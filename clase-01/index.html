@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Diplomatura de Videojuegos · Clase 1 — Godot</title>
+<link rel="stylesheet" href="../deck.css" />
+</head>
+<body>
+
+<div class="deck" id="deck" data-brand="Diplomatura de Videojuegos · Clase 1" data-home="../index.html">
+
+  <!-- ============ 1. INICIO ============ -->
+  <section class="slide title-slide active" data-chapter="Inicio" data-topic="Portada">
+    <div class="title-grid">
+      <div>
+        <div class="slide-eyebrow">Clase 1 · Introducción</div>
+        <h1 class="title">Primeros pasos con <span class="accent">Godot Engine</span></h1>
+        <p class="subtitle">Qué es un motor de videojuegos, cómo se estructura un proyecto y por qué en Godot <b>todo es un nodo</b>.</p>
+        <p class="small-note">“Hoy no van a aprender todo, pero sí van a entender cómo <b>pensar dentro del motor</b>.”</p>
+      </div>
+      <div class="title-photo" style="border:none; box-shadow:none; background:transparent;">
+        <img src="assets/godot-logo.png" alt="Logo de Godot Engine" style="max-height:420px; width:auto; margin:0 auto; display:block;" />
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Inicio" data-topic="Requisitos">
+    <div class="slide-eyebrow">Antes de empezar</div>
+    <h2 class="slide-title">Qué necesitás para la clase de hoy</h2>
+    <div class="columns">
+      <div class="card">
+        <h3>Traé</h3>
+        <ul>
+          <li>Tu notebook (cualquiera sirve, Godot es liviano)</li>
+          <li>Cargador y ganas de romper cosas</li>
+          <li>Conexión para descargar el editor</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Descarga</h3>
+        <ul>
+          <li>Sitio oficial: <code>godotengine.org</code></li>
+          <li>Versión <b>Godot 4.x — estándar</b> (GDScript)</li>
+          <li>Sin instalador, sin cuenta: se descomprime y abre</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout">Requisitos mínimos muy bajos: el editor pesa <b>menos de 100&nbsp;MB</b> y corre en máquinas modestas.</div>
+  </section>
+
+  <!-- ============ 2. APERTURA ============ -->
+  <section class="slide" data-chapter="Apertura" data-topic="Qué van a aprender">
+    <div class="slide-eyebrow">Apertura</div>
+    <h2 class="slide-title">Qué vamos a hacer hoy</h2>
+    <div class="columns">
+      <div>
+        <ul class="bullets">
+          <li>Entender qué es un <b>motor de videojuegos</b></li>
+          <li>Instalar Godot y recorrer su interfaz</li>
+          <li>El concepto clave: <b>nodos</b> y <b>escenas</b></li>
+          <li>Armar tu primera escena con nodos</li>
+        </ul>
+        <div class="callout" style="margin-top:22px;">Objetivo del día: <b>perder el miedo al editor</b> y entender el modelo mental de Godot.</div>
+      </div>
+      <div class="imgcard">
+        <img src="assets/godette.png" alt="Godette, la mascota de Godot" style="max-height:360px;" />
+        <figcaption class="imgcaption">Godette, la mascota de Godot — nos acompaña toda la diplomatura.</figcaption>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 3. MOTORES ============ -->
+  <section class="slide" data-chapter="Motores" data-topic="¿Qué es un motor?">
+    <div class="slide-eyebrow">Concepto</div>
+    <h2 class="slide-title">¿Qué es un motor de videojuegos?</h2>
+    <p class="subtitle">Un software que reúne, en un solo entorno, todo lo necesario para crear un juego: gráficos, físicas, audio, entrada del jugador, animación, scripting y exportación.</p>
+    <div class="columns" style="margin-top:6px;">
+      <div class="card">
+        <h3>Sin motor</h3>
+        <ul>
+          <li>Escribir código para dibujar un solo píxel</li>
+          <li>Detectar colisiones entre dos rectángulos</li>
+          <li>Reproducir un sonido desde cero… <b>lleva años</b></li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Con motor</h3>
+        <ul>
+          <li>Todo eso ya está resuelto</li>
+          <li>Te concentrás en el <b>juego en sí</b></li>
+          <li>Reglas, niveles, la experiencia</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout">🍳 <b>Analogía:</b> un motor es una <b>cocina equipada</b>. Podés fabricar tu horno y tus cuchillos… o entrar a una cocina lista y dedicarte a cocinar.</div>
+  </section>
+
+  <section class="slide" data-chapter="Motores" data-topic="Panorama de motores">
+    <div class="slide-eyebrow">Panorama</div>
+    <h2 class="slide-title">Motores populares</h2>
+    <div class="columns four" style="margin-top:6px;">
+      <div class="card" style="text-align:center;">
+        <svg viewBox="0 0 24 24" width="46" height="46" fill="currentColor" style="margin-bottom:8px;"><path d="m12.9288 4.2939 3.7997 2.1929c.1366.077.1415.2905 0 .3675l-4.515 2.6076a.4192.4192 0 0 1-.4246 0L7.274 6.8543c-.139-.0745-.1415-.293 0-.3675l3.7972-2.193V0L1.3758 5.5977V16.793l3.7177-2.1456v-4.3858c-.0025-.1565.1813-.2682.318-.1838l4.5148 2.6076a.4252.4252 0 0 1 .2136.3676v5.2127c.0025.1565-.1813.2682-.3179.1838l-3.7996-2.1929-3.7178 2.1457L12 24l9.6954-5.5977-3.7178-2.1457-3.7996 2.1929c-.1341.082-.3229-.0248-.3179-.1838V13.053c0-.1565.087-.2956.2136-.3676l4.5149-2.6076c.134-.082.3228.0224.3179.1838v4.3858l3.7177 2.1456V5.5977L12.9288 0Z"/></svg>
+        <h3 style="margin:0 0 6px;">Unity</h3>
+        <p style="margin:0;">C#, muy usado en la industria. Gratis hasta cierto nivel de ingresos.</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <svg viewBox="0 0 24 24" width="46" height="46" fill="currentColor" style="margin-bottom:8px;"><path d="M12 0a12 12 0 1012 12A12 12 0 0012 0zm0 23.52A11.52 11.52 0 1123.52 12 11.52 11.52 0 0112 23.52zm7.13-9.791c-.206.997-1.126 3.557-4.06 4.942l-1.179-1.325-1.988 2a7.338 7.338 0 01-5.804-2.978 2.859 2.859 0 00.65.123c.326.006.678-.114.678-.66v-5.394a.89.89 0 00-1.116-.89c-.92.212-1.656 2.509-1.656 2.509a7.304 7.304 0 012.528-5.597 7.408 7.408 0 013.73-1.721c-1.006.573-1.57 1.507-1.57 2.29 0 1.262.76 1.109.984.923v7.28a1.157 1.157 0 00.148.256 1.075 1.075 0 00.88.445c.76 0 1.747-.868 1.747-.868V9.172c0-.6-.452-1.324-.905-1.572 0 0 .838-.149 1.484.346a5.537 5.537 0 01.387-.425c1.508-1.48 2.929-1.902 4.112-2.112 0 0-2.151 1.69-2.151 3.96 0 1.687.043 5.801.043 5.801.799.771 1.986-.342 3.059-1.441Z"/></svg>
+        <h3 style="margin:0 0 6px;">Unreal</h3>
+        <p style="margin:0;">Gráficos AAA, C++ y Blueprints. Royalties sobre ingresos.</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <svg viewBox="0 0 24 24" width="46" height="46" fill="currentColor" style="margin-bottom:8px;"><path d="M.012 11.994 12.006 0l11.982 12.006h-6.831l-5.163-5.151-5.151 5.151 5.163 5.151v-5.151h5.151v6.903L12.006 24z"/></svg>
+        <h3 style="margin:0 0 6px;">GameMaker</h3>
+        <p style="margin:0;">Orientado a 2D, con su lenguaje propio (GML).</p>
+      </div>
+      <div class="card" style="text-align:center; border-color:var(--accent);">
+        <svg viewBox="0 0 24 24" width="46" height="46" fill="var(--accent)" style="margin-bottom:8px;"><path d="M9.5598.683c-1.096.244-2.1812.5831-3.1983 1.0951.023.8981.081 1.7582.199 2.6323-.395.253-.81.47-1.178.766-.375.288-.7581.564-1.0971.9011-.6781-.448-1.3962-.869-2.1352-1.2411C1.3532 5.6934.608 6.6186 0 7.6546c.458.7411.936 1.4352 1.4521 2.0942h.014v6.3565c.012 0 .023 0 .035.003l3.8963.376c.204.02.364.184.378.3891l.12 1.7201 3.3994.242.234-1.587c.03-.206.207-.358.415-.358h4.1114c.208 0 .385.152.415.358l.234 1.587 3.3993-.242.12-1.72a.4196.4196 0 01.378-.3891l3.8954-.376c.012 0 .023-.003.035-.003v-.5071h.002V9.7498h.014c.516-.659.994-1.3531 1.4521-2.0942-.608-1.036-1.3541-1.9611-2.1512-2.8192-.739.372-1.4571.793-2.1352 1.2411-.339-.337-.721-.613-1.096-.901-.369-.296-.7841-.5131-1.1781-.7661.117-.8741.175-1.7342.199-2.6323-1.0171-.512-2.1012-.851-3.1983-1.095-.438.736-.838 1.533-1.1871 2.3121-.414-.069-.829-.094-1.2461-.099h-.016c-.417.005-.832.03-1.2461.099-.349-.779-.749-1.576-1.1881-2.3121l.001-.001zM6.4765 9.9889c1.2971 0 2.3492 1.0511 2.3492 2.3482s-1.052 2.3482-2.3492 2.3482c-1.296 0-2.3482-1.051-2.3482-2.3482 0-1.297 1.0511-2.3482 2.3482-2.3482zm11.049 0c1.296 0 2.3482 1.0511 2.3482 2.3482s-1.0511 2.3482-2.3482 2.3482-2.3492-1.051-2.3492-2.3482c0-1.297 1.051-2.3482 2.3492-2.3482z"/></svg>
+        <h3 style="margin:0 0 6px;">Godot ★</h3>
+        <p style="margin:0;">Open source, gratis, sin royalties. <b>El que vamos a usar.</b></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Motores" data-topic="¿Por qué Godot?">
+    <div class="slide-eyebrow">Nuestra elección</div>
+    <h2 class="slide-title">¿Por qué Godot para empezar?</h2>
+    <div class="columns three">
+      <div class="card"><h3>Gratis y libre</h3><p>Open source, sin royalties ni licencias. Nada te frena para publicar.</p></div>
+      <div class="card"><h3>Liviano</h3><p>Corre en máquinas modestas. El editor pesa menos de 100&nbsp;MB.</p></div>
+      <div class="card"><h3>Curva amable</h3><p>Su sistema de <b>nodos</b> es uno de los modelos mentales más claros que existen.</p></div>
+    </div>
+    <div class="callout" style="margin-top:20px;">Filosofía de diseño muy particular: <b>todo es un nodo</b>. Lo vemos en detalle más adelante.</div>
+  </section>
+
+  <!-- ============ 4. INSTALACIÓN ============ -->
+  <section class="slide" data-chapter="Instalación" data-topic="Descarga y versiones">
+    <div class="slide-eyebrow">Instalación</div>
+    <h2 class="slide-title">Descarga y primer contacto</h2>
+    <p class="subtitle">Se descarga de <code>godotengine.org</code>. Es un único ejecutable: no hay instalador, ni registro, ni cuenta. Lo descomprimís y lo abrís.</p>
+    <table class="tbl" style="margin-top:8px;">
+      <thead><tr><th>Versión / sabor</th><th>Qué es</th><th>Cuándo</th></tr></thead>
+      <tbody>
+        <tr><td><b>Godot 4.x</b></td><td>Versión actual, mejor render 3D y nuevas funciones</td><td>✅ La que usamos</td></tr>
+        <tr><td>Godot 3.x</td><td>Versión anterior, todavía soportada</td><td>Mucho material online sigue en 3.x (la sintaxis cambió)</td></tr>
+        <tr><td>Estándar (GDScript)</td><td>Lenguaje propio, parecido a Python</td><td>✅ Recomendado para empezar</td></tr>
+        <tr><td>.NET / C#</td><td>Además permite programar en C#</td><td>Más adelante, si hace falta</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="slide" data-chapter="Instalación" data-topic="Crear un proyecto">
+    <div class="slide-eyebrow">Práctica en clase</div>
+    <h2 class="slide-title">Crear tu primer proyecto</h2>
+    <div class="columns">
+      <div>
+        <ol class="steps">
+          <li>Abrir Godot → aparece el <b>Project Manager</b></li>
+          <li>Clic en <b>New Project</b></li>
+          <li>Elegir <b>nombre</b> y <b>carpeta</b></li>
+          <li>Dejar el resto por defecto → <b>Create &amp; Edit</b></li>
+          <li>Eso te lleva al <b>editor</b> 🎉</li>
+        </ol>
+      </div>
+      <div class="imgcard card" style="justify-content:center;">
+        <div style="text-align:center; color:var(--muted);">
+          <div style="font-size:44px; margin-bottom:8px;">🖼️</div>
+          <b>Captura: Project Manager</b>
+          <p class="small-note" style="margin-top:6px;">Reemplazar con captura propia<br>(al abrir Godot por primera vez)</p>
+        </div>
+      </div>
+    </div>
+    <div class="callout">El Project Manager es donde se <b>listan</b> tus proyectos y se <b>crean</b> nuevos.</div>
+  </section>
+
+  <!-- ============ 5. INTERFAZ ============ -->
+  <section class="slide" data-chapter="Interfaz" data-topic="Recorrido general">
+    <div class="slide-eyebrow">La ventana del editor</div>
+    <h2 class="slide-title">Recorrido por la interfaz</h2>
+    <div class="imgcard">
+      <img src="assets/editor.png" alt="Editor de Godot mostrando sus cuatro zonas principales" style="max-height:400px;" />
+      <figcaption class="imgcaption">La ventana de Godot tiene cuatro zonas principales: <b>Escena</b> (arriba izq.), <b>FileSystem</b> (abajo izq.), <b>Viewport</b> (centro) e <b>Inspector</b> (derecha).</figcaption>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Interfaz" data-topic="Los cuatro paneles">
+    <div class="slide-eyebrow">Interfaz</div>
+    <h2 class="slide-title">Los cuatro paneles principales</h2>
+    <div class="columns">
+      <div class="card"><h3>🎬 Viewport (centro)</h3><p>La ventana grande donde “ves” tu juego. Pestañas arriba para <b>2D</b>, <b>3D</b> y editor de <b>Script</b>.</p></div>
+      <div class="card"><h3>🌳 Escena (arriba izq.)</h3><p>La <b>jerarquía de nodos</b> en árbol. El panel más importante de Godot — lo profundizamos hoy.</p></div>
+      <div class="card"><h3>📁 FileSystem (abajo izq.)</h3><p>Todos los archivos del proyecto. Las rutas internas empiezan con <code>res://</code>.</p></div>
+      <div class="card"><h3>🔧 Inspector (derecha)</h3><p>Las <b>propiedades</b> del nodo seleccionado: posición, rotación, color, tamaño… sin escribir código.</p></div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Interfaz" data-topic="Otros elementos + práctica">
+    <div class="slide-eyebrow">Interfaz</div>
+    <h2 class="slide-title">Otros elementos y primera práctica</h2>
+    <div class="columns">
+      <div>
+        <ul class="bullets">
+          <li><b>Barra superior:</b> <span class="kbd">▶ Play</span>, <span class="kbd">Play Scene</span>, pausa y stop</li>
+          <li><b>Panel inferior:</b> consola, errores, animaciones, audio</li>
+          <li><b>Menús:</b> Scene · Project · Debug · Editor · Help</li>
+          <li>Sobre todo <code>Project → Project Settings</code> (resolución, controles, capas físicas)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>👐 Práctica guiada</h3>
+        <ul>
+          <li>Agregar un <code>Sprite2D</code> con el <code>icon.svg</code> del proyecto</li>
+          <li>Verlo aparecer en el <b>Viewport</b></li>
+          <li>Mover sus propiedades en el <b>Inspector</b></li>
+          <li>Observar cómo se refleja el cambio</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 6. NODOS ============ -->
+  <section class="slide" data-chapter="Nodos" data-topic="Qué es un nodo">
+    <div class="slide-eyebrow">Bloque clave</div>
+    <h2 class="slide-title">El sistema de nodos</h2>
+    <div class="columns">
+      <div>
+        <p class="subtitle">Un <b>nodo</b> es la unidad mínima de funcionalidad en Godot. Cada nodo hace <b>una cosa específica</b>.</p>
+        <ul class="bullets" style="font-size:19px;">
+          <li>Mostrar una imagen</li>
+          <li>Reproducir un sonido</li>
+          <li>Detectar colisiones</li>
+          <li>Recibir input del jugador</li>
+        </ul>
+      </div>
+      <div class="imgcard">
+        <img src="assets/nodos.svg" alt="Ilustración del sistema de nodos de Godot" style="max-height:380px;" />
+        <figcaption class="imgcaption">Cientos de tipos de nodos, cada uno especializado en una tarea.</figcaption>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Nodos" data-topic="Ejemplos + analogía Lego">
+    <div class="slide-eyebrow">Nodos</div>
+    <h2 class="slide-title">Ejemplos, y por qué son como Lego</h2>
+    <div class="columns">
+      <div>
+        <table class="tbl">
+          <tbody>
+            <tr><td><code>Sprite2D</code></td><td>Muestra una imagen 2D</td></tr>
+            <tr><td><code>Camera2D</code></td><td>Define qué parte se ve</td></tr>
+            <tr><td><code>AudioStreamPlayer</code></td><td>Reproduce un sonido</td></tr>
+            <tr><td><code>Label</code></td><td>Muestra texto</td></tr>
+            <tr><td><code>CharacterBody2D</code></td><td>Cuerpo físico controlable</td></tr>
+            <tr><td><code>Timer</code></td><td>Dispara un evento cada X tiempo</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card" style="align-self:center;">
+        <h3>🧱 Analogía: piezas de Lego</h3>
+        <p>Cada pieza es simple y hace poco por sí sola. Lo interesante es <b>combinarlas</b>.</p>
+        <p>Un personaje jugable no es un nodo gigante con todo adentro, sino un cuerpo físico que <b>tiene como hijos</b> un sprite, un colisionador, una cámara, un sonido de pasos…</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 7. ESCENAS ============ -->
+  <section class="slide" data-chapter="Escenas" data-topic="Escena y jerarquía">
+    <div class="slide-eyebrow">Segundo concepto clave</div>
+    <h2 class="slide-title">Escena = un árbol de nodos</h2>
+    <div class="columns">
+      <div>
+        <p class="subtitle" style="font-size:19px;">Una <b>Escena</b> es un árbol de nodos guardado como archivo (<code>.tscn</code>). No es solo “un nivel”: es cualquier cosa que quieras tratar como <b>unidad reusable</b>.</p>
+        <ul class="bullets" style="font-size:18px;">
+          <li>Un nivel · el menú principal</li>
+          <li>Un enemigo · una bala</li>
+          <li>El HUD · hasta un solo botón</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Ejemplo: escena Player</h3>
+        <pre class="code" style="margin:0;">Player <span class="c">(CharacterBody2D)</span>
+├── Sprite2D
+├── CollisionShape2D
+├── Camera2D
+└── AudioStreamPlayer</pre>
+        <p class="small-note">Toda escena tiene un <b>nodo raíz</b>, y de ahí cuelgan los demás.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Escenas" data-topic="Anidables = prefab">
+    <div class="slide-eyebrow">El gran truco de Godot</div>
+    <h2 class="slide-title">Las escenas son anidables</h2>
+    <p class="subtitle">Una escena puede instanciarse <b>dentro</b> de otra como si fuera un solo nodo. <code>Nivel1</code> puede contener la escena <code>Player</code> y diez instancias de <code>Enemigo</code>.</p>
+    <div class="columns">
+      <div class="callout" style="margin-top:8px;">Si modificás la escena <code>Enemigo</code>, <b>todas las instancias</b> en todos los niveles se actualizan solas. En Godot, <b>la escena ES el prefab</b> — no hay distinción (Unity → prefabs, Unreal → blueprints).</div>
+      <div class="card">
+        <h3>Reglas de la jerarquía</h3>
+        <ul>
+          <li>El hijo <b>hereda la transformación</b> del padre: movés el padre, se mueven los hijos</li>
+          <li>El orden importa en 2D: los de más abajo se dibujan <b>encima</b></li>
+          <li>Cualquier nodo → <code>Save Branch as Scene</code></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 8. TIPOS DE NODOS ============ -->
+  <section class="slide" data-chapter="Tipos" data-topic="2D · 3D · UI">
+    <div class="slide-eyebrow">Familias de nodos</div>
+    <h2 class="slide-title">Tres grandes familias</h2>
+    <div class="columns three">
+      <div class="card" style="border-top:3px solid #2563eb;"><h3 style="color:#2563eb;">🟦 2D</h3><p>Para juegos planos: personajes, plataformas, sprites.</p></div>
+      <div class="card" style="border-top:3px solid #dc2626;"><h3 style="color:#dc2626;">🟥 3D</h3><p>Mundos tridimensionales: cámaras, luces, modelos.</p></div>
+      <div class="card" style="border-top:3px solid #15803d;"><h3 style="color:#15803d;">🟩 UI</h3><p>Interfaz: botones, HUD, menús.</p></div>
+    </div>
+    <div class="callout" style="margin-top:22px;">💡 <b>Ejercicio corto:</b> agregá un nodo 2D y un nodo UI (ej. un botón) y observá la diferencia en pantalla.</div>
+  </section>
+
+  <!-- ============ 9. GDSCRIPT (nuevo) ============ -->
+  <section class="slide" data-chapter="GDScript" data-topic="Primer vistazo al código">
+    <div class="slide-eyebrow">Adelanto</div>
+    <h2 class="slide-title">¿Y el código? Un vistazo a GDScript</h2>
+    <div class="columns">
+      <div>
+        <p class="subtitle" style="font-size:19px;">Los nodos se pueden programar con <b>GDScript</b>, un lenguaje propio muy parecido a Python. No hace falta memorizarlo hoy — solo ver cómo se ve.</p>
+        <ul class="bullets" style="font-size:18px;">
+          <li><code>_ready()</code> corre al aparecer el nodo</li>
+          <li><code>_process()</code> corre en cada frame</li>
+          <li>Se engancha un script a cualquier nodo</li>
+        </ul>
+      </div>
+      <div class="code-wrap">
+        <pre class="code"><span class="k">extends</span> <span class="t">Sprite2D</span>
+
+<span class="c"># Corre una vez, al empezar</span>
+<span class="k">func</span> <span class="t">_ready</span>():
+    <span class="t">print</span>(<span class="s">"¡Hola, Godot!"</span>)
+
+<span class="c"># Corre en cada frame</span>
+<span class="k">func</span> <span class="t">_process</span>(delta):
+    position.x += <span class="n">100</span> * delta</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 10. PRÁCTICA ============ -->
+  <section class="slide" data-chapter="Práctica" data-topic="Mini práctica integradora">
+    <div class="slide-eyebrow">Manos a la obra</div>
+    <h2 class="slide-title">Mini práctica integradora</h2>
+    <p class="subtitle">Algo simple pero poderoso: crear una escena con…</p>
+    <div class="flow">
+      <div class="card" style="text-align:center;"><h3>1 · Nodo raíz</h3><p>Un <code>Node2D</code> como base</p></div>
+      <div class="arrow">→</div>
+      <div class="card" style="text-align:center;"><h3>2 · Elemento visual</h3><p>Un <code>Sprite2D</code></p></div>
+      <div class="arrow">→</div>
+      <div class="card" style="text-align:center;"><h3>3 · Botón UI</h3><p>Un <code>Button</code></p></div>
+    </div>
+    <div class="callout" style="margin-top:24px;">No importa que sea básico. Importa que <b>creen una escena</b>, <b>usen nodos</b> y <b>vean la interfaz en acción</b>.</div>
+  </section>
+
+  <!-- ============ 11. CIERRE ============ -->
+  <section class="slide" data-chapter="Cierre" data-topic="Repaso + tarea">
+    <div class="slide-eyebrow">Cierre</div>
+    <h2 class="slide-title">Lo que nos llevamos de hoy</h2>
+    <div class="columns">
+      <div>
+        <ul class="bullets" style="font-size:19px;">
+          <li>Un motor es una <b>caja de herramientas</b> integrada</li>
+          <li>Godot tiene 4 paneles: Escena, FileSystem, Inspector, Viewport</li>
+          <li>Todo es un <b>nodo</b>; los nodos forman <b>escenas</b>; las escenas se <b>anidan</b></li>
+          <li>Tres familias: <b>2D</b>, <b>3D</b> y <b>UI</b></li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>📝 Tarea para la próxima</h3>
+        <ul>
+          <li>Crear un proyecto nuevo</li>
+          <li>Agregar una escena con raíz <code>Node2D</code></li>
+          <li>Sumar al menos <b>3 tipos de nodos hijos</b></li>
+          <li>Mover, romper, deshacer, leer el Inspector</li>
+        </ul>
+        <p class="small-note">No tiene que hacer nada funcional: solo familiarizarse con el editor.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide title-slide" data-chapter="Cierre" data-topic="Recursos y gracias">
+    <div class="slide-eyebrow">Para seguir</div>
+    <h2 class="slide-title">Recursos y próximos pasos</h2>
+    <div class="columns three">
+      <div class="card"><h3>Documentación</h3><p><code>docs.godotengine.org</code><br>Guía oficial, completísima y en varios idiomas.</p></div>
+      <div class="card"><h3>Descargar</h3><p><code>godotengine.org</code><br>Godot 4.x estándar. Traelo instalado para la próxima.</p></div>
+      <div class="card"><h3>Comunidad</h3><p>Discord y foros oficiales. Miles de tutoriales en YouTube (ojo con la versión).</p></div>
+    </div>
+    <p class="small-note" style="margin-top:26px; text-align:center;">Logo, mascota (Godette) e ilustraciones de Godot © Godot Foundation — <b>CC BY 4.0</b>. Logos de Unity, Unreal Engine y GameMaker: marcas de sus respectivos dueños, uso educativo.</p>
+  </section>
+
+</div>
+
+<script src="../deck.js"></script>
+</body>
+</html>
