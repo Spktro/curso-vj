@@ -10,20 +10,22 @@ Si están publicadas con GitHub Pages: **https://spktro.github.io/curso-vj/**
 
 | # | Clase | Contenido |
 |---|-------|-----------|
-| 01 | [Primeros pasos con Godot](clase-01/index.html) | Motores, instalación, interfaz, nodos, escenas y jerarquía |
+| 01 | [Primeros pasos con Godot](clase-1/index.html) | Motores, instalación, interfaz, nodos, escenas y jerarquía |
 
 ## 🗂️ Estructura
 
+El home vive en la raíz; cada clase es una carpeta **autocontenida** (trae su propio deck y assets).
+
 ```
 .
-├── index.html        # home: índice de clases
-├── deck.css          # framework de slides (slidedeck), compartido
-├── deck.js
-├── assets/           # imágenes del home
-└── clase-01/
-    ├── index.html    # la presentación de la clase
-    ├── guion.md      # guion / outline de la clase
-    └── assets/       # imágenes de la clase
+├── index.html          # home: índice de clases
+├── assets/             # imágenes del home
+└── clase-1/            # todo lo de la Clase 1, junto
+    ├── index.html      # la presentación
+    ├── deck.css        # framework de slides (slidedeck)
+    ├── deck.js
+    ├── guion.md        # guion / outline de la clase
+    └── assets/         # imágenes de la clase
 ```
 
 ## ▶️ Cómo usar las presentaciones
