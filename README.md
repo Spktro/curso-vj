@@ -10,7 +10,9 @@ Si están publicadas con GitHub Pages: **https://spktro.github.io/curso-vj/**
 
 | # | Clase | Contenido |
 |---|-------|-----------|
-| 01 | [Primeros pasos con Godot](clase-1/index.html) | Motores, instalación, interfaz, nodos, escenas y jerarquía |
+| 01 | [Primeros pasos con Godot](clase-01/index.html) | Motores, instalación, interfaz, nodos, escenas y jerarquía |
+| 02 | [Programar con GDScript](clase-02/index.html) | Qué es programar, variables, condicionales, loops, funciones e input |
+| 03 | [El juego está vivo](clase-03/index.html) | Game loop, `_ready()`, `_process(delta)`, movimiento con delta e Input Map |
 
 ## 🗂️ Estructura
 
@@ -20,12 +22,14 @@ El home vive en la raíz; cada clase es una carpeta **autocontenida** (trae su p
 .
 ├── index.html          # home: índice de clases
 ├── assets/             # imágenes del home
-└── clase-1/            # todo lo de la Clase 1, junto
-    ├── index.html      # la presentación
-    ├── deck.css        # framework de slides (slidedeck)
-    ├── deck.js
-    ├── guion.md        # guion / outline de la clase
-    └── assets/         # imágenes de la clase
+├── clase-01/           # todo lo de la Clase 1, junto
+│   ├── index.html      # la presentación
+│   ├── deck.css        # framework de slides (slidedeck)
+│   ├── deck.js
+│   ├── guion.md        # guion / outline de la clase
+│   └── assets/         # imágenes de la clase
+├── clase-02/           # todo lo de la Clase 2 (misma estructura)
+└── clase-03/           # todo lo de la Clase 3 (misma estructura)
 ```
 
 ## ▶️ Cómo usar las presentaciones
