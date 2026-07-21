@@ -235,6 +235,30 @@
     left: 0;
     font-weight: 700;
   }
+.engine-item {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    height: 100%;
+}
+
+    .engine-item .card {
+        flex: 1;
+    }
+
+.engine-screenshot {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    display: block;
+}
+.columns.four {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    align-items: stretch;
+}
 
   .columns {
     display: grid;
