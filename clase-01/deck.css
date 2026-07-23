@@ -499,6 +499,57 @@
   }
   ol.steps li code { color: var(--accent-2); background: var(--panel-2); padding: 1px 6px; border-radius: 4px; font-size: 0.9em; }
 
+  /* ===== Bloque 2D · 2.5D · 3D · UI ===== */
+  .dim-hero { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 10px; }
+  .dim {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-top: 4px solid var(--accent);
+    border-radius: 14px;
+    padding: 18px 20px;
+    box-shadow: 0 1px 3px rgba(20,30,55,0.05), 0 8px 24px rgba(20,30,55,0.04);
+  }
+  .dim h3 { margin: 0 0 8px; font-size: 20px; letter-spacing: 0.01em; }
+  .dim p { margin: 0; font-size: 15px; line-height: 1.5; }
+  .dim .tag {
+    display: block; margin-top: 12px;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 12px; color: var(--muted);
+  }
+
+  /* Grilla de capturas de juegos */
+  .shots { display: grid; gap: 14px; margin-top: 12px; }
+  .shots.two   { grid-template-columns: 1fr 1fr; }
+  .shots.three { grid-template-columns: repeat(3, 1fr); }
+  .shots.four  { grid-template-columns: repeat(4, 1fr); }
+  .shot { margin: 0; display: flex; flex-direction: column; gap: 9px; }
+  .shot img, .shot .ph {
+    width: 100%; height: 180px;
+    object-fit: cover;
+    border-radius: 10px;
+    display: block;
+  }
+  .shot img { box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+  .shot .ph {
+    border: 2px dashed var(--border);
+    background: var(--panel-2);
+    display: flex; align-items: center; justify-content: center;
+    text-align: center; padding: 10px;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 11.5px; line-height: 1.4; color: var(--muted);
+  }
+  .shot img[hidden], .shot .ph[hidden] { display: none !important; }
+  .shot figcaption { font-size: 14px; line-height: 1.4; color: var(--muted); }
+  .shot figcaption b { display: block; font-size: 15.5px; color: var(--text); margin-bottom: 2px; }
+
+  /* Diagrama de ejes */
+  .axes { display: block; margin: 0 auto; max-width: 100%; }
+  .axes .ln   { stroke: var(--muted); stroke-width: 2; fill: none; }
+  .axes .grid { stroke: var(--border); stroke-width: 1; }
+  .axes .lbl  { fill: var(--muted); font-size: 13px; font-family: "SF Mono", Menlo, Consolas, monospace; }
+  .axes .hot  { fill: var(--accent); }
+  .axes .hotln{ stroke: var(--accent); stroke-width: 2; stroke-dasharray: 4 4; fill: none; }
+
   /* Exportar a PDF / imprimir */
   @media print {
     @page { size: 1280px 720px; margin: 0; }

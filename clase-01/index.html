@@ -320,19 +320,544 @@
     </div>
   </section>
 
-  <!-- ============ 8. TIPOS DE NODOS ============ -->
-  <section class="slide" data-chapter="Tipos" data-topic="2D · 3D · UI">
+  <!-- ============ 8. TIPOS DE NODOS: 2D · 2.5D · 3D · UI ============ -->
+
+  <!-- 8.0 Mapa del bloque -->
+  <section class="slide" data-chapter="Tipos" data-topic="Mapa: dónde vive tu juego">
     <div class="slide-eyebrow">Familias de nodos</div>
-    <h2 class="slide-title">Tres grandes familias</h2>
-    <div class="columns three">
-      <div class="card" style="border-top:3px solid #2563eb;"><h3 style="color:#2563eb;">🟦 2D</h3><p>Para juegos planos: personajes, plataformas, sprites.</p></div>
-      <div class="card" style="border-top:3px solid #dc2626;"><h3 style="color:#dc2626;">🟥 3D</h3><p>Mundos tridimensionales: cámaras, luces, modelos.</p></div>
-      <div class="card" style="border-top:3px solid #15803d;"><h3 style="color:#15803d;">🟩 UI</h3><p>Interfaz: botones, HUD, menús.</p></div>
+    <h2 class="slide-title">¿Dónde vive tu juego?</h2>
+    <p class="subtitle">Antes de elegir nodos hay que elegir <b>en qué espacio</b> ocurre el juego. Godot tiene tres sistemas separados —y un cuarto que en realidad es un truco.</p>
+    <div class="dim-hero">
+      <div class="dim" style="border-top-color:#2563eb;">
+        <h3 style="color:#2563eb;">🟦 2D</h3>
+        <p>Un plano. Dos ejes: X e Y. Todo son imágenes planas ordenadas por capas.</p>
+        <span class="tag">Node2D</span>
+      </div>
+      <div class="dim" style="border-top-color:#b45309;">
+        <h3 style="color:#b45309;">🟨 2.5D</h3>
+        <p>No es un sistema: es una <b>ilusión</b>. Se ve en una dimensión y se juega en otra.</p>
+        <span class="tag">2D o 3D, según el truco</span>
+      </div>
+      <div class="dim" style="border-top-color:#dc2626;">
+        <h3 style="color:#dc2626;">🟥 3D</h3>
+        <p>Un volumen. Tres ejes: X, Y y Z. Mallas, luces, cámara con perspectiva.</p>
+        <span class="tag">Node3D</span>
+      </div>
+      <div class="dim" style="border-top-color:#15803d;">
+        <h3 style="color:#15803d;">🟩 UI</h3>
+        <p>No vive en el mundo: vive en la <b>pantalla</b>. Vida, menús, botones, HUD.</p>
+        <span class="tag">Control</span>
+      </div>
     </div>
-    <div class="callout" style="margin-top:22px;">💡 <b>Ejercicio corto:</b> agregá un nodo 2D y un nodo UI (ej. un botón) y observá la diferencia en pantalla.</div>
+    <div class="callout" style="margin-top:20px;">Casi todo juego usa <b>al menos dos</b> a la vez: un mundo (2D o 3D) <b>+</b> una capa de UI encima.</div>
+  </section>
+
+  <!-- 8.0 Plano cartesiano -->
+  <section class="slide" data-chapter="Tipos" data-topic="El plano cartesiano">
+    <div class="slide-eyebrow">Un repaso rápido</div>
+    <h2 class="slide-title">El plano cartesiano</h2>
+    <div class="columns" style="grid-template-columns: 0.95fr 1.05fr;">
+      <div>
+        <p class="subtitle" style="font-size:18px; margin-bottom:12px;">Antes de hablar de 2D, el ladrillo de todo: es el sistema para <b>ubicar un punto</b> con dos números. Lo inventó <b>René Descartes</b> en el siglo XVII.</p>
+        <ul class="bullets" style="font-size:17px;">
+          <li>Dos rectas cruzadas: el <b>eje X</b> (horizontal) y el <b>eje Y</b> (vertical).</li>
+          <li>Se cruzan en el <b>origen</b> <code>(0, 0)</code>.</li>
+          <li>Cualquier punto es un par <code>(x, y)</code>: cuánto a los lados, cuánto arriba/abajo.</li>
+          <li>Los ejes parten el plano en <b>4 cuadrantes</b>.</li>
+        </ul>
+        <div class="callout" style="margin-top:14px;">Un juego 2D es, literalmente, cosas puestas en este plano. La posición de todo — Mario, una moneda, un enemigo — es un <code>(x, y)</code>.</div>
+      </div>
+      <div class="card" style="align-self:start; padding:16px 18px;">
+        <svg class="axes" viewBox="0 0 360 360" width="300" height="300" style="max-width:100%; height:auto;">
+          <g class="grid">
+            <path d="M30 30 H330 M30 60 H330 M30 90 H330 M30 120 H330 M30 150 H330 M30 180 H330 M30 210 H330 M30 240 H330 M30 270 H330 M30 300 H330 M30 330 H330" />
+            <path d="M30 30 V330 M60 30 V330 M90 30 V330 M120 30 V330 M150 30 V330 M180 30 V330 M210 30 V330 M240 30 V330 M270 30 V330 M300 30 V330 M330 30 V330" />
+          </g>
+          <path class="ln" d="M22 180 H338" marker-end="url(#cax)" style="stroke-width:2.5" />
+          <path class="ln" d="M180 338 V22" marker-end="url(#cax)" style="stroke-width:2.5" />
+          <defs><marker id="cax" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="currentColor" style="color:var(--muted)"/></marker></defs>
+          <text class="lbl" x="342" y="176" style="fill:var(--text); font-weight:700">X</text>
+          <text class="lbl" x="170" y="20" style="fill:var(--text); font-weight:700">Y</text>
+          <text class="lbl" x="255" y="105" style="fill:var(--accent-2); font-size:15px" text-anchor="middle">Cuadrante 1</text>
+          <text class="lbl" x="105" y="105" style="fill:var(--accent-2); font-size:15px" text-anchor="middle">Cuadrante 2</text>
+          <text class="lbl" x="105" y="262" style="fill:var(--accent-2); font-size:15px" text-anchor="middle">Cuadrante 3</text>
+          <text class="lbl" x="255" y="262" style="fill:var(--accent-2); font-size:15px" text-anchor="middle">Cuadrante 4</text>
+          <circle class="hot" cx="180" cy="180" r="5" />
+          <text class="lbl hot" x="188" y="198" style="fill:var(--accent)">origen (0,0)</text>
+        </svg>
+        <p class="small-note" style="margin-top:6px; text-align:center;">El plano cartesiano de siempre: origen al centro, la <b>Y sube</b>. En la próxima vemos por qué en los juegos cambia.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8.1 Qué es 2D -->
+  <section class="slide" data-chapter="Tipos" data-topic="Qué significa 2D">
+    <div class="slide-eyebrow">2D</div>
+    <h2 class="slide-title">Qué significa, en serio, “2D”</h2>
+    <div class="columns" style="grid-template-columns: 1.05fr 0.95fr;">
+      <div>
+        <p class="subtitle" style="font-size:18px; margin-bottom:14px;">2D = <b>dos dimensiones</b> = dos ejes. Todo lo que existe en el juego se ubica en un <b>plano cartesiano</b>: cada objeto tiene una posición <code>(x, y)</code> y nada más.</p>
+        <ul class="bullets" style="font-size:17px;">
+          <li><b>Eje X:</b> izquierda ↔ derecha. <b>Eje Y:</b> arriba ↔ abajo.</li>
+          <li>⚠️ En pantalla el <b>Y crece hacia abajo</b> y el origen <code>(0,0)</code> está arriba a la izquierda — herencia de cómo los monitores dibujan, línea por línea, de arriba hacia abajo. Es al revés que en la clase de matemática.</li>
+          <li>La unidad es el <b>píxel</b>.</li>
+          <li><b>No hay profundidad real:</b> quién tapa a quién se decide por el <b>orden de dibujo</b>, no por distancia.</li>
+        </ul>
+      </div>
+      <div class="card" style="align-self:start; padding:16px 18px;">
+        <svg class="axes" viewBox="0 0 420 260" width="100%" height="230">
+          <g class="grid">
+            <path d="M20 20 H400 M20 70 H400 M20 120 H400 M20 170 H400 M20 220 H400" />
+            <path d="M20 20 V240 M100 20 V240 M180 20 V240 M260 20 V240 M340 20 V240" />
+          </g>
+          <path class="ln" d="M20 20 H405" marker-end="url(#a)" />
+          <path class="ln" d="M20 20 V245" marker-end="url(#a)" />
+          <defs><marker id="a" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="currentColor" style="color:var(--muted)"/></marker></defs>
+          <text class="lbl" x="26" y="15">(0,0)</text>
+          <text class="lbl" x="360" y="15">X →</text>
+          <text class="lbl" x="26" y="240">Y ↓</text>
+          <path class="hotln" d="M20 145 H260 M260 20 V145" />
+          <circle class="hot" cx="260" cy="145" r="7" />
+          <text class="lbl hot" x="272" y="140" style="fill:var(--accent)">(240, 125)</text>
+        </svg>
+        <p class="small-note" style="margin-top:6px; text-align:center;">El plano de un juego 2D: el origen arriba a la izquierda y el eje Y apuntando hacia abajo.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8.2 Perspectivas 2D + juegos -->
+  <section class="slide" data-chapter="Tipos" data-topic="2D: perspectivas y ejemplos">
+    <div class="slide-eyebrow">2D · juegos reales</div>
+    <h2 class="slide-title">Plano no quiere decir aburrido</h2>
+    <p class="subtitle" style="font-size:18px;">Con dos ejes se pueden simular puntos de vista muy distintos. La cámara no cambia: cambia <b>cómo dibujás</b>.</p>
+    <div class="shots three">
+      <figure class="shot">
+        <img src="assets/tipos/2d-lateral.jpg" alt="Captura de Hollow Knight: vista lateral con plataformas">
+        <div class="ph" hidden>assets/tipos/2d-lateral.jpg</div>
+        <figcaption><b>Vista lateral (side-view)</b>X = correr, Y = saltar. Hay gravedad. <span><i>Hollow Knight</i> · <i>Celeste</i> · <i>Super Mario Bros.</i></span></figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="assets/tipos/2d-cenital.jpg" alt="Captura de Stardew Valley: vista desde arriba de una granja">
+        <div class="ph" hidden>assets/tipos/2d-cenital.jpg</div>
+        <figcaption><b>Vista cenital (top-down)</b>Mirás desde arriba: X e Y son el piso. <span><i>Stardew Valley</i> · <i>Zelda</i> clásico · <i>Brotato</i></span></figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="assets/tipos/2d-isometrico.jpg" alt="Captura de Age of Empires II: ciudad en perspectiva isométrica">
+        <div class="ph" hidden>assets/tipos/2d-isometrico.jpg</div>
+        <figcaption><b>Isométrico</b>Sigue siendo 2D: el volumen está <b>pintado</b> en el sprite. <span><i>Age of Empires II</i> · <i>Hades</i> · <i>Diablo II</i></span></figcaption>
+      </figure>
+    </div>
+    <div class="callout" style="margin-top:16px;">En los tres casos el motor sólo maneja <code>(x, y)</code>. La “profundidad” del isométrico es dibujo y orden de capas: <b>puro arte</b>.</div>
+  </section>
+
+  <!-- 8.3 2D en Godot -->
+  <section class="slide" data-chapter="Tipos" data-topic="2D en Godot">
+    <div class="slide-eyebrow">2D · en el motor</div>
+    <h2 class="slide-title">Cómo se ve el 2D en Godot</h2>
+    <div class="columns">
+      <div>
+        <table class="tbl" style="font-size:16px;">
+          <thead><tr><th>Nodo</th><th>Para qué</th></tr></thead>
+          <tbody>
+            <tr><td><code>Node2D</code></td><td>Base de todo lo 2D: aporta <b>posición, rotación y escala</b> en el plano</td></tr>
+            <tr><td><code>Sprite2D</code></td><td>Dibuja una imagen</td></tr>
+            <tr><td><code>AnimatedSprite2D</code></td><td>Dibuja una secuencia de imágenes (animación cuadro a cuadro)</td></tr>
+            <tr><td><code>CharacterBody2D</code></td><td>Cuerpo con física, pensado para el personaje</td></tr>
+            <tr><td><code>TileMapLayer</code></td><td>Pinta el escenario con una grilla de mosaicos</td></tr>
+            <tr><td><code>Camera2D</code></td><td>El recorte del plano que se ve en pantalla</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card" style="align-self:start;">
+        <h3>🔍 Detalles que te van a morder</h3>
+        <ul>
+          <li>Los nodos 2D <b>terminan en <code>2D</code></b>. Si el nombre no lo tiene, casi seguro no es 2D.</li>
+          <li><b>El orden en el árbol es el orden de dibujo:</b> el hermano de más abajo se dibuja <b>encima</b>. ¿El personaje quedó tapado por el piso? Movelo abajo en la lista.</li>
+          <li>Para saltear esa regla existe <code>z_index</code>.</li>
+          <li>Todos heredan de <code>CanvasItem</code>: por eso comparten <code>modulate</code> (tinte), <code>visible</code> y las capas de dibujo.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8.4 Qué es 3D -->
+  <section class="slide" data-chapter="Tipos" data-topic="Qué significa 3D">
+    <div class="slide-eyebrow">3D</div>
+    <h2 class="slide-title">Sumar un eje lo cambia todo</h2>
+    <div class="columns" style="grid-template-columns: 1.05fr 0.95fr;">
+      <div>
+        <p class="subtitle" style="font-size:18px; margin-bottom:14px;">3D agrega el eje <b>Z</b>: la <b>profundidad</b>. Cada objeto vive en <code>(x, y, z)</code> dentro de un volumen, y la cámara se encarga de <b>proyectar</b> ese volumen sobre tu pantalla, que sigue siendo plana.</p>
+        <ul class="bullets" style="font-size:17px;">
+          <li>En Godot, <b>Y apunta hacia arriba</b> (al revés que en 2D) y <b>−Z es “hacia adelante”</b>.</li>
+          <li>La unidad ya no es el píxel: por convención <b>1 unidad = 1 metro</b>.</li>
+          <li>Los objetos no son imágenes: son <b>mallas</b> (vértices → triángulos → superficie) con un <b>material</b> encima (color, textura, brillo).</li>
+          <li><b>Sin luz no se ve nada.</b> Aparecen luces, sombras y entorno.</li>
+          <li>La rotación pasa de un número a <b>tres</b> (cabeceo, giro, alabeo).</li>
+        </ul>
+      </div>
+      <div class="card" style="align-self:start; padding:16px 18px;">
+        <svg class="axes" viewBox="0 0 420 250" width="100%" height="225">
+          <defs><marker id="b" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="currentColor" style="color:var(--muted)"/></marker></defs>
+          <path class="ln" d="M150 170 H400" marker-end="url(#b)" />
+          <path class="ln" d="M150 170 V20"  marker-end="url(#b)" />
+          <path class="ln" d="M150 170 L30 235" marker-end="url(#b)" />
+          <text class="lbl" x="378" y="192">X</text>
+          <text class="lbl" x="158" y="28">Y (arriba)</text>
+          <text class="lbl" x="24" y="222">Z</text>
+          <g stroke="var(--accent)" fill="none" stroke-width="2">
+            <path d="M255 120 h70 v60 h-70 z" />
+            <path d="M255 120 l30 -22 h70 l-30 22" />
+            <path d="M325 120 l30 -22 v60 l-30 22" />
+          </g>
+          <circle class="hot" cx="255" cy="180" r="5" />
+          <text class="lbl hot" x="200" y="212" style="fill:var(--accent)">position = (x, y, z)</text>
+        </svg>
+        <p class="small-note" style="margin-top:6px; text-align:center;">Tres ejes, Y hacia arriba. El cubo tiene volumen real: la cámara decide cómo se ve.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8.5 Juegos 3D -->
+  <section class="slide" data-chapter="Tipos" data-topic="3D: ejemplos">
+    <div class="slide-eyebrow">3D · juegos reales</div>
+    <h2 class="slide-title">Mundos con volumen</h2>
+    <div class="shots four">
+      <figure class="shot">
+        <img src="assets/tipos/3d-elden-ring.webp" alt="Captura de Elden Ring: el personaje a caballo mirando un paisaje abierto">
+        <div class="ph" hidden>assets/tipos/3d-elden-ring.jpg</div>
+        <figcaption><b>Tercera persona</b><span><i>Elden Ring</i> — la cámara va <b>detrás</b> del personaje: lo ves a él y al mundo</span></figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="assets/tipos/3d-portal.jpg" alt="Captura de Portal 2: una sala de pruebas vista en primera persona">
+        <div class="ph" hidden>assets/tipos/3d-portal.jpg</div>
+        <figcaption><b>Primera persona</b><span><i>Portal 2</i> — la cámara <b>es</b> los ojos del personaje: no lo ves nunca</span></figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="assets/tipos/3d-minecraft.jpg" alt="Imagen oficial de Minecraft: paisaje de bloques">
+        <div class="ph" hidden>assets/tipos/3d-minecraft.jpg</div>
+        <figcaption><b>3D no realista</b><span><i>Minecraft</i> — 3D total, pero con estética de bloques y texturas mínimas</span></figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="assets/tipos/3d-diablo4.jpg" alt="Captura de Diablo IV: combate visto desde una cámara elevada">
+        <div class="ph" hidden>assets/tipos/3d-diablo4.jpg</div>
+        <figcaption><b>3D con cámara fija</b><span><i>Diablo IV</i> — <i>parece</i> isométrico, pero mirá las sombras: es 3D real</span></figcaption>
+      </figure>
+    </div>
+    <div class="callout" style="margin-top:16px;">Costo real del 3D: modelado, texturizado, rigging, animación, iluminación y optimización. <b>Es mucho más trabajo por objeto</b> — por eso arrancamos en 2D.</div>
+  </section>
+
+  <!-- 8.6 3D en Godot -->
+  <section class="slide" data-chapter="Tipos" data-topic="3D en Godot">
+    <div class="slide-eyebrow">3D · en el motor</div>
+    <h2 class="slide-title">Cómo se ve el 3D en Godot</h2>
+    <div class="columns">
+      <div>
+        <table class="tbl" style="font-size:16px;">
+          <thead><tr><th>Nodo</th><th>Para qué</th></tr></thead>
+          <tbody>
+            <tr><td><code>Node3D</code></td><td>Base de todo lo 3D: posición, rotación y escala en el volumen</td></tr>
+            <tr><td><code>MeshInstance3D</code></td><td>Dibuja una malla (el equivalente al <code>Sprite2D</code>)</td></tr>
+            <tr><td><code>Camera3D</code></td><td>El punto de vista, con su campo de visión (FOV)</td></tr>
+            <tr><td><code>DirectionalLight3D</code></td><td>Una luz tipo sol; también hay <code>Omni</code> y <code>Spot</code></td></tr>
+            <tr><td><code>CharacterBody3D</code></td><td>El personaje con física, ahora en tres ejes</td></tr>
+            <tr><td><code>WorldEnvironment</code></td><td>Cielo, niebla, brillo, corrección de color</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card" style="align-self:start;">
+        <h3>🔍 Lo que cambia respecto de 2D</h3>
+        <ul>
+          <li>Los nodos <b>terminan en <code>3D</code></b>. <code>Sprite2D</code> y <code>Sprite3D</code> <b>no se mezclan</b>: cada mundo tiene su rama.</li>
+          <li>Ya no importa el orden del árbol para dibujar: el motor usa la <b>distancia a la cámara</b> (buffer de profundidad).</li>
+          <li>La escena arranca <b>negra</b> hasta que agregás una luz y una cámara. No está rota: le falta iluminación.</li>
+          <li>El Viewport tiene su propia pestaña <b>3D</b> arriba, con controles de órbita y navegación.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8.7 Qué es 2.5D -->
+  <section class="slide" data-chapter="Tipos" data-topic="Qué es 2.5D">
+    <div class="slide-eyebrow">2.5D</div>
+    <h2 class="slide-title">2.5D: se ve en una dimensión, se juega en otra</h2>
+    <p class="subtitle" style="font-size:18px;">No es un formato técnico ni un botón del motor: es una <b>decisión de presentación</b>. Hay dos caminos, y van en direcciones opuestas.</p>
+    <div class="columns" style="margin-top:4px;">
+      <div class="card" style="border-top:3px solid var(--accent-2);">
+        <h3>A · Mundo 3D, juego 2D</h3>
+        <p>Todo está modelado en 3D —con luces, sombras y cámara real— pero el jugador <b>sólo se mueve en dos ejes</b>. Ganás la belleza del 3D con la simpleza de diseño del 2D.</p>
+        <p style="margin-top:8px;"><b>Ejemplos:</b> <i>Little Nightmares</i>, <i>Trine</i>, <i>New Super Mario Bros. U</i>, <i>Donkey Kong Country Returns</i>.</p>
+      </div>
+      <div class="card" style="border-top:3px solid var(--yellow);">
+        <h3>B · Mundo 2D que finge volumen</h3>
+        <p>Imágenes planas acomodadas para <b>simular profundidad</b>: perspectiva isométrica, capas de fondo que se mueven a distinta velocidad (<i>parallax</i>), o sprites planos que siempre miran a la cámara.</p>
+        <p style="margin-top:8px;"><b>Ejemplos:</b> <i>DOOM</i> (1993), <i>Don't Starve</i>, <i>Octopath Traveler</i> (HD-2D), <i>Age of Empires II</i>.</p>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:18px;">¿Por qué tanto juego elige 2.5D? <b>Cuesta menos producir</b>, <b>se lee mejor</b> (una cámara previsible no te marea) y <b>diseñar niveles en dos ejes es mucho más simple</b>.</div>
+  </section>
+
+  <!-- 8.8 Juegos 2.5D -->
+  <section class="slide" data-chapter="Tipos" data-topic="2.5D: ejemplos">
+    <div class="slide-eyebrow">2.5D · juegos reales</div>
+    <h2 class="slide-title">El truco, en cuatro juegos</h2>
+    <div class="shots four">
+      <figure class="shot">
+        <img src="assets/tipos/25d-little-nightmares.jpg" alt="Captura de Little Nightmares: escenario 3D oscuro con el personaje de perfil">
+        <div class="ph" hidden>assets/tipos/25d-little-nightmares.jpg</div>
+        <figcaption><b>Little Nightmares</b><span>Escenario 3D con luces reales; el personaje avanza por un carril de dos ejes.</span></figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="assets/tipos/25d-octopath.jpg" alt="Captura de Octopath Traveler: sprites de píxeles en un pueblo 3D">
+        <div class="ph" hidden>assets/tipos/25d-octopath.jpg</div>
+        <figcaption><b>Octopath Traveler</b><span>“HD-2D”: sprites planos parados dentro de un escenario 3D, con desenfoque y profundidad.</span></figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="assets/tipos/25d-doom.jpg" alt="Captura de DOOM 1993: enemigos planos de frente y HUD inferior">
+        <div class="ph" hidden>assets/tipos/25d-doom.jpg</div>
+        <figcaption><b>DOOM (1993)</b><span>Los enemigos son imágenes planas que <b>siempre giran hacia vos</b>. Nunca les ves la espalda.</span></figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="assets/tipos/25d-dont-starve.jpg" alt="Captura de Don't Starve: personajes dibujados a mano entre pinos">
+        <div class="ph" hidden>assets/tipos/25d-dont-starve.jpg</div>
+        <figcaption><b>Don't Starve</b><span>Personajes y objetos 2D dibujados a mano, ubicados en un mundo con profundidad.</span></figcaption>
+      </figure>
+    </div>
+    <div class="callout" style="margin-top:16px;">Pregunta útil para clasificar cualquier juego: <b>¿en cuántos ejes puede moverse el jugador?</b> Eso define el género técnico; lo demás es cómo se ve.</div>
+  </section>
+
+  <!-- 8.9 2.5D en Godot -->
+  <section class="slide" data-chapter="Tipos" data-topic="2.5D en Godot">
+    <div class="slide-eyebrow">2.5D · en el motor</div>
+    <h2 class="slide-title">Cómo se arma un 2.5D en Godot</h2>
+    <p class="subtitle" style="font-size:18px;">No hay un modo “2.5D”. Elegís uno de los dos mundos y lo <b>disfrazás</b>.</p>
+    <div class="columns three" style="margin-top:4px;">
+      <div class="card">
+        <h3>Escena 3D, cámara plana</h3>
+        <p>Escena 3D normal + <code>Camera3D</code> con <b>Projection: Orthogonal</b> (se apaga la perspectiva) y el movimiento del <code>CharacterBody3D</code> bloqueado en un eje.</p>
+        <span class="pill">estilo Little Nightmares</span>
+      </div>
+      <div class="card">
+        <h3>Sprites parados en 3D</h3>
+        <p><code>Sprite3D</code> / <code>AnimatedSprite3D</code> con <b>Billboard: Enabled</b> dentro de una escena 3D: la imagen plana siempre rota hacia la cámara.</p>
+        <span class="pill">estilo HD-2D / DOOM</span>
+      </div>
+      <div class="card">
+        <h3>Todo 2D con falsa profundidad</h3>
+        <p><code>Parallax2D</code> para capas de fondo a distinta velocidad + <b>Y-Sort</b> para que lo que está más abajo se dibuje encima. <code>TileMapLayer</code> tiene modo <b>Isometric</b>.</p>
+        <span class="pill">estilo Hades / Stardew</span>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:20px;">Regla práctica: si el <b>arte</b> es plano → hacelo en 2D. Si el <b>arte</b> tiene volumen y luces → hacelo en 3D y limitá el movimiento. Nunca mezcles los dos árboles.</div>
+  </section>
+
+  <!-- 8.10 Qué es UI -->
+  <section class="slide" data-chapter="Tipos" data-topic="Qué es la UI">
+    <div class="slide-eyebrow">UI</div>
+    <h2 class="slide-title">La UI no está en el mundo: está en la pantalla</h2>
+    <div class="columns">
+      <div>
+        <p class="subtitle" style="font-size:18px; margin-bottom:14px;">La interfaz es todo lo que <b>le comunica información al jugador</b>, y no forma parte del terreno donde ocurre la acción. Si la cámara se mueve, el mundo se corre; <b>la UI se queda quieta</b>.</p>
+        <ul class="bullets" style="font-size:17px;">
+          <li><b>HUD</b> (durante el juego): vida, munición, puntaje, minimapa, misión activa.</li>
+          <li><b>Pantallas</b>: menú principal, pausa, inventario, opciones, game over.</li>
+          <li>Su sistema de coordenadas es <b>la pantalla</b>, medida en píxeles — y tiene que sobrevivir a <b>cualquier resolución</b>.</li>
+        </ul>
+      </div>
+      <div class="card" style="align-self:start;">
+        <h3>🧠 La UI es diseño de información</h3>
+        <p>Las tres preguntas de siempre:</p>
+        <ul>
+          <li><b>¿Qué</b> necesita saber el jugador para tomar la próxima decisión?</li>
+          <li><b>¿Cuándo?</b> ¿Todo el tiempo, o sólo cuando importa?</li>
+          <li><b>¿Cuánto ruido</b> estoy dispuesto a meterle a la imagen para decírselo?</li>
+        </ul>
+        <p class="small-note" style="margin-top:10px;">Esa tercera pregunta es exactamente la que separa la UI <b>diegética</b> de la <b>no diegética</b>.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8.11 Diegética vs no diegética -->
+  <section class="slide" data-chapter="Tipos" data-topic="UI diegética vs no diegética">
+    <div class="slide-eyebrow">UI · el concepto clave</div>
+    <h2 class="slide-title">Diegética vs. no diegética</h2>
+    <p class="subtitle" style="font-size:17px; margin-bottom:6px;"><b>Diégesis</b> es el mundo de la ficción. La pregunta es simple: <b>¿el personaje puede ver eso que estás viendo vos?</b></p>
+    <div class="shots two" style="margin-top:6px;">
+      <figure class="shot">
+        <img src="assets/tipos/deadspace1.jpg" alt="Captura de Dead Space: Isaac de espaldas con la barra de vida luminosa en la columna" style="height:250px; object-position:top;">
+        <div class="ph" hidden style="height:250px;">assets/tipos/ui-dead-space.jpg</div>
+        <figcaption style="font-size:13.5px;"><b>Diegética — <i>Dead Space</i></b>Mirale <b>la columna</b>: esa barra luminosa <b>es</b> su vida, y la munición se proyecta sobre el arma. Ni un píxel de HUD flotando.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="assets/tipos/ui-no-diegetica.jpg" alt="Captura de Hollow Knight con el HUD de máscaras de vida en la esquina superior izquierda" style="height:250px; object-position:top;">
+        <div class="ph" hidden style="height:250px;">assets/tipos/ui-no-diegetica.jpg</div>
+        <figcaption style="font-size:13.5px;"><b>No diegética — <i>Hollow Knight</i></b><span>Arriba a la izquierda: <b>máscaras de vida</b> y contador de geo, pegados a la pantalla. El personaje no los ve; existen sólo para vos.</span></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- 8.12 Los cuatro cuadrantes -->
+  <section class="slide" data-chapter="Tipos" data-topic="Los 4 tipos de UI">
+    <div class="slide-eyebrow">UI · el modelo completo</div>
+    <h2 class="slide-title">En realidad son cuatro tipos</h2>
+    <p class="subtitle" style="font-size:17px;">Se cruzan dos preguntas: <b>¿pertenece a la ficción?</b> y <b>¿está dibujada en el mundo o pegada a la pantalla?</b></p>
+    <table class="tbl" style="font-size:16px; margin-top:6px;">
+      <thead><tr><th style="width:15%">Tipo</th><th style="width:12%">¿Ficción?</th><th style="width:15%">¿Dónde?</th><th>Ejemplos</th></tr></thead>
+      <tbody>
+        <tr><td><b>Diegética</b></td><td>Sí</td><td>En el mundo</td><td><i>Dead Space</i> (vida en la espalda) · <i>Far Cry 2</i> (mapa de papel en la mano) · <i>Metro Exodus</i> (reloj de muñeca) · <i>Alien: Isolation</i> (detector de movimiento)</td></tr>
+        <tr><td><b>No diegética</b></td><td>No</td><td>En la pantalla</td><td><i>Hollow Knight</i> (máscaras de vida) · <i>League of Legends</i> (minimapa) · el puntaje de <i>Tetris</i></td></tr>
+        <tr><td><b>Espacial</b></td><td>No</td><td>En el mundo</td><td>Siluetas de compañeros a través de las paredes en <i>Left 4 Dead</i> · nombres flotando sobre los NPC en <i>WoW</i> · el cartel “E para abrir” pegado a la puerta</td></tr>
+        <tr><td><b>Meta</b></td><td>Sí</td><td>En la pantalla</td><td>Salpicaduras de sangre cuando te disparan en <i>Call of Duty</i> · gotas de lluvia sobre “el lente” · estática cuando te detectan</td></tr>
+      </tbody>
+    </table>
+    <div class="callout" style="margin-top:16px;">Ningún juego elige uno solo: <b>los mezclan</b>. Más diegético = más inmersión, pero menos legible y más caro de producir. Es un intercambio, no una escala de calidad.</div>
+  </section>
+
+  <!-- 8.13 UI en Godot -->
+  <section class="slide" data-chapter="Tipos" data-topic="UI en Godot">
+    <div class="slide-eyebrow">UI · en el motor</div>
+    <h2 class="slide-title">Cómo se arma la UI en Godot</h2>
+    <div class="columns">
+      <div>
+        <table class="tbl" style="font-size:15.5px;">
+          <thead><tr><th>Nodo</th><th>Para qué</th></tr></thead>
+          <tbody>
+            <tr><td><code>Control</code></td><td>Base de <b>toda</b> la UI. No usa posición suelta: usa un rectángulo con <b>anclas</b></td></tr>
+            <tr><td><code>CanvasLayer</code></td><td>Capa aparte que <b>no se mueve con la cámara</b>. Acá va tu HUD</td></tr>
+            <tr><td><code>Label</code> · <code>Button</code></td><td>Texto y botones</td></tr>
+            <tr><td><code>TextureProgressBar</code></td><td>La clásica barra de vida con arte propio</td></tr>
+            <tr><td><code>VBox</code>/<code>HBoxContainer</code></td><td>Acomodan a los hijos solos: la UI sobrevive a cualquier resolución</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card" style="align-self:start;">
+        <h3>🎭 ¿Y la UI diegética?</h3>
+        <p>No se hace con nodos de UI: <b>se hace con nodos del mundo</b>.</p>
+        <ul>
+          <li>En 2D: colgá un <code>Label</code> o un <code>Sprite2D</code> como <b>hijo del personaje</b> —fuera del <code>CanvasLayer</code>— y se moverá con él.</li>
+          <li>En 3D: <code>Label3D</code> o <code>Sprite3D</code> pegados al modelo.</li>
+          <li>Para una pantalla dentro del juego (un monitor, un celular): armás la UI con <code>Control</code> dentro de un <code>SubViewport</code> y usás <b>esa textura</b> en un <code>MeshInstance3D</code>.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8.14 Cuadro comparativo -->
+  <section class="slide" data-chapter="Tipos" data-topic="Cuadro comparativo">
+    <div class="slide-eyebrow">Resumen</div>
+    <h2 class="slide-title">Los tres sistemas, lado a lado</h2>
+    <table class="tbl" style="font-size:16px;">
+      <thead><tr><th></th><th style="color:#2563eb">🟦 2D</th><th style="color:#dc2626">🟥 3D</th><th style="color:#15803d">🟩 UI</th></tr></thead>
+      <tbody>
+        <tr><td><b>Nodo base</b></td><td><code>Node2D</code></td><td><code>Node3D</code></td><td><code>Control</code></td></tr>
+        <tr><td><b>Ejes</b></td><td>X, Y — <b>Y hacia abajo</b></td><td>X, Y, Z — <b>Y hacia arriba</b></td><td>X, Y de la pantalla</td></tr>
+        <tr><td><b>Unidad</b></td><td>píxel</td><td>metro (1 unidad)</td><td>píxel de pantalla</td></tr>
+        <tr><td><b>Qué dibuja</b></td><td><code>Sprite2D</code> (imagen)</td><td><code>MeshInstance3D</code> (malla)</td><td><code>Label</code>, <code>Button</code>…</td></tr>
+        <tr><td><b>Cámara</b></td><td><code>Camera2D</code></td><td><code>Camera3D</code> (con FOV)</td><td>ninguna: <code>CanvasLayer</code></td></tr>
+        <tr><td><b>Profundidad</b></td><td>orden en el árbol / <code>z_index</code></td><td>distancia real a la cámara</td><td>orden de las capas</td></tr>
+        <tr><td><b>Se nota porque…</b></td><td>termina en <code>2D</code></td><td>termina en <code>3D</code></td><td>no lleva sufijo</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 8.15 Ejercicio -->
+  <section class="slide" data-chapter="Tipos" data-topic="Ejercicio del bloque">
+    <div class="slide-eyebrow">Manos a la obra</div>
+    <h2 class="slide-title">Ejercicio: ver la diferencia con los ojos</h2>
+    <div class="columns">
+      <div>
+        <ol class="steps">
+          <li>En una escena con raíz <code>Node2D</code>, agregá un <code>Sprite2D</code> y movelo en el Viewport. Mirá cómo cambia <code>position</code> en el Inspector: <b>Y sube el número al bajar</b>.</li>
+          <li>Agregá un <code>Button</code>. Fijate que aparece <b>en otro lugar</b> y que su panel de propiedades es <b>completamente distinto</b>: tiene anclas, no posición libre.</li>
+          <li>Agregá un <code>Camera2D</code> y movelo: el sprite se corre… <b>y el botón no</b>.</li>
+          <li>Meté el botón dentro de un <code>CanvasLayer</code> y confirmá que ahí sí queda clavado a la pantalla, pase lo que pase con la cámara.</li>
+        </ol>
+      </div>
+      <div class="card" style="align-self:start;">
+        <h3>🎯 Lo que tienen que poder responder</h3>
+        <ul>
+          <li>¿Por qué el botón no se movió con la cámara?</li>
+          <li>¿Ese botón es UI diegética o no diegética?</li>
+          <li>¿Cómo lo harían diegético, sin cambiar el nodo por otro?</li>
+        </ul>
+        <p class="small-note" style="margin-top:12px;">🕹️ <b>Extra para casa:</b> elegí un juego que te guste, sacale una captura y marcá cada elemento de UI como <b>diegético</b>, <b>no diegético</b>, <b>espacial</b> o <b>meta</b>.</p>
+      </div>
+    </div>
   </section>
 
   <!-- ============ 9. GDSCRIPT (nuevo) ============ -->
+  <section class="slide" data-chapter="GDScript" data-topic="Qué es el código">
+    <div class="slide-eyebrow">Antes del código</div>
+    <h2 class="slide-title">¿Qué es el código?</h2>
+    <div class="columns">
+      <div>
+        <p class="subtitle" style="font-size:19px;"><b>Código</b> son <b>instrucciones</b> que le damos a una computadora para que haga algo.</p>
+        <p class="subtitle" style="font-size:19px;">El problema es que no hablamos el mismo idioma: nosotros pensamos en ideas («que salte»), la máquina solo ejecuta operaciones exactas. Para salvar esa distancia existen los <b>lenguajes de programación</b>.</p>
+        <div class="callout" style="margin-top:14px;">Un lenguaje de programación es un <b>idioma intermedio</b>: lo suficientemente humano para que podamos escribirlo, lo suficientemente preciso para que la máquina lo ejecute.</div>
+      </div>
+      <div class="card" style="align-self:start;">
+        <h3>🗣️ Hay muchos, y se parecen bastante</h3>
+        <table class="tbl" style="font-size:16px;">
+          <tbody>
+            <tr><td><code>Python</code></td><td>Datos, ciencia, automatización</td></tr>
+            <tr><td><code>JavaScript</code></td><td>La web</td></tr>
+            <tr><td><code>C#</code></td><td>Unity, aplicaciones</td></tr>
+            <tr><td><code>C++</code></td><td>Unreal, motores, performance</td></tr>
+            <tr><td><code>GDScript</code></td><td>Godot — el nuestro</td></tr>
+          </tbody>
+        </table>
+        <p class="small-note" style="margin-top:12px;">Cambia cómo se escribe, no cómo se piensa. Aprender a programar es aprender <b>a resolver problemas</b>; el idioma después se cambia sin tanto drama.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="GDScript" data-topic="Sintaxis y semántica">
+    <div class="slide-eyebrow">Las reglas del idioma</div>
+    <h2 class="slide-title">Sintaxis y semántica</h2>
+    <p class="subtitle" style="font-size:18px;">Todo lenguaje tiene reglas de <b>forma</b> y de <b>significado</b>. La computadora <b>no interpreta intenciones</b>: hace lo que escribiste, no lo que quisiste decir.</p>
+    <div class="columns" style="margin-top:8px;">
+      <div class="card">
+        <h3>✍️ Sintaxis — cómo se escribe</h3>
+        <p style="font-size:16px;">Los dos puntos, los paréntesis, la indentación. Si están mal, el programa <b>ni siquiera arranca</b>.</p>
+        <pre class="code" style="font-size:14.5px; margin-top:8px;"><span class="c"># ✗ falta el ":" del final</span>
+<span class="k">func</span> <span class="t">_ready</span>()
+
+<span class="c"># ✓ ahora sí</span>
+<span class="k">func</span> <span class="t">_ready</span>():</pre>
+        <p class="small-note" style="margin-top:8px;">El error <b>fácil</b>: Godot lo marca en rojo antes de correr.</p>
+      </div>
+      <div class="card">
+        <h3>🧠 Semántica — qué significa</h3>
+        <p style="font-size:16px;">Lo que la instrucción <b>hace</b>. Puede estar bien escrita y no ser lo que querías.</p>
+        <pre class="code" style="font-size:14.5px; margin-top:8px;"><span class="c"># Las dos son válidas. Pero la Y</span>
+<span class="c"># crece hacia ABAJO…</span>
+position.y += <span class="n">50</span>  <span class="c"># ✗ "salta" al piso</span>
+position.y -= <span class="n">50</span>  <span class="c"># ✓ salta de verdad</span></pre>
+        <p class="small-note" style="margin-top:8px;">El error <b>difícil</b>: nadie te avisa. Solo lo ves al jugar.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="GDScript" data-topic="El salto de Mario">
+    <div class="slide-eyebrow">De la idea a los números</div>
+    <h2 class="slide-title">El salto de Mario</h2>
+    <div class="columns">
+      <div>
+        <p class="subtitle" style="font-size:19px;">«Saltar» es una idea <b>nuestra</b>. Para la computadora no existe: hay que traducirla a números.</p>
+        <p class="subtitle" style="font-size:19px;">Mario es un objeto con una <b>posición</b>: <code>x</code> (horizontal) e <code>y</code> (vertical). El salto no es más que <b>modificar esos dos valores</b>, muchas veces por segundo.</p>
+        <ul class="bullets" style="font-size:18px;">
+          <li>La <code>y</code> sube y después vuelve a bajar → el <b>arco</b></li>
+          <li>La <code>x</code> sigue avanzando si venía corriendo → el <b>alcance</b></li>
+        </ul>
+        <div class="callout" style="margin-top:14px;">Mario no salta: <b>sus coordenadas cambian</b>. El salto lo ponemos nosotros al mirarlo.</div>
+      </div>
+      <figure class="shot" style="align-self:start;">
+        <img src="assets/tipos/mario-salto.png" alt="Captura de Super Mario Bros. (NES): Mario en pleno salto sobre la primera tubería del World 1-1" style="height:300px; image-rendering:pixelated;">
+        <div class="ph" hidden style="height:300px;">assets/tipos/mario-salto.png</div>
+        <figcaption style="font-size:13.5px;"><b><i>Super Mario Bros.</i> (NES, 1985) — World 1-1</b>Congelado, es solo un sprite en un par de coordenadas. El salto existe porque esos dos números cambian frame a frame.</figcaption>
+      </figure>
+    </div>
+  </section>
+
   <section class="slide" data-chapter="GDScript" data-topic="Primer vistazo al código">
     <div class="slide-eyebrow">Adelanto</div>
     <h2 class="slide-title">¿Y el código? Un vistazo a GDScript</h2>
@@ -384,7 +909,9 @@
           <li>Un motor es una <b>caja de herramientas</b> integrada</li>
           <li>Godot tiene 4 paneles: Escena, FileSystem, Inspector, Viewport</li>
           <li>Todo es un <b>nodo</b>; los nodos forman <b>escenas</b>; las escenas se <b>anidan</b></li>
-          <li>Tres familias: <b>2D</b>, <b>3D</b> y <b>UI</b></li>
+          <li>Tres sistemas separados: <b>2D</b> (plano, píxeles), <b>3D</b> (volumen, metros) y <b>UI</b> (pantalla)</li>
+          <li><b>2.5D</b> no es un sistema: es un disfraz sobre uno de los dos</li>
+          <li>La UI puede ser <b>diegética</b> (existe en la ficción) o <b>no diegética</b> (existe sólo para el jugador)</li>
         </ul>
       </div>
       <div class="card">
@@ -408,11 +935,25 @@
       <div class="card"><h3>Descargar</h3><p><code>godotengine.org</code><br>Godot 4.x estándar. Traelo instalado para la próxima.</p></div>
       <div class="card"><h3>Comunidad</h3><p>Discord y foros oficiales. Miles de tutoriales en YouTube (ojo con la versión).</p></div>
     </div>
-    <p class="small-note" style="margin-top:26px; text-align:center;">Logo, mascota (Godette) e ilustraciones de Godot © Godot Foundation — <b>CC BY 4.0</b>. Logos de Unity, Unreal Engine y GameMaker: marcas de sus respectivos dueños, uso educativo.</p>
+    <p class="small-note" style="margin-top:26px; text-align:center;">Logo, mascota (Godette) e ilustraciones de Godot © Godot Foundation — <b>CC BY 4.0</b>. Logos de Unity, Unreal Engine y GameMaker: marcas de sus respectivos dueños. Capturas de juegos © de sus respectivos estudios y editoras — reproducidas con fines ilustrativos y educativos.</p>
   </section>
 
 </div>
 
 <script src="deck.js"></script>
+<script>
+  /* Si una captura de juego todavía no está en assets/, mostramos el marcador punteado
+     en vez de una imagen rota. Al agregar el archivo, la imagen aparece sola. */
+  document.querySelectorAll('.shot img').forEach(function (img) {
+    function fallback() {
+      var ph = img.nextElementSibling;
+      if (!ph || !ph.classList.contains('ph')) return;
+      img.hidden = true;
+      ph.hidden = false;
+    }
+    img.addEventListener('error', fallback);
+    if (img.complete && img.naturalWidth === 0) fallback();
+  });
+</script>
 </body>
 </html>
