@@ -155,6 +155,27 @@
     <p class="small-note">💡 Cambiá los valores y observá cómo cambia la salida en la consola.</p>
   </section>
 
+  <!-- ============ CONSOLA ============ -->
+  <section class="slide" data-chapter="Consola" data-topic="¿Qué es y dónde está?">
+    <div class="slide-eyebrow">Depurar y observar</div>
+    <h2 class="slide-title">La consola: la ventana a lo que pasa "adentro"</h2>
+    <div class="columns">
+      <div>
+        <p class="subtitle" style="font-size:19px;">La <b>consola</b> (panel <i>Output</i>) es donde Godot muestra todo lo que le pedimos con <code>print()</code>, además de errores y advertencias.</p>
+        <ul class="bullets" style="font-size:18px;">
+          <li>Se abre sola al ejecutar la escena con <span class="kbd">F5</span></li>
+          <li>Vive en la parte <b>inferior</b> del editor, pestaña <b>“Output”</b></li>
+          <li>Ahí aparecen los <code>print()</code>, en el orden en que se ejecutan</li>
+          <li>Los errores salen en <span style="color:var(--red); font-weight:700;">rojo</span> — nuestro mejor amigo para depurar</li>
+        </ul>
+      </div>
+      <div class="title-photo" style="border:none; box-shadow:none; background:transparent;">
+          <img src="assets/godot-console.png" alt="Godot Engine" style="max-height:420px; width:auto; margin:0 auto; display:block;" />
+      </div>
+    </div>
+    <div class="callout" style="margin-top:18px;">💡 Regla de oro: si algo <b>“no funciona”</b>, lo primero es mirar la consola. Godot casi siempre te dice ahí qué salió mal.</div>
+  </section>
+
   <!-- ============ CONDICIONALES ============ -->
   <section class="slide" data-chapter="Condicionales" data-topic="if / else">
     <div class="slide-eyebrow">Tomar decisiones</div>
@@ -172,6 +193,9 @@
 <span class="k">else</span>:
     <span class="t">print</span>(<span class="s">"Sigo vivo con "</span> + <span class="t">str</span>(vida))</pre>
       </div>
+    </div>
+    <div class="title-photo" style="border:none; box-shadow:none; background:transparent;">
+        <img src="assets/diagrama-if.png" alt="Godot Engine" style="max-height:420px; width:auto; margin:0 auto; display:block;" />
     </div>
   </section>
 
@@ -201,6 +225,9 @@
             <tr><td><code>&lt;=</code> &nbsp; <code>&gt;=</code></td><td>menor o igual / mayor o igual</td></tr>
           </tbody>
         </table>
+        <div class="title-photo" style="border:none; box-shadow:none; background:transparent;">
+            <img src="assets/flujo-multiple.png" alt="Godot Engine" style="max-height:420px; width:auto; margin:0 auto; display:block;" />
+        </div>
       </div>
     </div>
   </section>
@@ -263,6 +290,39 @@
     <span class="t">print</span>(<span class="s">"Tienes: "</span> + item)</pre>
     </div>
     <div class="callout" style="margin-top:16px;">⚠️ <b>Importante:</b> en Godot los loops <b>no</b> se usan para la lógica en tiempo real (para eso está <code>_process()</code>). Sirven para inicialización, generar contenido y procesar datos.</div>
+  </section>
+
+  <section class="slide" data-chapter="Loops" data-topic="Ejemplo: Tower Defense">
+    <div class="slide-eyebrow">Aplicado a un género real</div>
+    <h2 class="slide-title">Ejemplo: una oleada de Tower Defense</h2>
+    <div class="columns">
+      <div class="code-wrap">
+        <pre class="code" style="font-size:12.5px;"><span class="k">extends</span> <span class="t">Node2D</span>
+
+<span class="k">var</span> cantidad_enemigos = <span class="n">5</span>
+<span class="k">var</span> torres = [<span class="s">"Arquero"</span>, <span class="s">"Cañón"</span>, <span class="s">"Hielo"</span>]
+
+<span class="k">func</span> <span class="t">_ready</span>():
+    spawnear_oleada()
+    revisar_torres()
+
+<span class="c"># Genera N enemigos con un for</span>
+<span class="k">func</span> <span class="t">spawnear_oleada</span>():
+    <span class="k">for</span> i <span class="k">in</span> <span class="t">range</span>(cantidad_enemigos):
+        <span class="t">print</span>(<span class="s">"👾 Enemigo "</span> + <span class="t">str</span>(i + <span class="n">1</span>) + <span class="s">" avanza por el camino"</span>)
+
+<span class="c"># Recorre la lista de torres colocadas</span>
+<span class="k">func</span> <span class="t">revisar_torres</span>():
+    <span class="k">for</span> torre <span class="k">in</span> torres:
+        <span class="t">print</span>(<span class="s">"🏹 Torre "</span> + torre + <span class="s">" lista para disparar"</span>)</pre>
+      </div>
+      <div>
+          <div class="title-photo" style="border:none; box-shadow:none; background:transparent;">
+              <img src="assets/tw-defense.png" alt="Godot Engine" style="max-height:420px; width:auto; margin:0 auto; display:block;" />
+          </div>
+        <div class="callout" style="margin-top:14px;">🎯 En un Tower Defense los loops están en todos lados: generar una <b>oleada</b> de enemigos, ubicar <b>torres</b> en una grilla, y recorrer la lista de torres para ver cuál dispara.</div>
+      </div>
+    </div>
   </section>
 
   <!-- ============ FUNCIONES ============ -->
