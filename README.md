@@ -14,6 +14,12 @@ Si están publicadas con GitHub Pages: **https://spktro.github.io/curso-vj/**
 | 02 | [Programar con GDScript](clase-02/index.html) | Qué es programar, variables, condicionales, loops, funciones e input |
 | 03 | [El juego está vivo](clase-03/index.html) | Game loop, `_ready()`, `_process(delta)`, movimiento con delta e Input Map |
 
+## 🕹️ Ejemplos en vivo
+
+| Ejemplo | Para explicar | Cómo correrlo |
+|---------|---------------|---------------|
+| [🏚️ La Mansión Embrujada](ejemplos/mansion-embrujada/) | `if`, funciones e ítems, con una aventura de texto de terror | Godot → `Node` + script → pegá `mansion.gd` → **F6**. Se juega con las flechas en el panel **Output**. Ver [guion](ejemplos/mansion-embrujada/guion.md). |
+
 ## 🗂️ Estructura
 
 El home vive en la raíz; cada clase es una carpeta **autocontenida** (trae su propio deck y assets).
