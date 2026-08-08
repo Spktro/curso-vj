@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Diplomatura de Videojuegos · Clase 4 — El personaje cobra vida</title>
+<link rel="stylesheet" href="deck.css" />
+</head>
+<body>
+
+<div class="deck" id="deck" data-brand="Diplomatura de Videojuegos · Clase 4" data-home="../index.html">
+
+  <!-- ============ INICIO ============ -->
+  <section class="slide title-slide active" data-chapter="Inicio" data-topic="Portada">
+    <div class="title-grid">
+      <div>
+        <div class="slide-eyebrow">Clase 4 · Física y Señales</div>
+        <h1 class="title">El personaje <span class="accent">cobra vida</span></h1>
+        <p class="subtitle"><code>CharacterBody2D</code>, colisiones y el sistema de <b>señales</b>: el personaje al fin choca con el mundo… y el mundo le responde.</p>
+        <p class="small-note">“Hasta ahora movíamos cosas. Hoy hacemos que <b>interactúen</b>.”</p>
+      </div>
+      <div class="title-photo" style="border:none; box-shadow:none; background:transparent;">
+        <img src="assets/godot-logo.png" alt="Godot Engine" style="max-height:420px; width:auto; margin:0 auto; display:block;" />
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Inicio" data-topic="Objetivos">
+    <div class="slide-eyebrow">Objetivos</div>
+    <h2 class="slide-title">Al terminar la clase van a poder…</h2>
+    <ul class="bullets">
+      <li>Diferenciar los <b>tres tipos de cuerpos físicos</b> de Godot y cuándo usar cada uno</li>
+      <li>Usar <code>CharacterBody2D</code> y <code>move_and_slide()</code> para un personaje que choca con el mundo</li>
+      <li>Agregar <code>CollisionShape2D</code> para darle <b>forma física</b> a los nodos</li>
+      <li>Entender el sistema de <b>Señales</b> y conectarlas desde el editor y por código</li>
+    </ul>
+    <div class="callout" style="margin-top:22px;">Puente con la Clase 3: el movimiento con <code>delta</code> ahora pasa por el <b>motor de física</b>.</div>
+  </section>
+
+  <!-- ============ HOOK ============ -->
+  <section class="slide" data-chapter="Hook" data-topic="Hook inicial">
+    <div class="slide-eyebrow">Arranque</div>
+    <h2 class="slide-title">¿Por qué uno cae y el otro no?</h2>
+    <div class="columns">
+      <div class="card" style="text-align:center; border-top:3px solid var(--red);"><h3 style="color:var(--red);">🕳️ Escena A</h3><p>Un sprite <b>atraviesa el suelo</b> y cae al vacío, como si el piso no existiera.</p></div>
+      <div class="card" style="text-align:center; border-top:3px solid var(--green);"><h3 style="color:var(--green);">🧍 Escena B</h3><p>El mismo personaje se <b>detiene sobre la plataforma</b> y se mueve con el teclado.</p></div>
+    </div>
+    <div class="callout" style="margin-top:22px;">🤔 <b>Para el grupo:</b> ¿qué tiene la segunda escena que no tiene la primera? La respuesta es el <b>tipo de nodo</b> y su <b>forma de colisión</b>.</div>
+  </section>
+
+  <!-- ============ CUERPOS FÍSICOS ============ -->
+  <section class="slide" data-chapter="Cuerpos físicos" data-topic="Los tres tipos">
+    <div class="slide-eyebrow">Concepto central</div>
+    <h2 class="slide-title">Tres tipos de cuerpos físicos</h2>
+    <table class="tbl">
+      <thead><tr><th>Nodo</th><th>¿Para qué sirve?</th></tr></thead>
+      <tbody>
+        <tr><td><code>StaticBody2D</code></td><td><b>No se mueve.</b> Suelo, paredes, plataformas fijas. El motor lo respeta pero nunca lo mueve.</td></tr>
+        <tr><td><code>CharacterBody2D</code></td><td><b>Lo controlás vos</b> por código. El personaje jugable, enemigos con IA. Sin gravedad automática.</td></tr>
+        <tr><td><code>RigidBody2D</code></td><td><b>Lo mueve el motor</b> con física realista: gravedad, rebote, impulsos. Objetos que se tiran o explotan.</td></tr>
+      </tbody>
+    </table>
+    <div class="callout" style="margin-top:16px;">🎭 <b>Analogía:</b> <code>CharacterBody2D</code> es un <b>actor</b> que vos dirigís. <code>RigidBody2D</code> es un <b>extra</b> al que empujás y se cae solo.</div>
+  </section>
+
+  <section class="slide" data-chapter="Cuerpos físicos" data-topic="Regla práctica">
+    <div class="slide-eyebrow">Cuerpos físicos</div>
+    <h2 class="slide-title">La regla práctica</h2>
+    <div class="columns three">
+      <div class="card" style="border-top:3px solid var(--accent-2);"><h3>El jugador</h3><p>Siempre <code>CharacterBody2D</code>. Control preciso, sin rebotes raros.</p></div>
+      <div class="card" style="border-top:3px solid var(--green);"><h3>El suelo</h3><p>Siempre <code>StaticBody2D</code>. Fijo, sólido, no se mueve nunca.</p></div>
+      <div class="card" style="border-top:3px solid var(--yellow);"><h3>Lo que se tira</h3><p>Siempre <code>RigidBody2D</code>. Cajas, barriles, proyectiles físicos.</p></div>
+    </div>
+    <div class="callout" style="margin-top:20px;">📏 Elegir el nodo correcto es la <b>mitad del trabajo</b>. El tipo define cómo interactúa con el mundo.</div>
+  </section>
+
+  <section class="slide" data-chapter="Cuerpos físicos" data-topic="En juegos reales">
+    <div class="slide-eyebrow">🎮 En juegos que conocés</div>
+    <h2 class="slide-title">Cada tipo, en un juego real</h2>
+    <div class="columns three">
+      <div class="card" style="border-top:3px solid var(--green);">
+        <h3>🟩 StaticBody2D</h3>
+        <p>El <b>suelo y las paredes</b> de <i>Super Mario Bros.</i> y <i>Celeste</i>. Nunca se mueven; el jugador se apoya en ellos.</p>
+      </div>
+      <div class="card" style="border-top:3px solid var(--accent-2);">
+        <h3>🟦 CharacterBody2D</h3>
+        <p><b>Madeline</b> en <i>Celeste</i>, el Caballero de <i>Hollow Knight</i>, el prota de <i>Super Meat Boy</i>. Control al píxel.</p>
+      </div>
+      <div class="card" style="border-top:3px solid var(--yellow);">
+        <h3>🟨 RigidBody2D</h3>
+        <p>Los <b>pájaros de <i>Angry Birds</i></b>, los barriles de <i>Donkey Kong</i>, las cajas de <i>World of Goo</i>.</p>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:20px;">💡 <i>Celeste</i> usa <b>los tres a la vez</b>: Madeline (character), las plataformas (static) y los bloques que caen (rigid).</div>
+  </section>
+
+  <!-- ============ move_and_slide ============ -->
+  <section class="slide" data-chapter="move_and_slide" data-topic="Por qué no alcanza position">
+    <div class="slide-eyebrow">El salto de calidad</div>
+    <h2 class="slide-title">¿Por qué no alcanza con <code>position.x += ...</code>?</h2>
+    <div class="columns">
+      <div>
+        <p class="subtitle" style="font-size:18px;">En la Clase 3 movíamos cambiando <code>position</code> directamente. Sirve para objetos que <b>no chocan</b> con nada.</p>
+        <div class="callout">Pero si el personaje tiene que <b>frenar contra una pared</b> o <b>pisar el suelo</b>, alguien tiene que resolver esas colisiones. Ese alguien es el <b>motor</b>.</div>
+      </div>
+      <div class="card" style="align-self:center;">
+        <h3>🚗 <code>move_and_slide()</code></h3>
+        <p>Mueve el <code>CharacterBody2D</code> usando su variable <code>velocity</code>, <b>detecta las colisiones</b> en el camino y <b>ajusta el movimiento</b> automáticamente — incluso deslizándose por las paredes.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="move_and_slide" data-topic="El patrón básico">
+    <div class="slide-eyebrow">El patrón que van a usar siempre</div>
+    <h2 class="slide-title">Movimiento de plataformas, paso a paso</h2>
+    <div class="code-wrap">
+      <pre class="code" style="font-size:12.5px;"><span class="k">extends</span> <span class="t">CharacterBody2D</span>
+
+<span class="k">const</span> VELOCIDAD = <span class="n">200.0</span>
+<span class="k">const</span> GRAVEDAD = <span class="n">900.0</span>
+<span class="k">const</span> FUERZA_SALTO = <span class="n">-400.0</span>  <span class="c"># negativo = arriba (Y invertido)</span>
+
+<span class="k">func</span> <span class="t">_physics_process</span>(delta):
+    <span class="c"># 1. Gravedad: se acumula en el aire</span>
+    <span class="k">if</span> <span class="k">not</span> is_on_floor():
+        velocity.y += GRAVEDAD * delta
+    <span class="c"># 2. Input horizontal: -1 / 0 / 1</span>
+    <span class="k">var</span> dir = <span class="t">Input</span>.get_axis(<span class="s">"mover_izquierda"</span>, <span class="s">"mover_derecha"</span>)
+    velocity.x = dir * VELOCIDAD
+    <span class="c"># 3. Salto: solo si toca el suelo</span>
+    <span class="k">if</span> <span class="t">Input</span>.is_action_just_pressed(<span class="s">"saltar"</span>) <span class="k">and</span> is_on_floor():
+        velocity.y = FUERZA_SALTO
+    <span class="c"># 4. Que Godot resuelva las colisiones</span>
+    move_and_slide()</pre>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="move_and_slide" data-topic="Desglose del patrón">
+    <div class="slide-eyebrow">Qué hace cada parte</div>
+    <h2 class="slide-title">Las cuatro partes del patrón</h2>
+    <table class="tbl">
+      <thead><tr><th>Paso</th><th>Qué hace</th></tr></thead>
+      <tbody>
+        <tr><td><b>1 · Gravedad</b></td><td><code>velocity.y += GRAVEDAD * delta</code> — se <b>acumula</b> (por eso <code>+=</code>) mientras <code>not is_on_floor()</code>. Sin esto, flota.</td></tr>
+        <tr><td><b>2 · Input</b></td><td><code>get_axis()</code> devuelve un número entre <code>-1</code> y <code>1</code>. Multiplicado por la velocidad, da la dirección horizontal.</td></tr>
+        <tr><td><b>3 · Salto</b></td><td>Un impulso hacia arriba (<code>velocity.y</code> negativo), <b>solo si está en el suelo</b> — si no, saltaría en el aire.</td></tr>
+        <tr><td><b>4 · Mover</b></td><td><code>move_and_slide()</code> aplica <code>velocity</code>, resuelve choques y actualiza <code>is_on_floor()</code>.</td></tr>
+      </tbody>
+    </table>
+    <div class="callout" style="margin-top:14px;">🎮 Este patrón es el corazón de <i>Celeste</i>, <i>Super Meat Boy</i> y cualquier plataformero de precisión.</div>
+  </section>
+
+  <section class="slide" data-chapter="move_and_slide" data-topic="_process vs _physics_process">
+    <div class="slide-eyebrow">Dónde va cada cosa</div>
+    <h2 class="slide-title"><code>_process</code> vs <code>_physics_process</code></h2>
+    <table class="tbl">
+      <thead><tr><th>Función</th><th>Cuándo usarla</th></tr></thead>
+      <tbody>
+        <tr><td><code>_process(delta)</code></td><td>Lógica general: input de menús, UI, estados. <b>No</b> toca la física.</td></tr>
+        <tr><td><code>_physics_process(delta)</code></td><td>Todo lo que usa <b>física y colisiones</b>. Se llama a <b>frecuencia fija</b> (60 Hz), estable siempre.</td></tr>
+      </tbody>
+    </table>
+    <div class="callout" style="margin-top:18px;">📏 <b>Regla:</b> si usás <code>move_and_slide()</code> o manejás colisiones, va en <code>_physics_process()</code>. Todo lo demás puede ir en <code>_process()</code>.</div>
+  </section>
+
+  <!-- ============ CollisionShape2D ============ -->
+  <section class="slide" data-chapter="CollisionShape2D" data-topic="La silueta física">
+    <div class="slide-eyebrow">Sin esto, nada choca</div>
+    <h2 class="slide-title"><code>CollisionShape2D</code>: la silueta física</h2>
+    <div class="columns">
+      <div>
+        <p class="subtitle" style="font-size:18px;">Un cuerpo físico <b>por sí solo no tiene forma</b>. Necesita un nodo hijo <code>CollisionShape2D</code> que define su “silueta” para las colisiones.</p>
+        <div class="callout" style="background:rgba(220,38,38,0.08); border-left-color:var(--red);">⚠️ <b>Error frecuente:</b> si el personaje no colisiona con nada, casi seguro <b>falta el <code>CollisionShape2D</code></b> o su <b>shape está vacío</b>.</div>
+      </div>
+      <div>
+        <table class="tbl" style="font-size:16px;">
+          <thead><tr><th>Shape</th><th>Ideal para</th></tr></thead>
+          <tbody>
+            <tr><td><code>RectangleShape2D</code></td><td>Personajes humanoides y cajas. La más común.</td></tr>
+            <tr><td><code>CapsuleShape2D</code></td><td>Personajes que se deslizan suave por esquinas.</td></tr>
+            <tr><td><code>CircleShape2D</code></td><td>Objetos redondos: pelotas, monedas.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="CollisionShape2D" data-topic="Práctica guiada">
+    <div class="slide-eyebrow">Manos a la obra</div>
+    <h2 class="slide-title">Práctica guiada: personaje + suelo</h2>
+    <div class="columns">
+      <div class="card">
+        <h3>Armamos juntos</h3>
+        <pre class="code" style="margin:0; font-size:13px;">Jugador <span class="c">(CharacterBody2D)</span>
+├── Sprite2D
+└── CollisionShape2D <span class="c"># Rectangle</span>
+
+Suelo <span class="c">(StaticBody2D)</span>
+└── CollisionShape2D <span class="c"># Rectangle</span></pre>
+      </div>
+      <div style="align-self:center;">
+        <ol class="steps" style="font-size:16px;">
+          <li><code>CharacterBody2D</code> como raíz del jugador</li>
+          <li><code>Sprite2D</code> como hijo visual</li>
+          <li><code>CollisionShape2D</code> con <code>RectangleShape2D</code></li>
+          <li>Plataforma <code>StaticBody2D</code> + su colisión, debajo</li>
+          <li>Adjuntar el script del patrón y <b>ejecutar</b></li>
+        </ol>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:16px;">🎯 Meta: que el personaje <b>caiga, aterrice sobre la plataforma</b> y camine sin atravesarla.</div>
+  </section>
+
+  <!-- ============ SEÑALES ============ -->
+  <section class="slide" data-chapter="Señales" data-topic="Qué son">
+    <div class="slide-eyebrow">Parte 2 · Comunicación</div>
+    <h2 class="slide-title">¿Qué son las Señales?</h2>
+    <div class="columns">
+      <div>
+        <p class="subtitle" style="font-size:18px;">El sistema de comunicación de Godot. Permiten que un nodo <b>avise</b> que pasó algo, sin que los nodos necesiten conocerse.</p>
+        <div class="callout" style="background:rgba(220,38,38,0.08); border-left-color:var(--red);">❌ <b>Sin señales:</b> la moneda busca el marcador y lo modifica a mano. Si cambiás un nombre, <b>todo se rompe</b>.</div>
+      </div>
+      <div class="card" style="align-self:center;">
+        <h3>🔔 Analogía: la campana</h3>
+        <p>La moneda <b>toca una campana</b> cuando la agarran. Cualquiera que esté “escuchando” reacciona.</p>
+        <p style="margin-top:10px;">La moneda <b>no sabe quién escucha</b> — solo toca la campana. Eso las hace flexibles.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Señales" data-topic="El flujo">
+    <div class="slide-eyebrow">Señales</div>
+    <h2 class="slide-title">El flujo de una señal</h2>
+    <div class="flow">
+      <div class="card" style="text-align:center;"><h3>1 · Emitir</h3><p>Un nodo <b>emite</b> la señal cuando ocurre algo</p></div>
+      <div class="arrow">→</div>
+      <div class="card" style="text-align:center;"><h3>2 · Conectar</h3><p>Otro nodo <b>conecta</b> la señal a una de sus funciones</p></div>
+      <div class="arrow">→</div>
+      <div class="card" style="text-align:center;"><h3>3 · Reaccionar</h3><p>Al emitirse, la función conectada <b>se ejecuta sola</b></p></div>
+    </div>
+    <div class="callout" style="margin-top:20px;">🎮 Así funcionan los <b>logros</b> de Steam, el <b>puntaje</b> que sube al juntar un anillo en <i>Sonic</i>, o el “¡Nivel completado!” cuando cruzás la meta.</div>
+  </section>
+
+  <!-- ============ Area2D ============ -->
+  <section class="slide" data-chapter="Area2D" data-topic="El detector de zonas">
+    <div class="slide-eyebrow">Señales predefinidas</div>
+    <h2 class="slide-title"><code>Area2D</code>: el detector de zonas</h2>
+    <div class="columns">
+      <div>
+        <p class="subtitle" style="font-size:18px;">Detecta cuándo otros cuerpos <b>entran o salen</b> de una zona. <b>No bloquea el paso</b> (a diferencia de <code>StaticBody2D</code>): solo detecta.</p>
+        <div class="callout">Perfecto para <b>monedas, poderes, zonas de daño</b> y disparadores de eventos.</div>
+      </div>
+      <div>
+        <table class="tbl" style="font-size:15px;">
+          <thead><tr><th>Señal</th><th>Cuándo se emite</th></tr></thead>
+          <tbody>
+            <tr><td><code>body_entered(body)</code></td><td>Entra un <code>CharacterBody2D</code> o <code>RigidBody2D</code>. Daño, recolección.</td></tr>
+            <tr><td><code>body_exited(body)</code></td><td>El cuerpo <b>sale</b> del área.</td></tr>
+            <tr><td><code>area_entered(area)</code></td><td>Entra otra <code>Area2D</code>. Zona contra zona.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:14px;">🎮 Los <b>anillos de <i>Sonic</i></b>, las <b>monedas de <i>Mario</i></b>, los <b>pinchos y la lava</b>, los <b>checkpoints</b>: todos son <code>Area2D</code> escuchando <code>body_entered</code>.</div>
+  </section>
+
+  <section class="slide" data-chapter="Area2D" data-topic="Conectar desde el editor">
+    <div class="slide-eyebrow">Conectar señales · editor</div>
+    <h2 class="slide-title">Conectar una señal sin código</h2>
+    <div class="columns">
+      <div>
+        <ol class="steps" style="font-size:15px;">
+          <li>Seleccioná el nodo <code>Area2D</code></li>
+          <li>Panel lateral <b>Node</b> → <b>Signals</b></li>
+          <li><b>Doble clic</b> en <code>body_entered</code></li>
+          <li>Elegí el nodo que va a recibir la señal</li>
+          <li><b>Connect</b></li>
+        </ol>
+        <p class="small-note">Godot <b>genera la función sola</b> en el script del receptor.</p>
+      </div>
+      <div class="code-wrap" style="align-self:center;">
+        <pre class="code" style="font-size:13px;"><span class="c"># Función generada automáticamente</span>
+<span class="k">func</span> <span class="t">_on_area_2d_body_entered</span>(body):
+    <span class="c"># 'body' es el nodo que entró</span>
+    <span class="t">print</span>(<span class="s">"Algo entró: "</span> + body.name)</pre>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Area2D" data-topic="Conectar por código">
+    <div class="slide-eyebrow">Conectar señales · código</div>
+    <h2 class="slide-title">Conectar una señal por código</h2>
+    <div class="code-wrap">
+      <pre class="code" style="font-size:13px;"><span class="c"># En _ready() del nodo receptor:</span>
+<span class="k">func</span> <span class="t">_ready</span>():
+    <span class="c"># Buscar el Area2D y conectar su señal a nuestra función</span>
+    $Area2D.body_entered.connect(_on_moneda_tocada)
+
+<span class="k">func</span> <span class="t">_on_moneda_tocada</span>(body):
+    <span class="k">if</span> body.is_in_group(<span class="s">"jugador"</span>):
+        puntos += <span class="n">1</span>
+        queue_free()   <span class="c"># eliminar la moneda</span></pre>
+    </div>
+    <div class="callout" style="margin-top:14px; background:rgba(220,38,38,0.08); border-left-color:var(--red);">⚠️ <b>Si la señal no dispara:</b> verificá que el <code>Area2D</code> tenga un <code>CollisionShape2D</code> hijo con shape asignado. Sin shape, el área <b>no tiene volumen</b> y nunca detecta nada.</div>
+  </section>
+
+  <!-- ============ GRUPOS ============ -->
+  <section class="slide" data-chapter="Grupos" data-topic="Comunicación masiva">
+    <div class="slide-eyebrow">Comunicación masiva</div>
+    <h2 class="slide-title">Grupos: un megáfono para muchos nodos</h2>
+    <div class="columns">
+      <div>
+        <p class="subtitle" style="font-size:18px;">Permiten <b>etiquetar</b> nodos para hablarle a <b>todos los de ese tipo a la vez</b>. En vez de señales uno a uno, es un megáfono.</p>
+        <div class="callout">🎮 Una <b>explosión</b> que le pega a <b>todos los enemigos</b> a la vez, o un <b>hechizo</b> que congela a todo lo etiquetado como <code>"enemigo"</code>.</div>
+      </div>
+      <div class="code-wrap" style="align-self:center;">
+        <pre class="code" style="font-size:12.5px;"><span class="c"># Etiquetar un nodo (en _ready):</span>
+<span class="k">func</span> <span class="t">_ready</span>():
+    add_to_group(<span class="s">"jugador"</span>)
+
+<span class="c"># ¿Pertenece a un grupo?</span>
+<span class="k">if</span> body.is_in_group(<span class="s">"jugador"</span>):
+    <span class="t">print</span>(<span class="s">"El jugador tocó el área"</span>)
+
+<span class="c"># Llamar una función en TODO un grupo:</span>
+get_tree().call_group(<span class="s">"enemigos"</span>, <span class="s">"recibir_dano"</span>, <span class="n">50</span>)</pre>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:14px;">También se etiqueta desde el editor: nodo → pestaña <b>Node</b> → <b>Groups</b>.</div>
+  </section>
+
+  <!-- ============ PRÁCTICA ============ -->
+  <section class="slide" data-chapter="Práctica" data-topic="La escena">
+    <div class="slide-eyebrow">Integradora</div>
+    <h2 class="slide-title">Práctica: un nivel con monedas</h2>
+    <div class="columns">
+      <div>
+        <p class="subtitle" style="font-size:17px;">El jugador se mueve, salta, y al tocar una moneda la recoge y suma puntos.</p>
+        <div class="card">
+          <h3>Estructura de la escena</h3>
+          <pre class="code" style="margin:0; font-size:12.5px;">Nivel <span class="c">(Node2D)</span>
+├── Jugador <span class="c">(CharacterBody2D)</span>
+│   ├── Sprite2D
+│   └── CollisionShape2D
+├── Suelo <span class="c">(StaticBody2D)</span>
+│   └── CollisionShape2D
+└── Moneda <span class="c">(Area2D)</span>
+    ├── Sprite2D
+    └── CollisionShape2D</pre>
+        </div>
+      </div>
+      <div style="align-self:center;">
+        <div class="callout">Junta <b>todo lo de hoy</b>: los tres cuerpos físicos, <code>move_and_slide()</code>, una señal de <code>Area2D</code> y un grupo.</div>
+        <p class="small-note">🎮 Es el esqueleto de <i>Mario</i> juntando monedas o <i>Sonic</i> juntando anillos.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Práctica" data-topic="Script del Jugador">
+    <div class="slide-eyebrow">Práctica · 1 de 2</div>
+    <h2 class="slide-title">Script del Jugador</h2>
+    <div class="code-wrap">
+      <pre class="code" style="font-size:11.5px;"><span class="k">extends</span> <span class="t">CharacterBody2D</span>
+
+<span class="k">const</span> VELOCIDAD = <span class="n">250.0</span>
+<span class="k">const</span> GRAVEDAD = <span class="n">980.0</span>
+<span class="k">const</span> SALTO = <span class="n">-450.0</span>
+<span class="k">var</span> puntos = <span class="n">0</span>
+
+<span class="k">func</span> <span class="t">_ready</span>():
+    add_to_group(<span class="s">"jugador"</span>)
+    <span class="t">print</span>(<span class="s">"Jugador listo. Puntos: "</span> + <span class="t">str</span>(puntos))
+<span class="k">func</span> <span class="t">_physics_process</span>(delta):
+    <span class="k">if</span> <span class="k">not</span> is_on_floor():
+        velocity.y += GRAVEDAD * delta
+    <span class="k">var</span> dir = <span class="t">Input</span>.get_axis(<span class="s">"mover_izquierda"</span>, <span class="s">"mover_derecha"</span>)
+    velocity.x = dir * VELOCIDAD
+    <span class="k">if</span> <span class="t">Input</span>.is_action_just_pressed(<span class="s">"saltar"</span>) <span class="k">and</span> is_on_floor():
+        velocity.y = SALTO
+    move_and_slide()
+<span class="k">func</span> <span class="t">sumar_punto</span>():
+    puntos += <span class="n">1</span>
+    <span class="t">print</span>(<span class="s">"¡Moneda! Puntos: "</span> + <span class="t">str</span>(puntos))</pre>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Práctica" data-topic="Script de la Moneda">
+    <div class="slide-eyebrow">Práctica · 2 de 2</div>
+    <h2 class="slide-title">Script de la Moneda</h2>
+    <div class="columns">
+      <div class="code-wrap">
+        <pre class="code" style="font-size:13px;"><span class="k">extends</span> <span class="t">Area2D</span>
+
+<span class="k">func</span> <span class="t">_ready</span>():
+    body_entered.connect(_on_body_entered)
+
+<span class="k">func</span> <span class="t">_on_body_entered</span>(body):
+    <span class="k">if</span> body.is_in_group(<span class="s">"jugador"</span>):
+        body.sumar_punto()   <span class="c"># función del jugador</span>
+        queue_free()         <span class="c"># eliminar la moneda</span></pre>
+      </div>
+      <div style="align-self:center;">
+        <div class="card">
+          <h3>Cómo se conecta todo</h3>
+          <ul>
+            <li>La moneda <b>emite</b> <code>body_entered</code></li>
+            <li>Chequea que sea del grupo <code>"jugador"</code></li>
+            <li>Le pide al jugador <code>sumar_punto()</code></li>
+            <li>Se <b>autoelimina</b> con <code>queue_free()</code></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Práctica" data-topic="Desafíos extra">
+    <div class="slide-eyebrow">Ir sumando de a una</div>
+    <h2 class="slide-title">Desafíos extra</h2>
+    <div class="columns three">
+      <div class="card"><h3>1 · Más monedas</h3><p>Poné <b>3 monedas</b> en distintas posiciones del nivel.</p></div>
+      <div class="card"><h3>2 · Victoria</h3><p>Mostrar <b>“¡Ganaste!”</b> cuando <code>puntos</code> llega a 3.</p></div>
+      <div class="card"><h3>3 · Peligro</h3><p>Una <b>zona de daño</b> (<code>Area2D</code>) que le reste vida al jugador.</p></div>
+    </div>
+    <div class="callout" style="margin-top:20px;">🎮 Con esto ya tenés la base de un plataformero: mover, saltar, juntar, evitar. El resto es <b>más de lo mismo</b>.</div>
+  </section>
+
+  <!-- ============ CIERRE ============ -->
+  <section class="slide title-slide" data-chapter="Cierre" data-topic="Cierre y tarea">
+    <div class="slide-eyebrow">Cierre</div>
+    <h2 class="slide-title">Hoy el personaje empezó a interactuar</h2>
+    <div class="columns">
+      <div class="card">
+        <h3>🧭 Repaso</h3>
+        <ul>
+          <li>Tres cuerpos: <b>Static</b>, <b>Character</b>, <b>Rigid</b></li>
+          <li><code>move_and_slide()</code> resuelve colisiones — va en <code>_physics_process()</code></li>
+          <li><code>CollisionShape2D</code> es <b>obligatorio</b>: sin forma, no choca</li>
+          <li><b>Señales</b>: un nodo emite, otro escucha. <code>Area2D</code> detecta</li>
+          <li><b>Grupos</b>: hablarle a muchos nodos a la vez</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>📝 Tarea</h3>
+        <ul>
+          <li>Zona de <b>Game Over</b> debajo: si cae, reaparece al inicio</li>
+          <li><b>5 monedas</b> + puntaje en consola al juntarlas</li>
+          <li>Plataforma que se <b>mueve de lado a lado</b></li>
+          <li><b>Desafío:</b> juntar todas → mensaje de victoria y <code>get_tree().reload_current_scene()</code></li>
+        </ul>
+      </div>
+    </div>
+    <p class="small-note" style="margin-top:22px; text-align:center;">“Hasta ahora movíamos cosas. Hoy hicimos que <b>interactúen</b>.” · Logo y mascota de Godot © Godot Foundation — CC BY 4.0.</p>
+  </section>
+
+</div>
+
+<script src="deck.js"></script>
+</body>
+</html>
