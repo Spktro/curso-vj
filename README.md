@@ -13,6 +13,17 @@ Si están publicadas con GitHub Pages: **https://spktro.github.io/curso-vj/**
 | 01 | [Primeros pasos con Godot](clase-01/index.html) | Motores, instalación, interfaz, nodos, escenas y jerarquía |
 | 02 | [Programar con GDScript](clase-02/index.html) | Qué es programar, variables, condicionales, loops, funciones e input |
 | 03 | [El juego está vivo](clase-03/index.html) | Game loop, `_ready()`, `_process(delta)`, movimiento con delta e Input Map |
+| 04 | [El personaje cobra vida](clase-04/index.html) | Cuerpos físicos, `CharacterBody2D` con `move_and_slide()`, colisiones, señales, `Area2D` y grupos |
+
+## 📝 Trabajos prácticos
+
+Tutoriales paso a paso, muy guiados, para hacer en casa. Cada uno en Markdown y PDF.
+
+| # | Trabajo práctico | Temas |
+|---|-------|-------|
+| 1 | [Tu primera escena](trabajos-practicos/trabajo-practico-1.md) ([PDF](trabajos-practicos/trabajo-practico-1.pdf)) | `RigidBody2D`, `CharacterBody2D`, caja que cae, `Camera2D`, audio y UI |
+| 2 | [Tu primer juego de texto](trabajos-practicos/trabajo-practico-2.md) ([PDF](trabajos-practicos/trabajo-practico-2.pdf)) | Variables, arreglos, `if`, `for`, funciones e input — combate por consola |
+| 3 | [Un personaje que se mueve](trabajos-practicos/trabajo-practico-3.md) ([PDF](trabajos-practicos/trabajo-practico-3.pdf)) | `CharacterBody2D`, Input Map, `delta`, correr, dash y `clamp()` |
 
 ## 🗂️ Estructura
 
@@ -29,7 +40,9 @@ El home vive en la raíz; cada clase es una carpeta **autocontenida** (trae su p
 │   ├── guion.md        # guion / outline de la clase
 │   └── assets/         # imágenes de la clase
 ├── clase-02/           # todo lo de la Clase 2 (misma estructura)
-└── clase-03/           # todo lo de la Clase 3 (misma estructura)
+├── clase-03/           # todo lo de la Clase 3 (misma estructura)
+├── clase-04/           # todo lo de la Clase 4 (misma estructura)
+└── trabajos-practicos/ # TPs guiados, en Markdown y PDF
 ```
 
 ## ▶️ Cómo usar las presentaciones
