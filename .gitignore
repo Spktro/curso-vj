@@ -1,2 +1,5 @@
 .DS_Store
 .claude/
+
+# dependencias de la herramienta de PDF
+trabajos-practicos/node_modules/

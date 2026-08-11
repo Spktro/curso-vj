@@ -19,6 +19,9 @@ Si están publicadas con GitHub Pages: **https://spktro.github.io/curso-vj/**
 
 Tutoriales paso a paso, muy guiados, para hacer en casa. Cada uno en Markdown y PDF.
 
+> Los PDF se regeneran desde el Markdown con [`build-pdf.js`](trabajos-practicos/build-pdf.js):
+> `cd trabajos-practicos && npm install && node build-pdf.js trabajo-practico-4.md`
+
 | # | Trabajo práctico | Temas |
 |---|-------|-------|
 | 1 | [Tu primera escena](trabajos-practicos/trabajo-practico-1.md) ([PDF](trabajos-practicos/trabajo-practico-1.pdf)) | `RigidBody2D`, `CharacterBody2D`, caja que cae, `Camera2D`, audio y UI |
