@@ -24,6 +24,7 @@ Tutoriales paso a paso, muy guiados, para hacer en casa. Cada uno en Markdown y 
 | 1 | [Tu primera escena](trabajos-practicos/trabajo-practico-1.md) ([PDF](trabajos-practicos/trabajo-practico-1.pdf)) | `RigidBody2D`, `CharacterBody2D`, caja que cae, `Camera2D`, audio y UI |
 | 2 | [Tu primer juego de texto](trabajos-practicos/trabajo-practico-2.md) ([PDF](trabajos-practicos/trabajo-practico-2.pdf)) | Variables, arreglos, `if`, `for`, funciones e input — combate por consola |
 | 3 | [Un personaje que se mueve](trabajos-practicos/trabajo-practico-3.md) ([PDF](trabajos-practicos/trabajo-practico-3.pdf)) | `CharacterBody2D`, Input Map, `delta`, correr, dash y `clamp()` |
+| 4 | [Un nivel que se juega](trabajos-practicos/trabajo-practico-4.md) ([PDF](trabajos-practicos/trabajo-practico-4.pdf)) | Cuerpos físicos, `move_and_slide()`, colisiones, señales, `Area2D` y grupos — plataformero con monedas |
 
 ## 🗂️ Estructura
 
