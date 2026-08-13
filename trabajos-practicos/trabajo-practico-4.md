@@ -1,378 +1,362 @@
-# Trabajo Práctico 4 — Un nivel que se juega: física y monedas
+# Trabajo Práctico 4 — Un plataformero: juntá las monedas
 
 > **Diplomatura de Videojuegos · Clase 4**
-> Objetivo: armar un **mini plataformero** de verdad. Vas a usar los **tres cuerpos físicos** de Godot, mover al personaje con **`move_and_slide()`**, hacer que **choque** con el suelo gracias a `CollisionShape2D`, y que al tocar una **moneda** la recoja usando **señales** y **grupos**.
+> Objetivo: armar un **mini plataformero jugable**. El corazón del TP son las **señales**: el jugador junta **monedas** al tocarlas (con `Area2D`, señales y grupos). Como **plus**, las plataformas las hacemos con un **TileSet** (colisión definida en los tiles, sin un `StaticBody2D` por cada uno). Todo con los sprites gratis de **Brackeys**.
 
 ---
 
 ## 🎯 Qué vas a lograr
 
-Un nivel jugable donde el personaje:
+Un nivel donde un **caballero animado**:
 
-- **camina y salta** con física real (cae por gravedad, pisa el suelo),
-- **choca** con el suelo en vez de atravesarlo,
-- **junta monedas** al tocarlas, y suma puntos en la consola,
-- y vas a ver, en vivo, la diferencia entre `StaticBody2D`, `CharacterBody2D` y `RigidBody2D`.
+- **camina y salta** con física real (`move_and_slide()`, gravedad),
+- se apoya en **plataformas hechas con tiles**,
+- **junta monedas** que giran, y suma puntos en la consola (esto es lo central: **señales**),
+- gana cuando las junta todas,
+- y la **cámara lo sigue**.
 
-> 💡 **Tiempo estimado:** 70–100 min. Como siempre: **escribí el código vos**. Se aprende tecleando y probando.
+> 💡 **Tiempo estimado:** 90–120 min. Es el TP más largo, pero cada parte se prueba sola. **Escribí el código vos.**
 
-> 🔗 **Viene de la Clase 3:** aquel personaje se movía con `position += ... * delta`. Hoy el movimiento pasa por el **motor de física**, así el personaje **choca** con el mundo.
+> 🔗 **Viene de la Clase 4:** cuerpos físicos, `CharacterBody2D` + `move_and_slide()`, `CollisionShape2D`, **señales**, `Area2D` y **grupos**. Todo eso se junta acá en un juego.
+
+---
+
+## 🎨 Los assets (Brackeys · CC0)
+
+Están en la carpeta [`tp4-assets/`](tp4-assets/) de este repo. Son de **Brackeys** (licencia **CC0**: uso libre). Vas a usar tres:
+
+**`knight.png`** — el jugador. Hoja de 8×8 con frames de **32×32**. Trae **texto** (IDLE, RUN…) metido en la hoja: ignoralo, vas a elegir solo los frames del caballero.
+
+![Hoja del caballero](tp4-assets/preview-knight.png)
+
+**`world_tileset.png`** — los tiles del mundo, de **16×16**. Vamos a usar los de **pasto/tierra** para el piso.
+
+![Tileset del mundo](tp4-assets/preview-tileset.png)
+
+**`coin.png`** — la moneda que gira, **12 frames** de 16×16.
+
+![Moneda](tp4-assets/preview-coin.png)
 
 ---
 
 ## 🧩 Cómo va a quedar el árbol de nodos
 
 ```
-Nivel  (Node2D)                  ← raíz del nivel
-├── Jugador  (CharacterBody2D)   ← lo controlás vos
-│   ├── Sprite2D
-│   └── CollisionShape2D
-├── Suelo  (StaticBody2D)        ← fijo, no se mueve
-│   └── CollisionShape2D
-└── Moneda  (Area2D)             ← detecta, no bloquea
-    ├── Sprite2D
-    └── CollisionShape2D
+Nivel  (Node2D)
+├── TileMapLayer                 ← las plataformas (colisión en el TileSet)
+├── Jugador  (CharacterBody2D)
+│   ├── AnimatedSprite2D         ← el caballero (idle / run)
+│   ├── CollisionShape2D
+│   └── Camera2D                 ← sigue al jugador
+└── Monedas  (Node2D)            ← contenedor de las monedas
+    └── Moneda (Area2D)  ×varias ← detecta al jugador (señal)
+        ├── AnimatedSprite2D
+        └── CollisionShape2D
 ```
 
-Tres nodos, tres **cuerpos físicos distintos**. Elegir el correcto es la mitad del trabajo.
+---
+
+## 🛠️ Parte 0 — Proyecto y assets
+
+1. Godot → **New Project** → nombre `tp4-plataformero` → carpeta vacía → **Create & Edit**.
+2. Copiá los sprites al proyecto: arrastrá `knight.png`, `world_tileset.png` y `coin.png` (de `tp4-assets/`) al panel **FileSystem**. Godot los importa solos.
+3. **Que los píxeles se vean nítidos** (importante con pixel-art): andá a **Project → Project Settings → Rendering → Textures** y poné **Default Texture Filter = Nearest**. Sin esto, los sprites se ven borrosos.
+4. Creá la escena: panel **Escena** → **Otro Nodo** → **`Node2D`** → renombralo **`Nivel`**. Guardá con **Ctrl + S** como `nivel.tscn`.
+
+✅ **Punto de control 0:** tenés un `Nivel (Node2D)` guardado y los 3 sprites en el FileSystem.
 
 ---
 
-## 🛠️ Parte 0 — Proyecto y personaje
+## 🧱 Parte 1 — Las plataformas con TileSet
 
-1. Abrí Godot → **New Project** → nombre `tp4-nivel` → carpeta vacía → **Create & Edit**.
-2. En el panel **Escena**, clic en **Otro Nodo** (*Other Node*).
+> **Plus de la clase:** en vez de un `StaticBody2D` por cada bloque, definimos la colisión **una vez** en el `TileSet` y la reusamos en todos los tiles. Es como se hacen los plataformeros de verdad.
 
-   ![Botón Otro Nodo](https://docs.godotengine.org/es/4.x/_images/scripting_first_script_click_other_node.webp)
+### 1.1 · Crear el TileMapLayer y su TileSet
 
-3. Buscá **`Node2D`**, crealo y renombralo a **`Nivel`**. Va a ser la **raíz** del nivel. Guardá con **Ctrl + S** → `nivel.tscn`.
-4. Seleccioná `Nivel` → agregá hijo (**Ctrl + A**) → **`CharacterBody2D`** → renombralo **`Jugador`**.
+1. Seleccioná **`Nivel`** → **Otro Nodo** (Ctrl+A) → **`TileMapLayer`**.
+2. Con el `TileMapLayer` seleccionado, en el **Inspector**, en la propiedad **Tile Set** elegí **Nuevo TileSet**.
 
-   ![Buscador de nodos](https://docs.godotengine.org/es/4.x/_images/nodes_and_scenes_03_create_node_window.webp)
+   ![Crear un TileSet nuevo](https://docs.godotengine.org/es/4.x/_images/using_tilesets_create_new_tileset.webp)
 
-5. **Darle imagen:** con `Jugador` seleccionado, agregá hijo → **`Sprite2D`**. Arrastrá el `icon.svg` del **FileSystem** a la propiedad **Texture**.
-6. **Darle cuerpo:** seleccioná `Jugador` → hijo → **`CollisionShape2D`**. En el Inspector → **Shape** → **Nuevo RectangleShape2D** y ajustá los puntos naranjas para cubrir el sprite.
+3. Hacé clic en ese `TileSet` para editarlo. **Importante:** poné **Tile Size = `16` × `16`** (nuestros tiles son de 16 px).
 
-   ![Forma de colisión](https://docs.godotengine.org/es/4.x/_images/player_coll_shape1.webp)
+   ![Configurar el tamaño de tile](https://docs.godotengine.org/es/4.x/_images/using_tilesets_specify_size_then_edit.webp)
 
-7. Poné al `Jugador` **arriba en la pantalla** (Inspector → **Transform → Position**, por ejemplo `y = 100`), así después lo vemos caer.
-8. **Adjuntá el script:** clic derecho sobre `Jugador` → **Attach Script** → `res://jugador.gd` → **Create**. Borrá la plantilla y dejá:
+   > 📸 La captura oficial usa 64×64 (otro pack). En **nuestro** caso es **16×16**.
 
-   ```gdscript
-   extends CharacterBody2D
+4. Abajo se abre el editor del **TileSet**. Arrastrá **`world_tileset.png`** desde el FileSystem al panel de la izquierda (fuentes/atlas). Godot pregunta si quiere **crear los tiles automáticamente**: decí **Sí**.
 
-   func _ready():
-       print("=== Jugador listo ===")
-   ```
+   ![Crear tiles automáticamente](https://docs.godotengine.org/es/4.x/_images/using_tilesets_create_tiles_automatically.webp)
 
-9. Guardá y ejecutá con **F6**. En **Output** aparece el mensaje y en la ventana, el personaje.
+### 1.2 · Agregar una Physics Layer (la colisión)
 
-   ![Panel Output](https://docs.godotengine.org/es/4.x/_images/scripting_first_script_print_hello_world.webp)
+5. Seleccioná de nuevo el **`TileMapLayer`**. En el Inspector, dentro del `TileSet`, desplegá **Physics Layers** y clic en **Add Element**.
 
-✅ **Punto de control 0:** ves el personaje en pantalla y el mensaje en Output. (Todavía no se mueve ni cae — eso viene ahora.)
+   ![Agregar una Physics Layer](https://docs.godotengine.org/es/4.x/_images/using_tilesets_create_physics_layer.webp)
 
----
+   > 🧠 Con esto el `TileSet` ya **puede guardar** formas de colisión. No hace falta ningún `StaticBody2D`.
 
-## 🧱 Parte 1 — Los tres cuerpos físicos
+### 1.3 · Pintar la colisión en los tiles del piso
 
-> **Concepto:** cuándo usar `StaticBody2D`, `CharacterBody2D` y `RigidBody2D`.
+6. Volvé al editor del **TileSet** (panel de abajo). Arriba, entrá en la pestaña **Paint** y en **Paint Properties** elegí **Physics Layer 0**.
+7. En la lista de la derecha, hacé clic sobre un **tile de pasto/tierra** y presioná **F**: Godot le pone una **caja de colisión que cubre todo el tile**.
 
-Godot tiene **tres** nodos para objetos físicos. Elegir el correcto es fundamental:
+   ![Colisión rectangular por defecto con F](https://docs.godotengine.org/es/4.x/_images/using_tilesets_using_default_rectangle_collision.webp)
 
-| Nodo | ¿Quién lo mueve? | Para qué |
-| :---- | :---- | :---- |
-| `StaticBody2D` | **Nadie** — está fijo | Suelo, paredes, plataformas |
-| `CharacterBody2D` | **Vos**, por código | El jugador, enemigos con IA |
-| `RigidBody2D` | **El motor** (física) | Cajas, barriles, cosas que se tiran |
+8. Repetí en **todos los tiles sólidos** que vayas a usar de piso y paredes. Los tiles de **decoración/fondo los dejás sin colisión**.
 
-> 🧠 **La regla práctica:** el **jugador** siempre es `CharacterBody2D`; el **suelo** siempre es `StaticBody2D`; lo que **se tira o rebota** es `RigidBody2D`.
+   ![Pintar la colisión sobre los tiles](https://docs.godotengine.org/es/4.x/_images/using_tilesets_paint_tile_properties_collision.webp)
 
-> 🎮 **En juegos que conocés:** en *Celeste* conviven los tres a la vez — Madeline (`CharacterBody2D`), las plataformas (`StaticBody2D`) y los bloques que caen (`RigidBody2D`). Lo mismo el suelo de *Mario* (static), el propio Mario (character) y los caparazones que pateás (rigid).
+   > 💡 Alcanza con darles colisión a **2 o 3 tiles** (uno de pasto, uno de tierra). No hace falta configurarlos todos.
 
-Elegimos `CharacterBody2D` para el `Jugador` porque queremos **control preciso**: nada de rebotes ni physics locas, se mueve **exactamente** como le decimos. Ya lo vas a sentir en la Parte 3.
+### 1.4 · Pintar el nivel
 
-✅ **Punto de control 1:** podés explicar por qué el jugador es `CharacterBody2D` y el suelo va a ser `StaticBody2D`.
+9. Con el `TileMapLayer` seleccionado, abrí el panel **TileMap** (abajo).
 
----
+   ![Panel TileMap](https://docs.godotengine.org/es/4.x/_images/using_tilemaps_open_tilemap_editor.webp)
 
-## 🎮 Parte 2 — El Input Map: mover y saltar
+10. Elegí un tile de piso en la paleta y **pintá** en el viewport (clic izquierdo dibuja, derecho borra). Armá un **piso** abajo y **un par de plataformas** flotando.
 
-> **Concepto:** acciones con nombre en el Input Map (como en la Clase 3).
+    ![Elegir un tile para pintar](https://docs.godotengine.org/es/4.x/_images/using_tilemaps_select_single_tile_from_tileset.webp)
 
-Abrí **Project → Project Settings → Input Map** (*Proyecto → Configuración del proyecto → Mapa de Entrada*).
+✅ **Punto de control 1:** tenés un piso y plataformas pintadas, y esos tiles tienen colisión (Parte 1.3).
 
-1. Escribí **`mover_izquierda`** en la barra de arriba y clic en **Add**.
-
-   ![Agregar una acción](https://docs.godotengine.org/es/4.x/_images/input-mapping-add-action.webp)
-
-2. Clic en el **`+`** de esa acción, **presioná la tecla** (por ejemplo **A** o **←**) y **OK**.
-
-   ![Configurar la tecla](https://docs.godotengine.org/es/4.x/_images/input-mapping-event-configuration.webp)
-
-3. Repetí para las otras dos:
-
-   | Acción | Tecla sugerida |
-   | :---- | :---- |
-   | `mover_izquierda` | **A** o **←** |
-   | `mover_derecha` | **D** o **→** |
-   | `saltar` | **Espacio** |
-
-   ![Acciones creadas](https://docs.godotengine.org/es/4.x/_images/input-mapping-completed.webp)
-
-   > 📸 En la captura oficial las acciones se llaman `move_*`. Vos usá los nombres de arriba; lo único que importa es que **coincidan** con el código.
-
-✅ **Punto de control 2:** tenés `mover_izquierda`, `mover_derecha` y `saltar` en el Input Map.
-
----
-
-## 🏃 Parte 3 — Movimiento con `move_and_slide()`
-
-> **Conceptos:** el patrón de plataformas, `velocity`, gravedad, salto, y `_physics_process()`.
-
-En la Clase 3 movíamos con `position += ...`. Eso **no choca** con nada. Ahora usamos **`move_and_slide()`**: mueve al personaje con su variable `velocity`, **detecta colisiones** y ajusta el movimiento solo.
-
-Reemplazá el script por esto:
-
-```gdscript
-extends CharacterBody2D
-
-const VELOCIDAD = 250.0
-const GRAVEDAD = 980.0
-const SALTO = -450.0        # negativo = hacia arriba (Y invertido)
-
-func _physics_process(delta):
-    # 1. Gravedad: se acumula mientras esté en el aire
-    if not is_on_floor():
-        velocity.y += GRAVEDAD * delta
-
-    # 2. Input horizontal: -1 (izq), 0, 1 (der)
-    var dir = Input.get_axis("mover_izquierda", "mover_derecha")
-    velocity.x = dir * VELOCIDAD
-
-    # 3. Salto: solo si está tocando el suelo
-    if Input.is_action_just_pressed("saltar") and is_on_floor():
-        velocity.y = SALTO
-
-    # 4. Que Godot resuelva las colisiones
-    move_and_slide()
-```
-
-Apretá **F6**. El personaje **cae y se va de la pantalla** 😅 — ¡todavía no hay suelo! Es lo esperado. Cerrá el juego.
-
-> 🧠 **Cuatro pasos, siempre los mismos:**
-> 1. **Gravedad** — `velocity.y += GRAVEDAD * delta` mientras `not is_on_floor()`.
-> 2. **Input** — `get_axis()` da un número entre `-1` y `1`; por la velocidad, es la dirección.
-> 3. **Salto** — un impulso hacia arriba (`velocity.y` **negativo**), solo si está en el suelo.
-> 4. **Mover** — `move_and_slide()` aplica `velocity`, resuelve choques y actualiza `is_on_floor()`.
-
-> ⚠️ **Va en `_physics_process()`, no en `_process()`.** Todo lo que usa **física y colisiones** va acá: se llama a **frecuencia fija** (60 Hz), estable en cualquier máquina. (Por eso acá el `delta` ya viene "parejo".)
-
-✅ **Punto de control 3:** el personaje cae por gravedad (y se va de pantalla, porque falta el suelo).
-
----
-
-## 🟩 Parte 4 — El suelo (StaticBody2D)
-
-> **Concepto:** un `StaticBody2D` con su `CollisionShape2D` para que el personaje **aterrice**.
-
-1. Seleccioná **`Nivel`** → agregá hijo → **`StaticBody2D`** → renombralo **`Suelo`**.
-2. Con `Suelo` seleccionado, agregá hijo → **`CollisionShape2D`** → **Shape** → **Nuevo RectangleShape2D**.
-3. En el Viewport, **estirá** el rectángulo hasta que sea una **plataforma ancha**, y posicioná el `Suelo` **abajo** (Inspector → Position, por ejemplo `y = 400`).
-4. (Opcional) Agregale un `Sprite2D` para verlo, o dejalo invisible: la colisión funciona igual.
-5. Apretá **F6**. Ahora el personaje **cae y aterriza** sobre el suelo, camina con A/D y salta con Espacio. 🎉
-
-> 🧠 **Por qué el suelo es `StaticBody2D`:** no se mueve nunca, pero **frena** al personaje. Es la pareja perfecta del `CharacterBody2D`: uno empuja, el otro lo detiene. Fijate que **no escribiste ni una línea** para la colisión — la resuelve `move_and_slide()`.
-
-> 🧪 **Experimento (los 3 cuerpos juntos):** agregá al `Nivel` un **`RigidBody2D`** con su `Sprite2D` + `CollisionShape2D`, ponelo arriba y ejecutá. La caja **cae sola y se apoya** en el suelo (física del motor), mientras el personaje **la controlás vos**. Ahí ves los tres tipos conviviendo: static (suelo), character (jugador), rigid (caja). Después podés borrarla.
-
-✅ **Punto de control 4:** el personaje aterriza en el suelo, camina y salta.
-
-> 🛟 **El personaje atraviesa el suelo o no se mueve**
+> 🛟 **No sé si los tiles tienen colisión**
 >
 > <details>
 > <summary>Abrí para ver soluciones</summary>
 >
-> - ¿El `Suelo` **y** el `Jugador` tienen cada uno su `CollisionShape2D` con **shape asignado**? Sin shape, no chocan.
-> - ¿Hiciste **clic en la ventana del juego** para darle foco al teclado?
-> - Los nombres de las acciones deben ser **idénticos** a los del Input Map.
-> - El movimiento va en **`_physics_process(delta)`**.
+> - En el editor del TileSet, con **Physics Layer 0** seleccionado en Paint, los tiles con colisión muestran la forma dibujada encima.
+> - Si un tile no tiene la caja, seleccionalo y apretá **F**.
+> - Más adelante, si el jugador atraviesa el piso, casi siempre es esto.
 > </details>
 
 ---
 
-## 📡 Parte 5 — Señales y `Area2D`: la moneda
+## 🧍 Parte 2 — El jugador (CharacterBody2D + animación)
 
-> **Conceptos:** qué son las señales y cómo `Area2D` detecta con `body_entered`.
+### 2.1 · El nodo
 
-Una **señal** es el sistema de comunicación de Godot: un nodo **avisa** que pasó algo, sin conocer a quién le avisa. Es como una **campana** — la moneda la toca cuando la agarran, y quien esté escuchando reacciona.
+1. Seleccioná **`Nivel`** → **Otro Nodo** → **`CharacterBody2D`** → renombralo **`Jugador`**.
 
-`Area2D` es un nodo que **detecta** cuándo otro cuerpo entra a una zona, pero **no lo bloquea** (a diferencia del suelo). Perfecto para monedas, poderes y zonas de daño.
+   > 🧠 `CharacterBody2D` es el nodo para personajes controlados (Clase 4). Se mueve con `velocity` + `move_and_slide()`.
 
-### Armar la moneda
+### 2.2 · La animación con AnimatedSprite2D
 
-1. Seleccioná **`Nivel`** → agregá hijo → **`Area2D`** → renombralo **`Moneda`**.
-2. Hijo de `Moneda` → **`Sprite2D`** → arrastrale el `icon.svg`, y bajale la escala (por ejemplo `0.3, 0.3`).
-3. Hijo de `Moneda` → **`CollisionShape2D`** → **Shape** → **Nuevo CircleShape2D** (una moneda es redonda). Ajustá el radio al sprite.
-4. Posicioná la `Moneda` **sobre el suelo pero separada del jugador**, para que la toque al caminar.
+2. Hijo de `Jugador` (Ctrl+A) → **`AnimatedSprite2D`**.
+3. En el Inspector, propiedad **Sprite Frames** → **Nuevo SpriteFrames**.
 
-### Conectar la señal (por código)
+   ![Nuevo SpriteFrames](https://docs.godotengine.org/es/4.x/_images/2d_animation_new_spriteframes.webp)
 
-Adjuntá un script a `Moneda` (`res://moneda.gd`) con esto:
+4. Clic en el recurso SpriteFrames → se abre el panel de abajo. Renombrá la animación `default` a **`idle`**.
+5. Clic en **Añadir Frames desde un Sprite Sheet** (el ícono de la cuadrícula).
+
+   ![Añadir frames desde un sprite sheet](https://docs.godotengine.org/es/4.x/_images/2d_animation_add_from_spritesheet.webp)
+
+6. Elegí **`knight.png`**. En el diálogo poné **Horizontal = 8** y **Vertical = 8** (la hoja es de 8×8 frames de 32 px). Se arma la grilla.
+7. **Seleccioná los 4 primeros frames de la fila de arriba** (los del **IDLE**) y clic en **Add Frames**.
+
+   ![Seleccionar frames de la hoja](https://docs.godotengine.org/es/4.x/_images/2d_animation_spritesheet_selectframes.webp)
+
+   > 📸 En la captura son ranas; en tu caso son caballeros. **No selecciones** las celdas con el texto “IDLE/RUN”.
+
+8. **Ahora la corrida:** en el panel SpriteFrames creá una animación nueva llamada **`run`**. Con `run` seleccionada, **Añadir Frames desde un Sprite Sheet** otra vez con `knight.png` (8×8) y seleccioná los **8 frames de la fila del RUN** (la fila de caballeros que está debajo del texto “RUN”). **Add Frames**.
+9. Para cada animación, activá **🔁 Loop**. En **`idle`** activá también **Autoplay on Load** (el ícono con la **A**), así arranca sola. Subí los FPS de `run` a ~**10**.
+10. Si el caballero se ve muy grande o muy chico respecto de los tiles, ajustá **Transform → Scale** del `AnimatedSprite2D` (algo como `0.6, 0.6`).
+
+### 2.3 · La colisión del jugador
+
+11. Hijo de `Jugador` → **`CollisionShape2D`** → en **Shape** creá un **`CapsuleShape2D`** y ajustalo para que envuelva al caballero.
+
+    ![Forma de colisión del jugador](https://docs.godotengine.org/es/4.x/_images/player_coll_shape1.webp)
+
+12. Poné al `Jugador` **arriba del piso** (movelo en el viewport).
+
+✅ **Punto de control 2:** al dar **F6**, ves al caballero animado (aunque todavía cae, porque no tiene script).
+
+---
+
+## 🎮 Parte 3 — El Input Map
+
+Abrí **Project → Project Settings → Input Map** y creá **3 acciones** (escribir nombre → **Add** → **`+`** → apretar la tecla → **OK**):
+
+![Agregar una acción](https://docs.godotengine.org/es/4.x/_images/input-mapping-add-action.webp)
+
+| Acción | Tecla |
+| :---- | :---- |
+| `move_left` | **A** o **←** |
+| `move_right` | **D** o **→** |
+| `jump` | **Espacio** |
+
+![Configurar la tecla](https://docs.godotengine.org/es/4.x/_images/input-mapping-event-configuration.webp)
+
+✅ **Punto de control 3:** tenés `move_left`, `move_right` y `jump` en el Input Map.
+
+---
+
+## 🏃 Parte 4 — Movimiento, salto y animación
+
+Adjuntá un script al **`Jugador`** (clic derecho → **Attach Script** → `res://jugador.gd`) y escribí:
+
+```gdscript
+extends CharacterBody2D
+
+const VELOCIDAD := 130.0
+const FUERZA_SALTO := -320.0
+const GRAVEDAD := 900.0
+
+@export var total_monedas := 3   # cuántas monedas hay en el nivel (se ve en el Inspector)
+var puntos := 0
+
+func _ready():
+    add_to_group("jugador")                 # el grupo que la moneda va a buscar
+    print("A juntar " + str(total_monedas) + " monedas!")
+
+func _physics_process(delta):
+    # 1) Gravedad
+    if not is_on_floor():
+        velocity.y += GRAVEDAD * delta
+
+    # 2) Salto (solo en el suelo)
+    if Input.is_action_just_pressed("jump") and is_on_floor():
+        velocity.y = FUERZA_SALTO
+
+    # 3) Movimiento horizontal
+    var dir := Input.get_axis("move_left", "move_right")
+    velocity.x = dir * VELOCIDAD
+
+    # 4) Animación según lo que hace
+    if dir != 0:
+        $AnimatedSprite2D.play("run")
+        $AnimatedSprite2D.flip_h = dir < 0   # mira a la izquierda si va a la izquierda
+    else:
+        $AnimatedSprite2D.play("idle")
+
+    # 5) Que el motor resuelva las colisiones
+    move_and_slide()
+```
+
+Apretá **F6**: el caballero **cae, aterriza sobre los tiles** y se mueve con las teclas, animándose y dándose vuelta según la dirección. 🎉
+
+> 🧠 **`move_and_slide()`** usa `velocity` y la colisión del jugador para chocar con las plataformas del TileSet. El `@export` hace que `total_monedas` **aparezca en el Inspector** del Jugador: después lo ajustás a la cantidad de monedas que pongas.
+
+✅ **Punto de control 4:** el caballero camina, salta y **no atraviesa** el piso.
+
+> 🛟 **El caballero atraviesa el piso**
+>
+> <details>
+> <summary>Abrí para ver soluciones</summary>
+>
+> - Los tiles del piso, ¿tienen colisión? (Parte 1.3, apretar **F** sobre el tile con Physics Layer 0).
+> - El `Jugador`, ¿tiene su `CollisionShape2D` con forma?
+> - ¿Estás llamando a **`move_and_slide()`** al final?
+> - ¿El movimiento está en **`_physics_process`** (no en `_process`)?
+> </details>
+
+---
+
+## 🪙 Parte 5 — Las monedas: señales (el corazón del TP)
+
+> **Concepto central (Clase 4):** la moneda es un `Area2D` que **detecta** al jugador y **emite** la señal `body_entered`. Al recibirla, le suma un punto al jugador y se elimina. La moneda **no conoce** al jugador de antemano: solo “toca la campana”.
+
+### 5.1 · Armar una moneda
+
+1. Seleccioná **`Nivel`** → **Otro Nodo** → **`Area2D`** → renombralo **`Moneda`**.
+2. Hijo de `Moneda` → **`AnimatedSprite2D`** → **Nuevo SpriteFrames** → animación `default`, **Añadir Frames desde un Sprite Sheet** con **`coin.png`**, **Horizontal = 12**, **Vertical = 1**, seleccioná los **12 frames** → **Add**. Activá **Loop** y **Autoplay on Load**. Así la moneda **gira sola**.
+3. Hijo de `Moneda` → **`CollisionShape2D`** → **Shape** → **`CircleShape2D`** (radio chico, ~8 px, que cubra la moneda).
+
+### 5.2 · El script de la moneda
+
+4. Adjuntá un script a **`Moneda`** (`res://moneda.gd`):
 
 ```gdscript
 extends Area2D
 
 func _ready():
-    # Cuando un cuerpo entra al área, llamá a _on_body_entered
+    # cuando un cuerpo entre al área, se llama a _on_body_entered
     body_entered.connect(_on_body_entered)
 
 func _on_body_entered(body):
-    print("Algo tocó la moneda: " + body.name)
+    if body.is_in_group("jugador"):   # ¿lo que entró es el jugador?
+        body.sumar_punto()            # le pedimos que sume un punto
+        queue_free()                  # y la moneda se elimina
 ```
 
-Apretá **F6** y caminá hasta la moneda: en **Output** aparece “Algo tocó la moneda: Jugador”.
-
-> 🧠 **El flujo de una señal:** la `Area2D` **emite** `body_entered` cuando algo entra → nosotros la **conectamos** a nuestra función `_on_body_entered` → cuando se emite, la función **se ejecuta sola**. La moneda no sabe *quién* entró de antemano; se entera cuando pasa.
-
-> 🎓 **También se puede desde el editor** (sin código): seleccioná la `Area2D`, andá a la pestaña **Signals** (al lado del Inspector), doble clic en `body_entered` y **Connect**. Godot te crea la función sola.
->
-> ![Pestaña Signals](https://docs.godotengine.org/es/4.x/_images/signals_10_node_dock.webp)
->
-> ![Diálogo Connect a Signal to a Method](https://docs.godotengine.org/es/4.x/_images/signals_12_node_connection.webp)
-
-> ⚠️ **Si la señal no dispara:** la `Area2D` necesita un `CollisionShape2D` hijo **con shape**. Sin forma, no tiene volumen y no detecta nada.
-
-✅ **Punto de control 5:** al tocar la moneda, se imprime un mensaje en Output.
-
----
-
-## 🏷️ Parte 6 — Grupos: que sepa quién la tocó
-
-> **Concepto:** etiquetar nodos con **grupos** para saber con quién estamos hablando.
-
-Ahora mismo la moneda reacciona a **cualquier** cuerpo. Queremos que reaccione **solo al jugador**. Para eso lo **etiquetamos** con un grupo.
-
-**1) En `jugador.gd`**, agregá el grupo y una función para sumar puntos:
+5. Agregá al **`Jugador`** (en `jugador.gd`) la función que la moneda va a llamar:
 
 ```gdscript
-extends CharacterBody2D
-
-const VELOCIDAD = 250.0
-const GRAVEDAD = 980.0
-const SALTO = -450.0
-
-var puntos = 0
-
-func _ready():
-    add_to_group("jugador")                      # ← etiqueta
-    print("Jugador listo. Puntos: " + str(puntos))
-
-func _physics_process(delta):
-    if not is_on_floor():
-        velocity.y += GRAVEDAD * delta
-    var dir = Input.get_axis("mover_izquierda", "mover_derecha")
-    velocity.x = dir * VELOCIDAD
-    if Input.is_action_just_pressed("saltar") and is_on_floor():
-        velocity.y = SALTO
-    move_and_slide()
-
-func sumar_punto():                              # ← la llama la moneda
+func sumar_punto():
     puntos += 1
-    print("¡Moneda! Puntos: " + str(puntos))
+    print("¡Moneda! " + str(puntos) + "/" + str(total_monedas))
+    if puntos == total_monedas:
+        print("🏆 ¡Ganaste! Juntaste todas las monedas.")
 ```
 
-**2) En `moneda.gd`**, chequeá el grupo y recogé la moneda:
+> ⚠️ **Si la moneda no reacciona:** el `Area2D` necesita su `CollisionShape2D` con forma (sin forma no detecta nada), y el jugador tiene que estar en el grupo `"jugador"` (lo hace `add_to_group("jugador")` en su `_ready`).
 
-```gdscript
-extends Area2D
-
-func _ready():
-    body_entered.connect(_on_body_entered)
-
-func _on_body_entered(body):
-    if body.is_in_group("jugador"):
-        body.sumar_punto()   # llamamos una función del jugador
-        queue_free()         # la moneda se elimina a sí misma
-```
-
-Apretá **F6** y tocá la moneda: suma un punto y **desaparece**. 🎉
-
-> 🧠 **Por qué grupos:** `is_in_group("jugador")` nos deja preguntar “¿esto es el jugador?” sin depender del **nombre** del nodo. Si mañana renombrás `Jugador` a `Heroe`, **nada se rompe**. Y `queue_free()` elimina la moneda de forma segura al final del frame.
-
-✅ **Punto de control 6:** la moneda solo reacciona al jugador, suma un punto y se elimina.
+✅ **Punto de control 5:** poné el `Jugador` de modo que toque la `Moneda` → en la consola aparece “¡Moneda! 1/3” y la moneda desaparece.
 
 ---
 
-## 🏆 Parte 7 — Todo junto: un nivel con varias monedas
+## 🏆 Parte 6 — Varias monedas, cámara y victoria
 
-1. **Duplicá** la `Moneda` (seleccionala → **Ctrl + D**) dos o tres veces y movelas a distintos lugares sobre el suelo. **Todas comparten el mismo script** — no tenés que tocar nada.
-2. Que aparezca un mensaje de **victoria** al juntarlas todas. En `jugador.gd`, cambiá `sumar_punto()`:
+### 6.1 · Convertir la moneda en escena reutilizable
 
-   ```gdscript
-   func sumar_punto():
-       puntos += 1
-       print("¡Moneda! Puntos: " + str(puntos))
-       if puntos >= 3:
-           print("🏆 ¡Ganaste! Juntaste todas las monedas.")
-   ```
+1. Clic derecho sobre **`Moneda`** → **Save Branch as Scene** → `moneda.tscn`. Ahora la moneda es una **pieza reutilizable** (como vimos en la Clase 1).
+2. Creá un nodo **`Node2D`** hijo de `Nivel` llamado **`Monedas`** (para tenerlas ordenadas).
+3. **Instanciá** varias monedas: seleccioná `Monedas` → ícono de **cadena** (Instantiate Child Scene) → elegí `moneda.tscn`. Repetí y **ubicá cada moneda** en distintos lugares del nivel (sobre las plataformas).
 
-3. Apretá **F6** y junta las 3 monedas: al llegar a la última, salta el mensaje de victoria.
+### 6.2 · La cámara que sigue al jugador
 
-**Cómo se juega:** **A/D** (o flechas) para caminar, **Espacio** para saltar, tocá las monedas para juntarlas.
+4. Seleccioná **`Jugador`** → hijo → **`Camera2D`**. Como es hija del jugador, **lo sigue**. Poné **Zoom** en `3, 3` (el mundo es chiquito) para verlo más grande.
 
-✅ **Punto de control 7 (final):** un nivel jugable — caminar, saltar, juntar 3 monedas y ganar.
+### 6.3 · Ajustar el contador de victoria
 
-> 🛟 **Errores comunes al armar el final**
->
-> <details>
-> <summary>Abrí para ver soluciones</summary>
->
-> - **La moneda no suma / da error `sumar_punto`**: la función va en `jugador.gd`, y el jugador tiene que estar en el grupo `"jugador"` (`add_to_group`).
-> - **Una moneda no reacciona**: revisá que tenga su `CollisionShape2D` con shape, y que esté **separada del jugador** (que la toque al moverse).
-> - **Suma 2 puntos de golpe**: puede pasar si la moneda arranca **encima** del jugador. Separalas.
-> - **Indentación mezclada**: usá espacios **o** tabs en todo el archivo, no los combines.
-> </details>
+5. Seleccioná el **`Jugador`** y en el Inspector poné **`Total Monedas`** = la **cantidad de monedas** que colocaste.
+
+Apretá **F6** y jugá: corré, saltá de plataforma en plataforma, **juntá todas las monedas** y mirá el “🏆 ¡Ganaste!” en la consola.
+
+✅ **Punto de control 6 (final):** juntás todas las monedas y aparece el mensaje de victoria.
 
 ---
 
 ## 📤 Entrega
 
-Entregá **una** de estas opciones (según indique el/la docente):
+Entregá **una** de estas opciones:
 
-1. Los archivos **`jugador.gd`** y **`moneda.gd`**, **o**
-2. La **carpeta del proyecto** comprimida en `.zip` (sin la carpeta `.godot/`), **o**
-3. Un **video corto** (o GIF) juntando las monedas y viendo el mensaje de victoria.
+1. La **carpeta del proyecto** comprimida en `.zip` (sin `.godot/`), **o**
+2. Un **video corto** (o GIF) jugando: moverse, saltar y juntar todas las monedas.
 
-**Nombre del archivo:** `tp4-nivel-ApellidoNombre.zip`
+**Nombre:** `tp4-plataformero-ApellidoNombre.zip`
 
 ### ✔️ Checklist de autoevaluación
 
-- [ ] El `Jugador` es un **`CharacterBody2D`** con `Sprite2D` y `CollisionShape2D`.
-- [ ] El `Suelo` es un **`StaticBody2D`** con `CollisionShape2D`, y el personaje **aterriza** en él.
-- [ ] El movimiento usa **`move_and_slide()`** dentro de **`_physics_process()`**.
-- [ ] Hay **gravedad** y **salto** (solo cuando `is_on_floor()`).
-- [ ] La `Moneda` es un **`Area2D`** con `CollisionShape2D`.
-- [ ] Conectaste la señal **`body_entered`** (por código o desde el editor).
-- [ ] El jugador está en el grupo **`"jugador"`** y la moneda lo verifica con `is_in_group`.
-- [ ] Al juntar **3 monedas** aparece el mensaje de victoria.
+- [ ] El `TileSet` tiene una **Physics Layer** y los tiles del piso tienen colisión.
+- [ ] El nivel está pintado con el **TileMapLayer**.
+- [ ] El `Jugador` es un `CharacterBody2D` con `AnimatedSprite2D` (idle + run) y `CollisionShape2D`.
+- [ ] Se mueve y salta con **`move_and_slide()`**, sin atravesar el piso.
+- [ ] La `Moneda` es un `Area2D` que usa la **señal `body_entered`**.
+- [ ] Usás el **grupo `"jugador"`** y la moneda llama a `sumar_punto()`.
+- [ ] Hay **varias monedas** (instancias de `moneda.tscn`) y un mensaje de **victoria**.
+- [ ] La **cámara sigue** al jugador.
 
 ---
 
-## 🌟 Extra (opcional, para los que quieran más)
+## 🌟 Extra (opcional)
 
-- **Zona de daño:** otra `Area2D` (con pinchos) que, al entrar el jugador, imprima “¡Ay!” y le reste vida. Mismo patrón que la moneda.
-- **Game Over al caer:** un `Area2D` grande **debajo** del nivel; si el jugador entra, reaparece en la posición inicial (`position = Vector2(x, y)`).
-- **Reiniciar el nivel:** al ganar, `get_tree().reload_current_scene()` para volver a empezar.
-- **Grupos como megáfono:** poné varios enemigos en el grupo `"enemigos"` y, con una explosión, `get_tree().call_group("enemigos", "recibir_dano", 50)` les pega a todos a la vez.
-- **Contador en pantalla:** en vez de la consola, mostrá los puntos con un `Label` dentro de un `CanvasLayer` (como en el TP1).
+- **Plataformas one-way:** en el TileSet, en la forma de colisión de un tile-plataforma, activá **One Way** (se atraviesa desde abajo y se aterriza desde arriba). Ideal para plataformas finitas.
+- **Enemigos:** usá `slime_green.png` (Brackeys) como un `Area2D` de daño; si toca al jugador, reiniciá con `get_tree().reload_current_scene()`.
+- **Sonido:** un `AudioStreamPlayer` que suene al juntar una moneda (el pack de Brackeys trae efectos en `sounds/`).
+- **Reaparecer:** una zona `Area2D` de “vacío” abajo del nivel que devuelva al jugador a la posición inicial si se cae.
 
 ---
 
 ## 📚 Recursos
 
-- Usar CharacterBody2D: **[Using CharacterBody2D](https://docs.godotengine.org/es/4.x/tutorials/physics/using_character_body_2d.html)**
-- Señales, paso a paso: **[Using signals](https://docs.godotengine.org/es/4.x/getting_started/step_by_step/signals.html)**
-- Cuerpos físicos: **[Physics introduction](https://docs.godotengine.org/es/4.x/tutorials/physics/physics_introduction.html)**
-- Grupos: **[Grupos (Groups)](https://docs.godotengine.org/es/4.x/tutorials/scripting/groups.html)**
+- Usar TileSets (colisiones): **[docs.godotengine.org/es/4.x — Using TileSets](https://docs.godotengine.org/es/4.x/tutorials/2d/using_tilesets.html)**
+- Usar TileMaps (pintar): **[Using TileMaps](https://docs.godotengine.org/es/4.x/tutorials/2d/using_tilemaps.html)**
+- Animación 2D (sprite sheets): **[2D sprite animation](https://docs.godotengine.org/es/4.x/tutorials/2d/2d_sprite_animation.html)**
+- Señales: **[Signals](https://docs.godotengine.org/es/4.x/getting_started/step_by_step/signals.html)**
 
-> Las capturas de este documento provienen de la **documentación oficial de Godot Engine** (Juan Linietsky, Ariel Manzur y la comunidad), bajo licencia **CC BY 4.0**.
+> Sprites de **Brackeys** (analogStudios_, RottingPixels) — licencia **CC0**. Ver [`tp4-assets/LICENSE-brackeys.txt`](tp4-assets/LICENSE-brackeys.txt).
+> Capturas del editor: documentación oficial de **Godot Engine**, CC BY 4.0.

@@ -64,7 +64,13 @@ li:has(input[type=checkbox]){list-style:none;margin-left:-20px}
 @page{size:A4;margin:15mm 14mm}
 `;
 
+// <base> para que las imágenes relativas (ej. tp4-assets/...) resuelvan en el PDF.
+// Las URLs absolutas (docs.godotengine.org) no se ven afectadas.
+const baseDir = path.dirname(path.resolve(inMd)).replace(/\\/g, '/');
+const baseTag = `<base href="file:///${baseDir}/">`;
+
 const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
+${baseTag}
 <title>${path.basename(inMd, '.md')}</title><style>${css}</style></head><body>
 ${body}
 </body></html>`;
