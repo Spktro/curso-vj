@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Diplomatura de Videojuegos · Clase 6 — La cara del juego</title>
+<link rel="stylesheet" href="deck.css" />
+</head>
+<body>
+
+<div class="deck" id="deck" data-brand="Diplomatura de Videojuegos · Clase 6" data-home="../index.html">
+
+  <!-- ============ INICIO ============ -->
+  <section class="slide title-slide active" data-chapter="Inicio" data-topic="Portada">
+    <div class="title-grid">
+      <div>
+        <div class="slide-eyebrow">Clase 6 · Interfaz de Usuario</div>
+        <h1 class="title">La cara del <span class="accent">juego</span></h1>
+        <p class="subtitle">HUD, menús y <code>CanvasLayer</code>: la capa que le habla al jugador. <code>Label</code>, <code>Button</code>, <code>ProgressBar</code> y cambio de escenas.</p>
+        <p class="small-note">“La UI no es decoración: es <b>comunicación</b> entre el juego y el jugador.”</p>
+      </div>
+      <div class="title-photo" style="border:none; box-shadow:none; background:transparent;">
+        <img src="assets/godot-logo.png" alt="Godot Engine" style="max-height:420px; width:auto; margin:0 auto; display:block;" />
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Inicio" data-topic="Objetivos">
+    <div class="slide-eyebrow">Objetivos</div>
+    <h2 class="slide-title">Al terminar la clase van a poder…</h2>
+    <ul class="bullets">
+      <li>Diferenciar <b>nodos de juego</b> de <b>nodos de interfaz</b> (Control)</li>
+      <li>Usar <code>CanvasLayer</code> para que la UI quede siempre por encima</li>
+      <li>Crear un <b>HUD</b> con contador de puntos y barra de vida</li>
+      <li>Construir un <b>menú principal</b> con botones funcionales</li>
+    </ul>
+    <div class="callout" style="margin-top:22px;">Puente con la Clase 1: retomamos la UI <b>diegética</b> vs <b>no diegética</b> — ahora la construimos.</div>
+  </section>
+
+  <!-- ============ HOOK ============ -->
+  <section class="slide" data-chapter="Hook" data-topic="Hook inicial">
+    <div class="slide-eyebrow">Arranque</div>
+    <h2 class="slide-title">¿Cuántas monedas tengo? ¿Cuánta vida?</h2>
+    <div class="columns">
+      <div class="card" style="border-top:3px solid var(--red);"><h3 style="color:var(--red);">Sin UI</h3><p>El personaje se mueve y recoge monedas. Pero… <b>no hay forma de saber</b> cuántas tiene ni cuánta vida le queda.</p></div>
+      <div class="card" style="border-top:3px solid var(--green);"><h3 style="color:var(--green);">Con UI</h3><p>Misma mecánica, pero con un <b>contador</b> arriba a la derecha y una <b>barra de vida</b> arriba a la izquierda.</p></div>
+    </div>
+    <div class="callout" style="margin-top:22px;">Sin UI, el jugador <b>no puede tomar decisiones informadas</b>. La interfaz es el puente de información.</div>
+  </section>
+
+  <!-- ============ CONTROL + CANVASLAYER ============ -->
+  <section class="slide" data-chapter="Control" data-topic="La jerarquía de la UI">
+    <div class="slide-eyebrow">Concepto</div>
+    <h2 class="slide-title">Nodos <code>Control</code>: viven en la pantalla</h2>
+    <div class="columns">
+      <div>
+        <p class="subtitle" style="font-size:18px;">Los nodos de interfaz son de tipo <b><code>Control</code></b>. A diferencia de los 2D, se posicionan <b>relativo a la pantalla</b>, no al mundo.</p>
+        <div class="callout">Cuando la cámara se mueve, el mundo se corre pero la <b>UI se queda quieta</b>.</div>
+      </div>
+      <div class="card" style="align-self:center; background:rgba(220,38,38,0.08); border-color:var(--red);">
+        <h3 style="color:var(--red);">⚠️ El problema</h3>
+        <p>Si ponés la UI como hija del jugador o del nivel, <b>se mueve con la cámara</b> y se ve mal. La solución es <code>CanvasLayer</code>.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Control" data-topic="CanvasLayer">
+    <div class="slide-eyebrow">Control</div>
+    <h2 class="slide-title"><code>CanvasLayer</code>: la capa que no se mueve</h2>
+    <div class="columns">
+      <div>
+        <p class="subtitle" style="font-size:18px;">Crea una <b>capa de renderizado independiente</b>. Todo lo que sea hijo de un <code>CanvasLayer</code> se dibuja en posición fija respecto a la pantalla, sin importar la cámara.</p>
+        <ul class="bullets" style="font-size:17px;">
+          <li>Todo el <b>HUD</b> (puntos, vida, íconos) va ahí adentro</li>
+          <li>Los <b>menús</b> también, o en escenas separadas</li>
+        </ul>
+      </div>
+      <div class="card" style="align-self:center;">
+        <pre class="code" style="margin:0; font-size:13px;">Nivel <span class="c">(Node2D)</span>
+├── Jugador
+├── TileMapLayer
+└── HUD <span class="c">(CanvasLayer)</span>  ← fijo
+    ├── LabelPuntos
+    └── BarraVida</pre>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Control" data-topic="Nodos de Control">
+    <div class="slide-eyebrow">Control</div>
+    <h2 class="slide-title">Los nodos de Control principales</h2>
+    <table class="tbl">
+      <thead><tr><th>Nodo</th><th>Para qué sirve</th></tr></thead>
+      <tbody>
+        <tr><td><code>Label</code></td><td>Muestra texto estático o dinámico. Puntaje, nombre, diálogos.</td></tr>
+        <tr><td><code>Button</code></td><td>Botón clickeable. Emite la señal <code>pressed()</code> al hacer clic.</td></tr>
+        <tr><td><code>ProgressBar</code></td><td>Barra de progreso. Ideal para vida, maná, carga.</td></tr>
+        <tr><td><code>TextureRect</code></td><td>Muestra una imagen. Íconos, fondos, arte de UI.</td></tr>
+        <tr><td><code>VBox</code>/<code>HBoxContainer</code></td><td>Ordenan a los hijos en columna o fila, solos.</td></tr>
+        <tr><td><code>Panel</code></td><td>Fondo rectangular con bordes. Base de ventanas y menús.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="slide" data-chapter="Control" data-topic="HUD en juegos reales">
+    <div class="slide-eyebrow">🎮 En juegos que conocés</div>
+    <h2 class="slide-title">El mismo HUD, en juegos que jugaste</h2>
+    <div class="columns three">
+      <div class="card"><h3>❤️ Barras de vida</h3><p>La vida y el maná de <i>Diablo</i> o <i>WoW</i>, los corazones de <i>Minecraft</i>: son <code>ProgressBar</code> / íconos en un HUD.</p></div>
+      <div class="card"><h3>🔢 Contadores</h3><p>Anillos de <i>Sonic</i>, monedas de <i>Mario</i>, munición de un shooter: <code>Label</code> que se actualizan.</p></div>
+      <div class="card"><h3>🎒 Barras de contenedores</h3><p>La hotbar de <i>Minecraft</i> o <i>Terraria</i>: un <code>HBoxContainer</code> con casillas.</p></div>
+    </div>
+    <div class="callout" style="margin-top:20px;">🔗 De la Clase 1: casi todo esto es UI <b>no diegética</b> (pegada a la pantalla). <i>Dead Space</i> la hacía <b>diegética</b> (en el traje). Ambas se arman con estos nodos.</div>
+  </section>
+
+  <!-- ============ LABEL + @onready ============ -->
+  <section class="slide" data-chapter="Label" data-topic="Info dinámica">
+    <div class="slide-eyebrow">Mostrar info</div>
+    <h2 class="slide-title"><code>Label</code>: texto que cambia</h2>
+    <div class="code-wrap">
+      <pre class="code" style="font-size:13px;"><span class="k">extends</span> <span class="t">CanvasLayer</span>
+
+<span class="c"># Referencias a los nodos de UI</span>
+<span class="k">@onready</span> <span class="k">var</span> label_puntos = $PanelPuntos/LabelPuntos
+<span class="k">@onready</span> <span class="k">var</span> label_vida = $PanelVida/LabelVida
+
+<span class="c"># El jugador llama estas funciones cuando cambian los valores</span>
+<span class="k">func</span> <span class="t">actualizar_puntos</span>(puntos: <span class="t">int</span>) -> <span class="t">void</span>:
+    label_puntos.text = <span class="s">"Puntos: "</span> + <span class="t">str</span>(puntos)
+
+<span class="k">func</span> <span class="t">actualizar_vida</span>(vida: <span class="t">int</span>) -> <span class="t">void</span>:
+    label_vida.text = <span class="s">"Vida: "</span> + <span class="t">str</span>(vida)</pre>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Label" data-topic="@onready">
+    <div class="slide-eyebrow">Atajo clave</div>
+    <h2 class="slide-title"><code>@onready</code>: acceso limpio a nodos</h2>
+    <div class="columns">
+      <div class="code-wrap">
+        <pre class="code" style="font-size:13px;"><span class="c"># Forma moderna ✅</span>
+<span class="k">@onready</span> <span class="k">var</span> mi_label = $Label
+
+<span class="c"># Forma clásica (equivalente):</span>
+<span class="k">var</span> mi_label
+<span class="k">func</span> <span class="t">_ready</span>():
+    mi_label = $Label</pre>
+      </div>
+      <div style="align-self:center;">
+        <div class="callout"><code>@onready</code> asigna la variable <b>cuando el nodo está listo</b> (en <code>_ready()</code>), pero en una sola línea. Lo vas a usar todo el tiempo.</div>
+        <p class="small-note"><code>$Nodo</code> busca un nodo hijo por su nombre en el árbol.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PROGRESSBAR ============ -->
+  <section class="slide" data-chapter="ProgressBar" data-topic="Barra de vida">
+    <div class="slide-eyebrow">ProgressBar</div>
+    <h2 class="slide-title">Barra de vida con color</h2>
+    <div class="code-wrap">
+      <pre class="code" style="font-size:12.5px;"><span class="k">@onready</span> <span class="k">var</span> barra_vida = $BarraVida
+
+<span class="k">func</span> <span class="t">actualizar_vida</span>(actual: <span class="t">int</span>, maxima: <span class="t">int</span>) -> <span class="t">void</span>:
+    barra_vida.max_value = maxima
+    barra_vida.value = actual
+    <span class="c"># Cambiar color según el nivel de vida</span>
+    <span class="k">if</span> actual <= maxima * <span class="n">0.25</span>:
+        barra_vida.modulate = <span class="t">Color</span>.RED      <span class="c"># crítica</span>
+    <span class="k">elif</span> actual <= maxima * <span class="n">0.5</span>:
+        barra_vida.modulate = <span class="t">Color</span>.YELLOW   <span class="c"># baja</span>
+    <span class="k">else</span>:
+        barra_vida.modulate = <span class="t">Color</span>.GREEN    <span class="c"># normal</span></pre>
+    </div>
+    <div class="callout" style="margin-top:12px;">💡 Nunca <i>hardcodees</i> el 100. Guardá la <b>vida máxima</b> en una variable y calculá porcentajes: si mañana hay 150 de vida, no se rompe nada.</div>
+  </section>
+
+  <!-- ============ BUTTON ============ -->
+  <section class="slide" data-chapter="Button" data-topic="Botones y señales">
+    <div class="slide-eyebrow">Menús</div>
+    <h2 class="slide-title"><code>Button</code>: la señal <code>pressed()</code></h2>
+    <div class="code-wrap">
+      <pre class="code" style="font-size:12.5px;"><span class="k">extends</span> <span class="t">Control</span>   <span class="c"># los menús usan Control como raíz</span>
+
+<span class="k">@onready</span> <span class="k">var</span> boton_jugar = $BtnJugar
+<span class="k">@onready</span> <span class="k">var</span> boton_salir = $BtnSalir
+
+<span class="k">func</span> <span class="t">_ready</span>():
+    boton_jugar.pressed.connect(_on_jugar_pressed)
+    boton_salir.pressed.connect(_on_salir_pressed)
+
+<span class="k">func</span> <span class="t">_on_jugar_pressed</span>() -> <span class="t">void</span>:
+    get_tree().change_scene_to_file(<span class="s">"res://nivel_1.tscn"</span>)
+
+<span class="k">func</span> <span class="t">_on_salir_pressed</span>() -> <span class="t">void</span>:
+    get_tree().quit()</pre>
+    </div>
+    <div class="callout" style="margin-top:12px;">💬 <b>Diseño:</b> el texto del botón describe la <b>acción</b>, no el resultado: “Jugar”, no “Empezar partida nueva”. Corto y claro.</div>
+  </section>
+
+  <!-- ============ CAMBIO DE ESCENAS ============ -->
+  <section class="slide" data-chapter="Escenas" data-topic="Cambio de escenas">
+    <div class="slide-eyebrow">Navegación</div>
+    <h2 class="slide-title">Cambiar de escena</h2>
+    <div class="code-wrap">
+      <pre class="code" style="font-size:13px;"><span class="c"># Ir a otra escena por su ruta</span>
+get_tree().change_scene_to_file(<span class="s">"res://escenas/nivel_1.tscn"</span>)
+
+<span class="c"># Reiniciar la escena actual</span>
+get_tree().reload_current_scene()
+
+<span class="c"># Pausar el juego (la UI sigue activa)</span>
+get_tree().paused = <span class="k">true</span>
+
+<span class="c"># Cerrar el juego</span>
+get_tree().quit()</pre>
+    </div>
+    <div class="callout" style="margin-top:12px; background:rgba(220,38,38,0.08); border-left-color:var(--red);">⚠️ Si el cambio “no funciona”, revisá la ruta <code>res://</code>: tiene que coincidir <b>exactamente</b> con la ubicación del <code>.tscn</code> en el FileSystem.</div>
+  </section>
+
+  <!-- ============ HUD COMPLETO ============ -->
+  <section class="slide" data-chapter="HUD" data-topic="Estructura del HUD">
+    <div class="slide-eyebrow">Diseño práctico</div>
+    <h2 class="slide-title">Estructura de un HUD completo</h2>
+    <div class="columns">
+      <div class="card">
+        <h3>Árbol recomendado</h3>
+        <pre class="code" style="margin:0; font-size:12.5px;">HUD <span class="c">(CanvasLayer)</span>
+└── HBoxContainer <span class="c"># fila superior</span>
+    ├── Panel <span class="c"># izq</span>
+    │   └── BarraVida
+    ├── Spacer <span class="c"># empuja a los extremos</span>
+    └── Panel <span class="c"># der</span>
+        └── LabelPuntos</pre>
+      </div>
+      <div style="align-self:center;">
+        <div class="callout">Los <b>contenedores</b> (<code>HBox</code>, <code>VBox</code>) acomodan los hijos solos. La UI así <b>sobrevive a cualquier resolución</b>.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="HUD" data-topic="Conectar con el jugador">
+    <div class="slide-eyebrow">HUD</div>
+    <h2 class="slide-title">Conectar el HUD con el jugador</h2>
+    <div class="columns">
+      <div class="code-wrap">
+        <pre class="code" style="font-size:12px;"><span class="c"># En el HUD (CanvasLayer):</span>
+<span class="k">func</span> <span class="t">set_puntos</span>(valor: <span class="t">int</span>):
+    label_puntos.text = <span class="s">"× "</span> + <span class="t">str</span>(valor)
+
+<span class="k">func</span> <span class="t">set_vida</span>(actual: <span class="t">int</span>, maximo: <span class="t">int</span>):
+    barra_vida.value = actual
+    barra_vida.max_value = maximo</pre>
+      </div>
+      <div class="code-wrap">
+        <pre class="code" style="font-size:12px;"><span class="c"># En el JUGADOR:</span>
+<span class="k">@onready</span> <span class="k">var</span> hud = $<span class="s">"../HUD"</span>
+
+<span class="k">func</span> <span class="t">recoger_moneda</span>():
+    puntos += <span class="n">1</span>
+    hud.set_puntos(puntos)
+
+<span class="k">func</span> <span class="t">recibir_dano</span>(cant: <span class="t">int</span>):
+    vida -= cant
+    hud.set_vida(vida, vida_maxima)</pre>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:12px;">El jugador <b>avisa</b> al HUD cuando algo cambia. El HUD solo se encarga de <b>mostrar</b>.</div>
+  </section>
+
+  <!-- ============ PRÁCTICA ============ -->
+  <section class="slide" data-chapter="Práctica" data-topic="Menú + HUD">
+    <div class="slide-eyebrow">Integradora</div>
+    <h2 class="slide-title">Práctica: menú principal + HUD</h2>
+    <div class="columns">
+      <div class="card">
+        <h3>A · Menú principal</h3>
+        <ul>
+          <li><code>MenuPrincipal.tscn</code>: fondo, título (Label grande), botones <b>Jugar</b> y <b>Salir</b></li>
+          <li>Jugar → lleva al nivel</li>
+          <li>Setearlo como <b>Main Scene</b> en Project Settings</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>B · HUD en el nivel</h3>
+        <ul>
+          <li><code>CanvasLayer</code> “HUD”</li>
+          <li>Label de puntos (arriba der.) + ProgressBar de vida (arriba izq.)</li>
+          <li>Conectarlo al jugador</li>
+          <li>Botón “Menú” que vuelve al inicio</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:16px;">🏆 <b>Extra:</b> pantalla de <b>Game Over</b> con botón “Reintentar” y la puntuación final.</div>
+  </section>
+
+  <!-- ============ CIERRE ============ -->
+  <section class="slide title-slide" data-chapter="Cierre" data-topic="Cierre y tarea">
+    <div class="slide-eyebrow">Cierre</div>
+    <h2 class="slide-title">La UI es comunicación</h2>
+    <div class="columns">
+      <div class="card">
+        <h3>🧭 Repaso</h3>
+        <ul>
+          <li><code>CanvasLayer</code>: capa de UI que no se mueve con la cámara</li>
+          <li>Nodos <code>Control</code> se posicionan respecto a la <b>pantalla</b></li>
+          <li><code>@onready</code> asigna un nodo hijo al estar listo</li>
+          <li><code>pressed()</code> responde a los clics de botón</li>
+          <li><code>change_scene_to_file()</code> cambia de escena</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>📝 Tarea</h3>
+        <ul>
+          <li>Pantalla de <b>créditos</b> desde el menú</li>
+          <li>Sistema de <b>3 vidas</b> con íconos en el HUD</li>
+          <li>Barra de vida que se anima suave (con <b>Tween</b> — Clase 7)</li>
+          <li><b>Desafío:</b> <i>high score</i> en el menú principal</li>
+        </ul>
+      </div>
+    </div>
+    <p class="small-note" style="margin-top:22px; text-align:center;">“La cara del juego.” · Logo y mascota de Godot © Godot Foundation — CC BY 4.0.</p>
+  </section>
+
+</div>
+
+<script src="deck.js"></script>
+</body>
+</html>

@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Diplomatura de Videojuegos · Clase 7 — El juego se siente vivo</title>
+<link rel="stylesheet" href="deck.css" />
+</head>
+<body>
+
+<div class="deck" id="deck" data-brand="Diplomatura de Videojuegos · Clase 7" data-home="../index.html">
+
+  <!-- ============ INICIO ============ -->
+  <section class="slide title-slide active" data-chapter="Inicio" data-topic="Portada">
+    <div class="title-grid">
+      <div>
+        <div class="slide-eyebrow">Clase 7 · Animación, Audio y Game Feel</div>
+        <h1 class="title">El juego se <span class="accent">siente vivo</span></h1>
+        <p class="subtitle">Animaciones por frames, <code>AnimationPlayer</code>, audio, y <b>Game Feel</b>: el pulido que separa un prototipo de un juego terminado.</p>
+        <p class="small-note">“Las reglas son iguales. La diferencia es el <b>juice</b>: cómo se siente cada acción.”</p>
+      </div>
+      <div class="title-photo" style="border:none; box-shadow:none; background:transparent;">
+        <img src="assets/godot-logo.png" alt="Godot Engine" style="max-height:420px; width:auto; margin:0 auto; display:block;" />
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Inicio" data-topic="Objetivos">
+    <div class="slide-eyebrow">Objetivos</div>
+    <h2 class="slide-title">Al terminar la clase van a poder…</h2>
+    <ul class="bullets">
+      <li>Usar <code>AnimatedSprite2D</code> para animaciones por frames</li>
+      <li>Controlar animaciones <b>desde código</b> según el estado del personaje</li>
+      <li>Integrar efectos de sonido y música con <code>AudioStreamPlayer</code></li>
+      <li>Aplicar principios de <b>Game Feel</b> para que el juego se sienta satisfactorio</li>
+    </ul>
+  </section>
+
+  <!-- ============ HOOK ============ -->
+  <section class="slide" data-chapter="Hook" data-topic="Hook inicial">
+    <div class="slide-eyebrow">Arranque</div>
+    <h2 class="slide-title">Mismo juego, dos sensaciones</h2>
+    <div class="columns">
+      <div class="card" style="border-top:3px solid var(--red);"><h3 style="color:var(--red);">Versión A</h3><p>El personaje se mueve como un <b>bloque estático</b>: sin sonido, sin partículas, sin ninguna retroalimentación.</p></div>
+      <div class="card" style="border-top:3px solid var(--green);"><h3 style="color:var(--green);">Versión B</h3><p>El mismo, con <b>animación de caminar</b>, sonido de pasos, una partícula al saltar y un <b>squash</b> al aterrizar.</p></div>
+    </div>
+    <div class="callout" style="margin-top:22px;">🎮 <b>Game Feel:</b> las mecánicas son idénticas. La diferencia es el <b>“juice”</b>: la retroalimentación sensorial que hace que cada acción se sienta bien.</div>
+  </section>
+
+  <!-- ============ ANIMATEDSPRITE2D ============ -->
+  <section class="slide" data-chapter="Animación" data-topic="AnimatedSprite2D">
+    <div class="slide-eyebrow">Animación por frames</div>
+    <h2 class="slide-title"><code>AnimatedSprite2D</code>: un flipbook</h2>
+    <div class="columns">
+      <div>
+        <p class="subtitle" style="font-size:18px;">Una serie de imágenes que se muestran en secuencia rápida, como un <b>flipbook</b>. Cada imagen es un <b>frame</b>.</p>
+        <ul class="bullets" style="font-size:17px;">
+          <li>Inspector → <b>SpriteFrames</b> → New SpriteFrames</li>
+          <li>Crear animaciones con nombre: <code>idle</code>, <code>run</code>, <code>jump</code>, <code>fall</code></li>
+          <li>Arrastrar frames y ajustar los <b>FPS</b></li>
+        </ul>
+      </div>
+      <div class="card" style="align-self:center;">
+        <h3>💡 Recursos gratis</h3>
+        <p>Buscá <i>“free platformer sprite sheet”</i> en <b>itch.io</b> u <b>opengameart.org</b>. Godot importa hojas con <b>Add Frames from Sprite Sheet</b>.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Animación" data-topic="Animar por código">
+    <div class="slide-eyebrow">Animación</div>
+    <h2 class="slide-title">Controlar la animación por código</h2>
+    <div class="code-wrap">
+      <pre class="code" style="font-size:12.5px;"><span class="k">@onready</span> <span class="k">var</span> sprite = $AnimatedSprite2D
+
+<span class="k">func</span> <span class="t">actualizar_animacion</span>(dir: <span class="t">float</span>) -> <span class="t">void</span>:
+    <span class="k">if</span> dir != <span class="n">0</span>:
+        sprite.flip_h = dir < <span class="n">0</span>   <span class="c"># espejo si va a la izquierda</span>
+    <span class="c"># Prioridad: primero el aire, después movimiento, después quieto</span>
+    <span class="k">if</span> <span class="k">not</span> is_on_floor():
+        <span class="k">if</span> velocity.y < <span class="n">0</span>: sprite.play(<span class="s">"jump"</span>)
+        <span class="k">else</span>:              sprite.play(<span class="s">"fall"</span>)
+    <span class="k">elif</span> dir != <span class="n">0</span>:
+        sprite.play(<span class="s">"run"</span>)
+    <span class="k">else</span>:
+        sprite.play(<span class="s">"idle"</span>)</pre>
+    </div>
+    <div class="callout" style="margin-top:12px;">💡 La lógica de animación es una cadena de <code>if/elif</code> <b>en orden de prioridad</b>. Primero lo más importante (¿está en el aire?). El orden importa.</div>
+  </section>
+
+  <!-- ============ ANIMATIONPLAYER ============ -->
+  <section class="slide" data-chapter="AnimationPlayer" data-topic="Qué es">
+    <div class="slide-eyebrow">Más poderoso</div>
+    <h2 class="slide-title"><code>AnimationPlayer</code>: animar cualquier cosa</h2>
+    <div class="columns">
+      <div>
+        <p class="subtitle" style="font-size:17px;">No solo sprites: puede animar <b>cualquier propiedad de cualquier nodo</b> — posición, escala, color, opacidad, volumen…</p>
+        <p class="small-note">Trabaja con una <b>línea de tiempo</b> y <b>keyframes</b> (fotogramas clave). Godot interpola el resto.</p>
+      </div>
+      <div class="imgcard">
+        <img src="assets/anim-panel.webp" alt="Panel de AnimationPlayer" style="max-height:240px; border:1px solid var(--border); border-radius:8px;" />
+        <figcaption class="imgcaption">El panel: <b>Tracks</b> (qué se anima), <b>Timeline</b> (cuándo) y los controles.</figcaption>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="AnimationPlayer" data-topic="Casos de uso">
+    <div class="slide-eyebrow">AnimationPlayer</div>
+    <h2 class="slide-title">Casos típicos + parpadeo de daño</h2>
+    <div class="columns">
+      <div>
+        <ul class="bullets" style="font-size:16px;">
+          <li><b>Muerte:</b> el personaje se encoge y desaparece</li>
+          <li><b>Daño:</b> parpadeo rojo rápido al recibir un golpe</li>
+          <li><b>Puerta</b> que rota o se desliza</li>
+          <li><b>Texto flotante</b> de daño que sube y se desvanece</li>
+        </ul>
+      </div>
+      <div class="code-wrap">
+        <pre class="code" style="font-size:12.5px;"><span class="k">@onready</span> <span class="k">var</span> anim = $AnimationPlayer
+
+<span class="k">func</span> <span class="t">recibir_dano</span>(cant: <span class="t">int</span>) -> <span class="t">void</span>:
+    vida -= cant
+    anim.play(<span class="s">"hit_flash"</span>)
+    <span class="k">if</span> vida <= <span class="n">0</span>:
+        anim.play(<span class="s">"death"</span>)</pre>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:14px;">💡 <b>Parpadeo rojo:</b> animá <code>modulate</code> del Sprite entre <code>WHITE</code> y <code>RED</code> varias veces en 0.4 s. Uno de los efectos de Game Feel más fáciles y más impactantes.</div>
+  </section>
+
+  <section class="slide" data-chapter="AnimationPlayer" data-topic="Game feel en juegos reales">
+    <div class="slide-eyebrow">🎮 Referencias imperdibles</div>
+    <h2 class="slide-title">El game feel en juegos que jugaste</h2>
+    <div class="columns three">
+      <div class="card"><h3>🏔️ Celeste</h3><p>El estándar de oro del <i>juice</i>: animación, screenshake, partículas y sonido en cada salto y dash.</p></div>
+      <div class="card"><h3>🔫 Nuclear Throne / Downwell</h3><p><b>Vlambeer</b> y el <i>screenshake</i>: la pantalla “golpea” con cada disparo. Puro feedback.</p></div>
+      <div class="card"><h3>🥩 Super Meat Boy</h3><p>Muerte instantánea + reinicio inmediato + partículas de sangre. El feedback hace que perder no moleste.</p></div>
+    </div>
+    <div class="callout" style="margin-top:18px;">📺 Dos charlas que valen oro: <b>“Juice it or lose it”</b> (Jonasson &amp; Purho) y <b>“The art of screenshake”</b> (Jan Willem Nijman, Vlambeer). Búsquenlas en YouTube.</div>
+  </section>
+
+  <!-- ============ AUDIO ============ -->
+  <section class="slide" data-chapter="Audio" data-topic="Nodos de audio">
+    <div class="slide-eyebrow">Sonido</div>
+    <h2 class="slide-title">Los nodos de audio</h2>
+    <table class="tbl">
+      <thead><tr><th>Nodo</th><th>Cuándo usar</th></tr></thead>
+      <tbody>
+        <tr><td><code>AudioStreamPlayer</code></td><td>Audio <b>sin posición</b>. Música de fondo y efectos de UI.</td></tr>
+        <tr><td><code>AudioStreamPlayer2D</code></td><td>Audio <b>con posición</b> en el mundo 2D. El volumen baja con la distancia.</td></tr>
+        <tr><td><code>AudioStreamPlayer3D</code></td><td>Lo mismo, pero en 3D.</td></tr>
+      </tbody>
+    </table>
+    <div class="callout" style="margin-top:16px;">🎚️ <b>Formato:</b> <code>.ogg</code> para música (mejor compresión) y <code>.wav</code> para efectos cortos (menor latencia). En Godot 4, evitá <code>.mp3</code> cuando puedas.</div>
+  </section>
+
+  <section class="slide" data-chapter="Audio" data-topic="Reproducir audio">
+    <div class="slide-eyebrow">Audio</div>
+    <h2 class="slide-title">Importar y reproducir</h2>
+    <div class="columns">
+      <div>
+        <ul class="bullets" style="font-size:16px;">
+          <li>Arrastrá el archivo (<code>.ogg</code>/<code>.wav</code>) al FileSystem</li>
+          <li>Para <b>música</b>: activá <b>Loop</b> en la importación</li>
+          <li>Para <b>efectos</b>: Loop desactivado</li>
+        </ul>
+      </div>
+      <div class="code-wrap">
+        <pre class="code" style="font-size:12.5px;"><span class="k">@onready</span> <span class="k">var</span> sfx_salto = $SFX_Salto
+<span class="k">@onready</span> <span class="k">var</span> sfx_dano = $SFX_Dano
+
+<span class="k">func</span> <span class="t">saltar</span>():
+    velocity.y = SALTO
+    sfx_salto.play()
+
+<span class="k">func</span> <span class="t">recibir_dano</span>(cant):
+    vida -= cant
+    sfx_dano.play()  <span class="c"># la música sigue sonando</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Audio" data-topic="Bus de audio">
+    <div class="slide-eyebrow">Audio Bus Layout</div>
+    <h2 class="slide-title">Buses: música y efectos por separado</h2>
+    <div class="columns">
+      <div>
+        <p class="subtitle" style="font-size:16px;">Project → <b>Open Audio Bus Layout</b>. Canales de volumen independientes:</p>
+        <ul class="bullets" style="font-size:15px;">
+          <li><b>Master</b> — volumen general</li>
+          <li><b>Music</b> — solo la música</li>
+          <li><b>SFX</b> — solo los efectos</li>
+        </ul>
+        <pre class="code" style="font-size:11.5px; margin-top:8px;"><span class="t">AudioServer</span>.set_bus_volume_db(
+  <span class="t">AudioServer</span>.get_bus_index(<span class="s">"Music"</span>),
+  <span class="t">linear_to_db</span>(<span class="n">0.5</span>))  <span class="c"># 50%</span></pre>
+      </div>
+      <div class="imgcard">
+        <img src="assets/audio-buses.webp" alt="Audio Bus Layout" style="max-height:230px; border:1px solid var(--border); border-radius:8px;" />
+        <figcaption class="imgcaption">Master + buses con sus sliders de volumen (en dB).</figcaption>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:12px;">💡 Los jugadores esperan poder <b>bajar la música sin bajar los efectos</b>. Es una feature estándar.</div>
+  </section>
+
+  <!-- ============ GAME FEEL ============ -->
+  <section class="slide" data-chapter="Game Feel" data-topic="Cámara con smoothing">
+    <div class="slide-eyebrow">Pulido básico</div>
+    <h2 class="slide-title">Cámara con <i>smoothing</i></h2>
+    <div class="columns">
+      <div>
+        <p class="subtitle" style="font-size:17px;">Que la cámara <b>siga suavemente</b> al jugador en vez de pegarse rígida. Un cambio chico, un salto de calidad enorme.</p>
+        <p class="small-note">Inspector del <code>Camera2D</code> → <b>Position Smoothing → Enable: ON</b>, Speed ~5.0.</p>
+      </div>
+      <div class="code-wrap" style="align-self:center;">
+        <pre class="code" style="font-size:13px;"><span class="k">@onready</span> <span class="k">var</span> camara = $Camera2D
+
+<span class="k">func</span> <span class="t">_ready</span>():
+    camara.position_smoothing_enabled = <span class="k">true</span>
+    camara.position_smoothing_speed = <span class="n">5.0</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Game Feel" data-topic="Squash and stretch">
+    <div class="slide-eyebrow">Game Feel</div>
+    <h2 class="slide-title">Squash &amp; Stretch con <code>Tween</code></h2>
+    <div class="code-wrap">
+      <pre class="code" style="font-size:12.5px;"><span class="c"># Un Tween anima una propiedad de forma programática, sin keyframes</span>
+<span class="k">func</span> <span class="t">squeeze_effect</span>() -> <span class="t">void</span>:
+    <span class="k">var</span> tween = create_tween()
+    <span class="c"># Aplastar: ancho +30%, alto -30%</span>
+    tween.tween_property(sprite, <span class="s">"scale"</span>, <span class="t">Vector2</span>(<span class="n">1.3</span>, <span class="n">0.7</span>), <span class="n">0.05</span>)
+    <span class="c"># Volver a normal</span>
+    tween.tween_property(sprite, <span class="s">"scale"</span>, <span class="t">Vector2</span>(<span class="n">1.0</span>, <span class="n">1.0</span>), <span class="n">0.15</span>)</pre>
+    </div>
+    <div class="callout" style="margin-top:14px;">Se dispara al <b>detectar el aterrizaje</b> (pasás de estar en el aire a tocar el suelo). El personaje se “aplasta” un instante y rebota — se siente <b>con peso</b>.</div>
+  </section>
+
+  <section class="slide" data-chapter="Game Feel" data-topic="Partículas">
+    <div class="slide-eyebrow">Game Feel</div>
+    <h2 class="slide-title">Partículas simples</h2>
+    <div class="columns">
+      <div>
+        <ul class="bullets" style="font-size:17px;">
+          <li>Agregá un nodo <code>GPUParticles2D</code> al personaje</li>
+          <li>Config: <code>Amount = 10</code>, <code>Lifetime = 0.3</code>, <code>One Shot = true</code>, <code>Emitting = false</code></li>
+          <li>Disparalas por código: <code>$Particulas.restart()</code></li>
+        </ul>
+      </div>
+      <div class="card" style="align-self:center;">
+        <h3>🎆 Dónde usarlas</h3>
+        <p>Un puñado de polvo al <b>saltar</b> y al <b>aterrizar</b>, o un destello al <b>juntar una moneda</b>. Detalles chicos, impacto grande.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PRÁCTICA ============ -->
+  <section class="slide" data-chapter="Práctica" data-topic="Capas de pulido">
+    <div class="slide-eyebrow">Integradora</div>
+    <h2 class="slide-title">Práctica: pulir el proyecto</h2>
+    <p class="subtitle" style="font-size:17px;">Tomá el juego de las clases anteriores y sumale capas de pulido, de menor a mayor dificultad:</p>
+    <table class="tbl" style="font-size:15.5px;">
+      <tbody>
+        <tr><td>🟢 Fácil</td><td>Música de fondo en loop + efecto de sonido al juntar una moneda</td></tr>
+        <tr><td>🟢 Fácil</td><td>Activar <i>smoothing</i> en la <code>Camera2D</code></td></tr>
+        <tr><td>🟡 Medio</td><td>Conectar el <code>AnimatedSprite2D</code> al estado (idle/run/jump/fall)</td></tr>
+        <tr><td>🟡 Medio</td><td>Parpadeo rojo al recibir daño (<code>AnimationPlayer</code>)</td></tr>
+        <tr><td>🔴 Difícil</td><td>Squash &amp; Stretch al aterrizar (<code>Tween</code>) + partículas</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============ CIERRE ============ -->
+  <section class="slide title-slide" data-chapter="Cierre" data-topic="Cierre y tarea">
+    <div class="slide-eyebrow">Cierre</div>
+    <h2 class="slide-title">El pulido transforma el juego</h2>
+    <div class="columns">
+      <div class="card">
+        <h3>🧭 Repaso</h3>
+        <ul>
+          <li><code>AnimatedSprite2D</code>: frames por estado, controlados por código</li>
+          <li><code>AnimationPlayer</code>: anima cualquier propiedad</li>
+          <li>Audio: <code>AudioStreamPlayer</code> + buses Music/SFX</li>
+          <li><b>Game Feel</b>: animación, sonido, partículas, cámara</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>📝 Tarea</h3>
+        <ul>
+          <li>Al menos <b>3 efectos de sonido</b> (salto, daño, moneda)</li>
+          <li>Animaciones conectadas al estado en <code>_physics_process()</code></li>
+          <li>Efecto visual al recibir daño</li>
+          <li><b>Desafío:</b> Squash &amp; Stretch completo (aplastar y estirar)</li>
+        </ul>
+      </div>
+    </div>
+    <p class="small-note" style="margin-top:20px; text-align:center;">Capturas del editor: documentación oficial de Godot — CC BY 4.0. · “El juego se siente vivo.”</p>
+  </section>
+
+</div>
+
+<script src="deck.js"></script>
+</body>
+</html>

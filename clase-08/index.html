@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Diplomatura de Videojuegos · Clase 8 — Tu juego en el mundo</title>
+<link rel="stylesheet" href="deck.css" />
+</head>
+<body>
+
+<div class="deck" id="deck" data-brand="Diplomatura de Videojuegos · Clase 8" data-home="../index.html">
+
+  <!-- ============ INICIO ============ -->
+  <section class="slide title-slide active" data-chapter="Inicio" data-topic="Portada">
+    <div class="title-grid">
+      <div>
+        <div class="slide-eyebrow">Clase 8 · Exportación y Cierre</div>
+        <h1 class="title">Tu juego en el <span class="accent">mundo</span></h1>
+        <p class="subtitle">Exportar a Windows y Android, organizar el proyecto, y presentar el proyecto final. La última pieza: que tu juego <b>salga al mundo</b>.</p>
+        <p class="small-note">“Terminar un juego y poder compartirlo es lo más difícil — y hoy aprenden a hacerlo.”</p>
+      </div>
+      <div class="title-photo" style="border:none; box-shadow:none; background:transparent;">
+        <img src="assets/godot-logo.png" alt="Godot Engine" style="max-height:420px; width:auto; margin:0 auto; display:block;" />
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Inicio" data-topic="Objetivos">
+    <div class="slide-eyebrow">Objetivos</div>
+    <h2 class="slide-title">Al terminar la clase van a poder…</h2>
+    <ul class="bullets">
+      <li>Exportar el proyecto como <b>ejecutable</b> para Windows y Android</li>
+      <li>Organizar el proyecto con <b>buenas prácticas</b> de estructura</li>
+      <li>Repasar los conceptos clave de toda la diplomatura</li>
+      <li>Presentar el <b>proyecto final</b> y reflexionar sobre el camino</li>
+    </ul>
+    <div class="callout" style="margin-top:22px;">🎯 Hicieron algo que la mayoría no hace: <b>terminaron un juego</b>. No importa el tamaño.</div>
+  </section>
+
+  <!-- ============ ORGANIZACIÓN ============ -->
+  <section class="slide" data-chapter="Organización" data-topic="Estructura de carpetas">
+    <div class="slide-eyebrow">Antes de exportar</div>
+    <h2 class="slide-title">Ordenar el proyecto</h2>
+    <div class="columns">
+      <div class="card">
+        <pre class="code" style="margin:0; font-size:12px;">res://
+├── assets/
+│   ├── sprites/
+│   ├── audio/
+│   │   ├── music/
+│   │   └── sfx/
+│   └── fonts/
+├── scenes/
+│   ├── personajes/
+│   ├── niveles/
+│   └── ui/
+├── scripts/
+└── project.godot</pre>
+      </div>
+      <div style="align-self:center;">
+        <div class="callout">Un proyecto ordenado es más fácil de <b>mantener, depurar y compartir</b>. Vale la pena hacerlo antes de exportar.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Organización" data-topic="Checklist pre-export">
+    <div class="slide-eyebrow">Organización</div>
+    <h2 class="slide-title">Antes de exportar, verificar…</h2>
+    <ul class="bullets" style="font-size:18px;">
+      <li><b>Escena principal:</b> Project Settings → Application → Run → Main Scene</li>
+      <li><b>Ícono y nombre:</b> Application → Config → Icon / Name</li>
+      <li><b>Sin errores en rojo</b> en la consola al jugar completo</li>
+      <li><b>Rutas <code>res://</code>:</b> todas las referencias relativas, nunca absolutas</li>
+    </ul>
+    <div class="callout" style="margin-top:20px; background:rgba(220,38,38,0.08); border-left-color:var(--red);">⚠️ Una ruta absoluta (<code>C:\Users\...</code>) funciona en tu máquina pero <b>se rompe al exportar</b> o en otra compu. Siempre <code>res://carpeta/archivo.png</code>.</div>
+  </section>
+
+  <!-- ============ EXPORT TEMPLATES ============ -->
+  <section class="slide" data-chapter="Export Templates" data-topic="La clave de exportar">
+    <div class="slide-eyebrow">La clave</div>
+    <h2 class="slide-title">Export Templates: el motor compilado</h2>
+    <div class="columns">
+      <div>
+        <p class="subtitle" style="font-size:17px;">Son los archivos con el <b>motor compilado</b> para cada plataforma. Sin ellos no se puede exportar.</p>
+        <ul class="bullets" style="font-size:16px;">
+          <li><b>Editor → Manage Export Templates → Download and Install</b></li>
+          <li>Godot baja los compatibles con tu versión</li>
+        </ul>
+        <p class="small-note">💡 Pesan varios GB. Si la conexión es lenta, descargalos <b>antes</b> de la clase.</p>
+      </div>
+      <div class="imgcard">
+        <img src="assets/export-templates.webp" alt="Manage Export Templates" style="max-height:250px; border:1px solid var(--border); border-radius:8px;" />
+        <figcaption class="imgcaption">Menú <b>Editor → Manage Export Templates…</b></figcaption>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WINDOWS ============ -->
+  <section class="slide" data-chapter="Windows" data-topic="Exportar a .exe">
+    <div class="slide-eyebrow">Windows</div>
+    <h2 class="slide-title">Exportar a Windows (.exe)</h2>
+    <div class="columns">
+      <div>
+        <ol class="steps" style="font-size:15px;">
+          <li><b>Project → Export</b> → <b>Add…</b> → <b>Windows Desktop</b></li>
+          <li>Elegir carpeta y nombre (<code>mi_juego.exe</code>)</li>
+          <li>Export Mode: <b>All Resources</b></li>
+          <li>Clic en <b>Export Project</b></li>
+        </ol>
+        <pre class="code" style="font-size:12px; margin-top:6px;">mi_juego/
+├── mi_juego.exe  <span class="c"># el ejecutable</span>
+└── mi_juego.pck  <span class="c"># los recursos</span>
+<span class="c"># Sin el .pck, el .exe no funciona.</span></pre>
+      </div>
+      <div class="imgcard">
+        <img src="assets/export-preset.webp" alt="Seleccionar plataforma" style="max-height:280px; border:1px solid var(--border); border-radius:8px;" />
+        <figcaption class="imgcaption">El botón <b>Add…</b> lista las plataformas disponibles.</figcaption>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Windows" data-topic="Configuraciones útiles">
+    <div class="slide-eyebrow">Windows</div>
+    <h2 class="slide-title">Configuraciones útiles de exportación</h2>
+    <table class="tbl">
+      <thead><tr><th>Opción</th><th>Para qué sirve</th></tr></thead>
+      <tbody>
+        <tr><td><b>Embed PCK</b></td><td>Fusiona <code>.exe</code> y <code>.pck</code> en un solo archivo. Más cómodo de distribuir, más lento de compilar.</td></tr>
+        <tr><td><b>Console Wrapper</b></td><td>Abre una consola al ejecutar. Útil para debug. <b>Desactivar</b> en la versión final.</td></tr>
+        <tr><td><b>Icon</b></td><td>Ícono del ejecutable. Recomendado: <code>.ico</code> con varios tamaños.</td></tr>
+      </tbody>
+    </table>
+    <div class="callout" style="margin-top:16px;">Para distribuir: comprimí el <code>.exe</code> y el <code>.pck</code> juntos en un <code>.zip</code>.</div>
+  </section>
+
+  <!-- ============ ANDROID ============ -->
+  <section class="slide" data-chapter="Android" data-topic="Requisitos">
+    <div class="slide-eyebrow">Android</div>
+    <h2 class="slide-title">Exportar a Android (.apk): requisitos</h2>
+    <p class="subtitle" style="font-size:17px;">Es más complejo (necesita herramientas extra), pero ver tu juego <b>en el celular</b> es muy motivador.</p>
+    <table class="tbl" style="font-size:15.5px;">
+      <tbody>
+        <tr><td><b>Android SDK</b></td><td>Vía Android Studio → SDK Manager (SDK Platform + Build Tools)</td></tr>
+        <tr><td><b>JDK</b></td><td>Para firmar el APK. <b>JDK 17 LTS</b> desde adoptium.net</td></tr>
+        <tr><td><b>Configurar en Godot</b></td><td>Editor Settings → Export → Android → rutas de SDK y JDK</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="slide" data-chapter="Android" data-topic="Keystore y export">
+    <div class="slide-eyebrow">Android</div>
+    <h2 class="slide-title">Clave de debug y exportar</h2>
+    <div class="columns">
+      <div class="code-wrap">
+        <pre class="code" style="font-size:11px;"><span class="c"># Generar un keystore de debug (PowerShell):</span>
+keytool -genkey -v -keystore debug.keystore \
+  -storepass android -alias androiddebugkey \
+  -keypass android -keyalg RSA \
+  -keysize 2048 -validity 10000</pre>
+        <p class="small-note">Editor Settings → Export → Android → <b>Debug Keystore</b> → apuntar al archivo.</p>
+      </div>
+      <div style="align-self:center;">
+        <ol class="steps" style="font-size:14px;">
+          <li>Project → Export → Add → <b>Android</b></li>
+          <li>Unique Name: <code>com.tuestudio.juego</code></li>
+          <li>Export Path: <code>mi_juego.apk</code></li>
+          <li><b>Export Project</b></li>
+        </ol>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:12px; background:rgba(220,38,38,0.08); border-left-color:var(--red);">⚠️ Para instalarlo, activá <b>“fuentes desconocidas”</b> en el celular. El APK de debug sirve para <b>pruebas</b>, no para la Play Store.</div>
+  </section>
+
+  <!-- ============ TESTING ============ -->
+  <section class="slide" data-chapter="Testing" data-topic="Checklist de calidad">
+    <div class="slide-eyebrow">Antes de lanzar</div>
+    <h2 class="slide-title">Testing y debugging</h2>
+    <ul class="bullets" style="font-size:17px;">
+      <li>Jugar de principio a fin al menos <b>3 veces</b></li>
+      <li><b>Intentar romperlo:</b> ir a lugares raros, hacer acciones inesperadas</li>
+      <li>Que alguien que <b>nunca lo jugó</b> lo juegue — observar sin ayudar</li>
+      <li>Verificar <b>audio</b> y <b>resolución</b> en el ejecutable</li>
+    </ul>
+    <div class="callout" style="margin-top:18px;">El mejor test es la persona que nunca vio tu juego. Vas a descubrir cosas que jamás imaginaste.</div>
+  </section>
+
+  <section class="slide" data-chapter="Testing" data-topic="Resolución y pantalla">
+    <div class="slide-eyebrow">Testing</div>
+    <h2 class="slide-title">Resolución y modo de pantalla</h2>
+    <div class="code-wrap">
+      <pre class="code" style="font-size:12.5px;"><span class="c"># Project Settings → Display → Window:</span>
+<span class="c"># - Viewport Width / Height: resolución base (ej: 1280 × 720)</span>
+<span class="c"># - Stretch Mode: canvas_items (pixel art) o viewport (UI)</span>
+<span class="c"># - Stretch Aspect: keep (mantiene proporción)</span>
+
+<span class="c"># Por código, pantalla completa:</span>
+<span class="t">DisplayServer</span>.window_set_mode(<span class="t">DisplayServer</span>.WINDOW_MODE_FULLSCREEN)
+<span class="c"># Volver a ventana:</span>
+<span class="t">DisplayServer</span>.window_set_mode(<span class="t">DisplayServer</span>.WINDOW_MODE_WINDOWED)</pre>
+    </div>
+  </section>
+
+  <!-- ============ JUEGOS EN GODOT ============ -->
+  <section class="slide" data-chapter="Godot en serio" data-topic="Juegos comerciales">
+    <div class="slide-eyebrow">🎮 Godot en serio</div>
+    <h2 class="slide-title">Juegos comerciales hechos en Godot</h2>
+    <div class="columns three">
+      <div class="card"><h3>🥔 Brotato</h3><p>Roguelite arena, éxito enorme en Steam. Godot puro.</p></div>
+      <div class="card"><h3>🐾 Cassette Beasts</h3><p>RPG estilo monstruos, aclamado por crítica y jugadores.</p></div>
+      <div class="card"><h3>⛏️ Dome Keeper</h3><p>Minería + defensa, un indie hit hecho en Godot.</p></div>
+      <div class="card"><h3>🔫 Buckshot Roulette</h3><p>Fenómeno viral de terror psicológico.</p></div>
+      <div class="card"><h3>⚔️ Halls of Torment</h3><p>Survivor oscuro, top ventas en Steam.</p></div>
+      <div class="card" style="border-color:var(--accent);"><h3>🚀 …y el tuyo</h3><p>Usan <b>exactamente</b> lo que vos aprendiste. La diferencia es escala, no fundamentos.</p></div>
+    </div>
+  </section>
+
+  <!-- ============ REPASO ============ -->
+  <section class="slide" data-chapter="Repaso" data-topic="Toda la diplomatura">
+    <div class="slide-eyebrow">El camino recorrido</div>
+    <h2 class="slide-title">Todo lo que construyeron</h2>
+    <table class="tbl" style="font-size:14.5px;">
+      <tbody>
+        <tr><td><b>Clase 1</b></td><td>Motor, interfaz de Godot, nodos y escenas</td></tr>
+        <tr><td><b>Clase 2</b></td><td>GDScript: variables, condicionales, loops, funciones, input</td></tr>
+        <tr><td><b>Clase 3</b></td><td><code>_ready()</code>, <code>_process()</code>, delta, movimiento, Input Map</td></tr>
+        <tr><td><b>Clase 4</b></td><td><code>CharacterBody2D</code>, <code>move_and_slide()</code>, colisiones, señales</td></tr>
+        <tr><td><b>Clase 5</b></td><td>POO, scripts como clases, instanciación, spawning</td></tr>
+        <tr><td><b>Clase 6</b></td><td><code>CanvasLayer</code>, Label, Button, ProgressBar, HUD, menús</td></tr>
+        <tr><td><b>Clase 7</b></td><td>Animación, audio, Game Feel, Tween</td></tr>
+        <tr><td><b>Clase 8</b></td><td>Exportación, organización, distribución</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============ PROYECTO FINAL ============ -->
+  <section class="slide" data-chapter="Proyecto Final" data-topic="La presentación">
+    <div class="slide-eyebrow">Proyecto Final</div>
+    <h2 class="slide-title">Cómo presentar tu juego</h2>
+    <div class="columns three">
+      <div class="card"><h3>1 · Demo jugable <span style="color:var(--muted);">(5 min)</span></h3><p>Mostrar el juego funcionando. Explicar el objetivo: ¿cómo se gana o pierde?</p></div>
+      <div class="card"><h3>2 · Tour técnico <span style="color:var(--muted);">(3 min)</span></h3><p>Una parte del código que les resultó interesante o difícil. Qué herramienta de Godot usaron.</p></div>
+      <div class="card"><h3>3 · Reflexión <span style="color:var(--muted);">(2 min)</span></h3><p>¿Qué fue lo más difícil? ¿Qué agregarían con más tiempo? ¿Qué aprendieron sin esperarlo?</p></div>
+    </div>
+    <div class="callout" style="margin-top:20px;">🤝 No es una evaluación, es <b>aprendizaje entre pares</b>: “¿alguien vio algo acá que le gustaría implementar en el suyo?”.</div>
+  </section>
+
+  <!-- ============ CIERRE ============ -->
+  <section class="slide title-slide" data-chapter="Cierre" data-topic="Cierre de la diplomatura">
+    <div class="slide-eyebrow">¿Y ahora qué?</div>
+    <h2 class="slide-title">Para seguir aprendiendo</h2>
+    <div class="columns">
+      <div class="card">
+        <h3>🔗 Recursos</h3>
+        <ul>
+          <li><b>Docs Godot</b> — docs.godotengine.org</li>
+          <li><b>GDQuest</b> — gdquest.com</li>
+          <li><b>KidsCanCode</b> — kidscancode.org</li>
+          <li><b>Game Jams</b> — itch.io/jams, globalgamejam.org</li>
+          <li><b>Comunidad</b> — r/godot y el Discord oficial</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>💛 El mejor consejo</h3>
+        <p>Hacer juegos <b>pequeños</b> y <b>terminarlos</b>. Un juego de 5 minutos que funciona vale más que un RPG enorme que nunca se termina.</p>
+        <p class="small-note" style="margin-top:10px;">“El único juego que no enseña nada es el que nunca se termina.”</p>
+      </div>
+    </div>
+    <p class="small-note" style="margin-top:20px; text-align:center;"><b>¡Felicitaciones! Hicieron un juego.</b> · Capturas del editor: docs oficiales de Godot — CC BY 4.0.</p>
+  </section>
+
+</div>
+
+<script src="deck.js"></script>
+</body>
+</html>

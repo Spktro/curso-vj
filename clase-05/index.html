@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Diplomatura de Videojuegos · Clase 5 — Muchos de uno</title>
+<link rel="stylesheet" href="deck.css" />
+</head>
+<body>
+
+<div class="deck" id="deck" data-brand="Diplomatura de Videojuegos · Clase 5" data-home="../index.html">
+
+  <!-- ============ INICIO ============ -->
+  <section class="slide title-slide active" data-chapter="Inicio" data-topic="Portada">
+    <div class="title-grid">
+      <div>
+        <div class="slide-eyebrow">Clase 5 · POO e Instanciación</div>
+        <h1 class="title">Muchos de <span class="accent">uno</span></h1>
+        <p class="subtitle">Programación orientada a objetos, scripts como clases, e <b>instanciar</b> escenas para crear enemigos, balas y monedas en tiempo real.</p>
+        <p class="small-note">“Un molde de galletas no es la galleta: es la plantilla para hacer <b>infinitas</b>.”</p>
+      </div>
+      <div class="title-photo" style="border:none; box-shadow:none; background:transparent;">
+        <img src="assets/godot-logo.png" alt="Godot Engine" style="max-height:420px; width:auto; margin:0 auto; display:block;" />
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Inicio" data-topic="Objetivos">
+    <div class="slide-eyebrow">Objetivos</div>
+    <h2 class="slide-title">Al terminar la clase van a poder…</h2>
+    <ul class="bullets">
+      <li>Entender los conceptos básicos de <b>POO</b> (objetos, propiedades, métodos)</li>
+      <li>Reconocer que en Godot <b>cada script es una clase</b></li>
+      <li><b>Instanciar</b> escenas guardadas para crear múltiples objetos en tiempo real</li>
+      <li>Implementar un sistema de <b>spawning</b> de enemigos o proyectiles</li>
+    </ul>
+    <div class="callout" style="margin-top:22px;">Puente con la Clase 1: las escenas eran reutilizables. Hoy las <b>reproducimos vivas</b> desde código.</div>
+  </section>
+
+  <!-- ============ HOOK ============ -->
+  <section class="slide" data-chapter="Hook" data-topic="Hook inicial">
+    <div class="slide-eyebrow">Arranque</div>
+    <h2 class="slide-title">¿Y si tengo 50 enemigos?</h2>
+    <div class="columns">
+      <div class="card" style="border-top:3px solid var(--red);"><h3 style="color:var(--red);">❌ Copiar y pegar</h3><p>Tres enemigos duplicados a mano. Querés cambiarles la velocidad… <b>y tocás tres scripts</b>. Con 50, es imposible.</p></div>
+      <div class="card" style="border-top:3px solid var(--green);"><h3 style="color:var(--green);">✅ Instanciar</h3><p>Un código crea 10 enemigos desde <b>una sola plantilla</b>. Modificás la plantilla y <b>cambian todos</b>.</p></div>
+    </div>
+    <div class="callout" style="margin-top:22px;">💡 La solución se llama <b>instanciación</b>. Y para entenderla, primero un concepto más profundo: la <b>Programación Orientada a Objetos</b>.</div>
+  </section>
+
+  <!-- ============ POO ============ -->
+  <section class="slide" data-chapter="POO" data-topic="El problema que resuelve">
+    <div class="slide-eyebrow">Concepto</div>
+    <h2 class="slide-title">POO: organizar el caos</h2>
+    <div class="columns">
+      <div>
+        <p class="subtitle" style="font-size:18px;">Sin organización, un RPG con 50 enemigos sería un mar de variables sueltas:</p>
+        <pre class="code" style="font-size:13px;"><span class="k">var</span> vida_goblin = <span class="n">30</span>
+<span class="k">var</span> velocidad_goblin = <span class="n">80</span>
+<span class="k">var</span> vida_dragon = <span class="n">500</span>
+<span class="k">var</span> velocidad_dragon = <span class="n">40</span>
+<span class="c"># ...imposible de mantener</span></pre>
+      </div>
+      <div class="card" style="align-self:center;">
+        <h3>Un objeto tiene 2 cosas</h3>
+        <ul>
+          <li><b>Datos</b> (propiedades): qué <b>sabe</b>. <code>vida = 100</code></li>
+          <li><b>Comportamiento</b> (métodos): qué <b>puede hacer</b>. <code>atacar()</code></li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:16px;">🎮 <b>Analogía RPG:</b> un Guerrero tiene <code>vida</code>, <code>fuerza</code>, <code>armadura</code> (datos) y puede <code>atacar()</code>, <code>bloquear()</code> (métodos). La Maga tiene lo suyo. Ambos son de tipo <b>Personaje</b>.</div>
+  </section>
+
+  <section class="slide" data-chapter="POO" data-topic="Los 4 pilares">
+    <div class="slide-eyebrow">POO</div>
+    <h2 class="slide-title">Los 4 pilares (versión principiante)</h2>
+    <table class="tbl">
+      <thead><tr><th>Pilar</th><th>Qué significa</th></tr></thead>
+      <tbody>
+        <tr><td><b>Encapsulamiento</b></td><td>Los datos de un objeto son suyos. Otros los tocan a través de <b>métodos</b>, no directamente.</td></tr>
+        <tr><td><b>Herencia</b></td><td>Una clase hereda propiedades y métodos de otra. <code>Mago</code> hereda de <code>Personaje</code>.</td></tr>
+        <tr><td>Polimorfismo</td><td>Objetos distintos responden distinto al mismo mensaje. <code>atacar()</code> difiere en Guerrero y Mago.</td></tr>
+        <tr><td>Abstracción</td><td>Usás el objeto sin saber cómo funciona por dentro.</td></tr>
+      </tbody>
+    </table>
+    <div class="callout" style="margin-top:16px;">Hoy nos concentramos en los <b>primeros dos</b>. Los otros aparecen solos a medida que el proyecto crece.</div>
+  </section>
+
+  <!-- ============ SCRIPTS COMO CLASES ============ -->
+  <section class="slide" data-chapter="Clases" data-topic="Scripts como clases">
+    <div class="slide-eyebrow">En Godot</div>
+    <h2 class="slide-title">Cada script <code>.gd</code> es una clase</h2>
+    <div class="code-wrap">
+      <pre class="code" style="font-size:12.5px;"><span class="k">extends</span> <span class="t">CharacterBody2D</span>   <span class="c"># hereda TODO de CharacterBody2D</span>
+
+<span class="c"># ── PROPIEDADES (datos de la clase) ──</span>
+<span class="k">var</span> vida: <span class="t">int</span> = <span class="n">100</span>
+<span class="k">var</span> nombre_personaje: <span class="t">String</span> = <span class="s">"Héroe"</span>
+
+<span class="c"># ── MÉTODOS (comportamiento) ──</span>
+<span class="k">func</span> <span class="t">recibir_dano</span>(cantidad: <span class="t">int</span>) -> <span class="t">void</span>:
+    vida -= cantidad
+    <span class="k">if</span> vida <= <span class="n">0</span>:
+        morir()
+
+<span class="k">func</span> <span class="t">morir</span>() -> <span class="t">void</span>:
+    <span class="t">print</span>(nombre_personaje + <span class="s">" murió"</span>)
+    queue_free()</pre>
+    </div>
+    <div class="callout" style="margin-top:12px;"><code>extends</code> es <b>herencia</b> en acción: tu clase arranca con todo lo de <code>CharacterBody2D</code> y le sumás lo tuyo.</div>
+  </section>
+
+  <section class="slide" data-chapter="Clases" data-topic="Tipado estático">
+    <div class="slide-eyebrow">Buena práctica</div>
+    <h2 class="slide-title">Tipado estático: <code>: int</code>, <code>: float</code>…</h2>
+    <div class="columns">
+      <div class="code-wrap">
+        <pre class="code" style="font-size:13px;"><span class="c"># Sin tipado (válido):</span>
+<span class="k">var</span> vida = <span class="n">100</span>
+
+<span class="c"># Con tipado (recomendado):</span>
+<span class="k">var</span> vida: <span class="t">int</span> = <span class="n">100</span>
+<span class="k">var</span> velocidad: <span class="t">float</span> = <span class="n">200.0</span>
+<span class="k">var</span> nombre: <span class="t">String</span> = <span class="s">"Héroe"</span>
+<span class="k">var</span> tiene_espada: <span class="t">bool</span> = <span class="k">false</span></pre>
+      </div>
+      <div style="align-self:center;">
+        <div class="card">
+          <h3>Por qué conviene</h3>
+          <ul>
+            <li>El editor te <b>avisa errores</b> antes de ejecutar</li>
+            <li>Mejor <b>autocompletado</b></li>
+            <li>El juego corre un poco <b>más rápido</b></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ INSTANCIACIÓN ============ -->
+  <section class="slide" data-chapter="Instanciación" data-topic="El molde de galletas">
+    <div class="slide-eyebrow">La magia</div>
+    <h2 class="slide-title">Instanciar = copias vivas de una escena</h2>
+    <div class="columns">
+      <div>
+        <div class="callout">🍪 <b>Analogía:</b> una escena guardada es un <b>molde de galletas</b>. El molde <b>no es</b> la galleta: es la plantilla para hacer infinitas.</div>
+        <p class="small-note" style="margin-top:14px;">Cada galleta instanciada es <b>independiente</b>: la movés, la pintás o la destruís sin tocar el molde ni a las demás.</p>
+      </div>
+      <div class="imgcard">
+        <img src="assets/godette.png" alt="Godette" style="max-height:300px;" />
+        <figcaption class="imgcaption">Una escena <code>.tscn</code> = el molde. <code>instantiate()</code> = cada galleta.</figcaption>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Instanciación" data-topic="El flujo">
+    <div class="slide-eyebrow">Instanciación</div>
+    <h2 class="slide-title">El flujo, en 4 pasos</h2>
+    <div class="code-wrap">
+      <pre class="code" style="font-size:13px;"><span class="k">extends</span> <span class="t">Node2D</span>
+
+<span class="c"># 1. Cargar la escena plantilla (una sola vez)</span>
+<span class="k">var</span> escena_enemigo = <span class="t">preload</span>(<span class="s">"res://enemigo.tscn"</span>)
+
+<span class="k">func</span> <span class="t">_ready</span>():
+    <span class="c"># 2. Crear una instancia (copia viva)</span>
+    <span class="k">var</span> nuevo = escena_enemigo.instantiate()
+    <span class="c"># 3. Configurarla</span>
+    nuevo.position = <span class="t">Vector2</span>(<span class="n">300</span>, <span class="n">200</span>)
+    <span class="c"># 4. Agregarla a la escena para que exista</span>
+    add_child(nuevo)</pre>
+    </div>
+    <div class="callout" style="margin-top:12px;">Sin <code>add_child()</code>, la instancia existe en memoria pero <b>no aparece</b> en el juego.</div>
+  </section>
+
+  <section class="slide" data-chapter="Instanciación" data-topic="preload vs load">
+    <div class="slide-eyebrow">Instanciación</div>
+    <h2 class="slide-title"><code>preload()</code> vs <code>load()</code></h2>
+    <table class="tbl">
+      <thead><tr><th>Función</th><th>Cuándo usar</th></tr></thead>
+      <tbody>
+        <tr><td><code>preload("ruta")</code></td><td>Carga el recurso <b>al compilar</b> la escena. Más rápido en ejecución. Para cosas que <b>siempre</b> vas a usar.</td></tr>
+        <tr><td><code>load("ruta")</code></td><td>Carga <b>en tiempo de ejecución</b>, cuando se necesita. Para contenido opcional o pesado, o cargas bajo demanda.</td></tr>
+      </tbody>
+    </table>
+    <div class="callout" style="margin-top:18px;"><b>Regla simple:</b> <code>preload()</code> para lo que siempre instanciás. <code>load()</code> para recursos opcionales o pesados.</div>
+  </section>
+
+  <!-- ============ SPAWNING ============ -->
+  <section class="slide" data-chapter="Spawning" data-topic="Spawner con timer manual">
+    <div class="slide-eyebrow">Crear en tiempo real</div>
+    <h2 class="slide-title">Spawning: que aparezcan solos</h2>
+    <div class="columns">
+      <div class="code-wrap">
+        <pre class="code" style="font-size:12px;"><span class="k">extends</span> <span class="t">Node2D</span>
+<span class="k">var</span> escena_enemigo = <span class="t">preload</span>(<span class="s">"res://enemigo.tscn"</span>)
+<span class="k">var</span> tiempo_entre = <span class="n">2.0</span>
+<span class="k">var</span> timer = <span class="n">0.0</span>
+
+<span class="k">func</span> <span class="t">_process</span>(delta):
+    timer += delta
+    <span class="k">if</span> timer >= tiempo_entre:
+        timer = <span class="n">0.0</span>
+        spawnear()
+
+<span class="k">func</span> <span class="t">spawnear</span>():
+    <span class="k">var</span> e = escena_enemigo.instantiate()
+    e.position = <span class="t">Vector2</span>(<span class="t">randf_range</span>(<span class="n">50</span>, <span class="n">750</span>), <span class="n">-30</span>)
+    add_child(e)</pre>
+      </div>
+      <div style="align-self:center;">
+        <div class="callout">Spawning es la técnica detrás de que aparezcan <b>enemigos, proyectiles, explosiones, monedas</b>.</div>
+        <p class="small-note"><code>randf_range(a, b)</code> da un número al azar entre <code>a</code> y <code>b</code>.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Spawning" data-topic="Nodo Timer">
+    <div class="slide-eyebrow">Spawning</div>
+    <h2 class="slide-title">El nodo <code>Timer</code>: más limpio</h2>
+    <div class="code-wrap">
+      <pre class="code" style="font-size:13px;"><span class="k">extends</span> <span class="t">Node2D</span>
+<span class="k">var</span> escena_enemigo = <span class="t">preload</span>(<span class="s">"res://enemigo.tscn"</span>)
+
+<span class="k">func</span> <span class="t">_ready</span>():
+    <span class="k">var</span> timer = <span class="t">Timer</span>.new()      <span class="c"># crear un Timer por código</span>
+    add_child(timer)
+    timer.wait_time = <span class="n">2.0</span>
+    timer.timeout.connect(spawnear)  <span class="c"># señal → función</span>
+    timer.start()
+
+<span class="k">func</span> <span class="t">spawnear</span>():
+    <span class="k">var</span> e = escena_enemigo.instantiate()
+    e.position = <span class="t">Vector2</span>(<span class="t">randf_range</span>(<span class="n">50</span>, <span class="n">750</span>), <span class="n">-30</span>)
+    add_child(e)</pre>
+    </div>
+    <div class="callout" style="margin-top:12px;">El <code>Timer</code> emite la señal <code>timeout</code> cada <code>wait_time</code>. La conectamos a <code>spawnear</code> (¡señales, de la Clase 4!).</div>
+  </section>
+
+  <section class="slide" data-chapter="Spawning" data-topic="En juegos reales">
+    <div class="slide-eyebrow">🎮 En juegos que conocés</div>
+    <h2 class="slide-title">Instanciar está en TODAS partes</h2>
+    <div class="columns three">
+      <div class="card">
+        <h3>👾 Space Invaders</h3>
+        <p>Cada alien y cada disparo es una <b>instancia</b> de una plantilla. El clásico de 1978 ya usaba la idea.</p>
+      </div>
+      <div class="card">
+        <h3>🧛 Vampire Survivors / Brotato</h3>
+        <p><b>Cientos de enemigos</b> en pantalla, todos spawneados desde una misma escena. Toda la tensión sale de ahí.</p>
+      </div>
+      <div class="card">
+        <h3>🔫 Enter the Gungeon</h3>
+        <p><i>Bullet hell</i>: <b>miles de balas</b> a la vez. Cada bala es una instancia que se autoelimina al salir.</p>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:20px;">Si un juego tiene “muchos de algo que aparecen y desaparecen”, casi seguro es <b>instanciación + spawning</b>.</div>
+  </section>
+
+  <section class="slide" data-chapter="Spawning" data-topic="Acceder a instancias">
+    <div class="slide-eyebrow">Spawning</div>
+    <h2 class="slide-title">Modificar y limpiar instancias</h2>
+    <div class="columns">
+      <div class="code-wrap">
+        <pre class="code" style="font-size:12.5px;"><span class="k">func</span> <span class="t">spawnear</span>():
+    <span class="k">var</span> e = escena_enemigo.instantiate()
+    add_child(e)
+    <span class="c"># tocar sus propiedades/métodos</span>
+    e.position = <span class="t">Vector2</span>(<span class="n">300</span>, <span class="n">200</span>)
+    e.velocidad = <span class="n">150.0</span>
+
+<span class="c"># eliminar todos los enemigos:</span>
+<span class="k">func</span> <span class="t">limpiar</span>():
+    <span class="k">for</span> e <span class="k">in</span> get_children():
+        <span class="k">if</span> e.is_in_group(<span class="s">"enemigo"</span>):
+            e.queue_free()</pre>
+      </div>
+      <div style="align-self:center;">
+        <div class="callout">💡 <b>Buena práctica:</b> instanciá dentro de un nodo contenedor (ej. <code>$Enemigos</code>). Así la jerarquía queda limpia y borrás todo de una.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PRÁCTICA ============ -->
+  <section class="slide" data-chapter="Práctica" data-topic="Esquivar enemigos">
+    <div class="slide-eyebrow">Integradora</div>
+    <h2 class="slide-title">Práctica: enemigos que caen</h2>
+    <div class="columns">
+      <div class="code-wrap">
+        <pre class="code" style="font-size:12.5px;"><span class="c"># Enemigo.tscn → script:</span>
+<span class="k">extends</span> <span class="t">CharacterBody2D</span>
+<span class="k">var</span> velocidad: <span class="t">float</span> = <span class="n">150.0</span>
+
+<span class="k">func</span> <span class="t">_ready</span>():
+    add_to_group(<span class="s">"enemigo"</span>)
+
+<span class="k">func</span> <span class="t">_physics_process</span>(delta):
+    velocity = <span class="t">Vector2</span>(<span class="n">0</span>, velocidad)  <span class="c"># hacia abajo</span>
+    move_and_slide()
+    <span class="k">if</span> position.y > <span class="n">700</span>:      <span class="c"># salió de pantalla</span>
+        queue_free()</pre>
+      </div>
+      <div style="align-self:center;">
+        <div class="card">
+          <h3>Objetivo</h3>
+          <p>Un <b>Spawner</b> crea enemigos arriba; el jugador los <b>esquiva</b>.</p>
+          <ul>
+            <li><code>Enemigo.tscn</code>: cuerpo + sprite + colisión</li>
+            <li><code>Nivel.tscn</code>: Jugador + Spawner</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CIERRE ============ -->
+  <section class="slide" data-chapter="Cierre" data-topic="Resumen">
+    <div class="slide-eyebrow">Cierre</div>
+    <h2 class="slide-title">Lo que nos llevamos</h2>
+    <table class="tbl">
+      <thead><tr><th>Concepto</th><th>Idea clave</th></tr></thead>
+      <tbody>
+        <tr><td><b>POO</b></td><td>Objetos con datos (propiedades) y comportamiento (métodos). Cada script es una clase.</td></tr>
+        <tr><td><b><code>preload()</code></b></td><td>Carga la escena plantilla al compilar.</td></tr>
+        <tr><td><b><code>instantiate()</code></b></td><td>Crea una copia viva; <code>add_child()</code> la hace aparecer.</td></tr>
+        <tr><td><b>Spawning</b></td><td>Crear instancias en vivo con <code>Timer</code> y posiciones al azar.</td></tr>
+      </tbody>
+    </table>
+    <div class="callout" style="margin-top:16px;">Las instancias son <b>independientes</b>: modificar una no afecta a las demás ni al molde.</div>
+  </section>
+
+  <section class="slide title-slide" data-chapter="Cierre" data-topic="Tarea y recursos">
+    <div class="slide-eyebrow">Para seguir</div>
+    <h2 class="slide-title">Tarea y recursos</h2>
+    <div class="columns">
+      <div class="card">
+        <h3>📝 Tarea</h3>
+        <ul>
+          <li>Escena <code>Proyectil.tscn</code> que se instancia al presionar una tecla</li>
+          <li>Que se muevan y se eliminen al salir de pantalla</li>
+          <li>Límite de munición (máx. 10 activos)</li>
+          <li><b>Desafío:</b> que los proyectiles destruyan enemigos usando <b>señales</b></li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>🔗 Para profundizar</h3>
+        <ul>
+          <li><b>GDQuest</b> — <code>gdquest.com</code> (buenas prácticas)</li>
+          <li><b>KidsCanCode</b> — <code>kidscancode.org</code></li>
+          <li>Docs: <i>GDScript → Classes</i> y <i>Instancing</i></li>
+        </ul>
+      </div>
+    </div>
+    <p class="small-note" style="margin-top:22px; text-align:center;">“Muchos de uno.” · Logo y mascota de Godot © Godot Foundation — CC BY 4.0.</p>
+  </section>
+
+</div>
+
+<script src="deck.js"></script>
+</body>
+</html>
