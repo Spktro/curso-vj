@@ -14,6 +14,10 @@ Si están publicadas con GitHub Pages: **https://spktro.github.io/curso-vj/**
 | 02 | [Programar con GDScript](clase-02/index.html) | Qué es programar, variables, condicionales, loops, funciones e input |
 | 03 | [El juego está vivo](clase-03/index.html) | Game loop, `_ready()`, `_process(delta)`, movimiento con delta e Input Map |
 | 04 | [El personaje cobra vida](clase-04/index.html) | Cuerpos físicos, `CharacterBody2D` con `move_and_slide()`, colisiones, señales, `Area2D` y grupos |
+| 05 | [Muchos de uno](clase-05/index.html) | POO básica, scripts como clases, tipado, instanciación de escenas y spawning |
+| 06 | [La cara del juego](clase-06/index.html) | UI: `CanvasLayer`, `Label`, `Button`, `ProgressBar`, HUD, menús y cambio de escenas |
+| 07 | [El juego se siente vivo](clase-07/index.html) | Animación, `AnimationPlayer`, audio y buses, y Game Feel (cámara, `Tween`, partículas) |
+| 08 | [Tu juego en el mundo](clase-08/index.html) | Exportar a Windows y Android, organización, testing y proyecto final |
 
 ## 📝 Trabajos prácticos
 
@@ -46,6 +50,7 @@ El home vive en la raíz; cada clase es una carpeta **autocontenida** (trae su p
 ├── clase-02/           # todo lo de la Clase 2 (misma estructura)
 ├── clase-03/           # todo lo de la Clase 3 (misma estructura)
 ├── clase-04/           # todo lo de la Clase 4 (misma estructura)
+├── clase-05/ … clase-08/   # Clases 5 a 8 (misma estructura)
 └── trabajos-practicos/ # TPs guiados, en Markdown y PDF
 ```
 
