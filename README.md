@@ -32,6 +32,7 @@ Tutoriales paso a paso, muy guiados, para hacer en casa. Cada uno en Markdown y 
 | 2 | [Tu primer juego de texto](trabajos-practicos/trabajo-practico-2.md) ([PDF](trabajos-practicos/trabajo-practico-2.pdf)) | Variables, arreglos, `if`, `for`, funciones e input — combate por consola |
 | 3 | [Un personaje que se mueve](trabajos-practicos/trabajo-practico-3.md) ([PDF](trabajos-practicos/trabajo-practico-3.pdf)) | `CharacterBody2D`, Input Map, `delta`, correr, dash y `clamp()` |
 | 4 | [Un plataformero: juntá las monedas](trabajos-practicos/trabajo-practico-4.md) ([PDF](trabajos-practicos/trabajo-practico-4.pdf)) | Señales y `Area2D` para juntar monedas, `CharacterBody2D` + `move_and_slide()`, y **TileSet** con colisiones para las plataformas (sprites de Brackeys, CC0) |
+| 5 | [Atrapa las piezas](trabajos-practicos/trabajo-practico-5.md) ([PDF](trabajos-practicos/trabajo-practico-5.pdf)) | **Herencia** (clase base + hijas), grupos, instanciación y spawning con `Timer`: atrapar piezas de Tetris con una canasta (suman) y esquivar bombas (restan) |
 
 ## 🗂️ Estructura
 
