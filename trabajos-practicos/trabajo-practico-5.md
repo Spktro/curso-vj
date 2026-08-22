@@ -12,7 +12,7 @@ Una **canasta** que movés con las flechas en la parte de abajo. Desde arriba ca
 - **Piezas de Tetris** (comida): atraparlas **suma** un punto. ✅
 - **Bombas** (basura): atraparlas **resta** un punto. 💣
 
-El puntaje aparece en la consola. Y todo el sistema de objetos que caen sale de **una sola clase base**.
+El puntaje se ve **en pantalla**. Y todo el sistema de objetos que caen sale de **una sola clase base**.
 
 > 💡 **Tiempo estimado:** 75–100 min. **Escribí el código vos** — la herencia se entiende tecleándola.
 
@@ -56,7 +56,9 @@ Nivel  (Node2D)
 ├── Canasta  (CharacterBody2D)   [grupo "canasta"]
 │   ├── Sprite2D
 │   └── CollisionShape2D
-└── Spawner  (Node2D)            ← crea comidas y basuras con un Timer
+├── Spawner  (Node2D)            ← crea comidas y basuras con un Timer
+└── HUD  (CanvasLayer)           ← el puntaje en pantalla
+    └── LabelPuntos  (Label)
 ```
 
 ---
@@ -270,7 +272,7 @@ func soltar() -> void:
 
 > 🧠 **`preload`** carga las escenas plantilla una vez. **`instantiate()`** crea una copia viva de cada objeto, y **`add_child()`** la hace aparecer. El `Timer` dispara todo con su señal `timeout`.
 
-✅ **Punto de control 5 (final):** caen objetos solos, el puntaje sube con las piezas y baja con las bombas.
+✅ **Punto de control 5:** caen objetos solos, el puntaje sube con las piezas y baja con las bombas.
 
 > 🛟 **Errores comunes**
 >
@@ -281,6 +283,57 @@ func soltar() -> void:
 > - **Caen todas encimadas**: usá `randf_range(40, ancho - 40)` para la X.
 > - **No pasa nada**: ¿el `Timer` tiene `start()` y su `timeout` conectado a `soltar`?
 > - **Indentación mezclada**: usá espacios **o** tabs en todo el archivo, no los combines.
+> </details>
+
+---
+
+## 🏆 Parte 6 — El puntaje en pantalla
+
+> **Plus:** mostrar el puntaje con un `Label` (un adelanto de la Clase 6). La UI va dentro de un `CanvasLayer` para que quede **fija en pantalla**, sin importar lo que pase con el mundo.
+
+1. Seleccioná **`Nivel`** → **Otro Nodo** → **`CanvasLayer`** → renombralo **`HUD`**.
+2. Hijo de `HUD` (Ctrl+A) → **`Label`** → renombralo **`LabelPuntos`**. En el Inspector, propiedad **Text**, escribí `Puntos: 0`. Movelo a una esquina (arriba a la izquierda).
+3. (Opcional) Agrandá la letra: Inspector → **Theme Overrides → Font Sizes → Font Size** (por ejemplo `32`).
+4. Que la canasta actualice ese Label. **Reemplazá `canasta.gd`** por esta versión (ahora actualiza el Label en vez de imprimir):
+
+```gdscript
+extends CharacterBody2D
+
+var velocidad := 500.0
+var puntos := 0
+
+func _ready() -> void:
+    add_to_group("canasta")
+    actualizar_puntos()
+
+func _physics_process(delta: float) -> void:
+    velocity.x = Input.get_axis("ui_left", "ui_right") * velocidad
+    move_and_slide()
+    var ancho := get_viewport_rect().size.x
+    position.x = clamp(position.x, 0, ancho)
+
+func sumar_puntos(valor: int) -> void:
+    puntos += valor
+    actualizar_puntos()
+
+func actualizar_puntos() -> void:
+    get_node("../HUD/LabelPuntos").text = "Puntos: " + str(puntos)
+```
+
+Apretá **F6**: el puntaje se ve **en pantalla** y cambia solo al atrapar piezas y bombas.
+
+> 🧠 El **`CanvasLayer`** es una capa que **no se mueve con la cámara**: la UI queda clavada en la pantalla. `get_node("../HUD/LabelPuntos")` busca el Label subiendo al `Nivel` (`..`) y bajando al `HUD`. La `Canasta` sigue llevando el puntaje; el `Label` solo lo **muestra**.
+
+✅ **Punto de control 6 (final):** el `Label` muestra el puntaje y se actualiza en tiempo real.
+
+> 🛟 **El Label no cambia / da error de nodo**
+>
+> <details>
+> <summary>Abrí para ver soluciones</summary>
+>
+> - Los nombres tienen que coincidir **exactamente**: el `CanvasLayer` se llama `HUD` y el `Label`, `LabelPuntos`.
+> - `HUD` y `Canasta` son **hijos de `Nivel`** (hermanos), por eso la ruta es `../HUD/LabelPuntos`.
+> - ¿La `Canasta` sigue teniendo `sumar_puntos()`? La llaman los objetos al ser atrapados.
 > </details>
 
 ---
@@ -302,12 +355,12 @@ Entregá **una** de estas opciones:
 - [ ] La `Canasta` está en el grupo **`canasta`** y se mueve con las flechas.
 - [ ] Al atrapar, el puntaje **sube o baja** según el tipo.
 - [ ] El **Spawner** instancia objetos con un `Timer` y posiciones al azar.
+- [ ] El puntaje se ve en un **`Label`** (dentro de un `CanvasLayer`) y se actualiza en tiempo real.
 
 ---
 
 ## 🌟 Extra (opcional)
 
-- **Puntaje en pantalla:** agregá un `CanvasLayer` con un `Label` y que la canasta actualice su texto en `sumar_puntos()` (adelanto de la Clase 6).
 - **Dificultad progresiva:** que el `wait_time` del Timer baje con el tiempo, o que la `velocidad` de los objetos suba.
 - **Sonido:** un `AudioStreamPlayer` distinto al atrapar comida y al atrapar basura.
 - **Game Over:** que el puntaje no pueda bajar de 0, o que 3 bombas terminen la partida con `get_tree().reload_current_scene()`.
