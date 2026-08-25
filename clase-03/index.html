@@ -93,9 +93,9 @@
 <span class="k">var</span> nombre = <span class="s">"Héroe"</span>
 
 <span class="k">func</span> <span class="t">_ready</span>():
-    position = <span class="t">Vector2</span>(<span class="n">100</span>, <span class="n">300</span>)
-    <span class="t">print</span>(<span class="s">"=== Juego iniciado ==="</span>)
-    <span class="t">print</span>(<span class="s">"Vida: "</span> + <span class="t">str</span>(vida))</pre>
+	position = <span class="t">Vector2</span>(<span class="n">100</span>, <span class="n">300</span>)
+	<span class="t">print</span>(<span class="s">"=== Juego iniciado ==="</span>)
+	<span class="t">print</span>(<span class="s">"Vida: "</span> + <span class="t">str</span>(vida))</pre>
       </div>
     </div>
   </section>
@@ -120,7 +120,7 @@
       </div>
       <div class="code-wrap" style="align-self:center;">
         <pre class="code" style="font-size:14px;"><span class="k">func</span> <span class="t">_process</span>(delta):
-    <span class="t">print</span>(<span class="s">"Estoy corriendo constantemente"</span>)</pre>
+	<span class="t">print</span>(<span class="s">"Estoy corriendo constantemente"</span>)</pre>
         <p class="small-note">Esto llena la consola sin parar — el motor la llama una y otra vez.</p>
       </div>
     </div>
@@ -146,7 +146,7 @@
     <div class="columns">
       <div class="code-wrap">
         <pre class="code" style="font-size:14px;"><span class="k">func</span> <span class="t">_process</span>(delta):
-    position.x += <span class="n">5</span></pre>
+	position.x += <span class="n">5</span></pre>
         <p class="small-note">Suma 5 píxeles… ¿por frame?</p>
       </div>
       <div>
@@ -177,7 +177,7 @@
       </div>
       <div class="code-wrap" style="align-self:center;">
         <pre class="code" style="font-size:14px;"><span class="k">func</span> <span class="t">_process</span>(delta):
-    position.x += <span class="n">200</span> * delta</pre>
+	position.x += <span class="n">200</span> * delta</pre>
         <p class="small-note">El movimiento queda atado al <b>tiempo real</b>, no a la velocidad de la máquina.</p>
       </div>
     </div>
@@ -203,10 +203,10 @@
 <span class="k">var</span> velocidad = <span class="n">150</span>
 
 <span class="k">func</span> <span class="t">_process</span>(delta):
-    position.x += velocidad * delta   <span class="c"># → Derecha</span>
-    <span class="c"># position.x -= velocidad * delta  # ← Izquierda</span>
-    <span class="c"># position.y += velocidad * delta  # ↓ Abajo</span>
-    <span class="c"># position.y -= velocidad * delta  # ↑ Arriba</span></pre>
+	position.x += velocidad * delta   <span class="c"># → Derecha</span>
+	<span class="c"># position.x -= velocidad * delta  # ← Izquierda</span>
+	<span class="c"># position.y += velocidad * delta  # ↓ Abajo</span>
+	<span class="c"># position.y -= velocidad * delta  # ↑ Arriba</span></pre>
       </div>
       <div style="align-self:center;">
         <ol class="steps" style="font-size:15px;">
@@ -228,10 +228,10 @@
 <span class="k">var</span> velocidad = <span class="n">200</span>
 
 <span class="k">func</span> <span class="t">_process</span>(delta):
-    <span class="c"># Vector2(x, y): x horizontal, y vertical</span>
-    position += <span class="t">Vector2</span>(velocidad, <span class="n">0</span>) * delta
-    <span class="c"># Vector2(-velocidad, 0) → izquierda</span>
-    <span class="c"># Vector2(0, velocidad)  → abajo</span></pre>
+	<span class="c"># Vector2(x, y): x horizontal, y vertical</span>
+	position += <span class="t">Vector2</span>(velocidad, <span class="n">0</span>) * delta
+	<span class="c"># Vector2(-velocidad, 0) → izquierda</span>
+	<span class="c"># Vector2(0, velocidad)  → abajo</span></pre>
       </div>
       <div style="align-self:center;">
         <div class="callout">Por ahora solo mostralo: <code>Vector2</code> junta las dos coordenadas en un valor. La <b>clase de física</b> lo va a retomar en profundidad.</div>
@@ -251,8 +251,8 @@
       </div>
       <div class="code-wrap" style="align-self:center;">
         <pre class="code" style="font-size:14px;"><span class="k">func</span> <span class="t">_process</span>(delta):
-    <span class="k">if</span> <span class="t">Input</span>.is_action_pressed(<span class="s">"ui_right"</span>):
-        position.x += velocidad * delta</pre>
+	<span class="k">if</span> <span class="t">Input</span>.is_action_pressed(<span class="s">"ui_right"</span>):
+		position.x += velocidad * delta</pre>
       </div>
     </div>
   </section>
@@ -303,7 +303,7 @@
       </div>
       <div class="code-wrap" style="align-self:center;">
         <pre class="code" style="font-size:13px;"><span class="k">if</span> <span class="t">Input</span>.is_action_pressed(<span class="s">"mover_derecha"</span>):
-    position.x += velocidad * delta</pre>
+	position.x += velocidad * delta</pre>
         <p class="small-note">👐 Práctica: creá <code>mover_derecha</code> y <code>mover_izquierda</code>, asignalas a teclas y usalas. Rompé la dependencia de las acciones predeterminadas.</p>
       </div>
     </div>
@@ -316,14 +316,14 @@
     <div class="columns">
       <div class="code-wrap">
         <pre class="code" style="font-size:12.5px;"><span class="k">func</span> <span class="t">_process</span>(delta):
-    <span class="k">if</span> <span class="t">Input</span>.is_action_pressed(<span class="s">"mover_derecha"</span>):
-        position.x += velocidad * delta
-    <span class="k">if</span> <span class="t">Input</span>.is_action_pressed(<span class="s">"mover_izquierda"</span>):
-        position.x -= velocidad * delta
-    <span class="k">if</span> <span class="t">Input</span>.is_action_pressed(<span class="s">"mover_arriba"</span>):
-        position.y -= velocidad * delta
-    <span class="k">if</span> <span class="t">Input</span>.is_action_pressed(<span class="s">"mover_abajo"</span>):
-        position.y += velocidad * delta</pre>
+	<span class="k">if</span> <span class="t">Input</span>.is_action_pressed(<span class="s">"mover_derecha"</span>):
+		position.x += velocidad * delta
+	<span class="k">if</span> <span class="t">Input</span>.is_action_pressed(<span class="s">"mover_izquierda"</span>):
+		position.x -= velocidad * delta
+	<span class="k">if</span> <span class="t">Input</span>.is_action_pressed(<span class="s">"mover_arriba"</span>):
+		position.y -= velocidad * delta
+	<span class="k">if</span> <span class="t">Input</span>.is_action_pressed(<span class="s">"mover_abajo"</span>):
+		position.y += velocidad * delta</pre>
       </div>
       <div style="align-self:center;">
         <div class="callout">⚠️ En Godot el <b>eje Y está invertido</b>: Y positivo es hacia <b>abajo</b>. Fuente frecuente de confusión.</div>
@@ -337,19 +337,19 @@
     <div class="columns">
       <div class="code-wrap">
         <pre class="code" style="font-size:12.5px;"><span class="k">func</span> <span class="t">_process</span>(delta):
-    <span class="k">if</span> <span class="t">Input</span>.is_mouse_button_pressed(<span class="t">MOUSE_BUTTON_LEFT</span>):
-        <span class="t">print</span>(<span class="s">"¡Click izquierdo!"</span>)
+	<span class="k">if</span> <span class="t">Input</span>.is_mouse_button_pressed(<span class="t">MOUSE_BUTTON_LEFT</span>):
+		<span class="t">print</span>(<span class="s">"¡Click izquierdo!"</span>)
 
-    <span class="k">var</span> pos = get_viewport().get_mouse_position()
-    <span class="t">print</span>(<span class="s">"Mouse en: "</span> + <span class="t">str</span>(pos))</pre>
+	<span class="k">var</span> pos = get_viewport().get_mouse_position()
+	<span class="t">print</span>(<span class="s">"Mouse en: "</span> + <span class="t">str</span>(pos))</pre>
       </div>
       <div class="code-wrap" style="align-self:center;">
         <h4 style="color:var(--accent); font-size:14px; text-transform:uppercase; margin:0 0 8px;">Bonus — ir hacia el mouse</h4>
         <pre class="code" style="font-size:12.5px; margin:0;"><span class="k">if</span> <span class="t">Input</span>.is_mouse_button_pressed(<span class="t">MOUSE_BUTTON_LEFT</span>):
-    <span class="k">var</span> objetivo = get_viewport() \
-        .get_mouse_position()
-    position = position.move_toward(
-        objetivo, velocidad * delta)</pre>
+	<span class="k">var</span> objetivo = get_viewport() \
+		.get_mouse_position()
+	position = position.move_toward(
+		objetivo, velocidad * delta)</pre>
       </div>
     </div>
   </section>
@@ -364,14 +364,14 @@
 <span class="k">var</span> velocidad = <span class="n">200</span>
 
 <span class="k">func</span> <span class="t">_ready</span>():
-    <span class="t">print</span>(<span class="s">"=== Juego iniciado ==="</span>)
-    <span class="t">print</span>(<span class="s">"Usá las flechas o WASD"</span>)
+	<span class="t">print</span>(<span class="s">"=== Juego iniciado ==="</span>)
+	<span class="t">print</span>(<span class="s">"Usá las flechas o WASD"</span>)
 
 <span class="k">func</span> <span class="t">_process</span>(delta):
-    <span class="k">if</span> <span class="t">Input</span>.is_action_pressed(<span class="s">"mover_derecha"</span>):
-        position.x += velocidad * delta
-    <span class="k">if</span> <span class="t">Input</span>.is_action_pressed(<span class="s">"mover_izquierda"</span>):
-        position.x -= velocidad * delta</pre>
+	<span class="k">if</span> <span class="t">Input</span>.is_action_pressed(<span class="s">"mover_derecha"</span>):
+		position.x += velocidad * delta
+	<span class="k">if</span> <span class="t">Input</span>.is_action_pressed(<span class="s">"mover_izquierda"</span>):
+		position.x -= velocidad * delta</pre>
       </div>
       <div style="align-self:center;">
         <div class="card">

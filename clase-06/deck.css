@@ -271,6 +271,8 @@
   .imgcaption { font-size: 13px; color: var(--muted); margin-top: 10px; text-align: center; line-height: 1.4; }
 
   pre.code {
+    tab-size: 4;
+    -moz-tab-size: 4;
     background: var(--code-bg);
     border: 1px solid var(--border);
     border-radius: 12px;
@@ -474,6 +476,148 @@
     display: flex; align-items: center; justify-content: center;
   }
   ol.steps li code { color: var(--accent-2); background: var(--panel-2); padding: 1px 6px; border-radius: 4px; font-size: 0.9em; }
+
+  /* ===================================================================
+     CLASE 6 — Demos visuales de UI (maquetas en vivo, hechas con CSS)
+     =================================================================== */
+
+  /* --- Maqueta de "pantalla de juego" --- */
+  .screen {
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+    border: 2px solid var(--border);
+    background: linear-gradient(#bfe3ff 0%, #dff1ff 55%, #86c06a 55%, #6fa957 100%);
+    aspect-ratio: 16 / 9;
+    width: 100%;
+  }
+  html[data-theme="dark"] .screen {
+    background: linear-gradient(#24344a 0%, #2c3f58 55%, #2f5c3a 55%, #25482d 100%);
+  }
+  .screen .world { position: absolute; inset: 0; }
+  .screen .hero {
+    position: absolute; bottom: 16%; left: 46%;
+    width: 26px; height: 34px; border-radius: 5px;
+    background: var(--accent); box-shadow: 0 3px 0 rgba(0,0,0,0.18);
+  }
+  .screen .prop {
+    position: absolute; bottom: 45%;
+    width: 34px; height: 34px; border-radius: 50%;
+    background: #f5c542; border: 2px solid #d9a520;
+  }
+
+  /* HUD falso dibujado dentro de la maqueta */
+  .fakehud {
+    position: absolute; top: 8px; left: 10px; right: 10px;
+    display: flex; justify-content: space-between; align-items: flex-start;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 13px; font-weight: 800; color: #fff;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+    pointer-events: none;
+  }
+  .fakehud .chip {
+    background: rgba(20,30,55,0.55); border-radius: 6px; padding: 3px 9px;
+  }
+
+  /* --- Demo: la cámara se mueve, ¿y la UI? --- */
+  .camdemo { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin-top: 6px; }
+  /* En la comparativa, las pantallas van a alto fijo para que la slide no se pase */
+  .camdemo .screen { height: 250px; width: auto; margin: 0 auto; }
+  .camdemo .cap { font-size: 14px; color: var(--muted); margin-top: 8px; line-height: 1.35; text-align: center; }
+  .camdemo .cap > b:first-child { display: block; font-size: 15.5px; color: var(--text); }
+  @keyframes pan-world { 0%, 100% { transform: translateX(6%); } 50% { transform: translateX(-22%); } }
+  .screen.moving .world { animation: pan-world 5s ease-in-out infinite; }
+
+  /* --- Demo: barra de vida animada --- */
+  .hpdemo { display: flex; flex-direction: column; gap: 10px; }
+  .hpbar {
+    position: relative; height: 30px; border-radius: 8px;
+    background: var(--panel-2); border: 2px solid var(--border); overflow: hidden;
+  }
+  .hpfill {
+    height: 100%; width: 100%;
+    background: var(--green);
+    animation: hp-drain 8s linear infinite;
+  }
+  @keyframes hp-drain {
+    0%   { width: 100%; background: #16a34a; }
+    44%  { width: 52%;  background: #16a34a; }
+    45%  { width: 50%;  background: #eab308; }
+    69%  { width: 27%;  background: #eab308; }
+    70%  { width: 25%;  background: #dc2626; }
+    92%  { width: 2%;   background: #dc2626; }
+    96%  { width: 100%; background: #16a34a; }
+    100% { width: 100%; background: #16a34a; }
+  }
+  .hpticks { position: absolute; inset: 0; pointer-events: none; }
+  .hpticks i {
+    position: absolute; top: 0; bottom: 0; width: 2px;
+    background: rgba(20,30,55,0.28);
+  }
+  .hpnum {
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 15px; font-weight: 700; color: var(--text); text-align: center;
+  }
+  .hplegend { display: flex; flex-direction: column; gap: 7px; margin-top: 4px; }
+  .hplegend div {
+    display: flex; align-items: center; gap: 9px;
+    font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 12.5px; color: var(--muted);
+  }
+  .hplegend .sw { width: 26px; height: 13px; border-radius: 3px; flex: 0 0 auto; }
+
+  /* --- Previews de nodos de Control --- */
+  .ctrl-demo { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 4px; }
+  .ctrl-demo .box {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 12px;
+    padding: 14px 16px; display: flex; flex-direction: column; gap: 9px;
+  }
+  .ctrl-demo .nm {
+    font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 12.5px;
+    color: var(--accent-2); font-weight: 700;
+  }
+  .ctrl-demo .stage {
+    background: var(--panel-2); border-radius: 8px; padding: 12px;
+    display: flex; align-items: center; justify-content: center; min-height: 56px;
+  }
+  .ctrl-demo p { margin: 0; font-size: 13px; color: var(--muted); line-height: 1.4; }
+
+  /* Botón "de Godot" con sus estados reales */
+  .gbtn {
+    font-family: inherit; font-size: 14px; font-weight: 600;
+    padding: 7px 18px; border-radius: 6px; cursor: pointer;
+    border: 1px solid var(--border); background: var(--panel); color: var(--text);
+    transition: background 0.12s ease, border-color 0.12s ease, transform 0.06s ease;
+  }
+  .gbtn:hover { background: var(--panel-2); border-color: var(--accent); }
+  .gbtn:active { transform: translateY(1px); background: var(--accent); color: #fff; }
+  .gbtn[disabled] { opacity: 0.45; cursor: not-allowed; }
+  .gbar { width: 100%; height: 18px; border-radius: 5px; background: var(--panel); border: 1px solid var(--border); overflow: hidden; }
+  .gbar > i { display: block; height: 100%; width: 65%; background: var(--green); }
+
+  /* --- Wireframe del HUD --- */
+  .wire { position: relative; width: 100%; aspect-ratio: 16 / 9; border: 2px dashed var(--border); border-radius: 10px; background: var(--panel-2); }
+  .wire .zone {
+    position: absolute; border: 2px solid var(--accent); border-radius: 8px;
+    background: rgba(124,58,237,0.10);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+    font-size: 12.5px; font-weight: 700; color: var(--accent); padding: 4px;
+    line-height: 1.25;
+  }
+  .wire .zone small { display: block; font-family: "SF Mono", Menlo, Consolas, monospace; font-weight: 500; font-size: 10.5px; color: var(--muted); }
+  .wire .center-note { position: absolute; inset: 34% 22%; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 13px; text-align: center; }
+
+  /* --- Grilla de capturas de HUD reales --- */
+  .hudshots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 6px; }
+  .hudshots figure { margin: 0; display: flex; flex-direction: column; gap: 8px; }
+  .hudshots img { width: 100%; height: 168px; object-fit: cover; border-radius: 9px; box-shadow: 0 2px 8px rgba(0,0,0,0.16); display: block; }
+  .hudshots figcaption { font-size: 13.5px; color: var(--muted); line-height: 1.35; }
+  .hudshots figcaption > b:first-child { display: block; font-size: 15px; color: var(--text); }
+
+  /* Animaciones detenidas al imprimir (quedan en un estado legible) */
+  @media print {
+    .screen.moving .world, .hpfill { animation: none !important; }
+    .hpfill { width: 38%; background: #eab308; }
+  }
 
   /* Exportar a PDF / imprimir */
   @media print {

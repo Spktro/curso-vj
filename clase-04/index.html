@@ -121,17 +121,17 @@
 <span class="k">const</span> FUERZA_SALTO = <span class="n">-400.0</span>  <span class="c"># negativo = arriba (Y invertido)</span>
 
 <span class="k">func</span> <span class="t">_physics_process</span>(delta):
-    <span class="c"># 1. Gravedad: se acumula en el aire</span>
-    <span class="k">if</span> <span class="k">not</span> is_on_floor():
-        velocity.y += GRAVEDAD * delta
-    <span class="c"># 2. Input horizontal: -1 / 0 / 1</span>
-    <span class="k">var</span> dir = <span class="t">Input</span>.get_axis(<span class="s">"mover_izquierda"</span>, <span class="s">"mover_derecha"</span>)
-    velocity.x = dir * VELOCIDAD
-    <span class="c"># 3. Salto: solo si toca el suelo</span>
-    <span class="k">if</span> <span class="t">Input</span>.is_action_just_pressed(<span class="s">"saltar"</span>) <span class="k">and</span> is_on_floor():
-        velocity.y = FUERZA_SALTO
-    <span class="c"># 4. Que Godot resuelva las colisiones</span>
-    move_and_slide()</pre>
+	<span class="c"># 1. Gravedad: se acumula en el aire</span>
+	<span class="k">if</span> <span class="k">not</span> is_on_floor():
+		velocity.y += GRAVEDAD * delta
+	<span class="c"># 2. Input horizontal: -1 / 0 / 1</span>
+	<span class="k">var</span> dir = <span class="t">Input</span>.get_axis(<span class="s">"mover_izquierda"</span>, <span class="s">"mover_derecha"</span>)
+	velocity.x = dir * VELOCIDAD
+	<span class="c"># 3. Salto: solo si toca el suelo</span>
+	<span class="k">if</span> <span class="t">Input</span>.is_action_just_pressed(<span class="s">"saltar"</span>) <span class="k">and</span> is_on_floor():
+		velocity.y = FUERZA_SALTO
+	<span class="c"># 4. Que Godot resuelva las colisiones</span>
+	move_and_slide()</pre>
     </div>
   </section>
 
@@ -281,8 +281,8 @@ Suelo <span class="c">(StaticBody2D)</span>
       <div class="code-wrap" style="align-self:center;">
         <pre class="code" style="font-size:13px;"><span class="c"># Función generada automáticamente</span>
 <span class="k">func</span> <span class="t">_on_area_2d_body_entered</span>(body):
-    <span class="c"># 'body' es el nodo que entró</span>
-    <span class="t">print</span>(<span class="s">"Algo entró: "</span> + body.name)</pre>
+	<span class="c"># 'body' es el nodo que entró</span>
+	<span class="t">print</span>(<span class="s">"Algo entró: "</span> + body.name)</pre>
       </div>
     </div>
   </section>
@@ -293,13 +293,13 @@ Suelo <span class="c">(StaticBody2D)</span>
     <div class="code-wrap">
       <pre class="code" style="font-size:13px;"><span class="c"># En _ready() del nodo receptor:</span>
 <span class="k">func</span> <span class="t">_ready</span>():
-    <span class="c"># Buscar el Area2D y conectar su señal a nuestra función</span>
-    $Area2D.body_entered.connect(_on_moneda_tocada)
+	<span class="c"># Buscar el Area2D y conectar su señal a nuestra función</span>
+	$Area2D.body_entered.connect(_on_moneda_tocada)
 
 <span class="k">func</span> <span class="t">_on_moneda_tocada</span>(body):
-    <span class="k">if</span> body.is_in_group(<span class="s">"jugador"</span>):
-        puntos += <span class="n">1</span>
-        queue_free()   <span class="c"># eliminar la moneda</span></pre>
+	<span class="k">if</span> body.is_in_group(<span class="s">"jugador"</span>):
+		puntos += <span class="n">1</span>
+		queue_free()   <span class="c"># eliminar la moneda</span></pre>
     </div>
     <div class="callout" style="margin-top:14px; background:rgba(220,38,38,0.08); border-left-color:var(--red);">⚠️ <b>Si la señal no dispara:</b> verificá que el <code>Area2D</code> tenga un <code>CollisionShape2D</code> hijo con shape asignado. Sin shape, el área <b>no tiene volumen</b> y nunca detecta nada.</div>
   </section>
@@ -316,11 +316,11 @@ Suelo <span class="c">(StaticBody2D)</span>
       <div class="code-wrap" style="align-self:center;">
         <pre class="code" style="font-size:12.5px;"><span class="c"># Etiquetar un nodo (en _ready):</span>
 <span class="k">func</span> <span class="t">_ready</span>():
-    add_to_group(<span class="s">"jugador"</span>)
+	add_to_group(<span class="s">"jugador"</span>)
 
 <span class="c"># ¿Pertenece a un grupo?</span>
 <span class="k">if</span> body.is_in_group(<span class="s">"jugador"</span>):
-    <span class="t">print</span>(<span class="s">"El jugador tocó el área"</span>)
+	<span class="t">print</span>(<span class="s">"El jugador tocó el área"</span>)
 
 <span class="c"># Llamar una función en TODO un grupo:</span>
 get_tree().call_group(<span class="s">"enemigos"</span>, <span class="s">"recibir_dano"</span>, <span class="n">50</span>)</pre>
@@ -368,19 +368,19 @@ get_tree().call_group(<span class="s">"enemigos"</span>, <span class="s">"recibi
 <span class="k">var</span> puntos = <span class="n">0</span>
 
 <span class="k">func</span> <span class="t">_ready</span>():
-    add_to_group(<span class="s">"jugador"</span>)
-    <span class="t">print</span>(<span class="s">"Jugador listo. Puntos: "</span> + <span class="t">str</span>(puntos))
+	add_to_group(<span class="s">"jugador"</span>)
+	<span class="t">print</span>(<span class="s">"Jugador listo. Puntos: "</span> + <span class="t">str</span>(puntos))
 <span class="k">func</span> <span class="t">_physics_process</span>(delta):
-    <span class="k">if</span> <span class="k">not</span> is_on_floor():
-        velocity.y += GRAVEDAD * delta
-    <span class="k">var</span> dir = <span class="t">Input</span>.get_axis(<span class="s">"mover_izquierda"</span>, <span class="s">"mover_derecha"</span>)
-    velocity.x = dir * VELOCIDAD
-    <span class="k">if</span> <span class="t">Input</span>.is_action_just_pressed(<span class="s">"saltar"</span>) <span class="k">and</span> is_on_floor():
-        velocity.y = SALTO
-    move_and_slide()
+	<span class="k">if</span> <span class="k">not</span> is_on_floor():
+		velocity.y += GRAVEDAD * delta
+	<span class="k">var</span> dir = <span class="t">Input</span>.get_axis(<span class="s">"mover_izquierda"</span>, <span class="s">"mover_derecha"</span>)
+	velocity.x = dir * VELOCIDAD
+	<span class="k">if</span> <span class="t">Input</span>.is_action_just_pressed(<span class="s">"saltar"</span>) <span class="k">and</span> is_on_floor():
+		velocity.y = SALTO
+	move_and_slide()
 <span class="k">func</span> <span class="t">sumar_punto</span>():
-    puntos += <span class="n">1</span>
-    <span class="t">print</span>(<span class="s">"¡Moneda! Puntos: "</span> + <span class="t">str</span>(puntos))</pre>
+	puntos += <span class="n">1</span>
+	<span class="t">print</span>(<span class="s">"¡Moneda! Puntos: "</span> + <span class="t">str</span>(puntos))</pre>
     </div>
   </section>
 
@@ -392,12 +392,12 @@ get_tree().call_group(<span class="s">"enemigos"</span>, <span class="s">"recibi
         <pre class="code" style="font-size:13px;"><span class="k">extends</span> <span class="t">Area2D</span>
 
 <span class="k">func</span> <span class="t">_ready</span>():
-    body_entered.connect(_on_body_entered)
+	body_entered.connect(_on_body_entered)
 
 <span class="k">func</span> <span class="t">_on_body_entered</span>(body):
-    <span class="k">if</span> body.is_in_group(<span class="s">"jugador"</span>):
-        body.sumar_punto()   <span class="c"># función del jugador</span>
-        queue_free()         <span class="c"># eliminar la moneda</span></pre>
+	<span class="k">if</span> body.is_in_group(<span class="s">"jugador"</span>):
+		body.sumar_punto()   <span class="c"># función del jugador</span>
+		queue_free()         <span class="c"># eliminar la moneda</span></pre>
       </div>
       <div style="align-self:center;">
         <div class="card">

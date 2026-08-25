@@ -271,6 +271,8 @@
   .imgcaption { font-size: 13px; color: var(--muted); margin-top: 10px; text-align: center; line-height: 1.4; }
 
   pre.code {
+    tab-size: 4;
+    -moz-tab-size: 4;
     background: var(--code-bg);
     border: 1px solid var(--border);
     border-radius: 12px;

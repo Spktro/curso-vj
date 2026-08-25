@@ -100,13 +100,13 @@
 
 <span class="c"># ── MÉTODOS (comportamiento) ──</span>
 <span class="k">func</span> <span class="t">recibir_dano</span>(cantidad: <span class="t">int</span>) -> <span class="t">void</span>:
-    vida -= cantidad
-    <span class="k">if</span> vida <= <span class="n">0</span>:
-        morir()
+	vida -= cantidad
+	<span class="k">if</span> vida <= <span class="n">0</span>:
+		morir()
 
 <span class="k">func</span> <span class="t">morir</span>() -> <span class="t">void</span>:
-    <span class="t">print</span>(nombre_personaje + <span class="s">" murió"</span>)
-    queue_free()</pre>
+	<span class="t">print</span>(nombre_personaje + <span class="s">" murió"</span>)
+	queue_free()</pre>
     </div>
     <div class="callout" style="margin-top:12px;"><code>extends</code> es <b>herencia</b> en acción: tu clase arranca con todo lo de <code>CharacterBody2D</code> y le sumás lo tuyo.</div>
   </section>
@@ -164,12 +164,12 @@
 <span class="k">var</span> escena_enemigo = <span class="t">preload</span>(<span class="s">"res://enemigo.tscn"</span>)
 
 <span class="k">func</span> <span class="t">_ready</span>():
-    <span class="c"># 2. Crear una instancia (copia viva)</span>
-    <span class="k">var</span> nuevo = escena_enemigo.instantiate()
-    <span class="c"># 3. Configurarla</span>
-    nuevo.position = <span class="t">Vector2</span>(<span class="n">300</span>, <span class="n">200</span>)
-    <span class="c"># 4. Agregarla a la escena para que exista</span>
-    add_child(nuevo)</pre>
+	<span class="c"># 2. Crear una instancia (copia viva)</span>
+	<span class="k">var</span> nuevo = escena_enemigo.instantiate()
+	<span class="c"># 3. Configurarla</span>
+	nuevo.position = <span class="t">Vector2</span>(<span class="n">300</span>, <span class="n">200</span>)
+	<span class="c"># 4. Agregarla a la escena para que exista</span>
+	add_child(nuevo)</pre>
     </div>
     <div class="callout" style="margin-top:12px;">Sin <code>add_child()</code>, la instancia existe en memoria pero <b>no aparece</b> en el juego.</div>
   </section>
@@ -199,15 +199,15 @@
 <span class="k">var</span> timer = <span class="n">0.0</span>
 
 <span class="k">func</span> <span class="t">_process</span>(delta):
-    timer += delta
-    <span class="k">if</span> timer >= tiempo_entre:
-        timer = <span class="n">0.0</span>
-        spawnear()
+	timer += delta
+	<span class="k">if</span> timer >= tiempo_entre:
+		timer = <span class="n">0.0</span>
+		spawnear()
 
 <span class="k">func</span> <span class="t">spawnear</span>():
-    <span class="k">var</span> e = escena_enemigo.instantiate()
-    e.position = <span class="t">Vector2</span>(<span class="t">randf_range</span>(<span class="n">50</span>, <span class="n">750</span>), <span class="n">-30</span>)
-    add_child(e)</pre>
+	<span class="k">var</span> e = escena_enemigo.instantiate()
+	e.position = <span class="t">Vector2</span>(<span class="t">randf_range</span>(<span class="n">50</span>, <span class="n">750</span>), <span class="n">-30</span>)
+	add_child(e)</pre>
       </div>
       <div style="align-self:center;">
         <div class="callout">Spawning es la técnica detrás de que aparezcan <b>enemigos, proyectiles, explosiones, monedas</b>.</div>
@@ -224,16 +224,16 @@
 <span class="k">var</span> escena_enemigo = <span class="t">preload</span>(<span class="s">"res://enemigo.tscn"</span>)
 
 <span class="k">func</span> <span class="t">_ready</span>():
-    <span class="k">var</span> timer = <span class="t">Timer</span>.new()      <span class="c"># crear un Timer por código</span>
-    add_child(timer)
-    timer.wait_time = <span class="n">2.0</span>
-    timer.timeout.connect(spawnear)  <span class="c"># señal → función</span>
-    timer.start()
+	<span class="k">var</span> timer = <span class="t">Timer</span>.new()      <span class="c"># crear un Timer por código</span>
+	add_child(timer)
+	timer.wait_time = <span class="n">2.0</span>
+	timer.timeout.connect(spawnear)  <span class="c"># señal → función</span>
+	timer.start()
 
 <span class="k">func</span> <span class="t">spawnear</span>():
-    <span class="k">var</span> e = escena_enemigo.instantiate()
-    e.position = <span class="t">Vector2</span>(<span class="t">randf_range</span>(<span class="n">50</span>, <span class="n">750</span>), <span class="n">-30</span>)
-    add_child(e)</pre>
+	<span class="k">var</span> e = escena_enemigo.instantiate()
+	e.position = <span class="t">Vector2</span>(<span class="t">randf_range</span>(<span class="n">50</span>, <span class="n">750</span>), <span class="n">-30</span>)
+	add_child(e)</pre>
     </div>
     <div class="callout" style="margin-top:12px;">El <code>Timer</code> emite la señal <code>timeout</code> cada <code>wait_time</code>. La conectamos a <code>spawnear</code> (¡señales, de la Clase 4!).</div>
   </section>
@@ -264,17 +264,17 @@
     <div class="columns">
       <div class="code-wrap">
         <pre class="code" style="font-size:12.5px;"><span class="k">func</span> <span class="t">spawnear</span>():
-    <span class="k">var</span> e = escena_enemigo.instantiate()
-    add_child(e)
-    <span class="c"># tocar sus propiedades/métodos</span>
-    e.position = <span class="t">Vector2</span>(<span class="n">300</span>, <span class="n">200</span>)
-    e.velocidad = <span class="n">150.0</span>
+	<span class="k">var</span> e = escena_enemigo.instantiate()
+	add_child(e)
+	<span class="c"># tocar sus propiedades/métodos</span>
+	e.position = <span class="t">Vector2</span>(<span class="n">300</span>, <span class="n">200</span>)
+	e.velocidad = <span class="n">150.0</span>
 
 <span class="c"># eliminar todos los enemigos:</span>
 <span class="k">func</span> <span class="t">limpiar</span>():
-    <span class="k">for</span> e <span class="k">in</span> get_children():
-        <span class="k">if</span> e.is_in_group(<span class="s">"enemigo"</span>):
-            e.queue_free()</pre>
+	<span class="k">for</span> e <span class="k">in</span> get_children():
+		<span class="k">if</span> e.is_in_group(<span class="s">"enemigo"</span>):
+			e.queue_free()</pre>
       </div>
       <div style="align-self:center;">
         <div class="callout">💡 <b>Buena práctica:</b> instanciá dentro de un nodo contenedor (ej. <code>$Enemigos</code>). Así la jerarquía queda limpia y borrás todo de una.</div>
@@ -293,13 +293,13 @@
 <span class="k">var</span> velocidad: <span class="t">float</span> = <span class="n">150.0</span>
 
 <span class="k">func</span> <span class="t">_ready</span>():
-    add_to_group(<span class="s">"enemigo"</span>)
+	add_to_group(<span class="s">"enemigo"</span>)
 
 <span class="k">func</span> <span class="t">_physics_process</span>(delta):
-    velocity = <span class="t">Vector2</span>(<span class="n">0</span>, velocidad)  <span class="c"># hacia abajo</span>
-    move_and_slide()
-    <span class="k">if</span> position.y > <span class="n">700</span>:      <span class="c"># salió de pantalla</span>
-        queue_free()</pre>
+	velocity = <span class="t">Vector2</span>(<span class="n">0</span>, velocidad)  <span class="c"># hacia abajo</span>
+	move_and_slide()
+	<span class="k">if</span> position.y > <span class="n">700</span>:      <span class="c"># salió de pantalla</span>
+		queue_free()</pre>
       </div>
       <div style="align-self:center;">
         <div class="card">

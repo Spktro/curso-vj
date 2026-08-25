@@ -74,16 +74,16 @@
       <pre class="code" style="font-size:12.5px;"><span class="k">@onready</span> <span class="k">var</span> sprite = $AnimatedSprite2D
 
 <span class="k">func</span> <span class="t">actualizar_animacion</span>(dir: <span class="t">float</span>) -> <span class="t">void</span>:
-    <span class="k">if</span> dir != <span class="n">0</span>:
-        sprite.flip_h = dir < <span class="n">0</span>   <span class="c"># espejo si va a la izquierda</span>
-    <span class="c"># Prioridad: primero el aire, después movimiento, después quieto</span>
-    <span class="k">if</span> <span class="k">not</span> is_on_floor():
-        <span class="k">if</span> velocity.y < <span class="n">0</span>: sprite.play(<span class="s">"jump"</span>)
-        <span class="k">else</span>:              sprite.play(<span class="s">"fall"</span>)
-    <span class="k">elif</span> dir != <span class="n">0</span>:
-        sprite.play(<span class="s">"run"</span>)
-    <span class="k">else</span>:
-        sprite.play(<span class="s">"idle"</span>)</pre>
+	<span class="k">if</span> dir != <span class="n">0</span>:
+		sprite.flip_h = dir < <span class="n">0</span>   <span class="c"># espejo si va a la izquierda</span>
+	<span class="c"># Prioridad: primero el aire, después movimiento, después quieto</span>
+	<span class="k">if</span> <span class="k">not</span> is_on_floor():
+		<span class="k">if</span> velocity.y < <span class="n">0</span>: sprite.play(<span class="s">"jump"</span>)
+		<span class="k">else</span>:              sprite.play(<span class="s">"fall"</span>)
+	<span class="k">elif</span> dir != <span class="n">0</span>:
+		sprite.play(<span class="s">"run"</span>)
+	<span class="k">else</span>:
+		sprite.play(<span class="s">"idle"</span>)</pre>
     </div>
     <div class="callout" style="margin-top:12px;">💡 La lógica de animación es una cadena de <code>if/elif</code> <b>en orden de prioridad</b>. Primero lo más importante (¿está en el aire?). El orden importa.</div>
   </section>
@@ -120,10 +120,10 @@
         <pre class="code" style="font-size:12.5px;"><span class="k">@onready</span> <span class="k">var</span> anim = $AnimationPlayer
 
 <span class="k">func</span> <span class="t">recibir_dano</span>(cant: <span class="t">int</span>) -> <span class="t">void</span>:
-    vida -= cant
-    anim.play(<span class="s">"hit_flash"</span>)
-    <span class="k">if</span> vida <= <span class="n">0</span>:
-        anim.play(<span class="s">"death"</span>)</pre>
+	vida -= cant
+	anim.play(<span class="s">"hit_flash"</span>)
+	<span class="k">if</span> vida <= <span class="n">0</span>:
+		anim.play(<span class="s">"death"</span>)</pre>
       </div>
     </div>
     <div class="callout" style="margin-top:14px;">💡 <b>Parpadeo rojo:</b> animá <code>modulate</code> del Sprite entre <code>WHITE</code> y <code>RED</code> varias veces en 0.4 s. Uno de los efectos de Game Feel más fáciles y más impactantes.</div>
@@ -171,12 +171,12 @@
 <span class="k">@onready</span> <span class="k">var</span> sfx_dano = $SFX_Dano
 
 <span class="k">func</span> <span class="t">saltar</span>():
-    velocity.y = SALTO
-    sfx_salto.play()
+	velocity.y = SALTO
+	sfx_salto.play()
 
 <span class="k">func</span> <span class="t">recibir_dano</span>(cant):
-    vida -= cant
-    sfx_dano.play()  <span class="c"># la música sigue sonando</span></pre>
+	vida -= cant
+	sfx_dano.play()  <span class="c"># la música sigue sonando</span></pre>
       </div>
     </div>
   </section>
@@ -217,8 +217,8 @@
         <pre class="code" style="font-size:13px;"><span class="k">@onready</span> <span class="k">var</span> camara = $Camera2D
 
 <span class="k">func</span> <span class="t">_ready</span>():
-    camara.position_smoothing_enabled = <span class="k">true</span>
-    camara.position_smoothing_speed = <span class="n">5.0</span></pre>
+	camara.position_smoothing_enabled = <span class="k">true</span>
+	camara.position_smoothing_speed = <span class="n">5.0</span></pre>
       </div>
     </div>
   </section>
@@ -229,11 +229,11 @@
     <div class="code-wrap">
       <pre class="code" style="font-size:12.5px;"><span class="c"># Un Tween anima una propiedad de forma programática, sin keyframes</span>
 <span class="k">func</span> <span class="t">squeeze_effect</span>() -> <span class="t">void</span>:
-    <span class="k">var</span> tween = create_tween()
-    <span class="c"># Aplastar: ancho +30%, alto -30%</span>
-    tween.tween_property(sprite, <span class="s">"scale"</span>, <span class="t">Vector2</span>(<span class="n">1.3</span>, <span class="n">0.7</span>), <span class="n">0.05</span>)
-    <span class="c"># Volver a normal</span>
-    tween.tween_property(sprite, <span class="s">"scale"</span>, <span class="t">Vector2</span>(<span class="n">1.0</span>, <span class="n">1.0</span>), <span class="n">0.15</span>)</pre>
+	<span class="k">var</span> tween = create_tween()
+	<span class="c"># Aplastar: ancho +30%, alto -30%</span>
+	tween.tween_property(sprite, <span class="s">"scale"</span>, <span class="t">Vector2</span>(<span class="n">1.3</span>, <span class="n">0.7</span>), <span class="n">0.05</span>)
+	<span class="c"># Volver a normal</span>
+	tween.tween_property(sprite, <span class="s">"scale"</span>, <span class="t">Vector2</span>(<span class="n">1.0</span>, <span class="n">1.0</span>), <span class="n">0.15</span>)</pre>
     </div>
     <div class="callout" style="margin-top:14px;">Se dispara al <b>detectar el aterrizaje</b> (pasás de estar en el aire a tocar el suelo). El personaje se “aplasta” un instante y rebota — se siente <b>con peso</b>.</div>
   </section>
