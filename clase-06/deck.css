@@ -536,11 +536,12 @@
   }
   .hpfill {
     height: 100%; width: 100%;
-    background: var(--green);
-    animation: hp-drain 8s linear infinite;
+    background: #16a34a;
+    transition: width 0.35s ease, background-color 0.35s ease;
   }
-  @keyframes hp-drain {
-    0%   { width: 100%; background: #16a34a; }
+  /* Botones para manejar la demo a mano */
+  .hpbtns { display: flex; gap: 9px; justify-content: center; flex-wrap: wrap; }
+  .hphint { font-size: 12.5px; color: var(--muted); text-align: center; font-style: italic; }
     44%  { width: 52%;  background: #16a34a; }
     45%  { width: 50%;  background: #eab308; }
     69%  { width: 27%;  background: #eab308; }
@@ -615,7 +616,7 @@
 
   /* Animaciones detenidas al imprimir (quedan en un estado legible) */
   @media print {
-    .screen.moving .world, .hpfill { animation: none !important; }
+    .screen.moving .world { animation: none !important; }
     .hpfill { width: 38%; background: #eab308; }
   }
 

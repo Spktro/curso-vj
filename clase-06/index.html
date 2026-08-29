@@ -274,6 +274,12 @@
           <div class="hpticks"><i style="left:25%"></i><i style="left:50%"></i></div>
         </div>
         <div class="hpnum">100 / 100</div>
+        <div class="hpbtns">
+          <button class="gbtn" data-hp="-15">⚔️ Recibir daño</button>
+          <button class="gbtn" data-hp="+25">🧪 Curar</button>
+          <button class="gbtn" data-hp="reset">↺ Reiniciar</button>
+        </div>
+        <p class="hphint">Tocá los botones y mirá cómo cambia el color al cruzar cada umbral.</p>
         <div class="hplegend">
           <div><span class="sw" style="background:#16a34a"></span> más del 50% → <b>GREEN</b></div>
           <div><span class="sw" style="background:#eab308"></span> entre 25% y 50% → <b>YELLOW</b></div>
@@ -486,18 +492,35 @@ get_tree().quit()</pre>
 
 <script src="deck.js"></script>
 <script>
-  /* La demo de la barra de vida: el número sale del ancho real de la barra,
-     así queda siempre sincronizado con la animación CSS. */
+  /* Demo de la barra de vida: la maneja el docente con los botones.
+     Replica la MISMA lógica del GDScript que está al lado. */
   (function () {
     var fill = document.querySelector('.hpfill');
-    var num = document.querySelector('.hpnum');
-    if (!fill || !num) return;
-    setInterval(function () {
-      var w = fill.getBoundingClientRect().width;
-      var total = fill.parentElement.getBoundingClientRect().width;
-      if (!total) return;
-      num.textContent = Math.round((w / total) * 100) + ' / 100';
-    }, 80);
+    var num  = document.querySelector('.hpnum');
+    var btns = document.querySelectorAll('.hpbtns [data-hp]');
+    if (!fill || !num || !btns.length) return;
+
+    var MAXIMA = 100;
+    var vida = MAXIMA;
+
+    function actualizar_vida() {
+      fill.style.width = (vida / MAXIMA * 100) + '%';
+      if (vida <= MAXIMA * 0.25)     fill.style.background = '#dc2626';  // Color.RED
+      else if (vida <= MAXIMA * 0.5) fill.style.background = '#eab308';  // Color.YELLOW
+      else                           fill.style.background = '#16a34a';  // Color.GREEN
+      num.textContent = vida + ' / ' + MAXIMA;
+    }
+
+    btns.forEach(function (b) {
+      b.addEventListener('click', function () {
+        var v = b.getAttribute('data-hp');
+        if (v === 'reset') vida = MAXIMA;
+        else vida = Math.max(0, Math.min(MAXIMA, vida + parseInt(v, 10)));
+        actualizar_vida();
+      });
+    });
+
+    actualizar_vida();
   })();
 </script>
 </body>
