@@ -35,6 +35,7 @@ Tutoriales paso a paso, muy guiados, para hacer en casa. Cada uno en Markdown y 
 | 5 | [Atrapa las piezas](trabajos-practicos/trabajo-practico-5.md) ([PDF](trabajos-practicos/trabajo-practico-5.pdf)) | **Herencia** (clase base + hijas), grupos, instanciación y spawning con `Timer`: atrapar piezas de Tetris con una canasta (suman) y esquivar bombas (restan) |
 | 6 | [Menú, HUD y Game Over](trabajos-practicos/trabajo-practico-6.md) ([PDF](trabajos-practicos/trabajo-practico-6.pdf)) | Nodos `Control`, menú principal, HUD con dos contadores, **Autoload** para guardar el puntaje y pantalla de Game Over con `change_scene_to_file()` |
 | 7 | [Sobreviví a los slimes](trabajos-practicos/trabajo-practico-7.md) ([PDF](trabajos-practicos/trabajo-practico-7.pdf)) | Un *Vampire Survivors* básico que junta todo: IA de **perseguir**, spawning por los bordes, **balas automáticas** al enemigo más cercano, y un **élite** que hereda de la base con **barra de vida sobre la cabeza** |
+| 8 | [El slime aprende a pensar](trabajos-practicos/trabajo-practico-8.md) ([PDF](trabajos-practicos/trabajo-practico-8.pdf)) | **Proyecto final.** Máquina de estados sobre el TP7 con `enum` + `match`: patrullar, perseguir, atacar; el élite hereda y suma **huir**. Termina exportando el juego a `.exe` |
 
 ## 🗂️ Estructura
 
