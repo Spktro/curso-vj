@@ -17,7 +17,7 @@ Si están publicadas con GitHub Pages: **https://spktro.github.io/curso-vj/**
 | 05 | [Muchos de uno](clase-05/index.html) | POO básica, scripts como clases, tipado, instanciación de escenas y spawning |
 | 06 | [La cara del juego](clase-06/index.html) | UI: `CanvasLayer`, `Label`, `Button`, `ProgressBar`, HUD, menús y cambio de escenas |
 | 07 | [El juego se siente vivo](clase-07/index.html) | Animación, `AnimationPlayer`, audio y buses, y Game Feel (cámara, `Tween`, partículas) |
-| 08 | [Tu juego en el mundo](clase-08/index.html) | Exportar a Windows y Android, organización, testing y proyecto final |
+| 08 | [Enemigos con cerebro](clase-08/index.html) | IA de enemigos y **máquinas de estado** (`enum` + `match`); cierre: exportar y presentar el proyecto final |
 
 ## 📝 Trabajos prácticos
 

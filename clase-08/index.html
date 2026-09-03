@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Diplomatura de Videojuegos · Clase 8 — Tu juego en el mundo</title>
+<title>Diplomatura de Videojuegos · Clase 8 — Enemigos con cerebro</title>
 <link rel="stylesheet" href="deck.css" />
 </head>
 <body>
@@ -14,10 +14,10 @@
   <section class="slide title-slide active" data-chapter="Inicio" data-topic="Portada">
     <div class="title-grid">
       <div>
-        <div class="slide-eyebrow">Clase 8 · Exportación y Cierre</div>
-        <h1 class="title">Tu juego en el <span class="accent">mundo</span></h1>
-        <p class="subtitle">Exportar a Windows y Android, organizar el proyecto, y presentar el proyecto final. La última pieza: que tu juego <b>salga al mundo</b>.</p>
-        <p class="small-note">“Terminar un juego y poder compartirlo es lo más difícil — y hoy aprenden a hacerlo.”</p>
+        <div class="slide-eyebrow">Clase 8 · IA y Máquinas de Estado</div>
+        <h1 class="title">Enemigos con <span class="accent">cerebro</span></h1>
+        <p class="subtitle">Cómo un enemigo <b>decide</b> qué hacer: comportamientos, detección y <b>máquinas de estado</b>. Y para cerrar: exportar tu juego y presentarlo.</p>
+        <p class="small-note">“El slime del TP7 tiene una sola idea. Hoy le damos <b>varias</b> — y la capacidad de cambiar de idea.”</p>
       </div>
       <div class="title-photo" style="border:none; box-shadow:none; background:transparent;">
         <img src="assets/godot-logo.png" alt="Godot Engine" style="max-height:420px; width:auto; margin:0 auto; display:block;" />
@@ -29,222 +29,437 @@
     <div class="slide-eyebrow">Objetivos</div>
     <h2 class="slide-title">Al terminar la clase van a poder…</h2>
     <ul class="bullets">
-      <li>Exportar el proyecto como <b>ejecutable</b> para Windows y Android</li>
-      <li>Organizar el proyecto con <b>buenas prácticas</b> de estructura</li>
-      <li>Repasar los conceptos clave de toda la diplomatura</li>
-      <li>Presentar el <b>proyecto final</b> y reflexionar sobre el camino</li>
+      <li>Entender qué es la <b>IA de un videojuego</b> (y qué no es)</li>
+      <li>Reconocer los <b>comportamientos básicos</b> de un enemigo: patrullar, perseguir, atacar, huir</li>
+      <li>Modelar un enemigo como una <b>máquina de estados</b>: estados + transiciones</li>
+      <li>Implementarla en GDScript con <code>enum</code> y <code>match</code></li>
+      <li><b>Exportar</b> el proyecto final y presentarlo</li>
     </ul>
-    <div class="callout" style="margin-top:22px;">🎯 Hicieron algo que la mayoría no hace: <b>terminaron un juego</b>. No importa el tamaño.</div>
+    <div class="callout" style="margin-top:18px;">Puente con el TP7: el slime que <b>persigue</b> es el punto de partida. Hoy lo convertimos en un enemigo que <b>decide</b>.</div>
   </section>
 
-  <!-- ============ ORGANIZACIÓN ============ -->
-  <section class="slide" data-chapter="Organización" data-topic="Estructura de carpetas">
-    <div class="slide-eyebrow">Antes de exportar</div>
-    <h2 class="slide-title">Ordenar el proyecto</h2>
+  <!-- ============ HOOK ============ -->
+  <section class="slide" data-chapter="Hook" data-topic="Hook inicial">
+    <div class="slide-eyebrow">Arranque</div>
+    <h2 class="slide-title">El slime del TP7 tiene una sola idea</h2>
+    <div class="columns">
+      <div class="card" style="border-top:3px solid var(--red);"><h3 style="color:var(--red);">Hoy</h3><p>Aparece → te persigue → te toca. <b>Siempre lo mismo.</b> A los 10 segundos ya sabés exactamente qué va a hacer. Es <b>predecible</b>, y lo predecible aburre.</p></div>
+      <div class="card" style="border-top:3px solid var(--green);"><h3 style="color:var(--green);">Lo que queremos</h3><p>Que <b>patrulle</b> sin verte. Que <b>te vea</b> y salga a perseguirte. Que al alcanzarte <b>ataque</b>. Que si te alejás mucho, <b>se rinda</b> y vuelva a patrullar.</p></div>
+    </div>
+    <div class="callout" style="margin-top:22px;">🤔 <b>Para el grupo:</b> ¿cómo escribirían eso con lo que saben? Con <code>if</code>… muchos <code>if</code>. Y ahí está el problema que vamos a resolver hoy.</div>
+  </section>
+
+  <!-- ============ QUÉ ES IA ============ -->
+  <section class="slide" data-chapter="IA" data-topic="Qué es la IA de un juego">
+    <div class="slide-eyebrow">Concepto</div>
+    <h2 class="slide-title">“IA” en un juego no es lo que pensás</h2>
+    <div class="columns">
+      <div class="card" style="border-top:3px solid var(--red);">
+        <h3 style="color:var(--red);">❌ No es</h3>
+        <p>Machine learning, redes neuronales, ChatGPT. Nada de eso corre dentro de un enemigo de videojuego.</p>
+      </div>
+      <div class="card" style="border-top:3px solid var(--green);">
+        <h3 style="color:var(--green);">✅ Es</h3>
+        <p>Un conjunto de <b>reglas simples</b> que hacen que el enemigo <b>parezca</b> que piensa. Comportamiento <b>creíble</b>, no inteligencia real.</p>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:20px;">📏 <b>La regla de oro:</b> la IA de un juego no tiene que ser <b>inteligente</b>, tiene que ser <b>divertida</b>. Un enemigo perfecto que nunca falla es injugable. El arte está en que <b>parezca</b> listo y que igual se lo pueda vencer.</div>
+    <p class="small-note" style="margin-top:14px;">🎮 Los fantasmas de <i>Pac-Man</i> (1980) son IA de videojuego en estado puro: cuatro reglas distintas, cero inteligencia, y 45 años después siguen siendo geniales.</p>
+  </section>
+
+  <!-- ============ COMPORTAMIENTOS ============ -->
+  <section class="slide" data-chapter="IA" data-topic="Comportamientos básicos">
+    <div class="slide-eyebrow">Los ladrillos</div>
+    <h2 class="slide-title">Los comportamientos básicos de un enemigo</h2>
+    <table class="tbl" style="font-size:15.5px;">
+      <thead><tr><th>Comportamiento</th><th>Qué hace</th><th>En una línea</th></tr></thead>
+      <tbody>
+        <tr><td><b>🚶 Patrullar</b></td><td>Camina sin rumbo o entre puntos fijos</td><td><code>position += dir_azar * vel * delta</code></td></tr>
+        <tr><td><b>🏃 Perseguir</b></td><td>Va hacia el jugador <i>(el del TP7)</i></td><td><code>dir = (jugador.position - position).normalized()</code></td></tr>
+        <tr><td><b>⚔️ Atacar</b></td><td>Se frena y hace daño cada tanto</td><td><code>if $Timer.is_stopped(): pegar()</code></td></tr>
+        <tr><td><b>🏳️ Huir</b></td><td>Se aleja del jugador (¡es perseguir al revés!)</td><td><code>dir = (position - jugador.position).normalized()</code></td></tr>
+      </tbody>
+    </table>
+    <div class="callout" style="margin-top:14px;">Cada uno es <b>trivial</b> por separado: ya saben escribirlos. Lo difícil no es cada comportamiento, es <b>cuándo cambiar de uno a otro</b>.</div>
+  </section>
+
+  <section class="slide" data-chapter="IA" data-topic="Detectar al jugador">
+    <div class="slide-eyebrow">Sentidos</div>
+    <h2 class="slide-title">¿Cómo “ve” al jugador?</h2>
     <div class="columns">
       <div class="card">
+        <h3>📏 Por distancia</h3>
+        <p>Lo que ya usan en el TP7. Un número: si está a menos de <b>X píxeles</b>, lo vio.</p>
+        <pre class="code" style="margin:10px 0 0; font-size:12.5px;"><span class="k">var</span> d = position.distance_to(jugador.position)
+<span class="k">if</span> d < <span class="n">250</span>:
+	<span class="c"># ¡lo vi!</span></pre>
+        <p class="small-note" style="margin-top:8px;">Simple, barato, sirve para el 90 % de los casos. <b>Es lo que usamos.</b></p>
+      </div>
+      <div class="card">
+        <h3>👁️ Con un Area2D de visión</h3>
+        <p>Un <code>Area2D</code> hijo del enemigo, con forma de círculo o cono. Cuando el jugador <b>entra</b>, se emite <code>body_entered</code>; cuando <b>sale</b>, <code>body_exited</code>.</p>
+        <p class="small-note" style="margin-top:8px;">Más flexible (conos de visión, sigilo). Todo lo que necesitan ya lo vieron en la Clase 4.</p>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:14px;">🎮 En <i>Metal Gear Solid</i> el cono de visión del guardia es <b>literal</b>: se dibuja en el radar. Entrás en el cono → “<b>!</b>” → te persigue.</div>
+  </section>
+
+  <!-- ============ EL PROBLEMA ============ -->
+  <section class="slide" data-chapter="Máquina de estados" data-topic="El problema del if">
+    <div class="slide-eyebrow">El problema</div>
+    <h2 class="slide-title">Con <code>if</code> se vuelve un spaghetti</h2>
+    <div class="columns">
+      <div class="code-wrap">
+        <pre class="code" style="font-size:11.5px;"><span class="k">func</span> <span class="t">_process</span>(delta):
+	<span class="k">if</span> lo_vi <span class="k">and</span> <span class="k">not</span> atacando <span class="k">and</span> <span class="k">not</span> huyendo:
+		perseguir(delta)
+		<span class="k">if</span> d < <span class="n">40</span>: atacando = <span class="k">true</span>
+	<span class="k">elif</span> atacando <span class="k">and</span> <span class="k">not</span> huyendo:
+		atacar()
+		<span class="k">if</span> d > <span class="n">60</span>: atacando = <span class="k">false</span>
+		<span class="k">if</span> vida < <span class="n">2</span>: huyendo = <span class="k">true</span>; atacando = <span class="k">false</span>
+	<span class="k">elif</span> huyendo:
+		huir(delta)
+		<span class="k">if</span> d > <span class="n">400</span>: huyendo = <span class="k">false</span>; lo_vi = <span class="k">false</span>
+	<span class="k">elif</span> <span class="k">not</span> lo_vi:
+		patrullar(delta)
+		<span class="k">if</span> d < <span class="n">250</span>: lo_vi = <span class="k">true</span>
+	<span class="c"># ¿y si lo_vi y huyendo son true a la vez? 🤯</span></pre>
+      </div>
+      <div style="align-self:center;">
+        <div class="card" style="border-color:var(--red);">
+          <h3 style="color:var(--red);">Lo que sale mal</h3>
+          <ul>
+            <li>Tres booleanos que <b>pueden contradecirse</b></li>
+            <li>Cada comportamiento nuevo <b>rompe los anteriores</b></li>
+            <li>Imposible saber “¿qué está haciendo ahora?”</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FSM ============ -->
+  <section class="slide" data-chapter="Máquina de estados" data-topic="Qué es una máquina de estados">
+    <div class="slide-eyebrow">La solución</div>
+    <h2 class="slide-title">Máquina de estados: una sola pregunta</h2>
+    <div class="columns">
+      <div>
+        <p class="subtitle" style="font-size:18px;">En vez de tres booleanos, <b>una variable</b>: <code>estado</code>. El enemigo está <b>en un estado a la vez</b>, y solo cambia por <b>transiciones</b> definidas.</p>
+        <ul class="bullets" style="font-size:17px;">
+          <li><b>Estado:</b> qué está haciendo (patrullar, perseguir…)</li>
+          <li><b>Transición:</b> la condición para pasar a otro</li>
+          <li>Un estado <b>a la vez</b>. Nunca dos.</li>
+        </ul>
+      </div>
+      <div class="card" style="align-self:center;">
+        <h3>🚦 Analogía: el semáforo</h3>
+        <p>Tres estados: <b>verde</b>, <b>amarillo</b>, <b>rojo</b>. Nunca dos prendidos. Y las transiciones son fijas: verde → amarillo → rojo → verde. Nadie se confunde.</p>
+        <p class="small-note" style="margin-top:8px;">Se llama <i>Finite State Machine</i> (FSM). “Finita” porque los estados son pocos y conocidos.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Máquina de estados" data-topic="El diagrama del slime">
+    <div class="slide-eyebrow">Primero se dibuja, después se programa</div>
+    <h2 class="slide-title">La máquina de estados del slime</h2>
+    <svg viewBox="0 0 1100 300" width="100%" height="290" style="display:block; margin:0 auto;" aria-label="Diagrama de estados: patrullar, perseguir, atacar">
+      <defs>
+        <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"/>
+        </marker>
+      </defs>
+      <!-- inicio -->
+      <circle cx="170" cy="28" r="7" fill="var(--accent)"/>
+      <line x1="170" y1="36" x2="170" y2="104" stroke="var(--accent)" stroke-width="2.5" marker-end="url(#ah)"/>
+      <text x="186" y="66" font-size="13" fill="var(--muted)">arranca acá</text>
+      <!-- estados -->
+      <rect x="60" y="110" width="220" height="80" rx="40" fill="var(--panel)" stroke="var(--accent)" stroke-width="3"/>
+      <text x="170" y="158" text-anchor="middle" font-size="22" font-weight="800" fill="var(--text)">PATRULLAR</text>
+      <rect x="440" y="110" width="220" height="80" rx="40" fill="var(--panel)" stroke="var(--accent)" stroke-width="3"/>
+      <text x="550" y="158" text-anchor="middle" font-size="22" font-weight="800" fill="var(--text)">PERSEGUIR</text>
+      <rect x="820" y="110" width="220" height="80" rx="40" fill="var(--panel)" stroke="var(--accent)" stroke-width="3"/>
+      <text x="930" y="158" text-anchor="middle" font-size="22" font-weight="800" fill="var(--text)">ATACAR</text>
+      <!-- PATRULLAR -> PERSEGUIR -->
+      <line x1="284" y1="135" x2="434" y2="135" stroke="var(--accent)" stroke-width="2.5" marker-end="url(#ah)"/>
+      <text x="359" y="121" text-anchor="middle" font-size="13" fill="var(--muted)">jugador a menos de 250 px</text>
+      <!-- PERSEGUIR -> PATRULLAR -->
+      <line x1="436" y1="168" x2="286" y2="168" stroke="var(--accent)" stroke-width="2.5" marker-end="url(#ah)"/>
+      <text x="359" y="194" text-anchor="middle" font-size="13" fill="var(--muted)">lo perdió: más de 350 px</text>
+      <!-- PERSEGUIR -> ATACAR -->
+      <line x1="664" y1="135" x2="814" y2="135" stroke="var(--accent)" stroke-width="2.5" marker-end="url(#ah)"/>
+      <text x="739" y="121" text-anchor="middle" font-size="13" fill="var(--muted)">a menos de 40 px</text>
+      <!-- ATACAR -> PERSEGUIR -->
+      <line x1="816" y1="168" x2="666" y2="168" stroke="var(--accent)" stroke-width="2.5" marker-end="url(#ah)"/>
+      <text x="739" y="194" text-anchor="middle" font-size="13" fill="var(--muted)">se alejó: más de 60 px</text>
+      <!-- nota -->
+      <text x="550" y="262" text-anchor="middle" font-size="14.5" fill="var(--muted)">Cada óvalo es un estado · cada flecha, una transición con su condición · solo UN estado activo a la vez</text>
+    </svg>
+    <div class="callout" style="margin-top:8px;">💡 <b>Dibujen esto antes de programar.</b> Si no pueden dibujarlo, no lo pueden programar. Y si está dibujado, el código sale casi solo.</div>
+  </section>
+
+  <!-- ============ CÓDIGO ============ -->
+  <section class="slide" data-chapter="Máquina de estados" data-topic="enum y match">
+    <div class="slide-eyebrow">Dos herramientas nuevas</div>
+    <h2 class="slide-title"><code>enum</code> para nombrar, <code>match</code> para elegir</h2>
+    <div class="columns">
+      <div class="code-wrap">
+        <pre class="code" style="font-size:12.5px;"><span class="c"># enum: una lista de nombres. Cada uno</span>
+<span class="c"># es un número por dentro, pero vos</span>
+<span class="c"># usás el nombre. Cero confusión.</span>
+<span class="k">enum</span> <span class="t">Estado</span> { PATRULLAR, PERSEGUIR, ATACAR }
+
+<span class="k">var</span> estado := <span class="t">Estado</span>.PATRULLAR</pre>
+      </div>
+      <div class="code-wrap">
+        <pre class="code" style="font-size:12.5px;"><span class="c"># match: un if/elif especializado para</span>
+<span class="c"># comparar UNA variable contra varios</span>
+<span class="c"># valores. Más limpio que elif, elif…</span>
+<span class="k">match</span> estado:
+	<span class="t">Estado</span>.PATRULLAR:
+		patrullar(delta)
+	<span class="t">Estado</span>.PERSEGUIR:
+		perseguir(delta)
+	<span class="t">Estado</span>.ATACAR:
+		atacar()</pre>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:16px;">Podrían escribirlo con <code>if estado == Estado.PATRULLAR: … elif …</code> y funcionaría igual. <code>match</code> es lo mismo, pero <b>se lee como el diagrama</b>.</div>
+  </section>
+
+  <section class="slide" data-chapter="Máquina de estados" data-topic="El _process completo">
+    <div class="slide-eyebrow">El corazón</div>
+    <h2 class="slide-title">El <code>_process</code>: hacer + decidir</h2>
+    <div class="columns" style="grid-template-columns:1.15fr 0.85fr;">
+      <div class="code-wrap">
+        <pre class="code" style="font-size:12px;"><span class="k">func</span> <span class="t">_process</span>(delta: <span class="t">float</span>) -> <span class="t">void</span>:
+	<span class="k">var</span> d := distancia_al_jugador()
+	<span class="k">match</span> estado:
+		<span class="t">Estado</span>.PATRULLAR:
+			patrullar(delta)                  <span class="c"># hacer</span>
+			<span class="k">if</span> d < <span class="n">250</span>: estado = <span class="t">Estado</span>.PERSEGUIR   <span class="c"># decidir</span>
+		<span class="t">Estado</span>.PERSEGUIR:
+			perseguir(delta)
+			<span class="k">if</span> d < <span class="n">40</span>:    estado = <span class="t">Estado</span>.ATACAR
+			<span class="k">elif</span> d > <span class="n">350</span>: estado = <span class="t">Estado</span>.PATRULLAR
+		<span class="t">Estado</span>.ATACAR:
+			atacar()
+			<span class="k">if</span> d > <span class="n">60</span>:  estado = <span class="t">Estado</span>.PERSEGUIR</pre>
+      </div>
+      <div style="align-self:center;">
+        <div class="card">
+          <h3>El patrón, siempre igual</h3>
+          <p>En cada estado, dos cosas y en este orden:</p>
+          <ol style="margin:8px 0 0; padding-left:20px; font-size:15px; line-height:1.5;">
+            <li><b>Hacer</b> lo que corresponde al estado</li>
+            <li><b>Decidir</b> si cambio de estado</li>
+          </ol>
+          <p class="small-note" style="margin-top:10px;">Compará con el diagrama: <b>cada <code>if</code> es una flecha</b>. Ni una más, ni una menos.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Máquina de estados" data-topic="Las funciones de cada estado">
+    <div class="slide-eyebrow">Cada estado, una función</div>
+    <h2 class="slide-title">Los comportamientos son funciones cortas</h2>
+    <div class="code-wrap">
+      <pre class="code" style="font-size:12px;"><span class="k">func</span> <span class="t">patrullar</span>(delta):        <span class="c"># camina despacio hacia una dirección al azar</span>
+	position += direccion_patrulla * velocidad * <span class="n">0.5</span> * delta
+
+<span class="k">func</span> <span class="t">perseguir</span>(delta):        <span class="c"># lo que ya hacía el slime del TP7</span>
+	<span class="k">var</span> dir = (jugador.position - position).normalized()
+	position += dir * velocidad * delta
+
+<span class="k">func</span> <span class="t">atacar</span>():                <span class="c"># quieto, y pega cada vez que el Timer termina</span>
+	<span class="k">if</span> $TimerAtaque.is_stopped():
+		jugador.recibir_dano(dano)
+		$TimerAtaque.start()
+
+<span class="k">func</span> <span class="t">distancia_al_jugador</span>() -> <span class="t">float</span>:
+	<span class="k">return</span> position.distance_to(jugador.position)</pre>
+    </div>
+    <div class="callout" style="margin-top:12px;">Fijate que el <code>_process</code> <b>no sabe cómo</b> se patrulla o se ataca: solo elige <b>cuál</b> llamar. Cada función se puede cambiar sin tocar las otras. <span class="small-note">(<code>jugador</code> se guarda una vez en <code>_ready()</code> con <code>get_first_node_in_group</code>.)</span></div>
+  </section>
+
+  <section class="slide" data-chapter="Máquina de estados" data-topic="Agregar un estado">
+    <div class="slide-eyebrow">La prueba de fuego</div>
+    <h2 class="slide-title">¿Y si quiero que huya con poca vida?</h2>
+    <div class="columns">
+      <div>
+        <p class="subtitle" style="font-size:17px;">Con el spaghetti de <code>if</code>, había que tocar <b>todo</b>. Con la máquina de estados, son <b>tres pasos aislados</b>:</p>
+        <ol class="steps" style="font-size:15px;">
+          <li>Un estado más en el <code>enum</code>: <code>HUIR</code></li>
+          <li>Una función más: <code>huir(delta)</code> (perseguir al revés)</li>
+          <li>Las flechas nuevas: de <b>cualquier</b> estado → <code>HUIR</code> si <code>vida < 2</code>; de <code>HUIR</code> → <code>PATRULLAR</code> si está lejos</li>
+        </ol>
+      </div>
+      <div class="code-wrap" style="align-self:center;">
+        <pre class="code" style="font-size:12px;"><span class="k">enum</span> <span class="t">Estado</span> { PATRULLAR, PERSEGUIR, ATACAR, HUIR }
+
+<span class="c"># dentro del match:</span>
+	<span class="t">Estado</span>.HUIR:
+		huir(delta)
+		<span class="k">if</span> d > <span class="n">400</span>: estado = <span class="t">Estado</span>.PATRULLAR
+
+<span class="k">func</span> <span class="t">huir</span>(delta):
+	<span class="k">var</span> dir = (position - jugador.position).normalized()
+	position += dir * velocidad * <span class="n">1.5</span> * delta</pre>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:12px;">Nada de lo anterior se rompió. <b>Eso</b> es lo que compra una máquina de estados: poder <b>agregar</b> sin miedo.</div>
+  </section>
+
+  <section class="slide" data-chapter="Máquina de estados" data-topic="En juegos reales">
+    <div class="slide-eyebrow">🎮 En juegos que conocés</div>
+    <h2 class="slide-title">Máquinas de estado por todos lados</h2>
+    <div class="columns three">
+      <div class="card"><h3>👻 Pac-Man (1980)</h3><p>Cada fantasma tiene <b>tres estados</b>: <b>Chase</b> (te caza), <b>Scatter</b> (se va a su esquina) y <b>Frightened</b> (azul, huye) cuando comés la píldora. La FSM más famosa de la historia.</p></div>
+      <div class="card"><h3>❗ Metal Gear Solid</h3><p>El guardia: <b>Patrol → Alert (!) → Evasion → Caution → Patrol</b>. El signo de exclamación es, literalmente, una <b>transición de estado</b> que el juego te muestra.</p></div>
+      <div class="card"><h3>🗡️ Hollow Knight / Dark Souls</h3><p>Todo enemigo: <b>Idle → Aggro → Ataque → Recuperación</b>. Aprender a leer en qué estado está es <i>la</i> habilidad de estos juegos.</p></div>
+    </div>
+    <div class="callout" style="margin-top:18px;">Cuando decimos que un enemigo es “interesante”, casi siempre estamos diciendo que tiene <b>varios estados</b> y que <b>se nota cuándo cambia</b>.</div>
+  </section>
+
+  <section class="slide" data-chapter="Máquina de estados" data-topic="Puente al TP8">
+    <div class="slide-eyebrow">Lo que viene</div>
+    <h2 class="slide-title">TP8: el slime aprende a pensar</h2>
+    <div class="columns">
+      <div class="card">
+        <h3>Sobre el TP7, sin empezar de cero</h3>
+        <ul>
+          <li>El slime básico pasa a tener <b>3 estados</b>: patrullar, perseguir, atacar</li>
+          <li>Ya no es kamikaze: <b>ataca cada tanto</b> con un Timer</li>
+          <li>Si te alejás, <b>se rinde</b> y vuelve a patrullar</li>
+        </ul>
+      </div>
+      <div class="card" style="border-color:var(--accent);">
+        <h3>Y el élite, con herencia</h3>
+        <ul>
+          <li>Hereda los 3 estados del básico</li>
+          <li>Agrega un cuarto: <b>HUIR</b> cuando le queda poca vida</li>
+          <li>Tres pasos aislados, como recién. Nada se rompe.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:20px;">📐 Van a arrancar <b>dibujando el diagrama</b>. Después, el código. Ese es el orden.</div>
+  </section>
+
+  <!-- ============ PARTE 2: CIERRE ============ -->
+  <section class="slide title-slide" data-chapter="Cierre" data-topic="Parte 2: tu juego al mundo">
+    <div class="title-grid">
+      <div>
+        <div class="slide-eyebrow">Parte 2 · Cierre de la diplomatura</div>
+        <h1 class="title">Tu juego al <span class="accent">mundo</span></h1>
+        <p class="subtitle">Ordenar, <b>exportar</b> y presentar el proyecto final. La última pieza del rompecabezas: que tu juego <b>salga de tu compu</b>.</p>
+        <p class="small-note">“Terminaron un juego. No importa el tamaño. Terminarlo y poder compartirlo es lo más difícil.”</p>
+      </div>
+      <div class="title-photo" style="border:none; box-shadow:none; background:transparent;">
+        <img src="assets/godette.png" alt="Godette" style="max-height:380px; width:auto; margin:0 auto; display:block;" />
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Cierre" data-topic="Antes de exportar">
+    <div class="slide-eyebrow">Ordenar</div>
+    <h2 class="slide-title">Antes de exportar: la lista</h2>
+    <div class="columns">
+      <div class="card">
+        <h3>📁 Estructura recomendada</h3>
         <pre class="code" style="margin:0; font-size:12px;">res://
-├── assets/
-│   ├── sprites/
-│   ├── audio/
-│   │   ├── music/
-│   │   └── sfx/
-│   └── fonts/
-├── scenes/
-│   ├── personajes/
-│   ├── niveles/
-│   └── ui/
+├── assets/   <span class="c"># sprites, audio, fonts</span>
+├── scenes/   <span class="c"># personajes, niveles, ui</span>
 ├── scripts/
 └── project.godot</pre>
       </div>
-      <div style="align-self:center;">
-        <div class="callout">Un proyecto ordenado es más fácil de <b>mantener, depurar y compartir</b>. Vale la pena hacerlo antes de exportar.</div>
-      </div>
-    </div>
-  </section>
-
-  <section class="slide" data-chapter="Organización" data-topic="Checklist pre-export">
-    <div class="slide-eyebrow">Organización</div>
-    <h2 class="slide-title">Antes de exportar, verificar…</h2>
-    <ul class="bullets" style="font-size:18px;">
-      <li><b>Escena principal:</b> Project Settings → Application → Run → Main Scene</li>
-      <li><b>Ícono y nombre:</b> Application → Config → Icon / Name</li>
-      <li><b>Sin errores en rojo</b> en la consola al jugar completo</li>
-      <li><b>Rutas <code>res://</code>:</b> todas las referencias relativas, nunca absolutas</li>
-    </ul>
-    <div class="callout" style="margin-top:20px; background:rgba(220,38,38,0.08); border-left-color:var(--red);">⚠️ Una ruta absoluta (<code>C:\Users\...</code>) funciona en tu máquina pero <b>se rompe al exportar</b> o en otra compu. Siempre <code>res://carpeta/archivo.png</code>.</div>
-  </section>
-
-  <!-- ============ EXPORT TEMPLATES ============ -->
-  <section class="slide" data-chapter="Export Templates" data-topic="La clave de exportar">
-    <div class="slide-eyebrow">La clave</div>
-    <h2 class="slide-title">Export Templates: el motor compilado</h2>
-    <div class="columns">
       <div>
-        <p class="subtitle" style="font-size:17px;">Son los archivos con el <b>motor compilado</b> para cada plataforma. Sin ellos no se puede exportar.</p>
         <ul class="bullets" style="font-size:16px;">
-          <li><b>Editor → Manage Export Templates → Download and Install</b></li>
-          <li>Godot baja los compatibles con tu versión</li>
+          <li><b>Main Scene:</b> Project Settings → Application → Run</li>
+          <li><b>Ícono y nombre:</b> Application → Config</li>
+          <li><b>Sin errores en rojo</b> al jugar de punta a punta</li>
+          <li><b>Rutas <code>res://</code></b>, nunca <code>C:\Users\...</code></li>
         </ul>
-        <p class="small-note">💡 Pesan varios GB. Si la conexión es lenta, descargalos <b>antes</b> de la clase.</p>
-      </div>
-      <div class="imgcard">
-        <img src="assets/export-templates.webp" alt="Manage Export Templates" style="max-height:250px; border:1px solid var(--border); border-radius:8px;" />
-        <figcaption class="imgcaption">Menú <b>Editor → Manage Export Templates…</b></figcaption>
       </div>
     </div>
+    <div class="callout" style="margin-top:14px; background:rgba(220,38,38,0.08); border-left-color:var(--red);">⚠️ Una ruta absoluta funciona en tu máquina y <b>se rompe en cualquier otra</b>. Es el error #1 al exportar.</div>
   </section>
 
-  <!-- ============ WINDOWS ============ -->
-  <section class="slide" data-chapter="Windows" data-topic="Exportar a .exe">
-    <div class="slide-eyebrow">Windows</div>
-    <h2 class="slide-title">Exportar a Windows (.exe)</h2>
+  <section class="slide" data-chapter="Cierre" data-topic="Exportar a Windows">
+    <div class="slide-eyebrow">Exportar</div>
+    <h2 class="slide-title">Exportar a Windows en 4 pasos</h2>
     <div class="columns">
       <div>
-        <ol class="steps" style="font-size:15px;">
-          <li><b>Project → Export</b> → <b>Add…</b> → <b>Windows Desktop</b></li>
-          <li>Elegir carpeta y nombre (<code>mi_juego.exe</code>)</li>
-          <li>Export Mode: <b>All Resources</b></li>
-          <li>Clic en <b>Export Project</b></li>
+        <ol class="steps" style="font-size:14.5px;">
+          <li><b>Editor → Manage Export Templates → Download and Install</b> (una sola vez; pesan varios GB)</li>
+          <li><b>Project → Export → Add… → Windows Desktop</b></li>
+          <li>Elegir carpeta y nombre: <code>mi_juego.exe</code></li>
+          <li><b>Export Project</b> (no “Export PCK/ZIP”)</li>
         </ol>
-        <pre class="code" style="font-size:12px; margin-top:6px;">mi_juego/
-├── mi_juego.exe  <span class="c"># el ejecutable</span>
-└── mi_juego.pck  <span class="c"># los recursos</span>
-<span class="c"># Sin el .pck, el .exe no funciona.</span></pre>
+        <pre class="code" style="font-size:12px; margin-top:6px;">mi_juego.exe  <span class="c"># el ejecutable</span>
+mi_juego.pck  <span class="c"># los recursos — SIEMPRE juntos</span></pre>
       </div>
       <div class="imgcard">
-        <img src="assets/export-preset.webp" alt="Seleccionar plataforma" style="max-height:280px; border:1px solid var(--border); border-radius:8px;" />
-        <figcaption class="imgcaption">El botón <b>Add…</b> lista las plataformas disponibles.</figcaption>
+        <img src="assets/export-preset.webp" alt="Elegir plataforma" style="max-height:250px; border:1px solid var(--border); border-radius:8px;" />
+        <figcaption class="imgcaption">El botón <b>Add…</b> lista las plataformas.</figcaption>
       </div>
     </div>
+    <div class="callout" style="margin-top:10px;">📱 <b>Android</b> también se puede: necesita Android SDK + JDK 17 y una clave de debug. Está en la guía del repo, para quien se anime.</div>
   </section>
 
-  <section class="slide" data-chapter="Windows" data-topic="Configuraciones útiles">
-    <div class="slide-eyebrow">Windows</div>
-    <h2 class="slide-title">Configuraciones útiles de exportación</h2>
-    <table class="tbl">
-      <thead><tr><th>Opción</th><th>Para qué sirve</th></tr></thead>
-      <tbody>
-        <tr><td><b>Embed PCK</b></td><td>Fusiona <code>.exe</code> y <code>.pck</code> en un solo archivo. Más cómodo de distribuir, más lento de compilar.</td></tr>
-        <tr><td><b>Console Wrapper</b></td><td>Abre una consola al ejecutar. Útil para debug. <b>Desactivar</b> en la versión final.</td></tr>
-        <tr><td><b>Icon</b></td><td>Ícono del ejecutable. Recomendado: <code>.ico</code> con varios tamaños.</td></tr>
-      </tbody>
-    </table>
-    <div class="callout" style="margin-top:16px;">Para distribuir: comprimí el <code>.exe</code> y el <code>.pck</code> juntos en un <code>.zip</code>.</div>
-  </section>
-
-  <!-- ============ ANDROID ============ -->
-  <section class="slide" data-chapter="Android" data-topic="Requisitos">
-    <div class="slide-eyebrow">Android</div>
-    <h2 class="slide-title">Exportar a Android (.apk): requisitos</h2>
-    <p class="subtitle" style="font-size:17px;">Es más complejo (necesita herramientas extra), pero ver tu juego <b>en el celular</b> es muy motivador.</p>
-    <table class="tbl" style="font-size:15.5px;">
-      <tbody>
-        <tr><td><b>Android SDK</b></td><td>Vía Android Studio → SDK Manager (SDK Platform + Build Tools)</td></tr>
-        <tr><td><b>JDK</b></td><td>Para firmar el APK. <b>JDK 17 LTS</b> desde adoptium.net</td></tr>
-        <tr><td><b>Configurar en Godot</b></td><td>Editor Settings → Export → Android → rutas de SDK y JDK</td></tr>
-      </tbody>
-    </table>
-  </section>
-
-  <section class="slide" data-chapter="Android" data-topic="Keystore y export">
-    <div class="slide-eyebrow">Android</div>
-    <h2 class="slide-title">Clave de debug y exportar</h2>
-    <div class="columns">
-      <div class="code-wrap">
-        <pre class="code" style="font-size:11px;"><span class="c"># Generar un keystore de debug (PowerShell):</span>
-keytool -genkey -v -keystore debug.keystore \
-  -storepass android -alias androiddebugkey \
-  -keypass android -keyalg RSA \
-  -keysize 2048 -validity 10000</pre>
-        <p class="small-note">Editor Settings → Export → Android → <b>Debug Keystore</b> → apuntar al archivo.</p>
-      </div>
-      <div style="align-self:center;">
-        <ol class="steps" style="font-size:14px;">
-          <li>Project → Export → Add → <b>Android</b></li>
-          <li>Unique Name: <code>com.tuestudio.juego</code></li>
-          <li>Export Path: <code>mi_juego.apk</code></li>
-          <li><b>Export Project</b></li>
-        </ol>
-      </div>
-    </div>
-    <div class="callout" style="margin-top:12px; background:rgba(220,38,38,0.08); border-left-color:var(--red);">⚠️ Para instalarlo, activá <b>“fuentes desconocidas”</b> en el celular. El APK de debug sirve para <b>pruebas</b>, no para la Play Store.</div>
-  </section>
-
-  <!-- ============ TESTING ============ -->
-  <section class="slide" data-chapter="Testing" data-topic="Checklist de calidad">
-    <div class="slide-eyebrow">Antes de lanzar</div>
-    <h2 class="slide-title">Testing y debugging</h2>
+  <section class="slide" data-chapter="Cierre" data-topic="Testing antes de entregar">
+    <div class="slide-eyebrow">Probar</div>
+    <h2 class="slide-title">Testing: antes de decir “está listo”</h2>
     <ul class="bullets" style="font-size:17px;">
-      <li>Jugar de principio a fin al menos <b>3 veces</b></li>
-      <li><b>Intentar romperlo:</b> ir a lugares raros, hacer acciones inesperadas</li>
-      <li>Que alguien que <b>nunca lo jugó</b> lo juegue — observar sin ayudar</li>
-      <li>Verificar <b>audio</b> y <b>resolución</b> en el ejecutable</li>
+      <li>Jugar de principio a fin <b>3 veces</b></li>
+      <li><b>Intentar romperlo:</b> lugares raros, acciones inesperadas, apretar todo a la vez</li>
+      <li>Que lo juegue alguien que <b>nunca lo vio</b>. Observar. <b>No ayudar.</b></li>
+      <li>Probar el <b>.exe exportado</b>, no solo desde el editor: ¿se escucha el audio? ¿se ve bien?</li>
     </ul>
-    <div class="callout" style="margin-top:18px;">El mejor test es la persona que nunca vio tu juego. Vas a descubrir cosas que jamás imaginaste.</div>
+    <div class="callout" style="margin-top:20px;">El mejor tester es la persona que no sabe cómo “debería” jugarse. Va a encontrar cosas que jamás imaginaste.</div>
   </section>
 
-  <section class="slide" data-chapter="Testing" data-topic="Resolución y pantalla">
-    <div class="slide-eyebrow">Testing</div>
-    <h2 class="slide-title">Resolución y modo de pantalla</h2>
-    <div class="code-wrap">
-      <pre class="code" style="font-size:12.5px;"><span class="c"># Project Settings → Display → Window:</span>
-<span class="c"># - Viewport Width / Height: resolución base (ej: 1280 × 720)</span>
-<span class="c"># - Stretch Mode: canvas_items (pixel art) o viewport (UI)</span>
-<span class="c"># - Stretch Aspect: keep (mantiene proporción)</span>
-
-<span class="c"># Por código, pantalla completa:</span>
-<span class="t">DisplayServer</span>.window_set_mode(<span class="t">DisplayServer</span>.WINDOW_MODE_FULLSCREEN)
-<span class="c"># Volver a ventana:</span>
-<span class="t">DisplayServer</span>.window_set_mode(<span class="t">DisplayServer</span>.WINDOW_MODE_WINDOWED)</pre>
-    </div>
-  </section>
-
-  <!-- ============ JUEGOS EN GODOT ============ -->
-  <section class="slide" data-chapter="Godot en serio" data-topic="Juegos comerciales">
+  <section class="slide" data-chapter="Cierre" data-topic="Juegos comerciales">
     <div class="slide-eyebrow">🎮 Godot en serio</div>
     <h2 class="slide-title">Juegos comerciales hechos en Godot</h2>
     <div class="columns three">
-      <div class="card"><h3>🥔 Brotato</h3><p>Roguelite arena, éxito enorme en Steam. Godot puro.</p></div>
-      <div class="card"><h3>🐾 Cassette Beasts</h3><p>RPG estilo monstruos, aclamado por crítica y jugadores.</p></div>
-      <div class="card"><h3>⛏️ Dome Keeper</h3><p>Minería + defensa, un indie hit hecho en Godot.</p></div>
-      <div class="card"><h3>🔫 Buckshot Roulette</h3><p>Fenómeno viral de terror psicológico.</p></div>
-      <div class="card"><h3>⚔️ Halls of Torment</h3><p>Survivor oscuro, top ventas en Steam.</p></div>
-      <div class="card" style="border-color:var(--accent);"><h3>🚀 …y el tuyo</h3><p>Usan <b>exactamente</b> lo que vos aprendiste. La diferencia es escala, no fundamentos.</p></div>
+      <div class="card"><h3>🥔 Brotato</h3><p>Roguelite arena, éxito enorme en Steam. Un <i>survivors</i> como el del TP7.</p></div>
+      <div class="card"><h3>🐾 Cassette Beasts</h3><p>RPG de monstruos, aclamado por crítica y jugadores.</p></div>
+      <div class="card"><h3>⛏️ Dome Keeper</h3><p>Minería + defensa, un indie hit.</p></div>
+      <div class="card"><h3>🔫 Buckshot Roulette</h3><p>Fenómeno viral de terror.</p></div>
+      <div class="card"><h3>⚔️ Halls of Torment</h3><p>Survivor oscuro, top ventas.</p></div>
+      <div class="card" style="border-color:var(--accent);"><h3>🚀 …y el tuyo</h3><p>Usan <b>exactamente</b> lo que aprendieron. La diferencia es escala, no fundamentos.</p></div>
     </div>
   </section>
 
-  <!-- ============ REPASO ============ -->
-  <section class="slide" data-chapter="Repaso" data-topic="Toda la diplomatura">
+  <section class="slide" data-chapter="Cierre" data-topic="Toda la diplomatura">
     <div class="slide-eyebrow">El camino recorrido</div>
     <h2 class="slide-title">Todo lo que construyeron</h2>
     <table class="tbl" style="font-size:14.5px;">
       <tbody>
-        <tr><td><b>Clase 1</b></td><td>Motor, interfaz de Godot, nodos y escenas</td></tr>
+        <tr><td><b>Clase 1</b></td><td>Motor, interfaz, nodos y escenas</td></tr>
         <tr><td><b>Clase 2</b></td><td>GDScript: variables, condicionales, loops, funciones, input</td></tr>
         <tr><td><b>Clase 3</b></td><td><code>_ready()</code>, <code>_process()</code>, delta, movimiento, Input Map</td></tr>
-        <tr><td><b>Clase 4</b></td><td><code>CharacterBody2D</code>, <code>move_and_slide()</code>, colisiones, señales</td></tr>
-        <tr><td><b>Clase 5</b></td><td>POO, scripts como clases, instanciación, spawning</td></tr>
-        <tr><td><b>Clase 6</b></td><td><code>CanvasLayer</code>, Label, Button, ProgressBar, HUD, menús</td></tr>
-        <tr><td><b>Clase 7</b></td><td>Animación, audio, Game Feel, Tween</td></tr>
-        <tr><td><b>Clase 8</b></td><td>Exportación, organización, distribución</td></tr>
+        <tr><td><b>Clase 4</b></td><td><code>CharacterBody2D</code>, colisiones, señales, <code>Area2D</code></td></tr>
+        <tr><td><b>Clase 5</b></td><td>POO, herencia, instanciación, spawning</td></tr>
+        <tr><td><b>Clase 6</b></td><td>UI: HUD, menús, cambio de escenas</td></tr>
+        <tr><td><b>Clase 7</b></td><td>Animación, audio, Game Feel</td></tr>
+        <tr><td><b>Clase 8</b></td><td>IA, máquinas de estado, exportación</td></tr>
       </tbody>
     </table>
+    <div class="callout" style="margin-top:12px;">Es la base de <b>cualquier juego 2D comercial</b>. Los “grandes” usan esto mismo, con más escenas y más sistemas. Escala, no fundamentos.</div>
   </section>
 
-  <!-- ============ PROYECTO FINAL ============ -->
-  <section class="slide" data-chapter="Proyecto Final" data-topic="La presentación">
+  <section class="slide" data-chapter="Cierre" data-topic="La presentación">
     <div class="slide-eyebrow">Proyecto Final</div>
     <h2 class="slide-title">Cómo presentar tu juego</h2>
     <div class="columns three">
-      <div class="card"><h3>1 · Demo jugable <span style="color:var(--muted);">(5 min)</span></h3><p>Mostrar el juego funcionando. Explicar el objetivo: ¿cómo se gana o pierde?</p></div>
-      <div class="card"><h3>2 · Tour técnico <span style="color:var(--muted);">(3 min)</span></h3><p>Una parte del código que les resultó interesante o difícil. Qué herramienta de Godot usaron.</p></div>
-      <div class="card"><h3>3 · Reflexión <span style="color:var(--muted);">(2 min)</span></h3><p>¿Qué fue lo más difícil? ¿Qué agregarían con más tiempo? ¿Qué aprendieron sin esperarlo?</p></div>
+      <div class="card"><h3>1 · Demo <span style="color:var(--muted);">(5 min)</span></h3><p>Mostrarlo funcionando. ¿Cuál es el objetivo? ¿Cómo se gana o pierde?</p></div>
+      <div class="card"><h3>2 · Tour técnico <span style="color:var(--muted);">(3 min)</span></h3><p>Una parte del código que les costó o los enorgullece. Qué herramienta de Godot usaron.</p></div>
+      <div class="card"><h3>3 · Reflexión <span style="color:var(--muted);">(2 min)</span></h3><p>¿Qué fue lo más difícil? ¿Qué agregarían? ¿Qué aprendieron sin esperarlo?</p></div>
     </div>
     <div class="callout" style="margin-top:20px;">🤝 No es una evaluación, es <b>aprendizaje entre pares</b>: “¿alguien vio algo acá que le gustaría implementar en el suyo?”.</div>
   </section>
 
-  <!-- ============ CIERRE ============ -->
   <section class="slide title-slide" data-chapter="Cierre" data-topic="Cierre de la diplomatura">
     <div class="slide-eyebrow">¿Y ahora qué?</div>
     <h2 class="slide-title">Para seguir aprendiendo</h2>
