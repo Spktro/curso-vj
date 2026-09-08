@@ -30,7 +30,7 @@
     <h2 class="slide-title">Al terminar la clase van a poder…</h2>
     <ul class="bullets">
       <li>Entender qué es la <b>IA de un videojuego</b> (y qué no es)</li>
-      <li>Reconocer los <b>comportamientos básicos</b> de un enemigo: patrullar, perseguir, atacar, huir</li>
+      <li>Reconocer los <b>comportamientos básicos</b> de un enemigo: acechar, perseguir, atacar, huir</li>
       <li>Modelar un enemigo como una <b>máquina de estados</b>: estados + transiciones</li>
       <li>Implementarla en GDScript con <code>enum</code> y <code>match</code></li>
       <li><b>Exportar</b> el proyecto final y presentarlo</li>
@@ -44,7 +44,7 @@
     <h2 class="slide-title">El slime del TP7 tiene una sola idea</h2>
     <div class="columns">
       <div class="card" style="border-top:3px solid var(--red);"><h3 style="color:var(--red);">Hoy</h3><p>Aparece → te persigue → te toca. <b>Siempre lo mismo.</b> A los 10 segundos ya sabés exactamente qué va a hacer. Es <b>predecible</b>, y lo predecible aburre.</p></div>
-      <div class="card" style="border-top:3px solid var(--green);"><h3 style="color:var(--green);">Lo que queremos</h3><p>Que <b>patrulle</b> sin verte. Que <b>te vea</b> y salga a perseguirte. Que al alcanzarte <b>ataque</b>. Que si te alejás mucho, <b>se rinda</b> y vuelva a patrullar.</p></div>
+      <div class="card" style="border-top:3px solid var(--green);"><h3 style="color:var(--green);">Lo que queremos (para el jefe)</h3><p>Que te <b>aceche</b> de lejos, despacio. Que al acercarte <b>te vea</b> y salga a perseguirte a toda velocidad. Que al alcanzarte <b>ataque</b>. Que si te alejás mucho, <b>se calme</b> y vuelva a acechar.</p></div>
     </div>
     <div class="callout" style="margin-top:22px;">🤔 <b>Para el grupo:</b> ¿cómo escribirían eso con lo que saben? Con <code>if</code>… muchos <code>if</code>. Y ahí está el problema que vamos a resolver hoy.</div>
   </section>
@@ -74,13 +74,14 @@
     <table class="tbl" style="font-size:15.5px;">
       <thead><tr><th>Comportamiento</th><th>Qué hace</th><th>En una línea</th></tr></thead>
       <tbody>
-        <tr><td><b>🚶 Patrullar</b></td><td>Camina sin rumbo o entre puntos fijos</td><td><code>position += dir_azar * vel * delta</code></td></tr>
+        <tr><td><b>🕵️ Acechar</b></td><td>Sigue al jugador de lejos, <b>despacio</b></td><td><code>position += dir_jugador * vel * 0.5 * delta</code></td></tr>
         <tr><td><b>🏃 Perseguir</b></td><td>Va hacia el jugador <i>(el del TP7)</i></td><td><code>dir = (jugador.position - position).normalized()</code></td></tr>
         <tr><td><b>⚔️ Atacar</b></td><td>Se frena y hace daño cada tanto</td><td><code>if $Timer.is_stopped(): pegar()</code></td></tr>
         <tr><td><b>🏳️ Huir</b></td><td>Se aleja del jugador (¡es perseguir al revés!)</td><td><code>dir = (position - jugador.position).normalized()</code></td></tr>
       </tbody>
     </table>
     <div class="callout" style="margin-top:14px;">Cada uno es <b>trivial</b> por separado: ya saben escribirlos. Lo difícil no es cada comportamiento, es <b>cuándo cambiar de uno a otro</b>.</div>
+    <p class="small-note" style="margin-top:10px;">🚶 <b>¿Y “patrullar”?</b> Caminar al azar es un clásico (los guardias de <i>Metal Gear</i>), pero en un <i>survivors</i> sería un error de diseño: los enemigos se irían de la pantalla, el jugador los evitaría para siempre y el juego se llenaría de slimes que nadie ve. Por eso el estado “tranquilo” de nuestro jefe es <b>acechar</b>: siempre viene hacia vos, solo que más lento.</p>
   </section>
 
   <section class="slide" data-chapter="IA" data-topic="Detectar al jugador">
@@ -89,7 +90,7 @@
     <div class="columns">
       <div class="card">
         <h3>📏 Por distancia</h3>
-        <p>Lo que ya usan en el TP7. Un número: si está a menos de <b>X píxeles</b>, lo vio.</p>
+        <p>Un número: si está a menos de <b>X píxeles</b>, lo vio. Ojo: <b>el slime del TP7 no detecta nada</b>, siempre sabe dónde estás y va. El <code>distance_to</code> lo usó el <b>jugador</b> para elegir a quién disparar; ahora se lo damos al <b>enemigo</b>, para que <b>decida</b>.</p>
         <pre class="code" style="margin:10px 0 0; font-size:12.5px;"><span class="k">var</span> d = position.distance_to(jugador.position)
 <span class="k">if</span> d < <span class="n">250</span>:
 	<span class="c"># ¡lo vi!</span></pre>
@@ -122,7 +123,7 @@
 		huir(delta)
 		<span class="k">if</span> d > <span class="n">400</span>: huyendo = <span class="k">false</span>; lo_vi = <span class="k">false</span>
 	<span class="k">elif</span> <span class="k">not</span> lo_vi:
-		patrullar(delta)
+		acechar(delta)
 		<span class="k">if</span> d < <span class="n">250</span>: lo_vi = <span class="k">true</span>
 	<span class="c"># ¿y si lo_vi y huyendo son true a la vez? 🤯</span></pre>
       </div>
@@ -147,7 +148,7 @@
       <div>
         <p class="subtitle" style="font-size:18px;">En vez de tres booleanos, <b>una variable</b>: <code>estado</code>. El enemigo está <b>en un estado a la vez</b>, y solo cambia por <b>transiciones</b> definidas.</p>
         <ul class="bullets" style="font-size:17px;">
-          <li><b>Estado:</b> qué está haciendo (patrullar, perseguir…)</li>
+          <li><b>Estado:</b> qué está haciendo (acechar, perseguir…)</li>
           <li><b>Transición:</b> la condición para pasar a otro</li>
           <li>Un estado <b>a la vez</b>. Nunca dos.</li>
         </ul>
@@ -162,8 +163,8 @@
 
   <section class="slide" data-chapter="Máquina de estados" data-topic="El diagrama del slime">
     <div class="slide-eyebrow">Primero se dibuja, después se programa</div>
-    <h2 class="slide-title">La máquina de estados del slime</h2>
-    <svg viewBox="0 0 1100 300" width="100%" height="290" style="display:block; margin:0 auto;" aria-label="Diagrama de estados: patrullar, perseguir, atacar">
+    <h2 class="slide-title">La máquina de estados del jefe</h2>
+    <svg viewBox="0 0 1100 300" width="100%" height="290" style="display:block; margin:0 auto;" aria-label="Diagrama de estados: acechar, perseguir, atacar">
       <defs>
         <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
           <path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"/>
@@ -175,15 +176,15 @@
       <text x="186" y="66" font-size="13" fill="var(--muted)">arranca acá</text>
       <!-- estados -->
       <rect x="60" y="110" width="220" height="80" rx="40" fill="var(--panel)" stroke="var(--accent)" stroke-width="3"/>
-      <text x="170" y="158" text-anchor="middle" font-size="22" font-weight="800" fill="var(--text)">PATRULLAR</text>
+      <text x="170" y="158" text-anchor="middle" font-size="22" font-weight="800" fill="var(--text)">ACECHAR</text>
       <rect x="440" y="110" width="220" height="80" rx="40" fill="var(--panel)" stroke="var(--accent)" stroke-width="3"/>
       <text x="550" y="158" text-anchor="middle" font-size="22" font-weight="800" fill="var(--text)">PERSEGUIR</text>
       <rect x="820" y="110" width="220" height="80" rx="40" fill="var(--panel)" stroke="var(--accent)" stroke-width="3"/>
       <text x="930" y="158" text-anchor="middle" font-size="22" font-weight="800" fill="var(--text)">ATACAR</text>
-      <!-- PATRULLAR -> PERSEGUIR -->
+      <!-- ACECHAR -> PERSEGUIR -->
       <line x1="284" y1="135" x2="434" y2="135" stroke="var(--accent)" stroke-width="2.5" marker-end="url(#ah)"/>
       <text x="359" y="121" text-anchor="middle" font-size="13" fill="var(--muted)">jugador a menos de 250 px</text>
-      <!-- PERSEGUIR -> PATRULLAR -->
+      <!-- PERSEGUIR -> ACECHAR -->
       <line x1="436" y1="168" x2="286" y2="168" stroke="var(--accent)" stroke-width="2.5" marker-end="url(#ah)"/>
       <text x="359" y="194" text-anchor="middle" font-size="13" fill="var(--muted)">lo perdió: más de 350 px</text>
       <!-- PERSEGUIR -> ATACAR -->
@@ -207,24 +208,24 @@
         <pre class="code" style="font-size:12.5px;"><span class="c"># enum: una lista de nombres. Cada uno</span>
 <span class="c"># es un número por dentro, pero vos</span>
 <span class="c"># usás el nombre. Cero confusión.</span>
-<span class="k">enum</span> <span class="t">Estado</span> { PATRULLAR, PERSEGUIR, ATACAR }
+<span class="k">enum</span> <span class="t">Estado</span> { ACECHAR, PERSEGUIR, ATACAR }
 
-<span class="k">var</span> estado := <span class="t">Estado</span>.PATRULLAR</pre>
+<span class="k">var</span> estado := <span class="t">Estado</span>.ACECHAR</pre>
       </div>
       <div class="code-wrap">
         <pre class="code" style="font-size:12.5px;"><span class="c"># match: un if/elif especializado para</span>
 <span class="c"># comparar UNA variable contra varios</span>
 <span class="c"># valores. Más limpio que elif, elif…</span>
 <span class="k">match</span> estado:
-	<span class="t">Estado</span>.PATRULLAR:
-		patrullar(delta)
+	<span class="t">Estado</span>.ACECHAR:
+		acechar(delta)
 	<span class="t">Estado</span>.PERSEGUIR:
 		perseguir(delta)
 	<span class="t">Estado</span>.ATACAR:
 		atacar()</pre>
       </div>
     </div>
-    <div class="callout" style="margin-top:16px;">Podrían escribirlo con <code>if estado == Estado.PATRULLAR: … elif …</code> y funcionaría igual. <code>match</code> es lo mismo, pero <b>se lee como el diagrama</b>.</div>
+    <div class="callout" style="margin-top:16px;">Podrían escribirlo con <code>if estado == Estado.ACECHAR: … elif …</code> y funcionaría igual. <code>match</code> es lo mismo, pero <b>se lee como el diagrama</b>.</div>
   </section>
 
   <section class="slide" data-chapter="Máquina de estados" data-topic="El _process completo">
@@ -235,13 +236,13 @@
         <pre class="code" style="font-size:12px;"><span class="k">func</span> <span class="t">_process</span>(delta: <span class="t">float</span>) -> <span class="t">void</span>:
 	<span class="k">var</span> d := distancia_al_jugador()
 	<span class="k">match</span> estado:
-		<span class="t">Estado</span>.PATRULLAR:
-			patrullar(delta)                  <span class="c"># hacer</span>
+		<span class="t">Estado</span>.ACECHAR:
+			acechar(delta)                  <span class="c"># hacer</span>
 			<span class="k">if</span> d < <span class="n">250</span>: estado = <span class="t">Estado</span>.PERSEGUIR   <span class="c"># decidir</span>
 		<span class="t">Estado</span>.PERSEGUIR:
 			perseguir(delta)
 			<span class="k">if</span> d < <span class="n">40</span>:    estado = <span class="t">Estado</span>.ATACAR
-			<span class="k">elif</span> d > <span class="n">350</span>: estado = <span class="t">Estado</span>.PATRULLAR
+			<span class="k">elif</span> d > <span class="n">350</span>: estado = <span class="t">Estado</span>.ACECHAR
 		<span class="t">Estado</span>.ATACAR:
 			atacar()
 			<span class="k">if</span> d > <span class="n">60</span>:  estado = <span class="t">Estado</span>.PERSEGUIR</pre>
@@ -264,8 +265,9 @@
     <div class="slide-eyebrow">Cada estado, una función</div>
     <h2 class="slide-title">Los comportamientos son funciones cortas</h2>
     <div class="code-wrap">
-      <pre class="code" style="font-size:12px;"><span class="k">func</span> <span class="t">patrullar</span>(delta):        <span class="c"># camina despacio hacia una dirección al azar</span>
-	position += direccion_patrulla * velocidad * <span class="n">0.5</span> * delta
+      <pre class="code" style="font-size:12px;"><span class="k">func</span> <span class="t">acechar</span>(delta):          <span class="c"># sigue al jugador, a mitad de velocidad</span>
+	<span class="k">var</span> dir = (jugador.position - position).normalized()
+	position += dir * velocidad * <span class="n">0.5</span> * delta
 
 <span class="k">func</span> <span class="t">perseguir</span>(delta):        <span class="c"># lo que ya hacía el slime del TP7</span>
 	<span class="k">var</span> dir = (jugador.position - position).normalized()
@@ -279,7 +281,7 @@
 <span class="k">func</span> <span class="t">distancia_al_jugador</span>() -> <span class="t">float</span>:
 	<span class="k">return</span> position.distance_to(jugador.position)</pre>
     </div>
-    <div class="callout" style="margin-top:12px;">Fijate que el <code>_process</code> <b>no sabe cómo</b> se patrulla o se ataca: solo elige <b>cuál</b> llamar. Cada función se puede cambiar sin tocar las otras. <span class="small-note">(<code>jugador</code> se guarda una vez en <code>_ready()</code> con <code>get_first_node_in_group</code>.)</span></div>
+    <div class="callout" style="margin-top:12px;">Fijate que el <code>_process</code> <b>no sabe cómo</b> se acecha o se ataca: solo elige <b>cuál</b> llamar. Cada función se puede cambiar sin tocar las otras. <span class="small-note">(<code>jugador</code> se guarda una vez en <code>_ready()</code> con <code>get_first_node_in_group</code>.)</span></div>
   </section>
 
   <section class="slide" data-chapter="Máquina de estados" data-topic="Agregar un estado">
@@ -291,16 +293,16 @@
         <ol class="steps" style="font-size:15px;">
           <li>Un estado más en el <code>enum</code>: <code>HUIR</code></li>
           <li>Una función más: <code>huir(delta)</code> (perseguir al revés)</li>
-          <li>Las flechas nuevas: de <b>cualquier</b> estado → <code>HUIR</code> si <code>vida < 2</code>; de <code>HUIR</code> → <code>PATRULLAR</code> si está lejos</li>
+          <li>Las flechas nuevas: de <b>cualquier</b> estado → <code>HUIR</code> si <code>vida < 2</code>; de <code>HUIR</code> → <code>ACECHAR</code> si está lejos</li>
         </ol>
       </div>
       <div class="code-wrap" style="align-self:center;">
-        <pre class="code" style="font-size:12px;"><span class="k">enum</span> <span class="t">Estado</span> { PATRULLAR, PERSEGUIR, ATACAR, HUIR }
+        <pre class="code" style="font-size:12px;"><span class="k">enum</span> <span class="t">Estado</span> { ACECHAR, PERSEGUIR, ATACAR, HUIR }
 
 <span class="c"># dentro del match:</span>
 	<span class="t">Estado</span>.HUIR:
 		huir(delta)
-		<span class="k">if</span> d > <span class="n">400</span>: estado = <span class="t">Estado</span>.PATRULLAR
+		<span class="k">if</span> d > <span class="n">400</span>: estado = <span class="t">Estado</span>.ACECHAR
 
 <span class="k">func</span> <span class="t">huir</span>(delta):
 	<span class="k">var</span> dir = (position - jugador.position).normalized()
@@ -323,22 +325,21 @@
 
   <section class="slide" data-chapter="Máquina de estados" data-topic="Puente al TP8">
     <div class="slide-eyebrow">Lo que viene</div>
-    <h2 class="slide-title">TP8: el slime aprende a pensar</h2>
+    <h2 class="slide-title">TP8: el jefe aprende a pensar</h2>
     <div class="columns">
       <div class="card">
-        <h3>Sobre el TP7, sin empezar de cero</h3>
+        <h3>El slime básico: no se toca</h3>
         <ul>
-          <li>El slime básico pasa a tener <b>3 estados</b>: patrullar, perseguir, atacar</li>
-          <li>Ya no es kamikaze: <b>ataca cada tanto</b> con un Timer</li>
-          <li>Si te alejás, <b>se rinde</b> y vuelve a patrullar</li>
+          <li>Queda <b>igual que en el TP7</b>: te persigue siempre, kamikaze. Es la <b>horda</b>: simple, masiva, previsible</li>
+          <li>Justamente por eso <b>no</b> le damos la máquina: cien slimes “pensando” serían un caos… y un gasto</li>
         </ul>
       </div>
       <div class="card" style="border-color:var(--accent);">
-        <h3>Y el élite, con herencia</h3>
+        <h3>El élite (jefe): con cerebro</h3>
         <ul>
-          <li>Hereda los 3 estados del básico</li>
-          <li>Agrega un cuarto: <b>HUIR</b> cuando le queda poca vida</li>
-          <li>Tres pasos aislados, como recién. Nada se rompe.</li>
+          <li>Recibe la máquina: <b>acechar → perseguir → atacar</b>, y <b>huir</b> con poca vida</li>
+          <li><b>Sobreescribe</b> el <code>_process</code> del padre y <b>anula el kamikaze</b> (<code>_on_body_entered</code> vacío)</li>
+          <li>Sigue heredando vida, daño y barra del TP7. <b>Solo se toca un script.</b></li>
         </ul>
       </div>
     </div>
