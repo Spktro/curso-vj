@@ -12,6 +12,7 @@
    Config en el contenedor .deck:
      data-brand : texto del pie de marca (lo anterior al primer " · " va en negrita)
      data-home  : href del botón "← Índice" (si se omite, no se muestra)
+     data-click-nav : "off" desactiva la navegación por clic en mitades (teclado y filmstrip siguen)
    Por slide (opcional, para el navegador):
      data-chapter : agrupador  ·  data-topic : tema
 */
@@ -249,8 +250,8 @@
     };
   }
 
-  // Teclado, clic por mitades, hashchange y posición inicial.
-  function setupInput(show, slides, state) {
+  // Teclado, clic por mitades (opcional), hashchange y posición inicial.
+  function setupInput(show, slides, state, clickNav) {
     document.addEventListener("keydown", (e) => {
       if (e.key === "ArrowRight" || e.key === "PageDown" || e.key === " ") { show(state.i + 1); e.preventDefault(); }
       else if (e.key === "ArrowLeft" || e.key === "PageUp") { show(state.i - 1); e.preventDefault(); }
@@ -258,11 +259,25 @@
       else if (e.key === "End") { show(slides.length - 1); }
     });
 
-    document.addEventListener("click", (e) => {
-      if (e.target.closest("a, pre, code, input, button, .filmstrip")) return;
-      const x = e.clientX / window.innerWidth;
-      if (x > 0.5) show(state.i + 1); else show(state.i - 1);
-    });
+    // Clic por mitades. Se ignora si:
+    //  - el deck lo desactiva con data-click-nav="off"
+    //  - el clic cae sobre un control (links, código, botones, filmstrip)
+    //  - hay texto seleccionado (el usuario estaba seleccionando, no navegando)
+    //  - el mouse se arrastró desde pointerdown (selección que terminó vacía)
+    if (clickNav) {
+      const DRAG_PX = 5;
+      let down = null;
+      document.addEventListener("pointerdown", (e) => { down = { x: e.clientX, y: e.clientY }; });
+
+      document.addEventListener("click", (e) => {
+        if (e.target.closest("a, pre, code, input, button, .filmstrip")) return;
+        const sel = window.getSelection();
+        if (sel && !sel.isCollapsed && sel.toString().length) return;
+        if (down && Math.hypot(e.clientX - down.x, e.clientY - down.y) > DRAG_PX) return;
+        const x = e.clientX / window.innerWidth;
+        if (x > 0.5) show(state.i + 1); else show(state.i - 1);
+      });
+    }
 
     window.addEventListener("hashchange", () => {
       const n = parseInt((location.hash || "#1").slice(1), 10);
@@ -299,7 +314,7 @@
     const state = { i: 0, thumbs: [] };
     const show = makeShow(slides, state, { progress, cur });
     state.thumbs = buildFilmstrip(slides, show);
-    setupInput(show, slides, state);
+    setupInput(show, slides, state, deck.dataset.clickNav !== "off");
   }
 
   ready(init);
