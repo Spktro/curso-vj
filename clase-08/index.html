@@ -236,7 +236,7 @@ objetivo = pacman.position + pacman.direccion * <span class="n">4</span>
             <tr><td><b>🏃 Perseguir</b></td><td>Va hacia el jugador <i>(ya está: TP7)</i></td><td><code>dir = (jugador.position - position).normalized()</code></td></tr>
             <tr><td><b>🕵️ Acechar</b></td><td>Lo sigue de lejos, <b>despacio</b></td><td><code>position += dir * vel * 0.5 * delta</code></td></tr>
             <tr><td><b>⚔️ Atacar</b></td><td>Se frena y pega cada tanto</td><td><code>if $Timer.is_stopped(): pegar()</code></td></tr>
-            <tr><td><b>💥 Golpeado</b></td><td>Retrocede y queda <b>congelado 0.5 s</b></td><td><code>position += dir_atras * 20</code></td></tr>
+            <tr><td><b>💥 Golpeado</b></td><td><i>On hit</i>: knockback y <b>congelado 0.5 s</b></td><td><code>position += dir_atras * 20</code></td></tr>
           </tbody>
         </table>
       </div>
@@ -334,11 +334,10 @@ objetivo = pacman.position + pacman.direccion * <span class="n">4</span>
   <section class="slide" data-chapter="Máquina de estados" data-topic="El diagrama del slime">
     <div class="slide-eyebrow">Primero se dibuja, después se programa</div>
     <h2 class="slide-title">La máquina de estados del jefe</h2>
-    <svg viewBox="0 0 1100 300" width="100%" height="290" style="display:block; margin:0 auto;" aria-label="Diagrama de estados: acechar, perseguir, atacar">
+    <svg viewBox="0 0 1100 440" width="100%" height="360" style="display:block; margin:0 auto;" aria-label="Diagrama de estados del jefe: acechar, perseguir, atacar y golpeado (on hit)">
       <defs>
-        <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
-          <path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"/>
-        </marker>
+        <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"/></marker>
+        <marker id="ahr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--red)"/></marker>
       </defs>
       <!-- inicio -->
       <circle cx="170" cy="28" r="7" fill="var(--accent)"/>
@@ -351,20 +350,29 @@ objetivo = pacman.position + pacman.direccion * <span class="n">4</span>
       <text x="550" y="158" text-anchor="middle" font-size="22" font-weight="800" fill="var(--text)">PERSEGUIR</text>
       <rect x="820" y="110" width="220" height="80" rx="40" fill="var(--panel)" stroke="var(--accent)" stroke-width="3"/>
       <text x="930" y="158" text-anchor="middle" font-size="22" font-weight="800" fill="var(--text)">ATACAR</text>
-      <!-- ACECHAR -> PERSEGUIR -->
+      <!-- transiciones por distancia -->
       <line x1="284" y1="135" x2="434" y2="135" stroke="var(--accent)" stroke-width="2.5" marker-end="url(#ah)"/>
       <text x="359" y="121" text-anchor="middle" font-size="13" fill="var(--muted)">jugador a menos de 250 px</text>
-      <!-- PERSEGUIR -> ACECHAR -->
       <line x1="436" y1="168" x2="286" y2="168" stroke="var(--accent)" stroke-width="2.5" marker-end="url(#ah)"/>
       <text x="359" y="194" text-anchor="middle" font-size="13" fill="var(--muted)">lo perdió: más de 350 px</text>
-      <!-- PERSEGUIR -> ATACAR -->
       <line x1="664" y1="135" x2="814" y2="135" stroke="var(--accent)" stroke-width="2.5" marker-end="url(#ah)"/>
       <text x="739" y="121" text-anchor="middle" font-size="13" fill="var(--muted)">a menos de 40 px</text>
-      <!-- ATACAR -> PERSEGUIR -->
       <line x1="816" y1="168" x2="666" y2="168" stroke="var(--accent)" stroke-width="2.5" marker-end="url(#ah)"/>
       <text x="739" y="194" text-anchor="middle" font-size="13" fill="var(--muted)">se alejó: más de 60 px</text>
+      <!-- GOLPEADO (on hit) -->
+      <rect x="440" y="300" width="220" height="80" rx="40" fill="var(--panel)" stroke="var(--red)" stroke-width="3"/>
+      <text x="550" y="348" text-anchor="middle" font-size="22" font-weight="800" fill="var(--red)">GOLPEADO</text>
+      <text x="550" y="404" text-anchor="middle" font-size="13" fill="var(--muted)">on hit: empujón (knockback) + 0.5 s congelado</text>
+      <line x1="230" y1="192" x2="444" y2="318" stroke="var(--red)" stroke-width="2.5" stroke-dasharray="7 5" marker-end="url(#ahr)"/>
+      <text x="296" y="282" text-anchor="middle" font-size="13" fill="var(--red)">le pega una bala</text>
+      <line x1="515" y1="192" x2="515" y2="296" stroke="var(--red)" stroke-width="2.5" stroke-dasharray="7 5" marker-end="url(#ahr)"/>
+      <text x="503" y="250" text-anchor="end" font-size="13" fill="var(--red)">le pega una bala</text>
+      <line x1="870" y1="192" x2="656" y2="318" stroke="var(--red)" stroke-width="2.5" stroke-dasharray="7 5" marker-end="url(#ahr)"/>
+      <text x="804" y="282" text-anchor="middle" font-size="13" fill="var(--red)">le pega una bala</text>
+      <line x1="585" y1="296" x2="585" y2="194" stroke="var(--accent)" stroke-width="2.5" marker-end="url(#ah)"/>
+      <text x="597" y="250" font-size="13" fill="var(--muted)">pasan 0.5 s</text>
       <!-- nota -->
-      <text x="550" y="262" text-anchor="middle" font-size="14.5" fill="var(--muted)">Cada óvalo es un estado · cada flecha, una transición con su condición · solo UN estado activo a la vez</text>
+      <text x="550" y="432" text-anchor="middle" font-size="14" fill="var(--muted)">Violeta: por distancia o por tiempo · Rojas punteadas: por evento (salen de recibir_dano) · solo UN estado activo a la vez</text>
     </svg>
     <div class="callout" style="margin-top:8px;">💡 <b>Dibujen esto antes de programar.</b> Si no pueden dibujarlo, no lo pueden programar. Y si está dibujado, el código sale casi solo.</div>
   </section>
@@ -378,7 +386,7 @@ objetivo = pacman.position + pacman.direccion * <span class="n">4</span>
         <pre class="code" style="font-size:12.5px;"><span class="c"># enum: una lista de nombres. Cada uno</span>
 <span class="c"># es un número por dentro, pero vos</span>
 <span class="c"># usás el nombre. Cero confusión.</span>
-<span class="k">enum</span> <span class="t">Estado</span> { ACECHAR, PERSEGUIR, ATACAR }
+<span class="k">enum</span> <span class="t">Estado</span> { ACECHAR, PERSEGUIR, ATACAR, GOLPEADO }
 
 <span class="k">var</span> estado := <span class="t">Estado</span>.ACECHAR</pre>
       </div>
@@ -392,7 +400,9 @@ objetivo = pacman.position + pacman.direccion * <span class="n">4</span>
 	<span class="t">Estado</span>.PERSEGUIR:
 		perseguir(delta)
 	<span class="t">Estado</span>.ATACAR:
-		atacar()</pre>
+		atacar()
+	<span class="t">Estado</span>.GOLPEADO:
+		golpeado()</pre>
       </div>
     </div>
     <div class="callout" style="margin-top:16px;">Podrían escribirlo con <code>if estado == Estado.ACECHAR: … elif …</code> y funcionaría igual. <code>match</code> es lo mismo, pero <b>se lee como el diagrama</b>.</div>
@@ -415,7 +425,10 @@ objetivo = pacman.position + pacman.direccion * <span class="n">4</span>
 			<span class="k">elif</span> d > <span class="n">350</span>: estado = <span class="t">Estado</span>.ACECHAR
 		<span class="t">Estado</span>.ATACAR:
 			atacar()
-			<span class="k">if</span> d > <span class="n">60</span>:  estado = <span class="t">Estado</span>.PERSEGUIR</pre>
+			<span class="k">if</span> d > <span class="n">60</span>:  estado = <span class="t">Estado</span>.PERSEGUIR
+		<span class="t">Estado</span>.GOLPEADO:
+			golpeado()                      <span class="c"># on hit: quieto y rojo</span>
+			<span class="k">if</span> $TimerGolpe.is_stopped(): estado = <span class="t">Estado</span>.PERSEGUIR</pre>
       </div>
       <div style="align-self:center;">
         <div class="card">
@@ -425,7 +438,7 @@ objetivo = pacman.position + pacman.direccion * <span class="n">4</span>
             <li><b>Hacer</b> lo que corresponde al estado</li>
             <li><b>Decidir</b> si cambio de estado</li>
           </ol>
-          <p class="small-note" style="margin-top:10px;">Compará con el diagrama: <b>cada <code>if</code> es una flecha</b>. Ni una más, ni una menos.</p>
+          <p class="small-note" style="margin-top:10px;">Compará con el diagrama: <b>cada <code>if</code> es una flecha</b>. Falta una sola: la de <b>entrada</b> a <code>GOLPEADO</code>, que no depende de la distancia y vive en <code>recibir_dano()</code>. Lo vemos en dos diapositivas.</p>
         </div>
       </div>
     </div>
@@ -460,10 +473,10 @@ objetivo = pacman.position + pacman.direccion * <span class="n">4</span>
 
   <section class="slide" data-chapter="Máquina de estados" data-topic="Agregar un estado">
     <div class="slide-eyebrow">La prueba de fuego</div>
-    <h2 class="slide-title">¿Y si quiero que sienta el golpe?</h2>
+    <h2 class="slide-title">El estado <i>on hit</i>: cómo entró <code>GOLPEADO</code></h2>
     <div class="columns" style="grid-template-columns:0.9fr 1.1fr;">
       <div>
-        <p class="subtitle" style="font-size:17px;">Cada bala que le pega: un <b>empujón</b> hacia atrás y <b>0.5 s congelado</b>, en rojo. Con el spaghetti había que tocar <b>todo</b>. Acá son <b>tres pasos aislados</b>:</p>
+        <p class="subtitle" style="font-size:17px;">Es el <b>on hit</b> del jefe: cada bala, un <b>empujón</b> hacia atrás (<i>knockback</i>) y <b>0.5 s congelado</b>, en rojo. Con el spaghetti había que tocar <b>todo</b>. Acá fueron <b>tres pasos aislados</b>:</p>
         <ol class="steps" style="font-size:15px;">
           <li>Un estado más en el <code>enum</code>: <code>GOLPEADO</code></li>
           <li>Una función más: <code>golpeado()</code> (quieto y rojo) y un <code>TimerGolpe</code> de 0.5 s</li>
@@ -598,29 +611,6 @@ objetivo = pacman.position + pacman.direccion * <span class="n">4</span>
       </tbody>
     </table>
     <div class="callout" style="margin-top:18px;">Cuando decimos que un enemigo es “interesante”, casi siempre estamos diciendo que tiene <b>varios estados</b> y que <b>se nota cuándo cambia</b>. Los tres disparadores que existen ya los usás: <b>distancia, evento y tiempo</b>.</div>
-  </section>
-
-  <section class="slide" data-chapter="Máquina de estados" data-topic="Puente al TP8">
-    <div class="slide-eyebrow">Lo que viene</div>
-    <h2 class="slide-title">TP8: el jefe aprende a pensar</h2>
-    <div class="columns">
-      <div class="card">
-        <h3>El slime básico: no se toca</h3>
-        <ul>
-          <li>Queda <b>igual que en el TP7</b>: te persigue siempre, kamikaze. Es la <b>horda</b>: simple, masiva, previsible</li>
-          <li>Justamente por eso <b>no</b> le damos la máquina: cien slimes “pensando” serían un caos… y un gasto</li>
-        </ul>
-      </div>
-      <div class="card" style="border-color:var(--accent);">
-        <h3>El élite (jefe): con cerebro</h3>
-        <ul>
-          <li>Recibe la máquina: <b>acechar → perseguir → atacar</b>, y <b>golpeado</b> cuando le pegás (empujón + 0.5 s congelado)</li>
-          <li><b>Sobreescribe</b> el <code>_process</code> del padre y <b>anula el kamikaze</b> (<code>_on_body_entered</code> vacío)</li>
-          <li>Sigue heredando vida, daño y barra del TP7. <b>Solo se toca un script.</b></li>
-        </ul>
-      </div>
-    </div>
-    <div class="callout" style="margin-top:20px;">📐 Van a arrancar <b>dibujando el diagrama</b>. Después, el código. Ese es el orden.</div>
   </section>
 
   <!-- ============ PARTE 2: CIERRE ============ -->
