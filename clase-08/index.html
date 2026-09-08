@@ -16,7 +16,7 @@
       <div>
         <div class="slide-eyebrow">Clase 8 · IA y Máquinas de Estado</div>
         <h1 class="title">Enemigos con <span class="accent">cerebro</span></h1>
-        <p class="subtitle">Cómo un enemigo <b>decide</b> qué hacer: comportamientos, detección y <b>máquinas de estado</b>. Y para cerrar: exportar tu juego y presentarlo.</p>
+        <p class="subtitle">Cómo un enemigo <b>decide</b> qué hacer: comportamientos, detección y <b>máquinas de estado</b>. Y al final, tres juegos famosos vistos con esos ojos.</p>
         <p class="small-note">“El slime del TP7 tiene una sola idea. Hoy le damos <b>varias</b> — y la capacidad de cambiar de idea.”</p>
       </div>
       <div class="title-photo" style="border:none; box-shadow:none; background:transparent;">
@@ -33,7 +33,6 @@
       <li>Reconocer los <b>comportamientos básicos</b> de un enemigo: acechar, perseguir, atacar, reaccionar al golpe</li>
       <li>Modelar un enemigo como una <b>máquina de estados</b>: estados + transiciones</li>
       <li>Implementarla en GDScript con <code>enum</code> y <code>match</code></li>
-      <li><b>Exportar</b> el proyecto final y presentarlo</li>
     </ul>
     <div class="callout" style="margin-top:18px;">Puente con el TP7: el slime que <b>persigue</b> es el punto de partida. Hoy lo convertimos en un enemigo que <b>decide</b>.</div>
   </section>
@@ -613,79 +612,7 @@ objetivo = pacman.position + pacman.direccion * <span class="n">4</span>
     <div class="callout" style="margin-top:18px;">Cuando decimos que un enemigo es “interesante”, casi siempre estamos diciendo que tiene <b>varios estados</b> y que <b>se nota cuándo cambia</b>. Los tres disparadores que existen ya los usás: <b>distancia, evento y tiempo</b>.</div>
   </section>
 
-  <!-- ============ PARTE 2: CIERRE ============ -->
-  <section class="slide title-slide" data-chapter="Cierre" data-topic="Parte 2: tu juego al mundo">
-    <div class="title-grid">
-      <div>
-        <div class="slide-eyebrow">Parte 2 · Cierre de la diplomatura</div>
-        <h1 class="title">Tu juego al <span class="accent">mundo</span></h1>
-        <p class="subtitle">Ordenar, <b>exportar</b> y presentar el proyecto final. La última pieza del rompecabezas: que tu juego <b>salga de tu compu</b>.</p>
-        <p class="small-note">“Terminaron un juego. No importa el tamaño. Terminarlo y poder compartirlo es lo más difícil.”</p>
-      </div>
-      <div class="title-photo" style="border:none; box-shadow:none; background:transparent;">
-        <img src="assets/godette.png" alt="Godette" style="max-height:380px; width:auto; margin:0 auto; display:block;" />
-      </div>
-    </div>
-  </section>
-
-  <section class="slide" data-chapter="Cierre" data-topic="Antes de exportar">
-    <div class="slide-eyebrow">Ordenar</div>
-    <h2 class="slide-title">Antes de exportar: la lista</h2>
-    <div class="columns">
-      <div class="card">
-        <h3>📁 Estructura recomendada</h3>
-        <pre class="code" style="margin:0; font-size:12px;">res://
-├── assets/   <span class="c"># sprites, audio, fonts</span>
-├── scenes/   <span class="c"># personajes, niveles, ui</span>
-├── scripts/
-└── project.godot</pre>
-      </div>
-      <div>
-        <ul class="bullets" style="font-size:16px;">
-          <li><b>Main Scene:</b> Project Settings → Application → Run</li>
-          <li><b>Ícono y nombre:</b> Application → Config</li>
-          <li><b>Sin errores en rojo</b> al jugar de punta a punta</li>
-          <li><b>Rutas <code>res://</code></b>, nunca <code>C:\Users\...</code></li>
-        </ul>
-      </div>
-    </div>
-    <div class="callout" style="margin-top:14px; background:rgba(220,38,38,0.08); border-left-color:var(--red);">⚠️ Una ruta absoluta funciona en tu máquina y <b>se rompe en cualquier otra</b>. Es el error #1 al exportar.</div>
-  </section>
-
-  <section class="slide" data-chapter="Cierre" data-topic="Exportar a Windows">
-    <div class="slide-eyebrow">Exportar</div>
-    <h2 class="slide-title">Exportar a Windows en 4 pasos</h2>
-    <div class="columns">
-      <div>
-        <ol class="steps" style="font-size:14.5px;">
-          <li><b>Editor → Manage Export Templates → Download and Install</b> (una sola vez; pesan varios GB)</li>
-          <li><b>Project → Export → Add… → Windows Desktop</b></li>
-          <li>Elegir carpeta y nombre: <code>mi_juego.exe</code></li>
-          <li><b>Export Project</b> (no “Export PCK/ZIP”)</li>
-        </ol>
-        <pre class="code" style="font-size:12px; margin-top:6px;">mi_juego.exe  <span class="c"># el ejecutable</span>
-mi_juego.pck  <span class="c"># los recursos — SIEMPRE juntos</span></pre>
-      </div>
-      <div class="imgcard">
-        <img src="assets/export-preset.webp" alt="Elegir plataforma" style="max-height:250px; border:1px solid var(--border); border-radius:8px;" />
-        <figcaption class="imgcaption">El botón <b>Add…</b> lista las plataformas.</figcaption>
-      </div>
-    </div>
-    <div class="callout" style="margin-top:10px;">📱 <b>Android</b> también se puede: necesita Android SDK + JDK 17 y una clave de debug. Está en la guía del repo, para quien se anime.</div>
-  </section>
-
-  <section class="slide" data-chapter="Cierre" data-topic="Testing antes de entregar">
-    <div class="slide-eyebrow">Probar</div>
-    <h2 class="slide-title">Testing: antes de decir “está listo”</h2>
-    <ul class="bullets" style="font-size:17px;">
-      <li>Jugar de principio a fin <b>3 veces</b></li>
-      <li><b>Intentar romperlo:</b> lugares raros, acciones inesperadas, apretar todo a la vez</li>
-      <li>Que lo juegue alguien que <b>nunca lo vio</b>. Observar. <b>No ayudar.</b></li>
-      <li>Probar el <b>.exe exportado</b>, no solo desde el editor: ¿se escucha el audio? ¿se ve bien?</li>
-    </ul>
-    <div class="callout" style="margin-top:20px;">El mejor tester es la persona que no sabe cómo “debería” jugarse. Va a encontrar cosas que jamás imaginaste.</div>
-  </section>
-
+  <!-- ============ CIERRE ============ -->
   <section class="slide" data-chapter="Cierre" data-topic="Juegos comerciales">
     <div class="slide-eyebrow">🎮 Godot en serio</div>
     <h2 class="slide-title">Juegos comerciales hechos en Godot</h2>
@@ -711,21 +638,10 @@ mi_juego.pck  <span class="c"># los recursos — SIEMPRE juntos</span></pre>
         <tr><td><b>Clase 5</b></td><td>POO, herencia, instanciación, spawning</td></tr>
         <tr><td><b>Clase 6</b></td><td>UI: HUD, menús, cambio de escenas</td></tr>
         <tr><td><b>Clase 7</b></td><td>Animación, audio, Game Feel</td></tr>
-        <tr><td><b>Clase 8</b></td><td>IA, máquinas de estado, exportación</td></tr>
+        <tr><td><b>Clase 8</b></td><td>IA y máquinas de estado</td></tr>
       </tbody>
     </table>
     <div class="callout" style="margin-top:12px;">Es la base de <b>cualquier juego 2D comercial</b>. Los “grandes” usan esto mismo, con más escenas y más sistemas. Escala, no fundamentos.</div>
-  </section>
-
-  <section class="slide" data-chapter="Cierre" data-topic="La presentación">
-    <div class="slide-eyebrow">Proyecto Final</div>
-    <h2 class="slide-title">Cómo presentar tu juego</h2>
-    <div class="columns three">
-      <div class="card"><h3>1 · Demo <span style="color:var(--muted);">(5 min)</span></h3><p>Mostrarlo funcionando. ¿Cuál es el objetivo? ¿Cómo se gana o pierde?</p></div>
-      <div class="card"><h3>2 · Tour técnico <span style="color:var(--muted);">(3 min)</span></h3><p>Una parte del código que les costó o los enorgullece. Qué herramienta de Godot usaron.</p></div>
-      <div class="card"><h3>3 · Reflexión <span style="color:var(--muted);">(2 min)</span></h3><p>¿Qué fue lo más difícil? ¿Qué agregarían? ¿Qué aprendieron sin esperarlo?</p></div>
-    </div>
-    <div class="callout" style="margin-top:20px;">🤝 No es una evaluación, es <b>aprendizaje entre pares</b>: “¿alguien vio algo acá que le gustaría implementar en el suyo?”.</div>
   </section>
 
   <section class="slide title-slide" data-chapter="Cierre" data-topic="Cierre de la diplomatura">
