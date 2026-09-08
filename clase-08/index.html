@@ -29,8 +29,8 @@
     <div class="slide-eyebrow">Objetivos</div>
     <h2 class="slide-title">Al terminar la clase van a poder…</h2>
     <ul class="bullets">
-      <li>Entender qué es la <b>IA de un videojuego</b> (y qué no es)</li>
-      <li>Reconocer los <b>comportamientos básicos</b> de un enemigo: acechar, perseguir, atacar, huir</li>
+      <li>Entender qué es la <b>IA de un videojuego</b> (y qué no es), con ejemplos de juegos famosos</li>
+      <li>Reconocer los <b>comportamientos básicos</b> de un enemigo: acechar, perseguir, atacar, reaccionar al golpe</li>
       <li>Modelar un enemigo como una <b>máquina de estados</b>: estados + transiciones</li>
       <li>Implementarla en GDScript con <code>enum</code> y <code>match</code></li>
       <li><b>Exportar</b> el proyecto final y presentarlo</li>
@@ -44,7 +44,7 @@
     <h2 class="slide-title">El slime del TP7 tiene una sola idea</h2>
     <div class="columns">
       <div class="card" style="border-top:3px solid var(--red);"><h3 style="color:var(--red);">Hoy</h3><p>Aparece → te persigue → te toca. <b>Siempre lo mismo.</b> A los 10 segundos ya sabés exactamente qué va a hacer. Es <b>predecible</b>, y lo predecible aburre.</p></div>
-      <div class="card" style="border-top:3px solid var(--green);"><h3 style="color:var(--green);">Lo que queremos (para el jefe)</h3><p>Que te <b>aceche</b> de lejos, despacio. Que al acercarte <b>te vea</b> y salga a perseguirte a toda velocidad. Que al alcanzarte <b>ataque</b>. Que si te alejás mucho, <b>se calme</b> y vuelva a acechar.</p></div>
+      <div class="card" style="border-top:3px solid var(--green);"><h3 style="color:var(--green);">Lo que queremos (para el jefe)</h3><p>Que te <b>aceche</b> de lejos, despacio. Que al acercarte <b>te vea</b> y salga a perseguirte a toda velocidad. Que al alcanzarte <b>ataque</b>. Que si te alejás mucho, <b>se calme</b> y vuelva a acechar. Y que cuando le pegás, <b>lo sienta</b>.</p></div>
     </div>
     <div class="callout" style="margin-top:22px;">🤔 <b>Para el grupo:</b> ¿cómo escribirían eso con lo que saben? Con <code>if</code>… muchos <code>if</code>. Y ahí está el problema que vamos a resolver hoy.</div>
   </section>
@@ -64,24 +64,193 @@
       </div>
     </div>
     <div class="callout" style="margin-top:20px;">📏 <b>La regla de oro:</b> la IA de un juego no tiene que ser <b>inteligente</b>, tiene que ser <b>divertida</b>. Un enemigo perfecto que nunca falla es injugable. El arte está en que <b>parezca</b> listo y que igual se lo pueda vencer.</div>
-    <p class="small-note" style="margin-top:14px;">🎮 Los fantasmas de <i>Pac-Man</i> (1980) son IA de videojuego en estado puro: cuatro reglas distintas, cero inteligencia, y 45 años después siguen siendo geniales.</p>
+    <p class="small-note" style="margin-top:14px;">🎮 Cuatro ejemplos famosos, en las próximas diapositivas: <i>Pac-Man</i>, <i>Space Invaders</i>, <i>Commandos</i> y <i>Doom</i>. Ninguno tiene más de tres líneas de “inteligencia”.</p>
+  </section>
+
+  <section class="slide" data-chapter="IA" data-topic="IA famosa: Pac-Man">
+    <div class="slide-eyebrow">🎮 IA famosa · 1 de 4</div>
+    <h2 class="slide-title">Pac-Man (1980): cuatro fantasmas, cuatro reglas</h2>
+    <div class="columns" style="grid-template-columns:0.95fr 1.05fr; align-items:center;">
+      <div class="card" style="padding:12px;">
+        <svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Pac-Man: Blinky apunta a Pac-Man, Pinky apunta cuatro casillas adelante" style="width:100%;height:auto;max-height:330px;display:block;">
+  <defs><marker id="pm-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker></defs>
+  <rect width="400" height="260" rx="12" fill="#1b2230"/>
+  <circle cx="40" cy="150" r="3" fill="#f5d78a"/><circle cx="80" cy="150" r="3" fill="#f5d78a"/><circle cx="200" cy="150" r="3" fill="#f5d78a"/><circle cx="240" cy="150" r="3" fill="#f5d78a"/><circle cx="320" cy="150" r="3" fill="#f5d78a"/><circle cx="360" cy="150" r="3" fill="#f5d78a"/>
+  <line x1="60" y1="150" x2="380" y2="150" stroke="#2d3a52" stroke-width="1" stroke-dasharray="2 6"/>
+  <!-- Pac-Man -->
+  <circle cx="120" cy="150" r="22" fill="#ffe13a"/>
+  <path d="M120,150 L150,132 L150,168 Z" fill="#1b2230"/>
+  <line x1="150" y1="112" x2="196" y2="112" stroke="#ffe13a" stroke-width="2.5" marker-end="url(#pm-ah)"/>
+  <text x="152" y="102" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#ffe13a">va para →</text>
+  <!-- objetivo de Pinky: 4 casillas adelante -->
+  <circle cx="280" cy="150" r="14" fill="none" stroke="#ff9ce6" stroke-width="2.5" stroke-dasharray="5 4"/>
+  <line x1="266" y1="150" x2="294" y2="150" stroke="#ff9ce6" stroke-width="1.5"/><line x1="280" y1="136" x2="280" y2="164" stroke="#ff9ce6" stroke-width="1.5"/>
+  <text x="280" y="196" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#ff9ce6">objetivo de Pinky: 4 casillas adelante</text>
+  <!-- Blinky -->
+  <path d="M34,76 v-16 a16,16 0 0 1 32,0 v16 l-5,-6 l-6,6 l-5,-6 l-5,6 l-6,-6 l-5,6 z" fill="#ff3b3b"/><circle cx="44" cy="58" r="4" fill="#fff"/><circle cx="56" cy="58" r="4" fill="#fff"/><circle cx="45" cy="58" r="2" fill="#1b2230"/><circle cx="57" cy="58" r="2" fill="#1b2230"/>
+  <line x1="62" y1="78" x2="106" y2="128" stroke="#ff3b3b" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#pm-ah)"/>
+  <text x="22" y="34" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#ff3b3b">Blinky: directo a vos</text>
+  <!-- Pinky -->
+  <path d="M324,76 v-16 a16,16 0 0 1 32,0 v16 l-5,-6 l-6,6 l-5,-6 l-5,6 l-6,-6 l-5,6 z" fill="#ff9ce6"/><circle cx="334" cy="58" r="4" fill="#fff"/><circle cx="346" cy="58" r="4" fill="#fff"/><circle cx="335" cy="58" r="2" fill="#1b2230"/><circle cx="347" cy="58" r="2" fill="#1b2230"/>
+  <line x1="330" y1="80" x2="290" y2="132" stroke="#ff9ce6" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#pm-ah)"/>
+  <text x="378" y="34" text-anchor="end" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#ff9ce6">Pinky: te sale al cruce</text>
+  <text x="200" y="240" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#9aa5b8">dos reglas distintas → sensación de que “te rodean”</text>
+</svg>
+        <div class="imgcaption">Ilustración propia. Cada fantasma calcula una <b>casilla objetivo</b> distinta.</div>
+      </div>
+      <div>
+        <p style="font-size:16px; line-height:1.5; margin:0 0 12px;">Parece que los fantasmas se <b>coordinan</b> para rodearte. No hay coordinación: cada uno tiene <b>una regla de una línea</b>. Blinky (rojo) apunta a tu casilla. Pinky (rosa) apunta <b>cuatro casillas adelante</b> tuyo, así que te sale al cruce. Con dos reglas distintas ya sentís que te cierran.</p>
+        <div class="code-wrap"><pre class="code" style="font-size:12px;"><span class="c"># Blinky (rojo): te persigue directo</span>
+objetivo = pacman.position
+
+<span class="c"># Pinky (rosa): apunta 4 casillas ADELANTE tuyo</span>
+objetivo = pacman.position + pacman.direccion * <span class="n">4</span>
+
+<span class="c"># Inky y Clyde: otras dos reglas, igual de cortas</span></pre></div>
+        <p class="small-note" style="margin-top:10px;">Y cada tanto entran en modo <b>Scatter</b>: se van a su esquina y te dejan respirar. La regla de oro: <b>divertido</b>, no perfecto.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="IA" data-topic="IA famosa: Space Invaders">
+    <div class="slide-eyebrow">🎮 IA famosa · 2 de 4</div>
+    <h2 class="slide-title">Space Invaders (1978): la IA que fue un accidente</h2>
+    <div class="columns" style="grid-template-columns:0.95fr 1.05fr; align-items:center;">
+      <div class="card" style="padding:12px;">
+        <svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Space Invaders: quedan pocos aliens y se mueven más rápido" style="width:100%;height:auto;max-height:330px;display:block;">
+  <defs>
+    <g id="inv" fill="#7cf29a"><rect x="6" y="0" width="3" height="3"/><rect x="15" y="0" width="3" height="3"/><rect x="3" y="3" width="3" height="3"/><rect x="6" y="3" width="3" height="3"/><rect x="9" y="3" width="3" height="3"/><rect x="12" y="3" width="3" height="3"/><rect x="15" y="3" width="3" height="3"/><rect x="18" y="3" width="3" height="3"/><rect x="0" y="6" width="3" height="3"/><rect x="3" y="6" width="3" height="3"/><rect x="9" y="6" width="3" height="3"/><rect x="12" y="6" width="3" height="3"/><rect x="18" y="6" width="3" height="3"/><rect x="21" y="6" width="3" height="3"/><rect x="0" y="9" width="3" height="3"/><rect x="3" y="9" width="3" height="3"/><rect x="6" y="9" width="3" height="3"/><rect x="9" y="9" width="3" height="3"/><rect x="12" y="9" width="3" height="3"/><rect x="15" y="9" width="3" height="3"/><rect x="18" y="9" width="3" height="3"/><rect x="21" y="9" width="3" height="3"/><rect x="3" y="12" width="3" height="3"/><rect x="18" y="12" width="3" height="3"/><rect x="0" y="15" width="3" height="3"/><rect x="6" y="15" width="3" height="3"/><rect x="15" y="15" width="3" height="3"/><rect x="21" y="15" width="3" height="3"/></g>
+    <marker id="si-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker>
+  </defs>
+  <rect width="400" height="260" rx="12" fill="#1b2230"/>
+  <use href="#inv" x="70" y="40"/><use href="#inv" x="116" y="40"/><use href="#inv" x="208" y="40"/><use href="#inv" x="300" y="40"/><use href="#inv" x="70" y="74"/><use href="#inv" x="162" y="74"/><use href="#inv" x="254" y="74"/><use href="#inv" x="116" y="108"/><use href="#inv" x="162" y="108"/><use href="#inv" x="254" y="108"/><use href="#inv" x="300" y="108"/>
+  <text x="174" y="54" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="12" fill="#3a4a66">✕</text><text x="266" y="54" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="12" fill="#3a4a66">✕</text><text x="128" y="88" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="12" fill="#3a4a66">✕</text><text x="220" y="88" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="12" fill="#3a4a66">✕</text><text x="312" y="88" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="12" fill="#3a4a66">✕</text><text x="82" y="122" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="12" fill="#3a4a66">✕</text><text x="220" y="122" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="12" fill="#3a4a66">✕</text>
+  <line x1="60" y1="152" x2="340" y2="152" stroke="#7cf29a" stroke-width="2.5" marker-end="url(#si-ah)"/>
+  <text x="200" y="172" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#7cf29a">quedan 11 de 18 → ya van al doble de velocidad</text>
+  <rect x="180" y="212" width="40" height="14" fill="#5ac8ff"/><rect x="196" y="204" width="8" height="10" fill="#5ac8ff"/>
+  <text x="200" y="246" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#9aa5b8">con 1 solo alien vivo: 55 veces más rápido que al empezar</text>
+</svg>
+        <div class="imgcaption">Ilustración propia. A menos aliens, más velocidad.</div>
+      </div>
+      <div>
+        <p style="font-size:16px; line-height:1.5; margin:0 0 12px;">Los aliens <b>aceleran</b> a medida que los matás, y el final de cada oleada es pura tensión. No fue diseño: el hardware dibujaba <b>más rápido cuantos menos sprites</b> había en pantalla. Tomohiro Nishikado lo vio, le gustó, y <b>lo dejó</b>.</p>
+        <div class="code-wrap"><pre class="code" style="font-size:12px;"><span class="c"># Cada vez que muere un alien, los que quedan se apuran</span>
+<span class="k">func</span> <span class="t">_on_alien_muerto</span>():
+	vivos -= <span class="n">1</span>
+	velocidad = velocidad_base * (<span class="n">55.0</span> / vivos)</pre></div>
+        <p class="small-note" style="margin-top:10px;">Una sola línea de “IA” y es el mecanismo más recordado del juego. <b>Lo que se siente bien, se queda.</b></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="IA" data-topic="IA famosa: Commandos">
+    <div class="slide-eyebrow">🎮 IA famosa · 3 de 4</div>
+    <h2 class="slide-title">Commandos (1998): el cono de visión que se ve</h2>
+    <div class="columns" style="grid-template-columns:0.95fr 1.05fr; align-items:center;">
+      <div class="card" style="padding:12px;">
+        <svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Commandos: cono de visión con zona clara y zona oscura; el comando agachado en la zona oscura no es visto" style="width:100%;height:auto;max-height:330px;display:block;">
+  <rect width="400" height="260" rx="12" fill="#cfc6a3"/>
+  <!-- zona oscura (lejos) -->
+  <polygon points="150,90 370,28 370,232 150,170" fill="#4b5563" opacity="0.45"/>
+  <!-- zona clara (cerca) -->
+  <polygon points="58,130 150,90 150,170" fill="#ffd54a" opacity="0.75"/>
+  <!-- soldado -->
+  <ellipse cx="58" cy="130" rx="18" ry="10" fill="#3f5a3a"/><circle cx="58" cy="130" r="9" fill="#556b4f" stroke="#2c3d2a" stroke-width="2"/>
+  <text x="58" y="160" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" font-weight="700" fill="#2c3d2a">soldado</text>
+  <text x="104" y="126" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="10.5" font-weight="700" fill="#5a4a00">CERCA</text>
+  <text x="104" y="139" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="9.5" fill="#5a4a00">te ve siempre</text>
+  <text x="270" y="120" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="10.5" font-weight="700" fill="#e5e7eb">LEJOS</text>
+  <text x="270" y="133" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="9.5" fill="#e5e7eb">solo si estás de pie</text>
+  <!-- comando de pie: visto -->
+  <ellipse cx="300" cy="72" rx="8" ry="11" fill="#1f5f3f"/><circle cx="300" cy="58" r="6" fill="#d9a066"/>
+  <text x="322" y="66" font-family="Segoe UI,Arial,sans-serif" font-size="20" font-weight="900" fill="#dc2626">!</text>
+  <text x="300" y="96" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="10" fill="#fff">de pie → visto</text>
+  <!-- comando agachado: no visto -->
+  <ellipse cx="300" cy="196" rx="11" ry="6" fill="#1f5f3f"/><circle cx="300" cy="188" r="5" fill="#d9a066"/>
+  <text x="322" y="196" font-family="Segoe UI,Arial,sans-serif" font-size="16" font-weight="900" fill="#16a34a">✓</text>
+  <text x="300" y="216" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="10" fill="#fff">agachado → invisible</text>
+  <text x="200" y="248" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#3f3a22">el cono se dibuja en el piso: el jugador ve exactamente lo que ve el enemigo</text>
+</svg>
+        <div class="imgcaption">Ilustración propia. Dos zonas: <b>clara</b> (cerca) y <b>oscura</b> (lejos).</div>
+      </div>
+      <div>
+        <p style="font-size:16px; line-height:1.5; margin:0 0 12px;">Hecho en Madrid por <b>Pyro Studios</b>. Cada soldado tiene un cono de visión <b>dibujado en el piso</b>. En la zona <b>clara</b> te ve siempre. En la zona <b>oscura</b>, solo si estás <b>de pie</b>: agachado, pasás. Todo el sigilo del juego sale de esa única regla.</p>
+        <div class="code-wrap"><pre class="code" style="font-size:12px;"><span class="c"># El cono es un Area2D hijo del soldado (Clase 4)</span>
+<span class="k">func</span> <span class="t">_on_cono_body_entered</span>(body):
+	<span class="k">if</span> body.is_in_group(<span class="s">"comando"</span>):
+		<span class="k">if</span> zona == CERCA <span class="k">or</span> body.de_pie:
+			dar_alarma()</pre></div>
+        <p class="small-note" style="margin-top:10px;">Fijate que <b>ya saben hacerlo</b>: un <code>Area2D</code> con forma de cono y la señal <code>body_entered</code>. Lo vemos en dos diapositivas.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="IA" data-topic="IA famosa: Doom">
+    <div class="slide-eyebrow">🎮 IA famosa · 4 de 4</div>
+    <h2 class="slide-title">Doom (1993): un <code>if</code> y los monstruos se pelean</h2>
+    <div class="columns" style="grid-template-columns:0.95fr 1.05fr; align-items:center;">
+      <div class="card" style="padding:12px;">
+        <svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Doom: el monstruo A le tira una bola de fuego al jugador, le pega al monstruo B, y B ataca a A" style="width:100%;height:auto;max-height:330px;display:block;">
+  <defs><marker id="dm-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker></defs>
+  <rect width="400" height="260" rx="12" fill="#1b2230"/>
+  <!-- jugador -->
+  <circle cx="60" cy="205" r="11" fill="#5ac8ff"/><rect x="52" y="216" width="16" height="18" rx="3" fill="#5ac8ff"/>
+  <text x="60" y="250" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#5ac8ff">vos</text>
+  <!-- A dispara hacia vos -->
+  <line x1="300" y1="82" x2="196" y2="143" stroke="#ff8a3b" stroke-width="2" stroke-dasharray="6 4"/>
+  <line x1="196" y1="143" x2="88" y2="196" stroke="#ff8a3b" stroke-width="1.5" stroke-dasharray="2 6" opacity="0.5"/>
+  <circle cx="196" cy="143" r="9" fill="#ff8a3b"/><circle cx="196" cy="143" r="4" fill="#ffe13a"/>
+  <text x="60" y="64" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#ff8a3b">1 · A te tira una bola de fuego…</text>
+  <rect x="286" y="50" width="28" height="26" rx="6" fill="#b45309"/><rect x="291" y="57" width="6" height="6" fill="#fff"/><rect x="303" y="57" width="6" height="6" fill="#fff"/><rect x="293" y="59" width="3" height="3" fill="#1b2230"/><rect x="305" y="59" width="3" height="3" fill="#1b2230"/><path d="M292,68 l4,4 l4,-4 l4,4 l4,-4" stroke="#fff" stroke-width="2" fill="none"/><text x="300" y="92" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#e5e7eb">monstruo A</text>
+  <rect x="166" y="138" width="28" height="26" rx="6" fill="#7c3aed"/><rect x="171" y="145" width="6" height="6" fill="#fff"/><rect x="183" y="145" width="6" height="6" fill="#fff"/><rect x="173" y="147" width="3" height="3" fill="#1b2230"/><rect x="185" y="147" width="3" height="3" fill="#1b2230"/><path d="M172,156 l4,4 l4,-4 l4,4 l4,-4" stroke="#fff" stroke-width="2" fill="none"/><text x="180" y="180" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#e5e7eb">monstruo B</text>
+  <text x="112" y="150" text-anchor="end" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#ffe13a">2 · …y le pega a B</text>
+  <!-- B contraataca a A -->
+  <path d="M200,132 C240,120 260,100 284,84" stroke="#dc2626" stroke-width="2.5" fill="none" marker-end="url(#dm-ah)"/>
+  <text x="330" y="132" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" font-weight="700" fill="#dc2626">3 · B ahora ataca a A</text>
+  <text x="200" y="235" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#9aa5b8">se olvidan de vos y se pelean entre ellos: “infighting”</text>
+</svg>
+        <div class="imgcaption">Ilustración propia. El <i>infighting</i>: una regla, un comportamiento que nadie programó.</div>
+      </div>
+      <div>
+        <p style="font-size:16px; line-height:1.5; margin:0 0 12px;">Regla: cuando un monstruo <b>recibe daño</b>, pasa a atacar <b>a quien lo golpeó</b>. Si a un monstruo se le escapa una bola de fuego y le pega a otro, el otro <b>se da vuelta y lo ataca</b>. Los jugadores lo usan como táctica: ponerse en el medio y dejar que se maten entre ellos.</p>
+        <div class="code-wrap"><pre class="code" style="font-size:12px;"><span class="c"># Cuando un monstruo recibe daño, apunta a quien lo golpeó</span>
+<span class="k">func</span> <span class="t">recibir_dano</span>(cantidad, atacante):
+	vida -= cantidad
+	<span class="k">if</span> atacante != jugador:
+		objetivo = atacante        <span class="c"># ¡se pelean entre ellos!</span></pre></div>
+        <p class="small-note" style="margin-top:10px;"><b>Ninguno de los cuatro ejemplos tiene más de tres líneas de decisión.</b> Eso es la IA de un videojuego. Y ojo con este: hoy nuestro jefe también va a <b>cambiar de comportamiento al recibir daño</b>.</p>
+      </div>
+    </div>
   </section>
 
   <!-- ============ COMPORTAMIENTOS ============ -->
   <section class="slide" data-chapter="IA" data-topic="Comportamientos básicos">
     <div class="slide-eyebrow">Los ladrillos</div>
     <h2 class="slide-title">Los comportamientos básicos de un enemigo</h2>
-    <table class="tbl" style="font-size:15.5px;">
-      <thead><tr><th>Comportamiento</th><th>Qué hace</th><th>En una línea</th></tr></thead>
-      <tbody>
-        <tr><td><b>🕵️ Acechar</b></td><td>Sigue al jugador de lejos, <b>despacio</b></td><td><code>position += dir_jugador * vel * 0.5 * delta</code></td></tr>
-        <tr><td><b>🏃 Perseguir</b></td><td>Va hacia el jugador <i>(el del TP7)</i></td><td><code>dir = (jugador.position - position).normalized()</code></td></tr>
-        <tr><td><b>⚔️ Atacar</b></td><td>Se frena y hace daño cada tanto</td><td><code>if $Timer.is_stopped(): pegar()</code></td></tr>
-        <tr><td><b>🏳️ Huir</b></td><td>Se aleja del jugador (¡es perseguir al revés!)</td><td><code>dir = (position - jugador.position).normalized()</code></td></tr>
-      </tbody>
-    </table>
+    <div class="columns" style="grid-template-columns:1.15fr 0.85fr;">
+      <div class="card" style="border-top:3px solid var(--green); padding:14px 16px;">
+        <h3 style="color:var(--green); margin-bottom:8px;">✅ Lo que va (nuestro jefe)</h3>
+        <table class="tbl" style="font-size:14px;">
+          <thead><tr><th>Comportamiento</th><th>Qué hace</th><th>En una línea</th></tr></thead>
+          <tbody>
+            <tr><td><b>🏃 Perseguir</b></td><td>Va hacia el jugador <i>(ya está: TP7)</i></td><td><code>dir = (jugador.position - position).normalized()</code></td></tr>
+            <tr><td><b>🕵️ Acechar</b></td><td>Lo sigue de lejos, <b>despacio</b></td><td><code>position += dir * vel * 0.5 * delta</code></td></tr>
+            <tr><td><b>⚔️ Atacar</b></td><td>Se frena y pega cada tanto</td><td><code>if $Timer.is_stopped(): pegar()</code></td></tr>
+            <tr><td><b>💥 Golpeado</b></td><td>Retrocede y queda <b>congelado 0.5 s</b></td><td><code>position += dir_atras * 20</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card" style="border-top:3px solid var(--muted); padding:14px 16px;">
+        <h3 style="color:var(--muted); margin-bottom:8px;">🧭 Otras opciones (hoy no)</h3>
+        <ul style="font-size:14px; line-height:1.45; margin:0; padding-left:18px;">
+          <li><b>Patrullar</b> (caminar al azar): en un <i>survivors</i> es un error. Los enemigos se van de pantalla y el jugador los evita para siempre.</li>
+          <li><b>Huir</b> con poca vida: un jefe que escapa es un jefe que <b>no se enfrenta</b>. Frustra.</li>
+          <li><b>Esquivar balas</b>: se puede con un <code>Area2D</code> que detecte la bala venir. Para tu propio juego.</li>
+          <li><b>Invocar</b> minions: <code>instantiate()</code> desde el jefe. Todo lo que hace falta ya lo tenés del TP5.</li>
+        </ul>
+      </div>
+    </div>
     <div class="callout" style="margin-top:14px;">Cada uno es <b>trivial</b> por separado: ya saben escribirlos. Lo difícil no es cada comportamiento, es <b>cuándo cambiar de uno a otro</b>.</div>
-    <p class="small-note" style="margin-top:10px;">🚶 <b>¿Y “patrullar”?</b> Caminar al azar es un clásico (los guardias de <i>Metal Gear</i>), pero en un <i>survivors</i> sería un error de diseño: los enemigos se irían de la pantalla, el jugador los evitaría para siempre y el juego se llenaría de slimes que nadie ve. Por eso el estado “tranquilo” de nuestro jefe es <b>acechar</b>: siempre viene hacia vos, solo que más lento.</p>
   </section>
 
   <section class="slide" data-chapter="IA" data-topic="Detectar al jugador">
@@ -99,10 +268,10 @@
       <div class="card">
         <h3>👁️ Con un Area2D de visión</h3>
         <p>Un <code>Area2D</code> hijo del enemigo, con forma de círculo o cono. Cuando el jugador <b>entra</b>, se emite <code>body_entered</code>; cuando <b>sale</b>, <code>body_exited</code>.</p>
-        <p class="small-note" style="margin-top:8px;">Más flexible (conos de visión, sigilo). Todo lo que necesitan ya lo vieron en la Clase 4.</p>
+        <p class="small-note" style="margin-top:8px;">Más flexible: conos de visión, sigilo. Es <b>exactamente</b> el cono de <i>Commandos</i>, y todo lo que necesitan ya lo vieron en la Clase 4.</p>
       </div>
     </div>
-    <div class="callout" style="margin-top:14px;">🎮 En <i>Metal Gear Solid</i> el cono de visión del guardia es <b>literal</b>: se dibuja en el radar. Entrás en el cono → “<b>!</b>” → te persigue.</div>
+    <div class="callout" style="margin-top:14px;">🎮 <i>Commandos</i> y <i>Metal Gear Solid</i> hacen lo mismo con la segunda opción: el cono es un <b>área</b>. Entrás → “<b>!</b>” → cambia de estado. Nuestro jefe, para empezar, usa la primera: <b>un número</b>.</div>
   </section>
 
   <!-- ============ EL PROBLEMA ============ -->
@@ -112,20 +281,21 @@
     <div class="columns">
       <div class="code-wrap">
         <pre class="code" style="font-size:11.5px;"><span class="k">func</span> <span class="t">_process</span>(delta):
-	<span class="k">if</span> lo_vi <span class="k">and</span> <span class="k">not</span> atacando <span class="k">and</span> <span class="k">not</span> huyendo:
+	<span class="k">if</span> golpeado:
+		<span class="k">if</span> $TimerGolpe.is_stopped(): golpeado = <span class="k">false</span>
+	<span class="k">elif</span> lo_vi <span class="k">and</span> <span class="k">not</span> atacando:
 		perseguir(delta)
 		<span class="k">if</span> d < <span class="n">40</span>: atacando = <span class="k">true</span>
-	<span class="k">elif</span> atacando <span class="k">and</span> <span class="k">not</span> huyendo:
+	<span class="k">elif</span> atacando <span class="k">and</span> <span class="k">not</span> golpeado:
 		atacar()
 		<span class="k">if</span> d > <span class="n">60</span>: atacando = <span class="k">false</span>
-		<span class="k">if</span> vida < <span class="n">2</span>: huyendo = <span class="k">true</span>; atacando = <span class="k">false</span>
-	<span class="k">elif</span> huyendo:
-		huir(delta)
-		<span class="k">if</span> d > <span class="n">400</span>: huyendo = <span class="k">false</span>; lo_vi = <span class="k">false</span>
 	<span class="k">elif</span> <span class="k">not</span> lo_vi:
 		acechar(delta)
 		<span class="k">if</span> d < <span class="n">250</span>: lo_vi = <span class="k">true</span>
-	<span class="c"># ¿y si lo_vi y huyendo son true a la vez? 🤯</span></pre>
+
+<span class="k">func</span> <span class="t">recibir_dano</span>(cantidad):
+	golpeado = <span class="k">true</span>   <span class="c"># ¿y atacando? ¿y lo_vi? ¿los toco o no?</span>
+	<span class="c"># ¿y si golpeado y atacando son true a la vez? 🤯</span></pre>
       </div>
       <div style="align-self:center;">
         <div class="card" style="border-color:var(--red);">
@@ -265,7 +435,11 @@
     <div class="slide-eyebrow">Cada estado, una función</div>
     <h2 class="slide-title">Los comportamientos son funciones cortas</h2>
     <div class="code-wrap">
-      <pre class="code" style="font-size:12px;"><span class="k">func</span> <span class="t">acechar</span>(delta):          <span class="c"># sigue al jugador, a mitad de velocidad</span>
+      <pre class="code" style="font-size:12px;"><span class="k">func</span> <span class="t">_ready</span>():
+	<span class="k">super</span>()                                   <span class="c"># lo del slime básico</span>
+	jugador = get_tree().get_first_node_in_group(<span class="s">"jugador"</span>)   <span class="c"># UNA vez, no cada frame</span>
+
+<span class="k">func</span> <span class="t">acechar</span>(delta):          <span class="c"># sigue al jugador, a mitad de velocidad</span>
 	<span class="k">var</span> dir = (jugador.position - position).normalized()
 	position += dir * velocidad * <span class="n">0.5</span> * delta
 
@@ -281,35 +455,42 @@
 <span class="k">func</span> <span class="t">distancia_al_jugador</span>() -> <span class="t">float</span>:
 	<span class="k">return</span> position.distance_to(jugador.position)</pre>
     </div>
-    <div class="callout" style="margin-top:12px;">Fijate que el <code>_process</code> <b>no sabe cómo</b> se acecha o se ataca: solo elige <b>cuál</b> llamar. Cada función se puede cambiar sin tocar las otras. <span class="small-note">(<code>jugador</code> se guarda una vez en <code>_ready()</code> con <code>get_first_node_in_group</code>.)</span></div>
+    <div class="callout" style="margin-top:12px;">Fijate que el <code>_process</code> <b>no sabe cómo</b> se acecha o se ataca: solo elige <b>cuál</b> llamar. Cada función se puede cambiar sin tocar las otras. Y <code>jugador</code> se busca <b>una sola vez</b>, en <code>_ready()</code>.</div>
   </section>
 
   <section class="slide" data-chapter="Máquina de estados" data-topic="Agregar un estado">
     <div class="slide-eyebrow">La prueba de fuego</div>
-    <h2 class="slide-title">¿Y si quiero que huya con poca vida?</h2>
-    <div class="columns">
+    <h2 class="slide-title">¿Y si quiero que sienta el golpe?</h2>
+    <div class="columns" style="grid-template-columns:0.9fr 1.1fr;">
       <div>
-        <p class="subtitle" style="font-size:17px;">Con el spaghetti de <code>if</code>, había que tocar <b>todo</b>. Con la máquina de estados, son <b>tres pasos aislados</b>:</p>
+        <p class="subtitle" style="font-size:17px;">Cada bala que le pega: un <b>empujón</b> hacia atrás y <b>0.5 s congelado</b>, en rojo. Con el spaghetti había que tocar <b>todo</b>. Acá son <b>tres pasos aislados</b>:</p>
         <ol class="steps" style="font-size:15px;">
-          <li>Un estado más en el <code>enum</code>: <code>HUIR</code></li>
-          <li>Una función más: <code>huir(delta)</code> (perseguir al revés)</li>
-          <li>Las flechas nuevas: de <b>cualquier</b> estado → <code>HUIR</code> si <code>vida < 2</code>; de <code>HUIR</code> → <code>ACECHAR</code> si está lejos</li>
+          <li>Un estado más en el <code>enum</code>: <code>GOLPEADO</code></li>
+          <li>Una función más: <code>golpeado()</code> (quieto y rojo) y un <code>TimerGolpe</code> de 0.5 s</li>
+          <li>Las flechas nuevas: de <b>cualquier</b> estado → <code>GOLPEADO</code> al <b>recibir daño</b> (un <b>evento</b>); de <code>GOLPEADO</code> → <code>PERSEGUIR</code> cuando <b>termina el Timer</b> (el <b>tiempo</b>)</li>
         </ol>
       </div>
       <div class="code-wrap" style="align-self:center;">
-        <pre class="code" style="font-size:12px;"><span class="k">enum</span> <span class="t">Estado</span> { ACECHAR, PERSEGUIR, ATACAR, HUIR }
+        <pre class="code" style="font-size:12px;"><span class="k">enum</span> <span class="t">Estado</span> { ACECHAR, PERSEGUIR, ATACAR, GOLPEADO }
 
 <span class="c"># dentro del match:</span>
-	<span class="t">Estado</span>.HUIR:
-		huir(delta)
-		<span class="k">if</span> d > <span class="n">400</span>: estado = <span class="t">Estado</span>.ACECHAR
+	<span class="t">Estado</span>.GOLPEADO:
+		golpeado()
+		<span class="k">if</span> $TimerGolpe.is_stopped():        <span class="c"># pasó el medio segundo</span>
+			$AnimatedSprite2D.modulate = Color.WHITE
+			estado = <span class="t">Estado</span>.PERSEGUIR
 
-<span class="k">func</span> <span class="t">huir</span>(delta):
-	<span class="k">var</span> dir = (position - jugador.position).normalized()
-	position += dir * velocidad * <span class="n">1.5</span> * delta</pre>
+<span class="k">func</span> <span class="t">golpeado</span>():                      <span class="c"># quieto: no se mueve ni pega</span>
+	$AnimatedSprite2D.modulate = Color(<span class="n">1</span>, <span class="n">0.4</span>, <span class="n">0.4</span>)
+
+<span class="c"># la flecha de ENTRADA vive en recibir_dano(), no en el match:</span>
+	<span class="k">if</span> vida > <span class="n">0</span>:
+		position += (position - jugador.position).normalized() * <span class="n">20</span>
+		$TimerGolpe.start()
+		estado = <span class="t">Estado</span>.GOLPEADO</pre>
       </div>
     </div>
-    <div class="callout" style="margin-top:12px;">Nada de lo anterior se rompió. <b>Eso</b> es lo que compra una máquina de estados: poder <b>agregar</b> sin miedo.</div>
+    <div class="callout" style="margin-top:12px;">Nada de lo anterior se rompió. <b>Eso</b> es lo que compra una máquina de estados: poder <b>agregar</b> sin miedo. (Y sí: es la misma idea que el <i>infighting</i> de <i>Doom</i>: <b>cambiar de estado al recibir daño</b>.)</div>
   </section>
 
   <section class="slide" data-chapter="Máquina de estados" data-topic="En juegos reales">
@@ -337,7 +518,7 @@
       <div class="card" style="border-color:var(--accent);">
         <h3>El élite (jefe): con cerebro</h3>
         <ul>
-          <li>Recibe la máquina: <b>acechar → perseguir → atacar</b>, y <b>huir</b> con poca vida</li>
+          <li>Recibe la máquina: <b>acechar → perseguir → atacar</b>, y <b>golpeado</b> cuando le pegás (empujón + 0.5 s congelado)</li>
           <li><b>Sobreescribe</b> el <code>_process</code> del padre y <b>anula el kamikaze</b> (<code>_on_body_entered</code> vacío)</li>
           <li>Sigue heredando vida, daño y barra del TP7. <b>Solo se toca un script.</b></li>
         </ul>

@@ -1,15 +1,16 @@
 # Trabajo Práctico 8 — El jefe aprende a pensar (máquina de estados)
 
 > **Diplomatura de Videojuegos · Clase 8 · Proyecto final**
-> Objetivo: darle **cerebro al slime élite** (el jefe) del TP7 con una **máquina de estados**: te va a **acechar** de lejos, **perseguirte** cuando te acercás, **atacarte** cuando te alcanza, y **huir** cuando le queda poca vida. El slime básico **queda como está**: es la horda. Y al final, **exportás** el juego: es tu proyecto final.
+> Objetivo: darle **cerebro al slime élite** (el jefe) del TP7 con una **máquina de estados**: te va a **acechar** de lejos, **perseguirte** cuando te acercás, **atacarte** cuando te alcanza, y **sentir el golpe** cuando le pegás: un empujón y medio segundo congelado. El slime básico **queda como está**: es la horda. Y al final, **exportás** el juego: es tu proyecto final.
 
 ---
 
 ## 🎯 Qué vas a lograr
 
-- El **jefe** con **cuatro estados** —`ACECHAR`, `PERSEGUIR`, `ATACAR`, `HUIR`— y las transiciones entre ellos, escritas con `enum` + `match` como en la clase.
+- El **jefe** con **cuatro estados** —`ACECHAR`, `PERSEGUIR`, `ATACAR`, `GOLPEADO`— y las transiciones entre ellos, escritas con `enum` + `match` como en la clase.
 - Una **etiqueta sobre el jefe** que muestra en qué estado está: vas a *ver* la máquina de estados funcionando.
 - El jefe **ya no es kamikaze**: se frena y te pega **cada segundo** mientras estés cerca.
+- Cada bala que le pega al jefe lo **empuja** y lo **congela 0.5 s**: el golpe se siente.
 - El slime básico **intacto**: sigue siendo la horda simple del TP7.
 - El juego **exportado** a `.exe`, listo para compartir.
 
@@ -52,7 +53,7 @@ Y lo vamos a construir **de a un estado por vez**, probando cada uno antes de se
 | :---- | :---- | :---- |
 | 1 | `ACECHAR` ⇄ `PERSEGUIR` | El jefe viene despacio; al acercarte, acelera |
 | 2 | + `ATACAR` | Se frena al alcanzarte y te pega cada segundo |
-| 3 | + `HUIR` | Escapa cuando le queda 1 de vida |
+| 3 | + `GOLPEADO` | Cada bala lo empuja y lo congela 0.5 s |
 | 4 | — | Ajustar, exportar y entregar |
 
 ---
@@ -148,6 +149,7 @@ func recibir_dano(cantidad: int) -> void:
 > 🧠 **Qué está pasando acá (tres ideas de herencia):**
 > - **Sobreescribir `_process`.** Al definirlo en el hijo, el del padre **deja de correr** para el jefe (a propósito no llamamos `super()` ahí). Los slimes básicos siguen usando el del padre: por eso no cambian.
 > - **Anular `_on_body_entered`.** El padre lo conecta a la señal en su `_ready()` (que sí llamamos con `super()`), pero como el jefe lo **redefine vacío** (`pass`), al tocarte no pasa nada. El ataque va a llegar por un **estado**, en la Parte 2.
+> - **`jugador` se busca una sola vez, en `_ready()`.** El slime básico del TP7 lo busca **cada frame** dentro de `_process`. Funciona, pero es trabajo repetido: el jugador es siempre el mismo nodo. Guardarlo en una variable al arrancar es lo correcto, y por eso el `if jugador == null: return` de arriba: si no lo encontró, mejor no hacer nada que romperse.
 > - **`Estado.keys()[estado]`** devuelve el nombre del estado como texto (`"ACECHAR"`). Eso muestra la etiqueta. Es *la* herramienta para depurar una máquina de estados: si algo anda raro, mirás la etiqueta y sabés exactamente en qué estado está.
 >
 > Y el patrón de siempre: en cada estado, primero **hacer** (llamar a la función), después **decidir** (¿cambio?).
@@ -247,62 +249,82 @@ Apretá **F6**. Dejá que el jefe te alcance: la etiqueta pasa a **`ATACAR`**, s
 
 ---
 
-## 🏳️ Parte 3 — Cuarto estado: HUIR
+## 💥 Parte 3 — Cuarto estado: GOLPEADO
 
-> **Concepto:** la prueba de fuego de la clase: agregar un estado **sin romper nada**. Con un detalle nuevo: esta transición **no se dispara por distancia**, sino por un **evento** — recibir daño.
+> **Concepto:** la prueba de fuego de la clase: agregar un estado **sin romper nada**. Y con dos flechas distintas a las de antes: se **entra** por un **evento** (recibir una bala) y se **sale** por **tiempo** (pasan 0.5 s).
 
-![Máquina de estados con HUIR: las flechas rojas salen de recibir_dano](tp8-assets/diagrama-4-estados.png)
+Hoy, cuando una bala le pega al jefe, la barra baja y nada más: sigue caminando como si nada. Queremos que **se sienta**: un **empujón** hacia atrás y **medio segundo congelado**, en rojo. Nada de huir: en un *survivors*, un jefe que escapa es un jefe que no se enfrenta.
 
-Cuatro cambios en **`enemigo_elite.gd`**:
+![Máquina de estados con GOLPEADO: se entra desde recibir_dano y se sale cuando termina el Timer](tp8-assets/diagrama-4-estados.png)
+
+Cinco cambios en **`enemigo_elite.gd`**:
 
 **1.** El `enum`, completo:
 
 ```gdscript
-enum Estado { ACECHAR, PERSEGUIR, ATACAR, HUIR }
+enum Estado { ACECHAR, PERSEGUIR, ATACAR, GOLPEADO }
 ```
 
-**2.** En `_process`, agregá la rama de `HUIR` **al final del `match`**, debajo de la de `ATACAR`:
+**2.** En `_ready()`, **debajo del bloque del `TimerAtaque`**, un segundo temporizador:
 
 ```gdscript
-		Estado.HUIR:
-			huir(delta)
-			if d > 400: estado = Estado.ACECHAR
+	var timer_golpe := Timer.new()
+	timer_golpe.name = "TimerGolpe"
+	timer_golpe.wait_time = 0.5       # medio segundo congelado
+	timer_golpe.one_shot = true
+	add_child(timer_golpe)
 ```
 
-**3.** La función, junto a las otras (es **perseguir al revés**):
+**3.** En `_process`, la rama de `GOLPEADO` **al final del `match`**, debajo de la de `ATACAR`:
 
 ```gdscript
-func huir(delta: float) -> void:
-	var dir := (position - jugador.position).normalized()   # del jugador hacia mí
-	position += dir * velocidad * 1.5 * delta                # más rápido que caminando
-	$AnimatedSprite2D.flip_h = dir.x < 0
+		Estado.GOLPEADO:
+			golpeado()
+			if $TimerGolpe.is_stopped():                  # pasó el medio segundo
+				$AnimatedSprite2D.modulate = Color.WHITE   # se le va el rojo
+				estado = Estado.PERSEGUIR
 ```
 
-**4.** Y la **flecha** que entra a `HUIR`, en `recibir_dano()`:
+**4.** La función, junto a las otras:
+
+```gdscript
+func golpeado() -> void:                              # congelado: no se mueve ni pega
+	$AnimatedSprite2D.modulate = Color(1, 0.4, 0.4)   # rojo, para que se note
+```
+
+**5.** Y la **flecha de entrada**, en `recibir_dano()`:
 
 ```gdscript
 func recibir_dano(cantidad: int) -> void:
 	super(cantidad)
 	$BarraVida.value = vida
-	if vida > 0 and vida < 2:          # NUEVO: con 1 de vida, escapa
-		estado = Estado.HUIR
+	if vida > 0:                                                    # si murió, no hay golpe que valga
+		position += (position - jugador.position).normalized() * 20   # empujón: 20 px hacia atrás
+		$TimerGolpe.start()                                             # arranca el medio segundo
+		estado = Estado.GOLPEADO
 ```
 
-> 🧠 **Esta flecha es distinta.** Las otras transiciones viven en el `match` y se disparan por **distancia**. Esta vive en `recibir_dano()` y se dispara por un **evento**: recibir un golpe. Las dos formas conviven sin problema — una máquina de estados no exige que todas las flechas salgan del mismo lugar. Y `vida > 0` evita mandar a huir a un jefe que ya murió con ese golpe.
+> 🧠 **Dos flechas nuevas, dos disparadores nuevos.** Las transiciones de antes viven en el `match` y se deciden por **distancia**. La de **entrada** a `GOLPEADO` vive en `recibir_dano()` y se dispara por un **evento**: recibir un golpe. Una máquina de estados no exige que todas las flechas salgan del mismo lugar. La de **salida** se decide por **tiempo**, con el mismo truco de `is_stopped()` que ya usás en `atacar()`.
+>
+> **El empujón** es "perseguir al revés" en una sola línea: `(position - jugador.position)` es la dirección **del jugador hacia el jefe**, y `* 20` la convierte en 20 píxeles. No lleva `delta` porque no es un movimiento por frame: es un salto, una vez, en el momento del golpe.
+>
+> **¿Por qué `vida > 0`?** Si la bala lo mató, `super()` ya llamó a `morir()` y el nodo está por desaparecer: no tiene sentido empujarlo ni congelarlo.
 
-Apretá **F6**. Dejá que las balas le peguen al jefe **cuatro veces**: con 1 de vida, la etiqueta cambia a **`HUIR`** y sale disparado en dirección contraria. Si se aleja más de 400 px, vuelve a **`ACECHAR`**… y si te acercás de nuevo, te persigue **con 1 de vida**.
+Apretá **F6**. Dejá que una bala le pegue al jefe: retrocede un poco, se pone **rojo**, la etiqueta dice **`GOLPEADO`** y se queda clavado medio segundo. Después vuelve a **`PERSEGUIR`**, blanco otra vez. Con varias balas seguidas se lo ve trabarse a cada golpe: eso es lo que hace que un jefe se sienta **pesado**.
 
-✅ **Punto de control 3:** el jefe huye al quedar con 1 de vida y vuelve a acechar cuando está lejos. Agregaste un estado y **nada de lo anterior se rompió**.
+✅ **Punto de control 3:** cada bala empuja y congela al jefe medio segundo, y después retoma la persecución. Agregaste un estado y **nada de lo anterior se rompió**. Los slimes básicos siguen sin inmutarse cuando les pegás: `enemigo.gd` no cambió.
 
 > 🛟 **Errores comunes en esta parte**
 >
 > <details>
 > <summary>Abrí para ver soluciones</summary>
 >
-> - **"Identifier 'HUIR' not declared"** → falta agregarlo al `enum`.
-> - **El jefe no huye** → la condición va **después** de `super(cantidad)`, si no `vida` todavía no bajó. Y revisá que sea `vida > 0 and vida < 2`.
-> - **Huye pero vuelve enseguida** → 400 px es mucho en una arena chica; bajalo a 300. O subí el `1.5` a `2.0` para que escape más rápido.
-> - **Huye y se va de la pantalla** → es lo esperado con esta versión simple. Si querés que no salga, en `huir()` agregá un `clamp` de `position` como el del jugador (TP7, Parte 1).
+> - **"Identifier 'GOLPEADO' not declared"** → falta agregarlo al `enum`.
+> - **"Node not found: TimerGolpe"** → el bloque que lo crea va **dentro de `_ready()`**, con la misma sangría que el del `TimerAtaque`.
+> - **No se congela ni se pone rojo** → las tres líneas van **después** de `super(cantidad)` y `$BarraVida.value = vida`, adentro del `if vida > 0:`. Y revisá que la última sea `estado = Estado.GOLPEADO`.
+> - **Nunca sale de GOLPEADO mientras le disparás** → el `TimerDisparo` del jugador tira una bala cada **0.4 s**, más seguido que los 0.5 s del congelado: si el jefe es el único objetivo, cada bala **reinicia** el Timer y queda trabado hasta morir. En muchos *survivors* eso es a propósito (*stun lock*). Si no te gusta, que el golpe **no se acumule**: `if $TimerGolpe.is_stopped(): $TimerGolpe.start()`. O bajá el `wait_time` a `0.3`.
+> - **Queda rojo para siempre** → el `modulate = Color.WHITE` va en la **salida** (dentro del `if` del `match`), no en `golpeado()`.
+> - **Retrocede pero casi no se nota** → 20 px es poco con el sprite chico; probá `40`. Mucho más y parece que se teletransporta.
 > </details>
 
 ---
@@ -313,13 +335,15 @@ Ya está todo. Ahora convertilo en **tu** juego.
 
 ### 4.1 · Ajustar los números
 
-Todo lo que define cómo se siente el jefe son **cinco números**. Jugá y tocalos hasta que te guste:
+Todo lo que define cómo se siente el jefe son **siete números**. Jugá y tocalos hasta que te guste:
 
 | Dónde | Variable | Qué cambia |
 | :---- | :---- | :---- |
-| `enemigo_elite.gd` | `velocidad` | Qué tan rápido persigue (acecha a la mitad, huye a 1.5×) |
+| `enemigo_elite.gd` | `velocidad` | Qué tan rápido persigue (acecha a la mitad) |
 | `enemigo_elite.gd` | umbrales `250` / `350` | Desde cuán lejos te ve y cuándo se calma |
 | `enemigo_elite.gd` | `wait_time` del `TimerAtaque` | Cada cuánto pega |
+| `enemigo_elite.gd` | `wait_time` del `TimerGolpe` | Cuánto queda congelado por cada bala |
+| `enemigo_elite.gd` | el `20` del empujón | Cuánto retrocede por cada bala |
 | `spawner.gd` | `wait_time` del `Timer` | Cuántos slimes por segundo |
 | `spawner.gd` | `contador >= 8` | Cada cuántos aparece un jefe |
 
@@ -345,18 +369,18 @@ Entregá **las dos cosas**:
 1. La **carpeta del proyecto** comprimida en `.zip` (sin la carpeta `.godot/`), **y**
 2. El juego **exportado**: `mi_juego.exe` + `mi_juego.pck` en un `.zip` aparte.
 
-(Opcional) Un **video corto** donde se vea: la horda persiguiéndote, el jefe acechando de lejos, acelerando al acercarte, atacándote, y huyendo con 1 de vida.
+(Opcional) Un **video corto** donde se vea: la horda persiguiéndote, el jefe acechando de lejos, acelerando al acercarte, atacándote, y frenándose en seco con cada bala.
 
 **Nombre:** `tp8-final-ApellidoNombre.zip` y `tp8-final-ApellidoNombre-exe.zip`
 
 ### ✔️ Checklist de autoevaluación
 
 - [ ] `enemigo_elite.gd` tiene `enum Estado` con **cuatro** estados y **su propio** `_process` con `match`.
-- [ ] Cada estado tiene **su función** (`acechar`, `perseguir`, `atacar`, `huir`).
+- [ ] Cada estado tiene **su función** (`acechar`, `perseguir`, `atacar`, `golpeado`).
 - [ ] El jefe muestra su **estado** en una etiqueta encima (aunque después la ocultes).
 - [ ] El jefe **acecha despacio** hacia vos, **persigue** a menos de 250 px y se **calma** a más de 350.
 - [ ] Al alcanzarte **se frena** y pega **una vez por segundo** (ya no desaparece al tocarte).
-- [ ] **Huye** con 1 de vida (flecha desde `recibir_dano()`) y vuelve a acechar cuando está lejos.
+- [ ] Cada bala lo **empuja y lo congela 0.5 s** (flecha desde `recibir_dano()`), y al terminar el Timer vuelve a perseguir.
 - [ ] El slime básico quedó **igual que en el TP7**: kamikaze y sin etiqueta. **`enemigo.gd` no se tocó.**
 - [ ] El juego está **exportado** y corre sin Godot.
 
@@ -372,7 +396,7 @@ Por si te perdiste en algún paso: así tiene que quedar `enemigo_elite.gd` al f
 ```gdscript
 extends "res://enemigo.gd"
 
-enum Estado { ACECHAR, PERSEGUIR, ATACAR, HUIR }
+enum Estado { ACECHAR, PERSEGUIR, ATACAR, GOLPEADO }
 
 var estado := Estado.ACECHAR
 var jugador: Node2D = null
@@ -398,6 +422,12 @@ func _ready() -> void:
 	timer_ataque.one_shot = true
 	add_child(timer_ataque)
 
+	var timer_golpe := Timer.new()
+	timer_golpe.name = "TimerGolpe"
+	timer_golpe.wait_time = 0.5
+	timer_golpe.one_shot = true
+	add_child(timer_golpe)
+
 func _process(delta: float) -> void:
 	if jugador == null:
 		return
@@ -413,9 +443,11 @@ func _process(delta: float) -> void:
 		Estado.ATACAR:
 			atacar()
 			if d > 60:  estado = Estado.PERSEGUIR
-		Estado.HUIR:
-			huir(delta)
-			if d > 400: estado = Estado.ACECHAR
+		Estado.GOLPEADO:
+			golpeado()
+			if $TimerGolpe.is_stopped():
+				$AnimatedSprite2D.modulate = Color.WHITE
+				estado = Estado.PERSEGUIR
 	$LabelEstado.text = Estado.keys()[estado]
 
 func _on_body_entered(body: Node) -> void:
@@ -436,10 +468,8 @@ func atacar() -> void:
 		jugador.recibir_dano(dano)
 		$TimerAtaque.start()
 
-func huir(delta: float) -> void:
-	var dir := (position - jugador.position).normalized()
-	position += dir * velocidad * 1.5 * delta
-	$AnimatedSprite2D.flip_h = dir.x < 0
+func golpeado() -> void:
+	$AnimatedSprite2D.modulate = Color(1, 0.4, 0.4)
 
 func distancia_al_jugador() -> float:
 	return position.distance_to(jugador.position)
@@ -447,8 +477,10 @@ func distancia_al_jugador() -> float:
 func recibir_dano(cantidad: int) -> void:
 	super(cantidad)
 	$BarraVida.value = vida
-	if vida > 0 and vida < 2:
-		estado = Estado.HUIR
+	if vida > 0:
+		position += (position - jugador.position).normalized() * 20
+		$TimerGolpe.start()
+		estado = Estado.GOLPEADO
 ```
 </details>
 
@@ -456,7 +488,8 @@ func recibir_dano(cantidad: int) -> void:
 
 ## 🌟 Extra (opcional)
 
-- **Que se note el cambio.** Un color por estado con `modulate` (blanco acechando, amarillo persiguiendo, rojo atacando), o un `Tween` de escala al entrar a `ATACAR` (Clase 7). Los buenos enemigos **avisan** en qué estado están.
+- **Que se note el cambio.** Un color por estado con `modulate` (blanco acechando, amarillo persiguiendo, naranja atacando; el rojo ya es de `GOLPEADO`), o un `Tween` de escala al entrar a `ATACAR` (Clase 7). Los buenos enemigos **avisan** en qué estado están.
+- **Que la horda también sienta el golpe.** Hoy solo el jefe reacciona a las balas. Si querés que los básicos también retrocedan, la línea del empujón va en el `recibir_dano()` de `enemigo.gd`… pero pensá primero si un slime que se muere de un tiro necesita retroceder.
 - **Un quinto estado: `EMBESTIR`.** Desde `PERSEGUIR`, si el jugador está entre 100 y 150 px, que cargue en línea recta a 3× durante medio segundo (un `Timer`) y después vuelva a perseguir. Es el ataque clásico de un jefe.
 - **Un jefe que dispara.** Que en `ATACAR`, en vez de acercarse, se **frene a distancia** e instancie una bala hacia vos (todo lo que hace falta ya lo tenés del TP7).
 - **Dificultad progresiva.** Que la `velocidad` y el radio de visión del jefe suban un poco cada vez que aparece uno nuevo.

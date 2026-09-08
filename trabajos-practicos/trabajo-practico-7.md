@@ -244,7 +244,7 @@ func _on_body_entered(body: Node) -> void:
 		queue_free()              # …y se sacrifica
 ```
 
-> 🧠 **Cómo “piensa” el slime.** `get_first_node_in_group("jugador")` le devuelve al jugador **sin conocerlo de antemano** (por eso el jugador se anotó en ese grupo). `jugador.position - position` es la **flecha** que va del slime al jugador; `.normalized()` la deja de largo 1, y `* velocidad * delta` la convierte en el pasito de este frame. **Eso es toda la IA.** Se llama *perseguir* (*chase*) y es la base de casi todo enemigo que existe. En la próxima clase le vamos a dar **varios comportamientos** (patrullar, perseguir, atacar) con una **máquina de estados**.
+> 🧠 **Cómo “piensa” el slime.** `get_first_node_in_group("jugador")` le devuelve al jugador **sin conocerlo de antemano** (por eso el jugador se anotó en ese grupo). `jugador.position - position` es la **flecha** que va del slime al jugador; `.normalized()` la deja de largo 1, y `* velocidad * delta` la convierte en el pasito de este frame. **Eso es toda la IA.** Se llama *perseguir* (*chase*) y es la base de casi todo enemigo que existe. En la próxima clase, al **élite** le vamos a dar **varios comportamientos** (acechar, perseguir, atacar, sentir el golpe) con una **máquina de estados**.
 
 > 🧠 **`recibir_dano()` y `morir()`** están separados a propósito: la bala va a llamar a la primera, y la segunda avisa al jugador antes de desaparecer. Mañana el élite las va a **heredar** tal cual.
 
