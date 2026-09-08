@@ -493,15 +493,111 @@ objetivo = pacman.position + pacman.direccion * <span class="n">4</span>
     <div class="callout" style="margin-top:12px;">Nada de lo anterior se rompió. <b>Eso</b> es lo que compra una máquina de estados: poder <b>agregar</b> sin miedo. (Y sí: es la misma idea que el <i>infighting</i> de <i>Doom</i>: <b>cambiar de estado al recibir daño</b>.)</div>
   </section>
 
-  <section class="slide" data-chapter="Máquina de estados" data-topic="En juegos reales">
-    <div class="slide-eyebrow">🎮 En juegos que conocés</div>
-    <h2 class="slide-title">Máquinas de estado por todos lados</h2>
-    <div class="columns three">
-      <div class="card"><h3>👻 Pac-Man (1980)</h3><p>Cada fantasma tiene <b>tres estados</b>: <b>Chase</b> (te caza), <b>Scatter</b> (se va a su esquina) y <b>Frightened</b> (azul, huye) cuando comés la píldora. La FSM más famosa de la historia.</p></div>
-      <div class="card"><h3>❗ Metal Gear Solid</h3><p>El guardia: <b>Patrol → Alert (!) → Evasion → Caution → Patrol</b>. El signo de exclamación es, literalmente, una <b>transición de estado</b> que el juego te muestra.</p></div>
-      <div class="card"><h3>🗡️ Hollow Knight / Dark Souls</h3><p>Todo enemigo: <b>Idle → Aggro → Ataque → Recuperación</b>. Aprender a leer en qué estado está es <i>la</i> habilidad de estos juegos.</p></div>
+  <section class="slide" data-chapter="Máquina de estados" data-topic="En juegos reales: Pac-Man">
+    <div class="slide-eyebrow">🎮 Máquinas de estado en juegos que conocés · 1 de 3</div>
+    <h2 class="slide-title">Pac-Man: el fantasma tiene cuatro estados</h2>
+    <div class="columns" style="grid-template-columns:0.9fr 1.1fr; align-items:start;">
+      <div class="card" style="padding:12px; display:flex; flex-direction:column; align-items:center;">
+        <img src="assets/pacman-gameplay.png" alt="Recreación píxel a píxel del original (Wikimedia Commons). Pac-Man © Bandai Namco." style="width:auto; max-width:100%; max-height:300px; image-rendering:pixelated; border-radius:8px;">
+        <div class="imgcaption">Recreación píxel a píxel del original (Wikimedia Commons). <i>Pac-Man</i> © Bandai Namco.</div>
+      </div>
+      <div>
+        <div class="card" style="padding:10px 12px 6px;"><svg viewBox="0 0 560 170" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Estados del fantasma: scatter, chase, frightened, eaten" style="width:100%;height:auto;display:block;">
+  <defs><marker id="pk-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--accent)"/></marker></defs><defs><marker id="pk-r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--red)"/></marker></defs>
+  <rect x="20" y="33" width="120" height="34" rx="17" style="fill:var(--panel);stroke:var(--accent);stroke-width:2.5"/><text x="80" y="55" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="12.5" font-weight="800" style="fill:var(--text)">SCATTER</text><rect x="220" y="33" width="120" height="34" rx="17" style="fill:var(--panel);stroke:var(--accent);stroke-width:2.5"/><text x="280" y="55" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="12.5" font-weight="800" style="fill:var(--text)">CHASE</text><rect x="395" y="33" width="150" height="34" rx="17" style="fill:var(--panel);stroke:var(--accent);stroke-width:2.5"/><text x="470" y="55" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="12.5" font-weight="800" style="fill:var(--text)">FRIGHTENED</text>
+  <line x1="142" y1="42" x2="218" y2="42" style="stroke:var(--accent);stroke-width:2"  marker-end="url(#pk-a)"/><text x="180" y="34" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" style="fill:var(--muted)">pasan 7 s</text>
+  <line x1="218" y1="58" x2="142" y2="58" style="stroke:var(--accent);stroke-width:2"  marker-end="url(#pk-a)"/><text x="180" y="74" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" style="fill:var(--muted)">pasan 20 s</text>
+  <line x1="342" y1="42" x2="393" y2="42" style="stroke:var(--red);stroke-width:2" stroke-dasharray="6 4" marker-end="url(#pk-r)"/><text x="367" y="30" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" style="fill:var(--red)">comés la píldora</text>
+  <line x1="393" y1="58" x2="342" y2="58" style="stroke:var(--accent);stroke-width:2"  marker-end="url(#pk-a)"/><text x="367" y="88" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" style="fill:var(--muted)">pasan unos segundos</text>
+  <rect x="410" y="113" width="120" height="34" rx="17" style="fill:var(--panel);stroke:var(--accent);stroke-width:2.5"/><text x="470" y="135" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="12.5" font-weight="800" style="fill:var(--text)">EATEN</text>
+  <line x1="470" y1="68" x2="470" y2="112" style="stroke:var(--red);stroke-width:2" stroke-dasharray="6 4" marker-end="url(#pk-r)"/><text x="478" y="95" text-anchor="start" font-family="Segoe UI,Arial,sans-serif" font-size="11" style="fill:var(--red)">te lo comés</text>
+  <path d="M410,130 L300,130 L300,72" fill="none" style="stroke:var(--accent);stroke-width:2" marker-end="url(#pk-a)"/><text x="355" y="146" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" style="fill:var(--muted)">vuelve a la casa</text>
+  <circle cx="80" cy="8" r="4" style="fill:var(--accent)"/><line x1="80" y1="12" x2="80" y2="32" style="stroke:var(--accent);stroke-width:2"  marker-end="url(#pk-a)"/>
+</svg></div>
+        <ul style="font-size:14.5px; line-height:1.45; margin:10px 0 0; padding-left:18px;">
+          <li><b>Estados:</b> <b>Scatter</b> (cada uno a su esquina), <b>Chase</b> (te cazan), <b>Frightened</b> (azules, huyen), <b>Eaten</b> (ojos que vuelven a la casa).</li>
+          <li><b>Qué dispara los cambios:</b> Scatter ⇄ Chase cambian <b>por tiempo</b>, con un reloj fijo: 7 s, 20 s, 7 s, 20 s… Frightened entra <b>por evento</b> (la píldora grande) y sale por tiempo.</li>
+          <li><b>Cómo te lo muestra:</b> El color. Azul = podés comerlo. Y <b>parpadea</b> justo antes de salir del estado: el juego te avisa que se le acaba el tiempo.</li>
+        </ul>
+        <p class="small-note" style="margin-top:8px;">Es exactamente nuestra máquina: flechas por <b>tiempo</b> y flechas por <b>evento</b> conviviendo. En 1980.</p>
+      </div>
     </div>
-    <div class="callout" style="margin-top:18px;">Cuando decimos que un enemigo es “interesante”, casi siempre estamos diciendo que tiene <b>varios estados</b> y que <b>se nota cuándo cambia</b>.</div>
+  </section>
+
+  <section class="slide" data-chapter="Máquina de estados" data-topic="En juegos reales: Metal Gear Solid">
+    <div class="slide-eyebrow">🎮 Máquinas de estado en juegos que conocés · 2 de 3</div>
+    <h2 class="slide-title">Metal Gear Solid: el estado está en pantalla</h2>
+    <div class="columns" style="grid-template-columns:0.9fr 1.1fr; align-items:start;">
+      <div class="card" style="padding:12px; display:flex; flex-direction:column; align-items:center;">
+        <img src="assets/mgs-gameplay.jpg" alt="Metal Gear Solid (1998): Snake escondido tras el tanque, el guardia en Patrol; arriba a la derecha, el radar. © Konami. Uso educativo." style="width:100%; max-height:300px; object-fit:contain; border-radius:8px;">
+        <div class="imgcaption"><i>Metal Gear Solid</i> (1998): Snake escondido tras el tanque, el guardia en <b>Patrol</b>; arriba a la derecha, el radar. © Konami. Uso educativo.</div>
+      </div>
+      <div>
+        <div class="card" style="padding:10px 12px 6px;"><svg viewBox="0 0 560 150" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Estados del guardia: patrol, alert, evasion, caution" style="width:100%;height:auto;display:block;">
+  <defs><marker id="mg-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--accent)"/></marker></defs><defs><marker id="mg-r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--red)"/></marker></defs>
+  <rect x="15" y="33" width="110" height="34" rx="17" style="fill:var(--panel);stroke:var(--accent);stroke-width:2.5"/><text x="70" y="55" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="12.5" font-weight="800" style="fill:var(--text)">PATROL</text><rect x="160" y="33" width="100" height="34" rx="17" style="fill:var(--panel);stroke:var(--accent);stroke-width:2.5"/><text x="210" y="55" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="12.5" font-weight="800" style="fill:var(--text)">ALERT</text><rect x="295" y="33" width="110" height="34" rx="17" style="fill:var(--panel);stroke:var(--accent);stroke-width:2.5"/><text x="350" y="55" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="12.5" font-weight="800" style="fill:var(--text)">EVASION</text><rect x="435" y="33" width="110" height="34" rx="17" style="fill:var(--panel);stroke:var(--accent);stroke-width:2.5"/><text x="490" y="55" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="12.5" font-weight="800" style="fill:var(--text)">CAUTION</text>
+  <line x1="127" y1="50" x2="158" y2="50" style="stroke:var(--red);stroke-width:2" stroke-dasharray="6 4" marker-end="url(#mg-r)"/><text x="142" y="34" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" style="fill:var(--red)">te ve: “!”</text>
+  <line x1="262" y1="50" x2="293" y2="50" style="stroke:var(--accent);stroke-width:2"  marker-end="url(#mg-a)"/><text x="277" y="34" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" style="fill:var(--muted)">te pierde</text>
+  <line x1="407" y1="50" x2="433" y2="50" style="stroke:var(--accent);stroke-width:2"  marker-end="url(#mg-a)"/><text x="420" y="34" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" style="fill:var(--muted)">contador a 0</text>
+  <path d="M490,68 L490,110 L70,110 L70,68" fill="none" style="stroke:var(--accent);stroke-width:2" marker-end="url(#mg-a)"/>
+  <text x="280" y="128" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" style="fill:var(--muted)">contador a 0: se olvida de vos y vuelve a patrullar</text>
+  <path d="M350,68 C330,96 230,96 214,70" fill="none" style="stroke:var(--red);stroke-width:2" stroke-dasharray="6 4" marker-end="url(#mg-r)"/><text x="280" y="98" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" style="fill:var(--red)">te vuelve a ver: “!”</text>
+</svg></div>
+        <ul style="font-size:14.5px; line-height:1.45; margin:10px 0 0; padding-left:18px;">
+          <li><b>Estados:</b> <b>Patrol</b> (ruta fija), <b>Alert</b> (te vio y llama a todos), <b>Evasion</b> (te buscan donde te vieron), <b>Caution</b> (patrullan nerviosos).</li>
+          <li><b>Qué dispara los cambios:</b> Entrar a Alert es <b>por evento</b>: el cono de visión te agarró. Salir de Evasion y de Caution es <b>por tiempo</b>: un contador que baja hasta cero.</li>
+          <li><b>Cómo te lo muestra:</b> El “<b>!</b>” sobre la cabeza es la transición dibujada. Y el <b>contador</b> aparece en el radar: es un <code>Timer</code> que podés ver, como nuestro <code>TimerGolpe</code>.</li>
+        </ul>
+        <p class="small-note" style="margin-top:8px;">Todo el sigilo es jugar con esa máquina: esconderte hasta que el contador llegue a cero.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Máquina de estados" data-topic="En juegos reales: Hollow Knight">
+    <div class="slide-eyebrow">🎮 Máquinas de estado en juegos que conocés · 3 de 3</div>
+    <h2 class="slide-title">Hollow Knight y los <i>souls</i>: leer el estado es el juego</h2>
+    <div class="columns" style="grid-template-columns:0.9fr 1.1fr; align-items:start;">
+      <div class="card" style="padding:12px; display:flex; flex-direction:column; align-items:center;">
+        <img src="assets/hollow-knight-gameplay.jpg" alt="Hollow Knight (2017): el False Knight, en el estado aviso, con la maza arriba. © Team Cherry. Uso educativo." style="width:100%; max-height:300px; object-fit:contain; border-radius:8px;">
+        <div class="imgcaption"><i>Hollow Knight</i> (2017): el False Knight, en el estado <b>aviso</b>, con la maza arriba. © Team Cherry. Uso educativo.</div>
+      </div>
+      <div>
+        <div class="card" style="padding:10px 12px 6px;"><svg viewBox="0 0 560 150" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Estados del enemigo: idle, aggro, y dentro de ataque: aviso, golpe, recuperación" style="width:100%;height:auto;display:block;">
+  <defs><marker id="hk-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--accent)"/></marker></defs><defs><marker id="hk-r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--red)"/></marker></defs>
+  <rect x="15" y="43" width="90" height="34" rx="17" style="fill:var(--panel);stroke:var(--accent);stroke-width:2.5"/><text x="60" y="65" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="12.5" font-weight="800" style="fill:var(--text)">IDLE</text><rect x="135" y="43" width="100" height="34" rx="17" style="fill:var(--panel);stroke:var(--accent);stroke-width:2.5"/><text x="185" y="65" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="12.5" font-weight="800" style="fill:var(--text)">AGGRO</text>
+  <line x1="106" y1="60" x2="133" y2="60" style="stroke:var(--accent);stroke-width:2"  marker-end="url(#hk-a)"/><text x="119" y="46" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" style="fill:var(--muted)">te ve</text>
+  <rect x="255" y="20" width="295" height="96" rx="12" fill="none" style="stroke:var(--red);stroke-width:2" stroke-dasharray="6 4"/>
+  <text x="268" y="36" text-anchor="start" font-family="Segoe UI,Arial,sans-serif" font-size="11" style="fill:var(--red)">ATAQUE</text>
+  <rect x="265" y="51" width="80" height="34" rx="17" style="fill:var(--panel);stroke:var(--red);stroke-width:2.5"/><text x="305" y="73" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="12.5" font-weight="800" style="fill:var(--red)">AVISO</text><rect x="362" y="51" width="80" height="34" rx="17" style="fill:var(--panel);stroke:var(--red);stroke-width:2.5"/><text x="402" y="73" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="12.5" font-weight="800" style="fill:var(--red)">GOLPE</text><rect x="458" y="51" width="84" height="34" rx="17" style="fill:var(--panel);stroke:var(--red);stroke-width:2.5"/><text x="500" y="73" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="12.5" font-weight="800" style="fill:var(--red)">RECUPERA</text>
+  <line x1="237" y1="60" x2="262" y2="60" style="stroke:var(--accent);stroke-width:2"  marker-end="url(#hk-a)"/><text x="250" y="48" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" style="fill:var(--muted)">cerca</text>
+  <line x1="347" y1="68" x2="360" y2="68" style="stroke:var(--red);stroke-width:2"  marker-end="url(#hk-r)"/><line x1="444" y1="68" x2="456" y2="68" style="stroke:var(--red);stroke-width:2"  marker-end="url(#hk-r)"/>
+  <path d="M500,87 L500,128 L185,128 L185,80" fill="none" style="stroke:var(--accent);stroke-width:2" marker-end="url(#hk-a)"/>
+  <text x="345" y="142" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" style="fill:var(--muted)">termina la animación: vuelve a acechar</text>
+  <text x="305" y="106" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" style="fill:var(--red)">“te aviso”</text><text x="402" y="106" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" style="fill:var(--red)">daño</text><text x="500" y="106" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" style="fill:var(--red)">indefenso</text>
+</svg></div>
+        <ul style="font-size:14.5px; line-height:1.45; margin:10px 0 0; padding-left:18px;">
+          <li><b>Estados:</b> <b>Idle</b>, <b>Aggro</b> (te sigue), y el <b>ataque</b> partido en tres: <b>aviso</b> (levanta el arma), <b>golpe</b> (el daño) y <b>recuperación</b> (queda indefenso).</li>
+          <li><b>Qué dispara los cambios:</b> Idle → Aggro por <b>distancia</b>. Aggro → Ataque cuando estás cerca. Dentro del ataque, <b>por tiempo</b>: cada parte es una animación con su duración.</li>
+          <li><b>Cómo te lo muestra:</b> La animación de <b>aviso</b> es el juego diciéndote “cambié de estado, tenés medio segundo”. Aprender a leerla es <i>la</i> habilidad de estos juegos.</li>
+        </ul>
+        <p class="small-note" style="margin-top:8px;">La <b>recuperación</b> es la ventana para pegarle: el equivalente a nuestro jefe <b>golpeado</b>, congelado medio segundo.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Máquina de estados" data-topic="En juegos reales: en común">
+    <div class="slide-eyebrow">🎮 Máquinas de estado en juegos que conocés</div>
+    <h2 class="slide-title">¿Qué tienen en común?</h2>
+    <table class="tbl" style="font-size:14.5px;">
+      <thead><tr><th>Juego</th><th>Estados</th><th>Qué dispara los cambios</th><th>Cómo te lo muestra</th></tr></thead>
+      <tbody>
+        <tr><td><b>👻 Pac-Man</b></td><td>scatter · chase · frightened · eaten</td><td><b>tiempo</b> (reloj fijo) + <b>evento</b> (píldora)</td><td>el color azul y el parpadeo</td></tr>
+        <tr><td><b>❗ Metal Gear Solid</b></td><td>patrol · alert · evasion · caution</td><td><b>evento</b> (te ve) + <b>tiempo</b> (contador)</td><td>el “!” y el contador en el radar</td></tr>
+        <tr><td><b>🗡️ Hollow Knight</b></td><td>idle · aggro · aviso · golpe · recuperación</td><td><b>distancia</b> + <b>tiempo</b> (animaciones)</td><td>la animación de aviso</td></tr>
+        <tr style="background:var(--panel-2);"><td><b>🟣 Nuestro jefe</b></td><td>acechar · perseguir · atacar · golpeado</td><td><b>distancia</b> + <b>evento</b> (bala) + <b>tiempo</b> (Timer)</td><td>la etiqueta encima y el rojo</td></tr>
+      </tbody>
+    </table>
+    <div class="callout" style="margin-top:18px;">Cuando decimos que un enemigo es “interesante”, casi siempre estamos diciendo que tiene <b>varios estados</b> y que <b>se nota cuándo cambia</b>. Los tres disparadores que existen ya los usás: <b>distancia, evento y tiempo</b>.</div>
   </section>
 
   <section class="slide" data-chapter="Máquina de estados" data-topic="Puente al TP8">
