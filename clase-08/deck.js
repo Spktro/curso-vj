@@ -259,10 +259,11 @@
       else if (e.key === "End") { show(slides.length - 1); }
     });
 
-    // Clic por mitades. Se ignora si:
+    // Clic por mitades. Solo navega si el clic cae en el fondo (la slide, el
+    // deck o el body), nunca sobre contenido: así seleccionar texto con
+    // arrastre, doble o triple clic no cambia de slide. Además se ignora si:
     //  - el deck lo desactiva con data-click-nav="off"
-    //  - el clic cae sobre un control (links, código, botones, filmstrip)
-    //  - hay texto seleccionado (el usuario estaba seleccionando, no navegando)
+    //  - hay texto seleccionado al soltar
     //  - el mouse se arrastró desde pointerdown (selección que terminó vacía)
     if (clickNav) {
       const DRAG_PX = 5;
@@ -270,7 +271,7 @@
       document.addEventListener("pointerdown", (e) => { down = { x: e.clientX, y: e.clientY }; });
 
       document.addEventListener("click", (e) => {
-        if (e.target.closest("a, pre, code, input, button, .filmstrip")) return;
+        if (!e.target.matches("html, body, .deck, .slide")) return;
         const sel = window.getSelection();
         if (sel && !sel.isCollapsed && sel.toString().length) return;
         if (down && Math.hypot(e.clientX - down.x, e.clientY - down.y) > DRAG_PX) return;
