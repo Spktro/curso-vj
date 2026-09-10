@@ -1,397 +1,36 @@
-# Trabajo Práctico 8 — El jefe aprende a pensar (máquina de estados)
+# Trabajo Práctico 8 — Proyecto final: terminá tu juego
 
-> **Diplomatura de Videojuegos · Clase 8 · Proyecto final**
-> Objetivo: darle **cerebro al slime élite** (el jefe) del TP7 con una **máquina de estados**: te va a **acechar** de lejos, **perseguirte** cuando te acercás, **atacarte** cuando te alcanza, y **sentir el golpe** cuando le pegás: un empujón y medio segundo congelado. El slime básico **queda como está**: es la horda. Y al final, **exportás** el juego: es tu proyecto final.
+> **Diplomatura de Videojuegos · Proyecto final**
+> Objetivo: convertir el prototipo del TP7 en un **juego terminado**: una cámara que te sigue, un piso **infinito**, un **menú de inicio** con tu nombre, un **ranking** que se **guarda en disco**, una pantalla final, el juego **exportado** a `.exe`… y **algo tuyo**: una idea propia que le agregue algo al juego.
 
 ---
 
 ## 🎯 Qué vas a lograr
 
-- El **jefe** con **cuatro estados** —`ACECHAR`, `PERSEGUIR`, `ATACAR`, `GOLPEADO`— y las transiciones entre ellos, escritas con `enum` + `match` como en la clase.
-- Una **etiqueta sobre el jefe** que muestra en qué estado está: vas a *ver* la máquina de estados funcionando.
-- El jefe **ya no es kamikaze**: se frena y te pega **cada segundo** mientras estés cerca.
-- Cada bala que le pega al jefe lo **empuja** y lo **congela 0.5 s**: el golpe se siente.
-- El slime básico **intacto**: sigue siendo la horda simple del TP7.
-- El juego **exportado** a `.exe`, listo para compartir.
+- La **cámara sigue al caballero** y el mundo deja de terminar en el borde de la ventana.
+- Un **piso que no se acaba nunca**, con un solo nodo (`Parallax2D`).
+- Un **Autoload** que cuenta el tiempo sobrevivido y los slimes eliminados, y que sobrevive a los cambios de escena.
+- Un **menú de inicio** donde escribís tu nombre, y una **pantalla final** con el **top 5** de partidas, resaltando la tuya.
+- El ranking **guardado en un archivo** (`FileAccess` + `JSON`): cerrás el juego, lo abrís, y sigue ahí.
+- El juego **exportado** y corriendo en una compu sin Godot.
+- **Tu aporte**: una mecánica, un arma o un enemigo nuevo, elegido de una lista o propuesto por vos.
 
-> 💡 **Tiempo estimado:** 75–100 min. Se toca **un solo script**: `enemigo_elite.gd`. El slime básico, el jugador, las balas y el spawner quedan como estaban.
+> 💡 **Tiempo estimado:** 2 h 30 a 3 h, en varias sentadas. Cada parte se prueba sola y deja el juego andando. **Escribí el código vos**: es la última vez que lo hacemos con la red de seguridad de un tutorial.
 
-> 🔗 **Viene de la Clase 8:** comportamientos básicos, el problema del spaghetti de `if`, máquinas de estado, `enum` y `match`, y el patrón **hacer + decidir**. Y de todo el curso: herencia y `super()` (TP5), `Timer`, grupos y `distance_to` (TP7).
+> 🔗 **Viene de todo el curso:** menús, `change_scene_to_file()` y el Autoload `Partida` (TP6), grupos, `Timer` e instanciar (TP5 y TP7), señales y `Area2D` (TP4), y la máquina de estados del jefe (Clase 8). Lo nuevo de hoy: `Camera2D`, `Parallax2D`, `LineEdit`, `FileAccess` y `JSON`.
 
 ---
 
 ## 📍 Punto de partida
 
-Este TP continúa **`tp7-sobrevivir`**. Abrilo (o copiá la carpeta como `tp8-final`).
+Este TP continúa **`tp7-sobrevivir`** con el **jefe de la Clase 8** (acechar → perseguir → atacar → golpeado). Copiá la carpeta como **`tp8-final`** y abrila en Godot.
 
-Confirmá que el **punto de control 5 del TP7** sigue andando: los slimes te persiguen, las balas salen solas, y cada 8 aparece un élite con su barra.
-
-> 🧠 **Recordá cómo quedó el élite en el TP7.** `enemigo_elite.gd` **hereda** de `enemigo.gd` (`extends "res://enemigo.gd"`): en `_ready()` llama a `super()` y después cambia `vida`, `velocidad`, `dano` y su `$BarraVida`; y en `recibir_dano()` llama a `super(cantidad)` y actualiza la barra. Todo lo demás —perseguir en `_process`, `morir()`, y el `_on_body_entered()` kamikaze— lo **hereda tal cual** del básico. Hoy le vamos a dar **su propio `_process`**.
-
-### 🧠 Decisión de diseño: ¿por qué solo el jefe?
-
-Si le diéramos la máquina de estados a **todos** los slimes, ¿cuál sería su estado “tranquilo”? La opción clásica es **patrullar** (caminar al azar), pero en un *survivors* sería un error: los slimes se irían **fuera de la pantalla**, el jugador podría **evitarlos para siempre**, y el juego se llenaría de enemigos que nadie ve y que igual gastan procesador.
-
-Por eso:
-
-- La **horda** (slime básico) sigue **simple y kamikaze**: siempre viene por vos. Es previsible a propósito.
-- El **jefe** es el que **piensa**. Y su estado tranquilo **no es patrullar**: es **acechar** — venir hacia vos, pero **despacio**. Nunca se pierde, nunca se va de pantalla.
-
-> Fijate que la decisión no es técnica, es de **diseño de juego**: la IA tiene que hacer el juego más divertido, no más “inteligente” (Clase 8).
-
----
-
-## 🧩 El plan: primero el diagrama
-
-En la clase dijimos: **si no lo podés dibujar, no lo podés programar.** Este es el diagrama que vamos a implementar en el jefe, con los mismos umbrales de la clase:
-
-![Máquina de estados del jefe: ACECHAR, PERSEGUIR, ATACAR](tp8-assets/diagrama-3-estados.png)
-
-Y lo vamos a construir **de a un estado por vez**, probando cada uno antes de seguir:
-
-| Parte | Estados | Qué se ve |
-| :---- | :---- | :---- |
-| 1 | `ACECHAR` ⇄ `PERSEGUIR` | El jefe viene despacio; al acercarte, acelera |
-| 2 | + `ATACAR` | Se frena al alcanzarte y te pega cada segundo |
-| 3 | + `GOLPEADO` | Cada bala lo empuja y lo congela 0.5 s |
-| 4 | — | Ajustar, exportar y entregar |
-
----
-
-## 🛠️ Parte 0 — Dibujar antes de programar
-
-Antes de escribir una línea, respondé estas tres preguntas **mirando el diagrama** (en papel o mentalmente):
-
-1. El jefe está **acechando** y el jugador pasa a **200 px**. ¿En qué estado queda?
-2. El jefe está **persiguiendo** y el jugador está a **300 px**. ¿Cambia de estado?
-3. El jefe está **atacando** y el jugador se aleja a **50 px**. ¿Cambia? ¿Y si se aleja a **70 px**?
+Confirmá que anda: los slimes te persiguen, las balas salen solas, cada 8 slimes entra el jefe violeta con su barra, y cuando le pegás se pone rojo y se frena medio segundo.
 
 <details>
-<summary>Respuestas (abrí después de pensarlas)</summary>
+<summary>¿No llegaste a terminar el jefe en clase? Acá está <code>enemigo_elite.gd</code> completo</summary>
 
-1. **`PERSEGUIR`**: 200 es menos de 250, así que cruza la flecha de “lo vio”.
-2. **No.** 300 no es menos de 40 (no ataca) ni más de 350 (no lo perdió). **Se queda persiguiendo.** Las flechas solo se cruzan cuando se cumple su condición.
-3. A **50 px sigue atacando** (50 no es más de 60). A **70 px vuelve a `PERSEGUIR`**.
-
-> 🧠 **¿Por qué entra a atacar a 40 y sale a 60, y no a 40 en los dos?** Si el umbral fuera el mismo, un jugador parado justo en el borde haría que el jefe **parpadee** entre atacar y perseguir cada frame. Dejar un margen entre “entrar” y “salir” se llama **histéresis**, y es un truco que vas a usar en toda máquina de estados.
-</details>
-
-✅ **Punto de control 0:** contestaste las tres, entendés que cada flecha tiene **su** condición, y por qué los umbrales de entrada y salida son distintos.
-
----
-
-## 🕵️ Parte 1 — Dos estados: ACECHAR y PERSEGUIR
-
-> **Concepto:** el jefe deja de usar el `_process` del slime básico y recibe **el suyo**, con la máquina de estados. Arrancamos con **dos** estados, y una **etiqueta** encima que muestra cuál está activo.
-
-**Reemplazá `enemigo_elite.gd`** por esta versión completa:
-
-```gdscript
-extends "res://enemigo.gd"
-
-enum Estado { ACECHAR, PERSEGUIR }
-
-var estado := Estado.ACECHAR
-var jugador: Node2D = null
-
-func _ready() -> void:
-	super()                          # grupo, señal y animación del slime básico
-	vida = 5
-	velocidad = 35.0
-	dano = 25
-	$BarraVida.max_value = vida
-	$BarraVida.value = vida
-
-	jugador = get_tree().get_first_node_in_group("jugador")
-
-	# Etiqueta que muestra el estado, creada por código
-	var etiqueta := Label.new()
-	etiqueta.name = "LabelEstado"
-	etiqueta.position = Vector2(-36, -66)
-	add_child(etiqueta)
-
-func _process(delta: float) -> void:     # SOBREESCRIBE el _process del básico
-	if jugador == null:
-		return
-	var d := distancia_al_jugador()
-	match estado:
-		Estado.ACECHAR:
-			acechar(delta)                          # hacer
-			if d < 250: estado = Estado.PERSEGUIR   # decidir
-		Estado.PERSEGUIR:
-			perseguir(delta)
-			if d > 350: estado = Estado.ACECHAR
-	$LabelEstado.text = Estado.keys()[estado]   # mostrar el estado encima
-
-func _on_body_entered(body: Node) -> void:   # ANULA el kamikaze del básico
-	pass
-
-# ---- comportamientos: cada estado, una función ----
-func acechar(delta: float) -> void:          # hacia el jugador, a MITAD de velocidad
-	var dir := (jugador.position - position).normalized()
-	position += dir * velocidad * 0.5 * delta
-	$AnimatedSprite2D.flip_h = dir.x < 0
-
-func perseguir(delta: float) -> void:        # hacia el jugador, a toda velocidad
-	var dir := (jugador.position - position).normalized()
-	position += dir * velocidad * delta
-	$AnimatedSprite2D.flip_h = dir.x < 0
-
-func distancia_al_jugador() -> float:
-	return position.distance_to(jugador.position)
-
-# ---- vida: igual que en el TP7 ----
-func recibir_dano(cantidad: int) -> void:
-	super(cantidad)
-	$BarraVida.value = vida
-```
-
-> 🧠 **Qué está pasando acá (tres ideas de herencia):**
-> - **Sobreescribir `_process`.** Al definirlo en el hijo, el del padre **deja de correr** para el jefe (a propósito no llamamos `super()` ahí). Los slimes básicos siguen usando el del padre: por eso no cambian.
-> - **Anular `_on_body_entered`.** El padre lo conecta a la señal en su `_ready()` (que sí llamamos con `super()`), pero como el jefe lo **redefine vacío** (`pass`), al tocarte no pasa nada. El ataque va a llegar por un **estado**, en la Parte 2.
-> - **`jugador` se busca una sola vez, en `_ready()`.** El slime básico del TP7 lo busca **cada frame** dentro de `_process`. Funciona, pero es trabajo repetido: el jugador es siempre el mismo nodo. Guardarlo en una variable al arrancar es lo correcto, y por eso el `if jugador == null: return` de arriba: si no lo encontró, mejor no hacer nada que romperse.
-> - **`Estado.keys()[estado]`** devuelve el nombre del estado como texto (`"ACECHAR"`). Eso muestra la etiqueta. Es *la* herramienta para depurar una máquina de estados: si algo anda raro, mirás la etiqueta y sabés exactamente en qué estado está.
->
-> Y el patrón de siempre: en cada estado, primero **hacer** (llamar a la función), después **decidir** (¿cambio?).
-
-**Probarlo rápido:** esperar 8 slimes cada vez es lento. Para testear, en `nivel.tscn` seleccioná `Enemigos` e **instanciá** un `enemigo_elite.tscn` a mano (ícono de cadena), ubicado lejos del jugador. Cuando termines el TP, borrá esa instancia.
-
-Apretá **F6**. El jefe viene hacia vos **despacio** con `ACECHAR` encima. Acercate a menos de 250 px: la etiqueta cambia a **`PERSEGUIR`** y **acelera**. Corré lejos (más de 350): vuelve a **`ACECHAR`** y afloja. Los slimes verdes siguen igual que siempre, sin etiqueta.
-
-✅ **Punto de control 1:** el jefe muestra su estado encima, te acecha despacio, te persigue rápido al acercarte y se calma al alejarte. **Por ahora no te pega** (eso es la Parte 2). Los básicos no cambiaron.
-
-> 🛟 **Errores comunes en esta parte**
->
-> <details>
-> <summary>Abrí para ver soluciones</summary>
->
-> - **El jefe se queda quieto con la etiqueta vacía** → `jugador` es `null`. Si lo instanciaste a mano, ponelo **dentro de `Enemigos`** (que está debajo de `Jugador` en el árbol): así el jugador ya se anotó en el grupo cuando el jefe arranca.
-> - **El jefe sigue desapareciendo al tocarte** → la función tiene que llamarse **exactamente** `_on_body_entered` con el mismo parámetro `(body: Node)` que en `enemigo.gd`; si no, no está *sobreescribiendo* nada.
-> - **"Invalid get index 'PERSEGUIR'"** → el `enum` se escribe **una sola vez**, arriba, y los nombres van **en mayúsculas exactas**.
-> - **La etiqueta no se ve** → es texto blanco; sobre fondo claro se pierde. Agregá `etiqueta.modulate = Color.BLACK` después de crearla.
-> - **Los slimes verdes también cambiaron** → tocaste `enemigo.gd`. En este TP ese archivo **no se modifica**.
-> </details>
-
----
-
-## ⚔️ Parte 2 — Tercer estado: ATACAR
-
-> **Concepto:** al alcanzarte, el jefe **se frena** y te pega **cada segundo** mientras estés cerca. Es un estado más y una función más — nada del resto se toca.
-
-Cuatro cambios en **`enemigo_elite.gd`**:
-
-**1.** Agregá el estado al `enum`:
-
-```gdscript
-enum Estado { ACECHAR, PERSEGUIR, ATACAR }
-```
-
-**2.** En `_ready()`, **debajo del bloque de la etiqueta**, creá el temporizador de ataque:
-
-```gdscript
-	var timer_ataque := Timer.new()
-	timer_ataque.name = "TimerAtaque"
-	timer_ataque.wait_time = 1.0      # un golpe por segundo
-	timer_ataque.one_shot = true      # se dispara una vez y se frena
-	add_child(timer_ataque)
-```
-
-**3.** **Reemplazá la función `_process` entera** por esta (es la de la clase, con las tres flechas):
-
-```gdscript
-func _process(delta: float) -> void:
-	if jugador == null:
-		return
-	var d := distancia_al_jugador()
-	match estado:
-		Estado.ACECHAR:
-			acechar(delta)
-			if d < 250: estado = Estado.PERSEGUIR
-		Estado.PERSEGUIR:
-			perseguir(delta)
-			if d < 40:    estado = Estado.ATACAR
-			elif d > 350: estado = Estado.ACECHAR
-		Estado.ATACAR:
-			atacar()
-			if d > 60:  estado = Estado.PERSEGUIR
-	$LabelEstado.text = Estado.keys()[estado]
-```
-
-**4.** Y agregá la función del nuevo estado, junto a las otras:
-
-```gdscript
-func atacar() -> void:                 # quieto: no se mueve
-	if $TimerAtaque.is_stopped():      # ¿ya pasó el segundo desde el último golpe?
-		jugador.recibir_dano(dano)
-		$TimerAtaque.start()
-```
-
-> 🧠 **Cómo funciona el golpe cada segundo.** El `TimerAtaque` es *one shot*: al entrar en `ATACAR` está **frenado**, así que pega **enseguida** y lo arranca. Mientras corre (1 s), `is_stopped()` es falso y no pega. Al terminar se frena solo, y en el próximo frame vuelve a pegar. Sin variables extra, sin contar `delta` a mano.
->
-> Y fijate que `atacar()` **no mueve** al jefe: estar quieto también es un comportamiento.
-
-Apretá **F6**. Dejá que el jefe te alcance: la etiqueta pasa a **`ATACAR`**, se frena pegado a vos, y tu barra baja **25 cada segundo** (cuatro golpes y perdés: es el jefe). Date un paso atrás: vuelve a **`PERSEGUIR`**.
-
-> 💡 Para testear tranquilo, bajá `dano = 25` a `dano = 5` un rato, y después volvelo.
-
-✅ **Punto de control 2:** el jefe te persigue, al alcanzarte se frena y te pega una vez por segundo, y si te alejás retoma la persecución. Compará con el diagrama: **cada `if` es una flecha**.
-
-> 🛟 **Errores comunes en esta parte**
->
-> <details>
-> <summary>Abrí para ver soluciones</summary>
->
-> - **"Node not found: TimerAtaque"** → el bloque que lo crea tiene que estar **dentro de `_ready()`**, con la misma sangría que el de la etiqueta.
-> - **Pega todo el tiempo, no cada segundo** → te faltó `one_shot = true`, o el `$TimerAtaque.start()` después de pegar.
-> - **Parpadea entre ATACAR y PERSEGUIR** → revisá los umbrales: entra a **40** y sale a **60**. Si pusiste el mismo número en los dos, es la histéresis de la Parte 0.
-> - **Nunca llega a ATACAR** → 40 px es poco si el `CollisionShape2D` del jefe es grande. Probá con `d < 60` y `d > 80`.
-> </details>
-
----
-
-## 💥 Parte 3 — Cuarto estado: GOLPEADO
-
-> **Concepto:** la prueba de fuego de la clase: agregar un estado **sin romper nada**. Y con dos flechas distintas a las de antes: se **entra** por un **evento** (recibir una bala) y se **sale** por **tiempo** (pasan 0.5 s).
-
-Hoy, cuando una bala le pega al jefe, la barra baja y nada más: sigue caminando como si nada. Queremos que **se sienta**: un **empujón** hacia atrás y **medio segundo congelado**, en rojo. Nada de huir: en un *survivors*, un jefe que escapa es un jefe que no se enfrenta.
-
-![Máquina de estados con GOLPEADO: se entra desde recibir_dano y se sale cuando termina el Timer](tp8-assets/diagrama-4-estados.png)
-
-Cinco cambios en **`enemigo_elite.gd`**:
-
-**1.** El `enum`, completo:
-
-```gdscript
-enum Estado { ACECHAR, PERSEGUIR, ATACAR, GOLPEADO }
-```
-
-**2.** En `_ready()`, **debajo del bloque del `TimerAtaque`**, un segundo temporizador:
-
-```gdscript
-	var timer_golpe := Timer.new()
-	timer_golpe.name = "TimerGolpe"
-	timer_golpe.wait_time = 0.5       # medio segundo congelado
-	timer_golpe.one_shot = true
-	add_child(timer_golpe)
-```
-
-**3.** En `_process`, la rama de `GOLPEADO` **al final del `match`**, debajo de la de `ATACAR`:
-
-```gdscript
-		Estado.GOLPEADO:
-			golpeado()
-			if $TimerGolpe.is_stopped():                  # pasó el medio segundo
-				$AnimatedSprite2D.modulate = Color.WHITE   # se le va el rojo
-				estado = Estado.PERSEGUIR
-```
-
-**4.** La función, junto a las otras:
-
-```gdscript
-func golpeado() -> void:                              # congelado: no se mueve ni pega
-	$AnimatedSprite2D.modulate = Color(1, 0.4, 0.4)   # rojo, para que se note
-```
-
-**5.** Y la **flecha de entrada**, en `recibir_dano()`:
-
-```gdscript
-func recibir_dano(cantidad: int) -> void:
-	super(cantidad)
-	$BarraVida.value = vida
-	if vida > 0:                                                    # si murió, no hay golpe que valga
-		position += (position - jugador.position).normalized() * 20   # empujón: 20 px hacia atrás
-		$TimerGolpe.start()                                             # arranca el medio segundo
-		estado = Estado.GOLPEADO
-```
-
-> 🧠 **Dos flechas nuevas, dos disparadores nuevos.** Las transiciones de antes viven en el `match` y se deciden por **distancia**. La de **entrada** a `GOLPEADO` vive en `recibir_dano()` y se dispara por un **evento**: recibir un golpe. Una máquina de estados no exige que todas las flechas salgan del mismo lugar. La de **salida** se decide por **tiempo**, con el mismo truco de `is_stopped()` que ya usás en `atacar()`.
->
-> **El empujón** es "perseguir al revés" en una sola línea: `(position - jugador.position)` es la dirección **del jugador hacia el jefe**, y `* 20` la convierte en 20 píxeles. No lleva `delta` porque no es un movimiento por frame: es un salto, una vez, en el momento del golpe.
->
-> **¿Por qué `vida > 0`?** Si la bala lo mató, `super()` ya llamó a `morir()` y el nodo está por desaparecer: no tiene sentido empujarlo ni congelarlo.
-
-Apretá **F6**. Dejá que una bala le pegue al jefe: retrocede un poco, se pone **rojo**, la etiqueta dice **`GOLPEADO`** y se queda clavado medio segundo. Después vuelve a **`PERSEGUIR`**, blanco otra vez. Con varias balas seguidas se lo ve trabarse a cada golpe: eso es lo que hace que un jefe se sienta **pesado**.
-
-✅ **Punto de control 3:** cada bala empuja y congela al jefe medio segundo, y después retoma la persecución. Agregaste un estado y **nada de lo anterior se rompió**. Los slimes básicos siguen sin inmutarse cuando les pegás: `enemigo.gd` no cambió.
-
-> 🛟 **Errores comunes en esta parte**
->
-> <details>
-> <summary>Abrí para ver soluciones</summary>
->
-> - **"Identifier 'GOLPEADO' not declared"** → falta agregarlo al `enum`.
-> - **"Node not found: TimerGolpe"** → el bloque que lo crea va **dentro de `_ready()`**, con la misma sangría que el del `TimerAtaque`.
-> - **No se congela ni se pone rojo** → las tres líneas van **después** de `super(cantidad)` y `$BarraVida.value = vida`, adentro del `if vida > 0:`. Y revisá que la última sea `estado = Estado.GOLPEADO`.
-> - **Nunca sale de GOLPEADO mientras le disparás** → el `TimerDisparo` del jugador tira una bala cada **0.4 s**, más seguido que los 0.5 s del congelado: si el jefe es el único objetivo, cada bala **reinicia** el Timer y queda trabado hasta morir. En muchos *survivors* eso es a propósito (*stun lock*). Si no te gusta, que el golpe **no se acumule**: `if $TimerGolpe.is_stopped(): $TimerGolpe.start()`. O bajá el `wait_time` a `0.3`.
-> - **Queda rojo para siempre** → el `modulate = Color.WHITE` va en la **salida** (dentro del `if` del `match`), no en `golpeado()`.
-> - **Retrocede pero casi no se nota** → 20 px es poco con el sprite chico; probá `40`. Mucho más y parece que se teletransporta.
-> </details>
-
----
-
-## 🏁 Parte 4 — Proyecto final: ajustar, exportar, entregar
-
-Ya está todo. Ahora convertilo en **tu** juego.
-
-### 4.1 · Ajustar los números
-
-Todo lo que define cómo se siente el jefe son **siete números**. Jugá y tocalos hasta que te guste:
-
-| Dónde | Variable | Qué cambia |
-| :---- | :---- | :---- |
-| `enemigo_elite.gd` | `velocidad` | Qué tan rápido persigue (acecha a la mitad) |
-| `enemigo_elite.gd` | umbrales `250` / `350` | Desde cuán lejos te ve y cuándo se calma |
-| `enemigo_elite.gd` | `wait_time` del `TimerAtaque` | Cada cuánto pega |
-| `enemigo_elite.gd` | `wait_time` del `TimerGolpe` | Cuánto queda congelado por cada bala |
-| `enemigo_elite.gd` | el `20` del empujón | Cuánto retrocede por cada bala |
-| `spawner.gd` | `wait_time` del `Timer` | Cuántos slimes por segundo |
-| `spawner.gd` | `contador >= 8` | Cada cuántos aparece un jefe |
-
-(Opcional) Para la versión final, ocultá la etiqueta agregando `etiqueta.visible = false` justo después de crearla en `_ready()`. O dejala: es simpática y muestra que el jefe piensa.
-
-### 4.2 · Exportar
-
-Como vimos en la clase 8:
-
-1. **Editor → Manage Export Templates → Download and Install** (solo la primera vez).
-2. **Project → Project Settings → Application → Config**: poné el **nombre** de tu juego.
-3. **Project → Export → Add… → Windows Desktop** → carpeta y nombre (`mi_juego.exe`) → **Export Project**.
-4. Godot genera `mi_juego.exe` **y** `mi_juego.pck`. **Van siempre juntos**: sin el `.pck` el `.exe` no arranca.
-
-✅ **Punto de control 4 (final):** el `.exe` corre en una compu **sin Godot instalado**, y se juega igual que en el editor.
-
----
-
-## 📤 Entrega — Proyecto final
-
-Entregá **las dos cosas**:
-
-1. La **carpeta del proyecto** comprimida en `.zip` (sin la carpeta `.godot/`), **y**
-2. El juego **exportado**: `mi_juego.exe` + `mi_juego.pck` en un `.zip` aparte.
-
-(Opcional) Un **video corto** donde se vea: la horda persiguiéndote, el jefe acechando de lejos, acelerando al acercarte, atacándote, y frenándose en seco con cada bala.
-
-**Nombre:** `tp8-final-ApellidoNombre.zip` y `tp8-final-ApellidoNombre-exe.zip`
-
-### ✔️ Checklist de autoevaluación
-
-- [ ] `enemigo_elite.gd` tiene `enum Estado` con **cuatro** estados y **su propio** `_process` con `match`.
-- [ ] Cada estado tiene **su función** (`acechar`, `perseguir`, `atacar`, `golpeado`).
-- [ ] El jefe muestra su **estado** en una etiqueta encima (aunque después la ocultes).
-- [ ] El jefe **acecha despacio** hacia vos, **persigue** a menos de 250 px y se **calma** a más de 350.
-- [ ] Al alcanzarte **se frena** y pega **una vez por segundo** (ya no desaparece al tocarte).
-- [ ] Cada bala lo **empuja y lo congela 0.5 s** (flecha desde `recibir_dano()`), y al terminar el Timer vuelve a perseguir.
-- [ ] El slime básico quedó **igual que en el TP7**: kamikaze y sin etiqueta. **`enemigo.gd` no se tocó.**
-- [ ] El juego está **exportado** y corre sin Godot.
-
----
-
-## 📄 Código completo de referencia
-
-Por si te perdiste en algún paso: así tiene que quedar `enemigo_elite.gd` al final. **`enemigo.gd` es el mismo del TP7, sin cambios.**
-
-<details>
-<summary><code>enemigo_elite.gd</code> completo</summary>
+Reemplazá `enemigo_elite.gd` por esto (hereda de `enemigo.gd`, que queda igual que en el TP7):
 
 ```gdscript
 extends "res://enemigo.gd"
@@ -484,27 +123,785 @@ func recibir_dano(cantidad: int) -> void:
 ```
 </details>
 
+### Cómo queda el proyecto al final
+
+```
+menu.tscn        ← NUEVA: título, tu nombre, Jugar / Salir          (Main Scene)
+nivel.tscn       ← el juego, con cámara, piso infinito y tiempo
+game_over.tscn   ← NUEVA: resumen de la partida + ranking top 5
+partida.gd       ← NUEVO: Autoload "Partida" — nombre, kills, tiempo y ranking guardado
+```
+
+| Parte | Qué se agrega | Qué se ve |
+| :---- | :---- | :---- |
+| 1 | `Camera2D` + spawner alrededor del jugador | El mundo se mueve con vos; el HUD queda fijo |
+| 2 | `Parallax2D` con el piso | Caminás para siempre sin ver un borde |
+| 3 | Autoload `Partida` + tiempo en el HUD | `Tiempo: 37` que sigue contando aunque reinicies |
+| 4 | Menú con `LineEdit` | Escribís tu nombre y jugás |
+| 5 | Ranking con `FileAccess` + `JSON` | Un archivo `ranking.json` con tus partidas |
+| 6 | Pantalla final | Top 5 con tu puesto resaltado |
+| 7 | Exportar | `mi_juego.exe` corriendo sin Godot |
+| 8 | **Tu aporte** | Algo que no estaba en ningún TP |
+
+---
+
+## 🎥 Parte 1 — La cámara sigue al jugador
+
+> **Concepto:** hasta hoy el mundo era la ventana: el caballero tenía un `clamp` para no salir y los slimes nacían en los bordes. Con una **`Camera2D`** hija del jugador, lo que se ve es **lo que rodea al caballero**, y el mundo pasa a ser tan grande como quieras.
+
+### 1.1 · La cámara
+
+1. Abrí `nivel.tscn`. Seleccioná **`Jugador`** → **Ctrl+A** → **`Camera2D`**. Al ser hija del jugador, **va a donde va él**: no hace falta ni una línea de código.
+2. Con `Camera2D` seleccionada, en el Inspector: **Position Smoothing → Enabled** ✔, **Speed** `5`.
+3. Abrí `jugador.gd` y **borrá** las tres líneas del `clamp` al final de `_physics_process` (las que empiezan con `var limites := get_viewport_rect().size`).
+
+Apretá **F6** y caminá para cualquier lado. El caballero queda en el centro y **el mundo se mueve**. El HUD (barra y contador) **no se mueve**: sigue clavado en su esquina.
+
+> 🧠 **¿Por qué el HUD no se movió?** Porque está en un **`CanvasLayer`** (TP7), y un `CanvasLayer` dibuja en **coordenadas de pantalla**, no del mundo: la cámara no lo afecta. Es exactamente para esto que existe. Y el *smoothing* hace que la cámara **llegue** a donde está el jugador en vez de estar pegada: se siente más suave, y cuando el jefe te empuja no da un latigazo.
+
+### 1.2 · Los slimes aparecen alrededor tuyo
+
+Ahora hay un problema: el spawner sigue usando los bordes **de la ventana** (`get_viewport_rect()`), que ya no coinciden con lo que ves. Si caminás lejos, los slimes aparecen en el lugar equivocado. La solución: que nazcan en un **círculo alrededor del jugador**, justo fuera de la vista.
+
+4. Abrí `spawner.gd`. Agregá una variable y buscá al jugador en `_ready()`, como hace el jefe:
+
+```gdscript
+var jugador: Node2D = null
+
+func _ready() -> void:
+	$Timer.timeout.connect(spawnear)
+	jugador = get_tree().get_first_node_in_group("jugador")
+```
+
+5. **Borrá** la función `posicion_en_el_borde()` entera y poné esta en su lugar:
+
+```gdscript
+func posicion_alrededor_del_jugador() -> Vector2:
+	var angulo := randf_range(0, TAU)                          # un ángulo al azar (TAU = una vuelta entera)
+	var desplazamiento := Vector2.RIGHT.rotated(angulo) * 750  # una flecha de 750 px en esa dirección
+	return jugador.position + desplazamiento
+```
+
+6. En `spawnear()`, cambiá la línea de la posición y protegete por si no hay jugador:
+
+```gdscript
+func spawnear() -> void:
+	if jugador == null:
+		return
+	contador += 1
+	var enemigo
+	if contador >= 8:
+		contador = 0
+		enemigo = escena_elite.instantiate()
+	else:
+		enemigo = escena_enemigo.instantiate()
+	enemigo.position = posicion_alrededor_del_jugador()   # CAMBIÓ
+	get_node("../Enemigos").add_child(enemigo)
+```
+
+> 🧠 **Un punto al azar en un círculo.** `Vector2.RIGHT` es la flecha `(1, 0)`. `.rotated(angulo)` la gira, y `* 750` la estira a 750 píxeles. Sumársela a la posición del jugador da un punto a 750 px de él, en una dirección al azar. ¿Por qué 750? La ventana es de 1280×720: desde el centro, la esquina más lejana está a unos 735 px. Con 750 el slime **siempre nace fuera de la vista**, y como te persigue, entra en pantalla solo. Es la misma cuenta de dirección × distancia que usan las balas.
+
+✅ **Punto de control 1:** caminás en cualquier dirección y el mundo se mueve con vos, el HUD queda fijo, y los slimes siguen apareciendo de a uno, siempre desde afuera de la pantalla, aunque te hayas ido lejos del punto de partida.
+
+> 🛟 **Errores comunes en esta parte**
+>
+> <details>
+> <summary>Abrí para ver soluciones</summary>
+>
+> - **La cámara no sigue al jugador** → `Camera2D` tiene que ser **hija de `Jugador`**, no de `Nivel`. Arrastrala en el árbol si quedó mal.
+> - **El caballero sigue sin poder salir de un rectángulo** → quedaron las líneas del `clamp`. Borrá las tres.
+> - **Los slimes aparecen en pantalla** → 750 es poco si cambiaste el tamaño de la ventana o el zoom de la cámara. Subilo a `900`.
+> - **"Invalid get index 'position' (on base: 'Nullinstance')" en el spawner** → `jugador` es `null`: el `Jugador` tiene que estar **arriba** del `Spawner` en el árbol (Godot ejecuta los `_ready()` en orden) y en el grupo `"jugador"`.
+> - **Hay un gris feo alrededor** → es el fondo vacío de Godot: el mundo ahora es infinito y no hay nada dibujado ahí. Lo arreglamos ya mismo.
+> </details>
+
+---
+
+## 🌿 Parte 2 — Un piso que no se termina
+
+> **Concepto:** en un juego visto desde arriba, el "fondo" es el piso. Un `Parallax2D` con una textura repetida da un piso **infinito** con un solo nodo y cero código: cuando la cámara avanza el tamaño de la imagen, el nodo la **vuelve a poner adelante** sin que se note. Es exactamente lo que hace *Vampire Survivors*.
+
+1. Descargá **[piso.png](tp8-assets/piso.png)** (pasto en *pixel art*, 1536×1024, hecho para repetirse sin costuras) y copialo a la carpeta del proyecto. Así se ve un pedazo:
+
+   ![Vista previa del piso](tp8-assets/preview-piso.png)
+
+2. En `nivel.tscn`, seleccioná **`Nivel`** → **Ctrl+A** → **`Parallax2D`** → renombralo **`Fondo`**.
+3. **Arrastrá `Fondo` hasta arriba de todo** en el árbol, por encima de `Jugador`. En 2D, lo que está más arriba en el árbol se dibuja **primero**, o sea, debajo.
+4. Hijo de `Fondo` → **`Sprite2D`** → renombralo **`Piso`**. Arrastrá `piso.png` a su propiedad **Texture**. En **Offset → Centered**, **destildalo**: la imagen tiene que empezar en `(0, 0)` y extenderse hacia abajo y a la derecha.
+5. Seleccioná **`Fondo`** y en el Inspector, sección **Repeat**: **Repeat Size** = `1536` × `1024` (el tamaño exacto de la imagen).
+
+Apretá **F6** y caminá para cualquier lado, todo lo que quieras: **el pasto no se acaba nunca**.
+
+> 🧠 **Cómo funciona `repeat_size`.** El `Parallax2D` dibuja la textura y **una copia** corrida exactamente `repeat_size` píxeles. Cuando la cámara avanzó esa distancia, el nodo **vuelve la textura al principio** en el mismo frame: como la copia es idéntica, el ojo no lo ve. Por eso la imagen tiene que ser (a) **más grande que la ventana** (1536×1024 contra 1280×720) y (b) **continua**: el borde derecho encaja con el izquierdo y el de abajo con el de arriba. Si dibujás tu propio piso, cuidá esas dos cosas.
+>
+> **¿Y el "parallax"?** El nodo se llama así porque sirve para hacer que un fondo se mueva **más lento** que el mundo (`Scroll Scale` menor que 1) y parezca lejano, como las montañas de un plataformero. En un juego visto desde arriba el piso está **a la misma altura** que el caballero, así que lo dejamos en `(1, 1)`: se mueve igual que todo lo demás. Solo usamos el "infinito".
+
+✅ **Punto de control 2:** caminás en cualquier dirección sin ver jamás el borde del piso ni el gris de fondo, y el caballero, los slimes y las balas se dibujan **encima** del pasto.
+
+> 🛟 **Errores comunes en esta parte**
+>
+> <details>
+> <summary>Abrí para ver soluciones</summary>
+>
+> - **No aparece `Parallax2D` en la lista de nodos** → tenés Godot **4.2 o anterior** (`Parallax2D` existe desde 4.3). Lo mismo se hace con los nodos viejos: `Nivel` → hijo **`ParallaxBackground`** → hijo **`ParallaxLayer`** → hijo `Sprite2D` con la textura (Centered OFF). En el `ParallaxLayer`, **Motion → Mirroring** = `1536` × `1024`. Mismo resultado.
+> - **Se ve una franja gris al caminar** → *Centered* quedó tildado en el `Sprite2D`, o *Repeat Size* no es exactamente `1536 × 1024`.
+> - **El piso tapa al jugador** → `Fondo` tiene que ser el **primer** hijo de `Nivel`. Arrastralo arriba de `Jugador`.
+> - **El pasto se ve borroso** → Godot suaviza las texturas por defecto. **Project → Project Settings → Rendering → Textures → Canvas Textures → Default Texture Filter** = `Nearest` (si lo hiciste en el TP4, ya está).
+> </details>
+
+---
+
+## ⏱️ Parte 3 — Contar el tiempo: el Autoload `Partida`
+
+> **Concepto:** el puntaje de esta partida son dos números: **cuántos slimes** eliminaste y **cuántos segundos** aguantaste. Van a tener que sobrevivir al cambio de escena (del nivel a la pantalla final), así que viven en un **Autoload**, como en el TP6.
+
+1. En **FileSystem**, clic derecho → **New → Script…** → Inherits `Node`, path **`res://partida.gd`** → **Create**. Escribí:
+
+```gdscript
+extends Node
+
+var nombre := ""
+var kills := 0
+var segundos := 0
+
+func nueva_partida(nombre_jugador: String) -> void:
+	nombre = nombre_jugador
+	kills = 0
+	segundos = 0
+```
+
+2. **Project → Project Settings → Globals → Autoload** → en **Path** elegí `partida.gd`, en **Node Name** escribí **`Partida`** → **Add**. Tiene que quedar en la lista, tildado.
+
+   ![Pestaña Globals con Autoload](https://docs.godotengine.org/es/4.x/_images/autoload_tab.webp)
+
+3. En `nivel.tscn`: **`Nivel`** → **Ctrl+A** → **`Timer`** → renombralo **`TimerSegundos`**. **Wait Time** `1`, **Autostart** ✔.
+4. Hijo de **`HUD`** → **`Label`** → renombralo **`LabelTiempo`**. **Text** = `Tiempo: 0`. Ubicalo debajo de `LabelKills`.
+5. Seleccioná **`Nivel`** → **Attach Script** → `res://nivel.gd`:
+
+```gdscript
+extends Node2D
+
+func _ready() -> void:
+	$TimerSegundos.timeout.connect(_on_segundo)
+
+func _on_segundo() -> void:
+	Partida.segundos += 1
+	$HUD/LabelTiempo.text = "Tiempo: " + str(Partida.segundos)
+```
+
+6. En `jugador.gd`, que `sumar_kill()` le avise a `Partida`:
+
+```gdscript
+func sumar_kill() -> void:
+	kills += 1
+	Partida.kills = kills        # NUEVO
+	actualizar_hud()
+```
+
+Apretá **F6**: el HUD cuenta `Tiempo: 1, 2, 3…`. Dejá que te maten. La escena se reinicia (todavía con `reload_current_scene()`)… y **el tiempo sigue desde donde estaba**. No es un error: `Partida` vive **fuera** de la escena, y por eso no se reinicia con ella. Es justo lo que necesitamos para llevar los números a la pantalla final. Ponerlo en cero es trabajo del menú, en la próxima parte.
+
+✅ **Punto de control 3:** el HUD muestra el tiempo sobrevivido, y al morir y reiniciar, el contador **sigue**: prueba de que el Autoload sobrevive a la escena.
+
+> 🛟 **Errores comunes en esta parte**
+>
+> <details>
+> <summary>Abrí para ver soluciones</summary>
+>
+> - **"Identifier 'Partida' not declared"** → falta el Autoload, o el *Node Name* no es exactamente `Partida`. Mirá **Project Settings → Globals → Autoload**.
+> - **El tiempo no avanza** → `TimerSegundos` sin **Autostart**, o la señal conectada en un script que no es el de `Nivel`.
+> - **"Node not found: HUD/LabelTiempo"** → `LabelTiempo` tiene que ser hija de `HUD`, y `HUD` hija de `Nivel`. Los nombres, exactos.
+> </details>
+
+---
+
+## 🚪 Parte 4 — El menú de inicio (con tu nombre)
+
+> **Concepto:** es el menú del TP6, con una pieza nueva: un **`LineEdit`**, el nodo de "campo de texto". Lo que escribas ahí va a `Partida.nombre` y después aparece en el ranking.
+
+1. **Escena → Otro Nodo** → **`Control`** → renombralo **`MenuPrincipal`**. Guardá como **`menu.tscn`**.
+2. Hijo → **`ColorRect`** → **`Fondo`** → ancla **Full Rect**. Elegí un color oscuro.
+3. Hijo de `MenuPrincipal` → **`VBoxContainer`** → **`Botonera`** → ancla **Center**. **Theme Overrides → Constants → Separation** = `16`.
+4. Hijo de `Botonera` → **`Label`** → **`LabelTitulo`**. **Text** = `Sobreviví a los slimes`. **Font Size** = `48`.
+5. Hijo de `Botonera` → **`LineEdit`** → **`CampoNombre`**. **Placeholder Text** = `Tu nombre`, **Max Length** = `12`, **Alignment** = `Center`. En **Layout → Custom Minimum Size**, `x` = `260` para que no quede finito.
+6. Hijo de `Botonera` → **`Button`** → **`BtnJugar`**, **Text** = `Jugar`.
+7. Hijo de `Botonera` → **`Button`** → **`BtnSalir`**, **Text** = `Salir`.
+
+```
+MenuPrincipal  (Control)
+├── Fondo        (ColorRect)      ← Full Rect
+└── Botonera     (VBoxContainer)  ← Center
+    ├── LabelTitulo   (Label)
+    ├── CampoNombre   (LineEdit)   ← NUEVO
+    ├── BtnJugar      (Button)
+    └── BtnSalir      (Button)
+```
+
+8. **`MenuPrincipal`** → **Attach Script** → `res://menu.gd`:
+
+```gdscript
+extends Control
+
+func _ready() -> void:
+	$Botonera/BtnJugar.pressed.connect(_on_jugar_pressed)
+	$Botonera/BtnSalir.pressed.connect(_on_salir_pressed)
+	$Botonera/CampoNombre.text_submitted.connect(_on_nombre_submitted)
+	$Botonera/CampoNombre.text = Partida.nombre   # recuerda el último nombre usado
+	$Botonera/CampoNombre.grab_focus()            # el cursor ya está en el campo
+
+func _on_jugar_pressed() -> void:
+	var nombre := $Botonera/CampoNombre.text.strip_edges()   # saca espacios de más
+	if nombre == "":
+		nombre = "Anónimo"
+	Partida.nueva_partida(nombre)
+	get_tree().change_scene_to_file("res://nivel.tscn")
+
+func _on_nombre_submitted(_texto: String) -> void:   # Enter en el campo = Jugar
+	_on_jugar_pressed()
+
+func _on_salir_pressed() -> void:
+	get_tree().quit()
+```
+
+9. **Project → Project Settings → General → Application → Run → Main Scene** → `menu.tscn`.
+
+> 🧠 **`LineEdit`** tiene su texto en `.text` y emite **`text_submitted`** cuando apretás Enter: una señal más, como `pressed` de los botones. `strip_edges()` saca los espacios del principio y del final, así "  Javi " queda "Javi". Y fijate que `nueva_partida()` **pone kills y segundos en cero**: por eso el tiempo de la Parte 3 ya no "sigue" entre partidas. Cada partida arranca desde el menú.
+
+✅ **Punto de control 4:** con **F5** el juego arranca en el menú, escribís tu nombre, apretás Jugar (o Enter) y empieza el nivel con el tiempo en 0. Salir cierra el juego.
+
+> 🛟 **Errores comunes en esta parte**
+>
+> <details>
+> <summary>Abrí para ver soluciones</summary>
+>
+> - **F5 abre el nivel directo** → falta cambiar la **Main Scene** (paso 9).
+> - **"Node not found: Botonera/CampoNombre"** → el `LineEdit` tiene que ser hijo de `Botonera` y llamarse exactamente así.
+> - **El campo es muy angosto o no se ve** → *Custom Minimum Size* `x = 260`. Y si el título es más ancho que el campo, es normal: el `VBoxContainer` los centra.
+> - **Enter no hace nada** → la señal es **`text_submitted`** (no `text_changed`), y va conectada en `_ready()`.
+> </details>
+
+---
+
+## 💾 Parte 5 — Guardar el ranking en un archivo
+
+> **Concepto:** hasta ahora, al cerrar el juego se perdía todo. Para que un ranking **sobreviva** hay que escribirlo en el disco: `FileAccess` abre un archivo y `JSON` convierte nuestros datos a texto y de vuelta. Todo vive en `Partida`, que ya es el dueño de los números.
+
+1. **Reemplazá `partida.gd`** por esta versión completa:
+
+```gdscript
+extends Node
+
+const ARCHIVO := "user://ranking.json"
+const MAXIMO := 5
+
+var nombre := ""
+var kills := 0
+var segundos := 0
+var ranking: Array = []     # lista de diccionarios: { "nombre": …, "kills": …, "segundos": … }
+
+func _ready() -> void:
+	cargar_ranking()        # al abrir el juego, lo que quedó de la última vez
+
+func nueva_partida(nombre_jugador: String) -> void:
+	nombre = nombre_jugador
+	kills = 0
+	segundos = 0
+
+func terminar_partida() -> void:
+	var partida := { "nombre": nombre, "kills": kills, "segundos": segundos }
+	ranking.append(partida)
+	ranking.sort_custom(mejor_que)      # ordena de mejor a peor
+	if ranking.size() > MAXIMO:
+		ranking.resize(MAXIMO)          # se queda con los 5 mejores
+	guardar_ranking()
+
+func mejor_que(a: Dictionary, b: Dictionary) -> bool:
+	if a["kills"] != b["kills"]:
+		return a["kills"] > b["kills"]        # más slimes = mejor
+	return a["segundos"] > b["segundos"]      # a igual slimes, más tiempo = mejor
+
+func guardar_ranking() -> void:
+	var archivo := FileAccess.open(ARCHIVO, FileAccess.WRITE)
+	archivo.store_string(JSON.stringify(ranking, "\t"))
+	archivo.close()
+
+func cargar_ranking() -> void:
+	if not FileAccess.file_exists(ARCHIVO):
+		return                                          # primera vez: no hay nada que cargar
+	var archivo := FileAccess.open(ARCHIVO, FileAccess.READ)
+	var datos = JSON.parse_string(archivo.get_as_text())
+	archivo.close()
+	if datos is Array:
+		ranking = datos
+```
+
+2. En `jugador.gd`, en `recibir_dano()`, avisá que la partida terminó **antes** de reiniciar:
+
+```gdscript
+func recibir_dano(cantidad: int) -> void:
+	vida -= cantidad
+	actualizar_hud()
+	if vida <= 0:
+		Partida.terminar_partida()               # NUEVO
+		get_tree().reload_current_scene()
+```
+
+> 🧠 **Cuatro ideas nuevas, todas chicas:**
+> - **`user://`** es la carpeta que Godot le da a tu juego para escribir. En Windows es `%APPDATA%\Godot\app_userdata\<nombre del juego>`. Nunca escribas en `res://`: es el proyecto, y en el juego exportado es **de solo lectura**.
+> - **`FileAccess.open()`** devuelve un objeto para leer o escribir (`READ` o `WRITE`). `WRITE` **crea** el archivo si no existe y lo **pisa** si existe. Cerralo siempre con `close()`.
+> - **`JSON.stringify()`** convierte un `Array` de diccionarios en texto (el `"\t"` es para que quede prolijo y lo puedas leer). **`JSON.parse_string()`** hace el camino inverso. Es el mismo formato que usan las páginas web para mandarse datos.
+> - **`sort_custom()`** ordena la lista usando **tu** función de comparación: `mejor_que(a, b)` devuelve `true` si `a` tiene que ir antes que `b`. Cambiás esa función y cambiás el criterio del ranking.
+>
+> Un detalle: los números que vuelven de un JSON son **decimales** (`23.0`, no `23`). No molesta para ordenar, pero para mostrarlos vamos a usar `int()`.
+
+3. **Probalo:** **F5**, jugá, morí, jugá otra vez con otro nombre, morí. Después, en el editor: **Project → Open User Data Folder**. Se abre la carpeta `user://` de tu juego: ahí está **`ranking.json`**. Abrilo con el bloc de notas:
+
+```json
+[
+	{
+		"nombre": "Javi",
+		"kills": 23.0,
+		"segundos": 47.0
+	},
+	{
+		"nombre": "Anónimo",
+		"kills": 9.0,
+		"segundos": 21.0
+	}
+]
+```
+
+✅ **Punto de control 5:** `ranking.json` existe, tiene tus partidas **ordenadas de mejor a peor**, nunca más de 5, y si cerrás Godot y volvés a jugar, las viejas siguen ahí.
+
+> 🛟 **Errores comunes en esta parte**
+>
+> <details>
+> <summary>Abrí para ver soluciones</summary>
+>
+> - **No aparece `ranking.json`** → ¿llegaste a morir? El archivo se escribe en `terminar_partida()`. Y revisá que la llamada esté **antes** de `reload_current_scene()`.
+> - **"Invalid call. Nonexistent function 'store_string' in base 'Nil'"** → `FileAccess.open()` devolvió `null`: la ruta tiene que empezar con `user://`, no `res://`.
+> - **Se guarda pero al reabrir está vacío** → `cargar_ranking()` va en `_ready()` de `partida.gd`, y `datos is Array` tiene que dar verdadero: si editaste el JSON a mano y le rompiste una coma, `parse_string` devuelve `null`. Borrá el archivo y volvé a jugar.
+> - **El ranking no está ordenado** → `sort_custom` va **antes** del `resize`, si no recortás los equivocados.
+> </details>
+
+---
+
+## 🏆 Parte 6 — La pantalla final con el ranking
+
+> **Concepto:** la pantalla de Game Over del TP6, pero en vez de un puntaje muestra el resumen de tu partida y el **top 5**, creando un `Label` por fila **desde el código**: no sabemos de antemano cuántas filas hay.
+
+1. **Escena → Otro Nodo** → **`Control`** → **`GameOver`**. Guardá como **`game_over.tscn`**.
+2. Hijo → **`ColorRect`** → **`Fondo`** → **Full Rect**, color oscuro o rojizo.
+3. Hijo de `GameOver` → **`VBoxContainer`** → **`Botonera`** → **Center**, **Separation** `12`.
+4. Hijos de `Botonera`, en este orden:
+   - **`Label`** → **`LabelTitulo`**, **Text** = `Sobreviviste`, **Font Size** `48`.
+   - **`Label`** → **`LabelResumen`**, **Text** = `…` (lo pisa el código).
+   - **`Label`** → **`LabelRanking`**, **Text** = `Mejores 5`. **Font Size** `28`.
+   - **`VBoxContainer`** → **`Filas`** (vacío: acá van a caer las filas del ranking).
+   - **`Button`** → **`BtnReintentar`**, **Text** = `Jugar de nuevo`.
+   - **`Button`** → **`BtnMenu`**, **Text** = `Menú`.
+
+```
+GameOver  (Control)
+├── Fondo          (ColorRect)      ← Full Rect
+└── Botonera       (VBoxContainer)  ← Center
+    ├── LabelTitulo    (Label)
+    ├── LabelResumen   (Label)
+    ├── LabelRanking   (Label)
+    ├── Filas          (VBoxContainer)   ← vacío, se llena por código
+    ├── BtnReintentar  (Button)
+    └── BtnMenu        (Button)
+```
+
+5. **`GameOver`** → **Attach Script** → `res://game_over.gd`:
+
+```gdscript
+extends Control
+
+func _ready() -> void:
+	$Botonera/LabelResumen.text = Partida.nombre + ": " + str(Partida.kills) + " slimes en " + str(Partida.segundos) + " segundos"
+	armar_ranking()
+	$Botonera/BtnReintentar.pressed.connect(_on_reintentar_pressed)
+	$Botonera/BtnMenu.pressed.connect(_on_menu_pressed)
+
+func armar_ranking() -> void:
+	var puesto := 1
+	for fila in Partida.ranking:
+		var etiqueta := Label.new()
+		etiqueta.text = str(puesto) + ". " + fila["nombre"] + " — " + str(int(fila["kills"])) + " slimes · " + str(int(fila["segundos"])) + " s"
+		etiqueta.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		if es_la_partida_actual(fila):
+			etiqueta.modulate = Color.YELLOW          # tu partida, resaltada
+		$Botonera/Filas.add_child(etiqueta)
+		puesto += 1
+
+func es_la_partida_actual(fila: Dictionary) -> bool:
+	return fila["nombre"] == Partida.nombre and int(fila["kills"]) == Partida.kills and int(fila["segundos"]) == Partida.segundos
+
+func _on_reintentar_pressed() -> void:
+	Partida.nueva_partida(Partida.nombre)      # mismo nombre, números en cero
+	get_tree().change_scene_to_file("res://nivel.tscn")
+
+func _on_menu_pressed() -> void:
+	get_tree().change_scene_to_file("res://menu.tscn")
+```
+
+6. Y el último cambio en `jugador.gd`: al morir, en vez de reiniciar, ir a la pantalla final:
+
+```gdscript
+	if vida <= 0:
+		Partida.terminar_partida()
+		get_tree().change_scene_to_file("res://game_over.tscn")   # CAMBIÓ
+```
+
+> 🧠 **Crear nodos desde el código** es lo mismo que hiciste con la etiqueta del jefe: `Label.new()`, configurarlo, `add_child()`. Como `Filas` es un `VBoxContainer`, cada etiqueta nueva se acomoda sola debajo de la anterior. Y `es_la_partida_actual()` compara los tres datos porque podés tener varias partidas con tu nombre en el top 5: la de **esta** vez es la que coincide en todo.
+
+✅ **Punto de control 6 (el juego completo):** menú → escribís tu nombre → jugás → morís → ves "Javi: 23 slimes en 47 segundos", el top 5 con tu fila en amarillo (si entró), y los botones te llevan a jugar de nuevo o al menú. Cerrás el juego, lo abrís, y el ranking sigue.
+
+> 🛟 **Errores comunes en esta parte**
+>
+> <details>
+> <summary>Abrí para ver soluciones</summary>
+>
+> - **"Cannot load scene res://game_over.tscn"** → el archivo tiene que llamarse **exactamente** así y estar en la raíz del proyecto.
+> - **El ranking sale vacío** → ¿`Partida.terminar_partida()` está antes del `change_scene_to_file`? Y si nunca moriste desde que agregaste la Parte 5, no hay partidas guardadas todavía.
+> - **"Invalid operands 'String' and 'float'"** → falta un `str()` o un `int()` en la línea del texto de la etiqueta. Todo lo que se pega con `+` tiene que ser texto.
+> - **Tu fila no está en amarillo** → no entró en el top 5 (mirá el resumen arriba), o el nombre tiene espacios distintos. Normal.
+> - **Las filas se ven apretadas** → `Filas` también es un `VBoxContainer`: ponele **Separation** `4`.
+> </details>
+
+---
+
+## 📦 Parte 7 — Exportar: tu juego fuera de Godot
+
+> **Concepto:** hasta ahora tu juego solo existe dentro del editor. **Exportar** es empaquetarlo en un `.exe` que cualquiera puede abrir. Godot necesita unas **plantillas** (los ejecutables base de cada plataforma) que se bajan una sola vez.
+
+### 7.1 · Antes de exportar
+
+- **Main Scene** = `menu.tscn` (lo hiciste en la Parte 4).
+- **Project → Project Settings → Application → Config**: **Name** = el nombre de tu juego. Ese nombre define la carpeta `user://` (y tu `ranking.json` va a vivir ahí, separado del de las pruebas).
+- (Opcional) En **Application → Config → Icon**, un `.png` de 256×256 para el ícono del `.exe`.
+- Jugá una vez de punta a punta **sin errores rojos** en la consola.
+
+> ⚠️ Si en algún script escribiste una ruta como `C:\Users\...` en vez de `res://` o `user://`, funciona en tu compu y **se rompe en cualquier otra**. Es el error número uno al exportar.
+
+### 7.2 · Exportar a Windows en 4 pasos
+
+1. **Editor → Manage Export Templates → Download and Install**. Una sola vez; pesan bastante. Esperá a que diga que están instaladas.
+
+   ![Administrador de plantillas de exportación](tp8-assets/export-templates.webp)
+
+2. **Project → Export… → Add… → Windows Desktop**.
+
+   ![El botón Add… lista las plataformas](tp8-assets/export-preset.webp)
+
+3. Abajo, **Export Project…**: elegí una carpeta **nueva** (por ejemplo `export/`) y el nombre `mi_juego.exe`. Destildá *Export With Debug* si querés la versión final.
+4. Godot genera **dos archivos**: `mi_juego.exe` y `mi_juego.pck`. **Van siempre juntos**: el `.exe` es el motor y el `.pck` es tu juego. Sin el `.pck`, el `.exe` no arranca.
+
+> 💡 Si preferís un solo archivo: en el preset, **Options → Binary Format → Embed PCK** ✔. Queda todo dentro del `.exe`.
+
+5. **Probalo de verdad:** cerrá Godot, abrí `mi_juego.exe` desde la carpeta, jugá, morí, cerrá, volvé a abrir. El ranking tiene que seguir. Si podés, pasáselo a alguien que no tenga Godot.
+
+✅ **Punto de control 7:** el `.exe` corre en una compu **sin Godot**, se juega igual que en el editor y el ranking se guarda entre una ejecución y otra.
+
+> 🛟 **Errores comunes en esta parte**
+>
+> <details>
+> <summary>Abrí para ver soluciones</summary>
+>
+> - **"No export template found"** → las plantillas no se instalaron, o son de **otra versión** de Godot que la tuya. Volvé a *Manage Export Templates* y fijate que la versión coincida.
+> - **El `.exe` abre y se cierra** → falta el `.pck` al lado, o copiaste solo el `.exe` a otra carpeta.
+> - **Se ve una ventana negra** → la *Main Scene* no está configurada, o apunta a una escena borrada.
+> - **En otra compu no encuentra una imagen o un sonido** → una ruta absoluta (`C:\...`) en algún script, o un archivo que está fuera de la carpeta del proyecto. Todo tiene que estar dentro de `res://`.
+> </details>
+
+---
+
+## 🧩 Parte 8 — Tu aporte: algo que no estaba en ningún TP
+
+> **Concepto:** ya tenés un juego terminado. Ahora **agregale una cosa tuya**. No importa cuál: importa que la elijas, la hagas andar, y puedas explicar cómo la hiciste. Eso es diseñar y programar un juego.
+
+### Las reglas
+
+1. **Una sola cosa.** Bien hecha vale más que tres a medias.
+2. **Se tiene que notar jugando.** Si hay que leer el código para darse cuenta, no cuenta.
+3. **Solo con lo que ya sabés.** Todo lo de la lista se hace con nodos y funciones que usaste en TP1–TP8 y en las clases. No hace falta buscar nada nuevo (aunque podés).
+4. **Del tamaño justo:** un script nuevo **o** una función nueva. Si necesita más de dos escenas nuevas, es demasiado grande para este cierre.
+5. **Contala** en un archivo **`aporte.md`** dentro del proyecto, de 5 a 10 líneas: qué agregaste, en qué archivos, y cómo se prueba.
+
+### Elegí una de estas (o proponé la tuya)
+
+Cada una dice qué es, qué del curso usa y una pista. La pista **no es la solución**: es el empujón.
+
+| # | Aporte | Qué usás | Pista |
+| :--- | :--- | :--- | :--- |
+| 1 | **Disparo triple.** Cada disparo salen tres balas en abanico. | `for` (TP2), `rotated()` (esta misma guía) | En `disparar()`, un `for angulo in [-15, 0, 15]:` que instancie una bala con `direccion.rotated(deg_to_rad(angulo))`. |
+| 2 | **Orbe que gira** alrededor del caballero y daña lo que toca. | `Area2D` + `area_entered` (TP4), `delta` (TP3) | Un `Area2D` hijo de `Jugador` con un sprite; en `_process`: `angulo += 3 * delta` y `position = Vector2(60, 0).rotated(angulo)`. Al tocar un `"enemigo"`, `recibir_dano(1)`. |
+| 3 | **Bomba** cada 10 segundos: una explosión alrededor tuyo que mata todo lo que toca. | `Timer` (TP7), instanciar (TP5), `TimerVida` de la bala | Una escena `bomba.tscn` (`Area2D` con un círculo grande) que se instancia sobre el jugador y se borra sola a los 0.2 s. `area_entered` → `recibir_dano(99)`. |
+| 4 | **Slime veloz**: un tercer enemigo, rápido y frágil, que aparece cada 4 slimes. | Herencia (TP5, TP7) | `enemigo_veloz.gd` que hereda de `enemigo.gd` y en `_ready()` pone `velocidad = 120`, `vida = 1`, `dano = 5` y `modulate = Color.CYAN`. Un `if contador % 4 == 0` en el spawner. |
+| 5 | **El jefe dispara**: en `ATACAR` se frena a distancia y te tira balas. | Máquina de estados (Clase 8), instanciar (TP5) | Copiá `bala.tscn` como `bala_enemiga.tscn` en el grupo `"bala_enemiga"`, que use `body_entered` para pegarle al jugador. En `atacar()` del élite, instanciala hacia el jugador; y que entre en `ATACAR` a 150 px en vez de 40. |
+| 6 | **Corazones que curan**: cada 15 s aparece uno cerca tuyo. | `Area2D` + `body_entered` (TP4, las monedas), `Timer` | `corazon.tscn` con un sprite; al tocarlo el jugador, `vida = min(vida + 20, 100)`, `actualizar_hud()` y `queue_free()`. Un `Timer` en `Nivel` lo instancia a `jugador.position + Vector2(200, 0).rotated(randf_range(0, TAU))`. |
+| 7 | **Mejora cada 10 kills**: el arma dispara más rápido. | `%` (TP2), `Timer` | En `sumar_kill()`: `if kills % 10 == 0: $TimerDisparo.wait_time *= 0.8`. Mostrá un aviso en el HUD un segundo. |
+| 8 | **Dificultad que sube**: cada 20 segundos salen más slimes. | `Timer`, `if` | En `_on_segundo()` de `nivel.gd`: `if Partida.segundos % 20 == 0: $Spawner/Timer.wait_time = max(0.2, $Spawner/Timer.wait_time * 0.8)`. |
+| 9 | **Esquive**: con Shift, un dash y medio segundo de invulnerabilidad. | Dash (TP3), `Timer` one shot | Un `TimerInvulnerable`; `recibir_dano()` no hace nada mientras corre. Poné `modulate.a = 0.5` mientras dura, para que se note. |
+| 10 | **Pausa con Esc**: el juego se congela y muestra "PAUSA". | `CanvasLayer` + `Label` (TP6), Input Map (TP3) | `get_tree().paused = not get_tree().paused`. El `CanvasLayer` de la pausa necesita **Process → Mode = Always** para seguir escuchando la tecla. |
+| 11 | **Se siente**: sonido al disparar y al matar, y la cámara tiembla cuando te pega el jefe. | Clase 7 (`AudioStreamPlayer`, `Tween`) | Un `Tween` sobre `offset` de la `Camera2D`: `tween_property($Camera2D, "offset", Vector2(8, 0), 0.05)` y volver a `Vector2.ZERO`. |
+
+**¿Tenés otra idea?** Genial: **consultala antes** de empezar (un mensaje con dos líneas: qué querés hacer y con qué nodos). Así nos aseguramos de que sea del tamaño justo y no te trabe en el cierre.
+
+### El archivo `aporte.md`
+
+Guardalo en la raíz del proyecto, al lado de `project.godot`. Plantilla:
+
+```markdown
+# Mi aporte: <nombre de la idea>
+
+**Qué agregué:** una o dos líneas.
+**Dónde está:** archivos nuevos o modificados (por ejemplo: jugador.gd → disparar(); bomba.tscn + bomba.gd).
+**Cómo se prueba:** qué hay que hacer en el juego para verlo.
+**Qué me costó / qué cambiaría:** (opcional) una línea honesta.
+```
+
+✅ **Punto de control 8 (final):** tu aporte se nota jugando, el resto del juego sigue funcionando igual, y `aporte.md` lo explica.
+
+---
+
+## 📤 Entrega — Proyecto final
+
+Entregá **tres cosas**:
+
+1. La **carpeta del proyecto** comprimida en `.zip` (sin la carpeta `.godot/`), con **`aporte.md`** adentro.
+2. El **juego exportado**: `mi_juego.exe` + `mi_juego.pck` (o el `.exe` con el PCK embebido) en un `.zip` aparte.
+3. (Opcional, pero suma) un **video corto**: menú con tu nombre → jugar → morir → ranking con tu fila → **tu aporte** en acción.
+
+**Nombre:** `tp8-final-ApellidoNombre.zip` y `tp8-final-ApellidoNombre-exe.zip`
+
+### ✔️ Checklist de autoevaluación
+
+- [ ] La cámara sigue al caballero y el HUD queda fijo.
+- [ ] Los slimes aparecen alrededor del jugador, siempre fuera de la vista.
+- [ ] El piso es infinito y se dibuja debajo de todo.
+- [ ] El HUD muestra el **tiempo** y `Partida` guarda kills y segundos.
+- [ ] El juego arranca en el **menú**, con campo de nombre, Jugar y Salir.
+- [ ] `ranking.json` se escribe en `user://`, ordenado, con 5 partidas como máximo, y sobrevive al cerrar el juego.
+- [ ] La pantalla final muestra el resumen y el **top 5** con tu fila resaltada.
+- [ ] El `.exe` exportado corre sin Godot.
+- [ ] **Mi aporte** se nota jugando, no rompió nada, y está explicado en `aporte.md`.
+
+---
+
+## 📄 Código completo de referencia
+
+Por si te perdiste en algún paso. `enemigo.gd`, `enemigo_elite.gd` y `bala.gd` **no cambian** en este TP.
+
+<details>
+<summary><code>partida.gd</code> (Autoload <code>Partida</code>)</summary>
+
+```gdscript
+extends Node
+
+const ARCHIVO := "user://ranking.json"
+const MAXIMO := 5
+
+var nombre := ""
+var kills := 0
+var segundos := 0
+var ranking: Array = []
+
+func _ready() -> void:
+	cargar_ranking()
+
+func nueva_partida(nombre_jugador: String) -> void:
+	nombre = nombre_jugador
+	kills = 0
+	segundos = 0
+
+func terminar_partida() -> void:
+	var partida := { "nombre": nombre, "kills": kills, "segundos": segundos }
+	ranking.append(partida)
+	ranking.sort_custom(mejor_que)
+	if ranking.size() > MAXIMO:
+		ranking.resize(MAXIMO)
+	guardar_ranking()
+
+func mejor_que(a: Dictionary, b: Dictionary) -> bool:
+	if a["kills"] != b["kills"]:
+		return a["kills"] > b["kills"]
+	return a["segundos"] > b["segundos"]
+
+func guardar_ranking() -> void:
+	var archivo := FileAccess.open(ARCHIVO, FileAccess.WRITE)
+	archivo.store_string(JSON.stringify(ranking, "\t"))
+	archivo.close()
+
+func cargar_ranking() -> void:
+	if not FileAccess.file_exists(ARCHIVO):
+		return
+	var archivo := FileAccess.open(ARCHIVO, FileAccess.READ)
+	var datos = JSON.parse_string(archivo.get_as_text())
+	archivo.close()
+	if datos is Array:
+		ranking = datos
+```
+</details>
+
+<details>
+<summary><code>menu.gd</code></summary>
+
+```gdscript
+extends Control
+
+func _ready() -> void:
+	$Botonera/BtnJugar.pressed.connect(_on_jugar_pressed)
+	$Botonera/BtnSalir.pressed.connect(_on_salir_pressed)
+	$Botonera/CampoNombre.text_submitted.connect(_on_nombre_submitted)
+	$Botonera/CampoNombre.text = Partida.nombre
+	$Botonera/CampoNombre.grab_focus()
+
+func _on_jugar_pressed() -> void:
+	var nombre := $Botonera/CampoNombre.text.strip_edges()
+	if nombre == "":
+		nombre = "Anónimo"
+	Partida.nueva_partida(nombre)
+	get_tree().change_scene_to_file("res://nivel.tscn")
+
+func _on_nombre_submitted(_texto: String) -> void:
+	_on_jugar_pressed()
+
+func _on_salir_pressed() -> void:
+	get_tree().quit()
+```
+</details>
+
+<details>
+<summary><code>game_over.gd</code></summary>
+
+```gdscript
+extends Control
+
+func _ready() -> void:
+	$Botonera/LabelResumen.text = Partida.nombre + ": " + str(Partida.kills) + " slimes en " + str(Partida.segundos) + " segundos"
+	armar_ranking()
+	$Botonera/BtnReintentar.pressed.connect(_on_reintentar_pressed)
+	$Botonera/BtnMenu.pressed.connect(_on_menu_pressed)
+
+func armar_ranking() -> void:
+	var puesto := 1
+	for fila in Partida.ranking:
+		var etiqueta := Label.new()
+		etiqueta.text = str(puesto) + ". " + fila["nombre"] + " — " + str(int(fila["kills"])) + " slimes · " + str(int(fila["segundos"])) + " s"
+		etiqueta.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		if es_la_partida_actual(fila):
+			etiqueta.modulate = Color.YELLOW
+		$Botonera/Filas.add_child(etiqueta)
+		puesto += 1
+
+func es_la_partida_actual(fila: Dictionary) -> bool:
+	return fila["nombre"] == Partida.nombre and int(fila["kills"]) == Partida.kills and int(fila["segundos"]) == Partida.segundos
+
+func _on_reintentar_pressed() -> void:
+	Partida.nueva_partida(Partida.nombre)
+	get_tree().change_scene_to_file("res://nivel.tscn")
+
+func _on_menu_pressed() -> void:
+	get_tree().change_scene_to_file("res://menu.tscn")
+```
+</details>
+
+<details>
+<summary><code>nivel.gd</code></summary>
+
+```gdscript
+extends Node2D
+
+func _ready() -> void:
+	$TimerSegundos.timeout.connect(_on_segundo)
+
+func _on_segundo() -> void:
+	Partida.segundos += 1
+	$HUD/LabelTiempo.text = "Tiempo: " + str(Partida.segundos)
+```
+</details>
+
+<details>
+<summary><code>spawner.gd</code></summary>
+
+```gdscript
+extends Node2D
+
+var escena_enemigo := preload("res://enemigo.tscn")
+var escena_elite := preload("res://enemigo_elite.tscn")
+var contador := 0
+var jugador: Node2D = null
+
+func _ready() -> void:
+	$Timer.timeout.connect(spawnear)
+	jugador = get_tree().get_first_node_in_group("jugador")
+
+func spawnear() -> void:
+	if jugador == null:
+		return
+	contador += 1
+	var enemigo
+	if contador >= 8:
+		contador = 0
+		enemigo = escena_elite.instantiate()
+	else:
+		enemigo = escena_enemigo.instantiate()
+	enemigo.position = posicion_alrededor_del_jugador()
+	get_node("../Enemigos").add_child(enemigo)
+
+func posicion_alrededor_del_jugador() -> Vector2:
+	var angulo := randf_range(0, TAU)
+	var desplazamiento := Vector2.RIGHT.rotated(angulo) * 750
+	return jugador.position + desplazamiento
+```
+</details>
+
+<details>
+<summary><code>jugador.gd</code>: lo que cambia respecto del TP7</summary>
+
+```gdscript
+# En _physics_process(): se BORRAN estas tres líneas
+	var limites := get_viewport_rect().size
+	position.x = clamp(position.x, 0, limites.x)
+	position.y = clamp(position.y, 0, limites.y)
+
+# recibir_dano() queda así
+func recibir_dano(cantidad: int) -> void:
+	vida -= cantidad
+	actualizar_hud()
+	if vida <= 0:
+		Partida.terminar_partida()
+		get_tree().change_scene_to_file("res://game_over.tscn")
+
+# sumar_kill() queda así
+func sumar_kill() -> void:
+	kills += 1
+	Partida.kills = kills
+	actualizar_hud()
+```
+</details>
+
 ---
 
 ## 🌟 Extra (opcional)
 
-- **Que se note el cambio.** Un color por estado con `modulate` (blanco acechando, amarillo persiguiendo, naranja atacando; el rojo ya es de `GOLPEADO`), o un `Tween` de escala al entrar a `ATACAR` (Clase 7). Los buenos enemigos **avisan** en qué estado están.
-- **Que la horda también sienta el golpe.** Hoy solo el jefe reacciona a las balas. Si querés que los básicos también retrocedan, la línea del empujón va en el `recibir_dano()` de `enemigo.gd`… pero pensá primero si un slime que se muere de un tiro necesita retroceder.
-- **Un quinto estado: `EMBESTIR`.** Desde `PERSEGUIR`, si el jugador está entre 100 y 150 px, que cargue en línea recta a 3× durante medio segundo (un `Timer`) y después vuelva a perseguir. Es el ataque clásico de un jefe.
-- **Un jefe que dispara.** Que en `ATACAR`, en vez de acercarse, se **frene a distancia** e instancie una bala hacia vos (todo lo que hace falta ya lo tenés del TP7).
-- **Dificultad progresiva.** Que la `velocidad` y el radio de visión del jefe suban un poco cada vez que aparece uno nuevo.
-- **¿Y si la horda también pensara?** Podrías darle la máquina a `enemigo.gd`. Pero antes contestá: ¿cuál sería su estado tranquilo? Si la respuesta es “patrullar al azar”, releé la decisión de diseño del principio.
-- **Game Over de verdad.** Puntaje en un Autoload y pantalla final, como en el TP6.
+- **Ahora sí, parallax.** Una segunda capa en `Fondo`: otro `Parallax2D` con nubes semitransparentes y **Scroll Scale** `(1.3, 1.3)`. Al moverse **más rápido** que el piso, se leen como "están más arriba que vos": es el truco de los shooters verticales como *1942* o *Raiden*. Necesitás una imagen de nubes con transparencia, también de 1536×1024.
+- **Ranking por tiempo.** Cambiá `mejor_que()` para que gane quien más segundos aguantó. Una función, ningún otro cambio.
+- **Exportar a la web.** Preset **Web** en vez de Windows Desktop: genera un `.html` que se sube a [itch.io](https://itch.io) y se juega en el navegador. `user://` funciona igual (usa el almacenamiento del navegador).
+- **Un segundo aporte.** Si te sobró tiempo y ganas, elegí otro de la lista. Contalo también en `aporte.md`.
 
 ---
 
 ## 📚 Recursos
 
-- `enum` y `match` en GDScript: **[GDScript basics](https://docs.godotengine.org/es/4.x/tutorials/scripting/gdscript/gdscript_basics.html)**
-- Máquinas de estado en Godot, con más profundidad: **[GDQuest — Finite State Machine](https://www.gdquest.com/tutorial/godot/design-patterns/finite-state-machine/)**
-- El nodo `Timer`: **[Timer](https://docs.godotengine.org/es/4.x/classes/class_timer.html)**
-- Exportar el proyecto: **[Exporting projects](https://docs.godotengine.org/es/4.x/tutorials/export/exporting_projects.html)**
+- Cámara: **[Camera2D](https://docs.godotengine.org/es/4.x/classes/class_camera2d.html)**
+- Fondo infinito: **[Parallax2D](https://docs.godotengine.org/es/4.x/classes/class_parallax2d.html)** y la guía **[2D Parallax](https://docs.godotengine.org/es/4.x/tutorials/2d/2d_parallax.html)** (con los errores típicos de `repeat_size`). Para Godot anterior a 4.3: **[ParallaxBackground](https://docs.godotengine.org/es/4.x/classes/class_parallaxbackground.html)**.
+- Autoload: **[Singletons (Autoload)](https://docs.godotengine.org/es/4.x/tutorials/scripting/singletons_autoload.html)**
+- Campo de texto: **[LineEdit](https://docs.godotengine.org/es/4.x/classes/class_lineedit.html)**
+- Archivos: **[FileAccess](https://docs.godotengine.org/es/4.x/classes/class_fileaccess.html)**, **[JSON](https://docs.godotengine.org/es/4.x/classes/class_json.html)**, dónde está `user://`: **[Rutas de datos](https://docs.godotengine.org/es/4.x/tutorials/io/data_paths.html)**, y la guía **[Guardar partidas](https://docs.godotengine.org/es/4.x/tutorials/io/saving_games.html)**
+- Exportar: **[Exporting projects](https://docs.godotengine.org/es/4.x/tutorials/export/exporting_projects.html)**
 
-> Diagramas: elaboración propia para la diplomatura. Sprites de **Brackeys** (CC0), heredados del TP7.
+> `piso.png`: elaboración propia para la diplomatura, CC0. Sprites de **Brackeys** (CC0), heredados del TP7. Capturas del exportador: documentación oficial de Godot (CC BY 3.0).
 >
-> **¡Felicitaciones! Terminaste la diplomatura con un juego exportado, con un jefe que piensa.** 🎉
+> **¡Felicitaciones! Terminaste la diplomatura con un juego completo, exportado, con ranking… y con una idea tuya adentro.** 🎉
