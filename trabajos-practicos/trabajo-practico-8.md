@@ -518,7 +518,9 @@ GameOver  (Control)
 extends Control
 
 func _ready() -> void:
-	$Botonera/LabelResumen.text = Partida.nombre + ": " + str(Partida.kills) + " slimes en " + str(Partida.segundos) + " segundos"
+	var resumen := Partida.nombre + ": " + str(Partida.kills) + " slimes"
+	resumen += " en " + str(Partida.segundos) + " segundos"
+	$Botonera/LabelResumen.text = resumen
 	armar_ranking()
 	$Botonera/BtnReintentar.pressed.connect(_on_reintentar_pressed)
 	$Botonera/BtnMenu.pressed.connect(_on_menu_pressed)
@@ -527,7 +529,10 @@ func armar_ranking() -> void:
 	var puesto := 1
 	for fila in Partida.ranking:
 		var etiqueta := Label.new()
-		etiqueta.text = str(puesto) + ". " + fila["nombre"] + " — " + str(int(fila["kills"])) + " slimes · " + str(int(fila["segundos"])) + " s"
+		var texto := str(puesto) + ". " + fila["nombre"]
+		texto += " — " + str(int(fila["kills"])) + " slimes"
+		texto += " · " + str(int(fila["segundos"])) + " s"
+		etiqueta.text = texto
 		etiqueta.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		if es_la_partida_actual(fila):
 			etiqueta.modulate = Color.YELLOW          # tu partida, resaltada
@@ -535,7 +540,10 @@ func armar_ranking() -> void:
 		puesto += 1
 
 func es_la_partida_actual(fila: Dictionary) -> bool:
-	return fila["nombre"] == Partida.nombre and int(fila["kills"]) == Partida.kills and int(fila["segundos"]) == Partida.segundos
+	var mismo_nombre := fila["nombre"] == Partida.nombre
+	var mismos_kills := int(fila["kills"]) == Partida.kills
+	var mismos_segundos := int(fila["segundos"]) == Partida.segundos
+	return mismo_nombre and mismos_kills and mismos_segundos
 
 func _on_reintentar_pressed() -> void:
 	Partida.nueva_partida(Partida.nombre)      # mismo nombre, números en cero
@@ -779,7 +787,9 @@ func _on_salir_pressed() -> void:
 extends Control
 
 func _ready() -> void:
-	$Botonera/LabelResumen.text = Partida.nombre + ": " + str(Partida.kills) + " slimes en " + str(Partida.segundos) + " segundos"
+	var resumen := Partida.nombre + ": " + str(Partida.kills) + " slimes"
+	resumen += " en " + str(Partida.segundos) + " segundos"
+	$Botonera/LabelResumen.text = resumen
 	armar_ranking()
 	$Botonera/BtnReintentar.pressed.connect(_on_reintentar_pressed)
 	$Botonera/BtnMenu.pressed.connect(_on_menu_pressed)
@@ -788,7 +798,10 @@ func armar_ranking() -> void:
 	var puesto := 1
 	for fila in Partida.ranking:
 		var etiqueta := Label.new()
-		etiqueta.text = str(puesto) + ". " + fila["nombre"] + " — " + str(int(fila["kills"])) + " slimes · " + str(int(fila["segundos"])) + " s"
+		var texto := str(puesto) + ". " + fila["nombre"]
+		texto += " — " + str(int(fila["kills"])) + " slimes"
+		texto += " · " + str(int(fila["segundos"])) + " s"
+		etiqueta.text = texto
 		etiqueta.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		if es_la_partida_actual(fila):
 			etiqueta.modulate = Color.YELLOW
@@ -796,7 +809,10 @@ func armar_ranking() -> void:
 		puesto += 1
 
 func es_la_partida_actual(fila: Dictionary) -> bool:
-	return fila["nombre"] == Partida.nombre and int(fila["kills"]) == Partida.kills and int(fila["segundos"]) == Partida.segundos
+	var mismo_nombre := fila["nombre"] == Partida.nombre
+	var mismos_kills := int(fila["kills"]) == Partida.kills
+	var mismos_segundos := int(fila["segundos"]) == Partida.segundos
+	return mismo_nombre and mismos_kills and mismos_segundos
 
 func _on_reintentar_pressed() -> void:
 	Partida.nueva_partida(Partida.nombre)

@@ -32,6 +32,11 @@ const outPdf = process.argv[3] || inMd.replace(/\.md$/i, '') + '.pdf';
 marked.setOptions({ gfm: true, breaks: false });
 let body = marked.parse(fs.readFileSync(inMd, 'utf8'));
 body = body.replace(/<details>/g, '<details open>'); // que el troubleshooting salga abierto en el PDF
+// Cada línea de un bloque de código va en un <span class="l">: si es muy larga, se corta con sangría francesa
+body = body.replace(/<pre><code([^>]*)>([\s\S]*?)<\/code><\/pre>/g, (m, attrs, code) => {
+  const lineas = code.replace(/\n$/, '').split('\n').map((l) => `<span class="l">${l}</span>`).join('');
+  return `<pre><code${attrs}>${lineas}</code></pre>`;
+});
 
 const css = `
 :root{--accent:#7c3aed;--accent-2:#2563eb;--text:#1b2230;--muted:#5a6576;
@@ -45,16 +50,17 @@ h2{font-size:21px;font-weight:800;margin:30px 0 12px;padding-bottom:6px;border-b
 h3{font-size:16.5px;font-weight:700;color:var(--accent);margin:20px 0 8px;break-after:avoid}
 h4{font-size:14.5px;font-weight:700;margin:16px 0 6px}
 p{margin:9px 0}a{color:var(--accent-2);text-decoration:none}strong{font-weight:700}
-code{font-family:"SF Mono",Menlo,Consolas,monospace;font-size:.86em;background:var(--panel-2);color:var(--accent-2);padding:1px 6px;border-radius:4px}
-pre{background:var(--code-bg);border:1px solid var(--border);border-radius:10px;padding:14px 16px;overflow:auto;break-inside:avoid}
-pre code{background:none;color:#24292f;padding:0;font-size:12.5px;line-height:1.5;tab-size:4;-moz-tab-size:4}
+code{font-family:"SF Mono",Menlo,Consolas,monospace;font-size:.86em;background:var(--panel-2);color:var(--accent-2);padding:1px 6px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:var(--code-bg);border:1px solid var(--border);border-radius:10px;padding:14px 16px;overflow:visible;break-inside:avoid;white-space:pre-wrap;overflow-wrap:anywhere}
+pre code{background:none;color:#24292f;padding:0;font-size:12.5px;line-height:1.5;tab-size:4;-moz-tab-size:4;white-space:pre-wrap;overflow-wrap:anywhere}
+pre code .l{display:block;padding-left:3em;text-indent:-3em}pre code .l:empty::after{content:"\\00a0"}
 ul,ol{margin:8px 0;padding-left:26px}li{margin:5px 0}li::marker{color:var(--accent);font-weight:700}
 img{max-width:100%;height:auto;display:block;margin:12px 0;border:1px solid var(--border);border-radius:8px;break-inside:avoid}
 hr{border:none;border-top:1px solid var(--border);margin:26px 0}
 blockquote{margin:12px 0;background:rgba(124,58,237,.06);border-left:3px solid var(--accent);padding:10px 16px;border-radius:0 8px 8px 0;break-inside:avoid}
 blockquote p{margin:5px 0;font-size:13.8px}
 table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13.2px;border:1px solid var(--border);border-radius:8px;overflow:hidden;break-inside:avoid}
-th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:top;overflow-wrap:anywhere}
 th{background:var(--panel-2);color:var(--muted);font-weight:700;text-transform:uppercase;font-size:11px;letter-spacing:.06em}
 tr:last-child td{border-bottom:none}td code,th code{background:var(--panel-2)}
 details{margin:12px 0;border:1px solid var(--border);border-radius:8px;padding:8px 14px;background:var(--panel);break-inside:avoid}
