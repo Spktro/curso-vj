@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Diplomatura de Videojuegos · Semana 1 · Clase 2 — Programar con GDScript</title>
+<link rel="stylesheet" href="deck.css" />
+<style>
+  /* Diapos "en vivo": código a la izquierda, pasos + consola a la derecha */
+  .live { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 22px; align-items: start; }
+  .live pre.code { margin: 0; }
+  .vivo { display: inline-block; background: #dc2626; color: #fff; font-size: 11px; font-weight: 800; letter-spacing: 0.12em; padding: 3px 9px; border-radius: 999px; margin-left: 10px; vertical-align: middle; }
+  ol.steps.compact li { padding: 6px 0 6px 38px; font-size: 15px; line-height: 1.4; }
+  ol.steps.compact li::before { width: 26px; height: 26px; font-size: 12px; top: 6px; }
+  .consola { background: #1e222a; color: #d6deeb; font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 13.5px; line-height: 1.5; padding: 10px 14px; border-radius: 10px; margin: 10px 0 0; white-space: pre; }
+  .consola .lbl { display: block; color: #7f8aa3; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 4px; font-family: inherit; }
+  .consola .err { color: #ff7b72; }
+  .proba { margin-top: 10px; font-size: 14.5px; line-height: 1.45; padding: 10px 14px; }
+  .proba b { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck" data-brand="Diplomatura de Videojuegos · Semana 1 · Clase 2" data-home="../../index.html">
+
+  <!-- ============ INICIO ============ -->
+  <section class="slide title-slide active" data-chapter="Inicio" data-topic="Portada">
+    <div class="title-grid">
+      <div>
+        <div class="slide-eyebrow">Semana 1 · Clase 2 · Teórico-práctica</div>
+        <h1 class="title">Empezar a <span class="accent">programar</span> con GDScript</h1>
+        <p class="subtitle">Variables, condicionales, loops, funciones e input. Hoy el código se escribe <b>en vivo</b>: yo escribo, vos escribís.</p>
+        <p class="small-note">“Hoy dejan de <b>usar</b> el motor… y empiezan a <b>controlarlo</b>.”</p>
+      </div>
+      <div class="title-photo" style="border:none; box-shadow:none; background:transparent;">
+        <img src="assets/godot-logo.png" alt="Godot Engine" style="max-height:420px; width:auto; margin:0 auto; display:block;" />
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Inicio" data-topic="Cómo va a ser hoy">
+    <div class="slide-eyebrow">Antes de empezar</div>
+    <h2 class="slide-title">Cómo va a ser la clase de hoy</h2>
+    <div class="columns">
+      <div class="card">
+        <h3>🔴 Cinco bloques, cinco escenas</h3>
+        <p>Por cada tema armamos <b>una escena con un script</b>, en vivo, en un proyecto nuevo que se llama <code>clase-02</code>:</p>
+        <ol class="steps compact" style="margin-top:8px;">
+          <li><code>01_variables</code></li>
+          <li><code>02_condicionales</code></li>
+          <li><code>03_for</code></li>
+          <li><code>04_funciones</code></li>
+          <li><code>05_input</code></li>
+        </ol>
+      </div>
+      <div>
+        <div class="card">
+          <h3>👐 Las reglas</h3>
+          <ul>
+            <li><b>Escribí el código vos.</b> Nada de copiar y pegar: los dedos también aprenden.</li>
+            <li>Cada bloque termina con un <b>punto de control</b>: la consola tiene que mostrar algo concreto.</li>
+            <li>Si te trabás, mirá la consola primero y después levantá la mano.</li>
+          </ul>
+        </div>
+        <div class="callout" style="margin-top:14px;">El TP de esta semana sigue exactamente el mismo formato: una escena por ejemplo. Lo que armás hoy te sirve de base.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOOK ============ -->
+  <section class="slide" data-chapter="Hook" data-topic="Código en vivo">
+    <div class="slide-eyebrow">Arranque</div>
+    <h2 class="slide-title">Hagamos que reaccione a una tecla</h2>
+    <div class="columns">
+      <div>
+        <p class="subtitle" style="font-size:19px;">Un programador le dice a la computadora <b>qué</b> hacer, <b>cuándo</b> y <b>por qué</b>. Ejecutemos esto en vivo:</p>
+        <div class="callout">🤔 Antes de explicar nada: <b>¿qué creen que está pasando acá?</b></div>
+      </div>
+      <div class="code-wrap">
+        <pre class="code" style="font-size:15px;"><span class="k">func</span> <span class="t">_process</span>(delta):
+	<span class="k">if</span> <span class="t">Input</span>.is_action_pressed(<span class="s">"ui_accept"</span>):
+		<span class="t">print</span>(<span class="s">"¡El jugador presionó ESPACIO!"</span>)</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PROGRAMAR ============ -->
+  <section class="slide" data-chapter="Programar" data-topic="¿Qué es programar?">
+    <div class="slide-eyebrow">Concepto</div>
+    <h2 class="slide-title">¿Qué es programar?</h2>
+    <p class="subtitle">No es magia: es <b>comunicación</b>. Le hablás a una máquina que hace exactamente lo que le decís, ni más ni menos.</p>
+    <div class="columns">
+      <div class="card" style="border-top:3px solid var(--red);">
+        <h3 style="color:var(--red);">❌ Mito</h3>
+        <p>“La computadora es inteligente y entiende lo que queremos.”</p>
+      </div>
+      <div class="card" style="border-top:3px solid var(--green);">
+        <h3 style="color:var(--green);">✅ Realidad</h3>
+        <p>La computadora <b>no piensa</b>. Solo ejecuta instrucciones paso a paso, exactamente como se las damos.</p>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:20px;">Humano: <i>“si presiono espacio, el personaje salta”</i> &nbsp;→&nbsp; Lógica: <code>SI (condición) ENTONCES (acción)</code>. Esa estructura <b>SI/ENTONCES</b> es el núcleo de todo programa.</div>
+  </section>
+
+  <!-- ============ GDSCRIPT ============ -->
+  <section class="slide" data-chapter="GDScript" data-topic="¿Por qué GDScript?">
+    <div class="slide-eyebrow">El lenguaje</div>
+    <h2 class="slide-title">GDScript: el lenguaje de Godot</h2>
+    <div class="columns">
+      <div>
+        <p class="subtitle" style="font-size:19px;">Lenguaje nativo de Godot, inspirado en Python pero pensado para videojuegos.</p>
+        <ul class="bullets" style="font-size:19px;">
+          <li>Sintaxis simple y clara</li>
+          <li>Integrado con el motor</li>
+          <li>Familiar si sabés Python</li>
+          <li>Pensado para juegos: <code>_process</code>, <code>_ready</code>, <code>Input</code>…</li>
+        </ul>
+      </div>
+      <div class="code-wrap" style="align-self:center;">
+        <pre class="code" style="font-size:14px;"><span class="k">extends</span> <span class="t">Node</span>
+
+<span class="c"># Este script controla al nodo</span>
+<span class="c"># Define QUÉ puede hacer</span>
+
+<span class="k">func</span> <span class="t">_ready</span>():
+	<span class="t">print</span>(<span class="s">"¡El nodo está listo!"</span>)</pre>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="GDScript" data-topic="Anatomía del script">
+    <div class="slide-eyebrow">GDScript</div>
+    <h2 class="slide-title">Qué significa cada línea</h2>
+    <table class="tbl">
+      <thead><tr><th>Código</th><th>Significado</th></tr></thead>
+      <tbody>
+        <tr><td><code>extends Node</code></td><td>Le dice a Godot <b>qué tipo de nodo</b> controla este script.</td></tr>
+        <tr><td><code>func _ready():</code></td><td>Se ejecuta <b>una sola vez</b> cuando el nodo aparece en la escena.</td></tr>
+        <tr><td><code>print(...)</code></td><td>Imprime texto en la consola: nuestro <b>mejor amigo</b> para depurar.</td></tr>
+      </tbody>
+    </table>
+    <div class="callout" style="margin-top:18px;">🔍 Fijate la <b>sangría</b>: la línea del <code>print</code> está corrida con <b>Tab</b>. Así Godot sabe que está <i>adentro</i> de <code>_ready()</code>. En GDScript la sangría no es estética: es parte del lenguaje.</div>
+  </section>
+
+  <!-- ============ EL RITUAL ============ -->
+  <section class="slide" data-chapter="GDScript" data-topic="El ritual: escena + script">
+    <div class="slide-eyebrow">Lo vamos a hacer cinco veces hoy</div>
+    <h2 class="slide-title">El ritual: una escena, un nodo, un script</h2>
+    <div class="columns">
+      <div>
+        <ol class="steps" style="font-size:16px;">
+          <li><b>Scene → New Scene</b> (<span class="kbd">Ctrl</span>+<span class="kbd">N</span>) → <b>Other Node</b> → buscá <code>Node</code> → <b>Create</b></li>
+          <li>Doble clic sobre el nodo y <b>renombralo</b>: <code>Variables</code></li>
+          <li>Botón 📜 <b>Attach Script</b> → nombre <code>01_variables.gd</code> → <b>Create</b></li>
+          <li><span class="kbd">Ctrl</span>+<span class="kbd">S</span>: guardá la escena como <code>01_variables.tscn</code></li>
+          <li><span class="kbd">F6</span> (<b>Run Current Scene</b>) → mirá el panel <b>Output</b></li>
+        </ol>
+      </div>
+      <div style="align-self:start;">
+        <div class="card">
+          <h3>🧠 Por qué un <code>Node</code> pelado</h3>
+          <p>Hoy no dibujamos nada: solo queremos <b>un lugar donde vive el script</b>. <code>Node</code> es el nodo más simple que existe; no muestra ni mueve nada, y con eso alcanza.</p>
+        </div>
+        <div class="callout" style="margin-top:14px;">⚠️ Si al apretar <span class="kbd">F6</span> se abre una ventana gris y vacía, <b>está bien</b>: el juego “es” lo que sale en la consola.</div>
+        <pre class="code" style="margin-top:14px; font-size:13px;"><span class="c"># Así queda el FileSystem al final de la clase</span>
+res://
+├── 01_variables.tscn      01_variables.gd
+├── 02_condicionales.tscn  02_condicionales.gd
+├── 03_for.tscn            03_for.gd
+├── 04_funciones.tscn      04_funciones.gd
+└── 05_input.tscn          05_input.gd</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CONSOLA ============ -->
+  <section class="slide" data-chapter="Consola" data-topic="¿Qué es y dónde está?">
+    <div class="slide-eyebrow">Depurar y observar</div>
+    <h2 class="slide-title">La consola: la ventana a lo que pasa "adentro"</h2>
+    <div class="columns">
+      <div>
+        <p class="subtitle" style="font-size:19px;">La <b>consola</b> (panel <i>Output</i>) es donde Godot muestra todo lo que le pedimos con <code>print()</code>, además de errores y advertencias.</p>
+        <ul class="bullets" style="font-size:18px;">
+          <li>Se abre sola al ejecutar la escena con <span class="kbd">F6</span></li>
+          <li>Vive en la parte <b>inferior</b> del editor, pestaña <b>“Output”</b></li>
+          <li>Ahí aparecen los <code>print()</code>, en el orden en que se ejecutan</li>
+          <li>Los errores salen en <span style="color:var(--red); font-weight:700;">rojo</span>, y casi siempre dicen <b>en qué línea</b></li>
+        </ul>
+      </div>
+      <div class="title-photo" style="border:none; box-shadow:none; background:transparent;">
+          <img src="assets/godot-console.png" alt="Panel Output de Godot" style="max-height:420px; width:auto; margin:0 auto; display:block;" />
+      </div>
+    </div>
+    <div class="callout" style="margin-top:18px;">💡 Regla de oro: si algo <b>“no funciona”</b>, lo primero es mirar la consola. Godot casi siempre te dice ahí qué salió mal.</div>
+  </section>
+
+  <!-- ============ VARIABLES ============ -->
+  <section class="slide" data-chapter="Variables" data-topic="Qué es una variable">
+    <div class="slide-eyebrow">Guardar datos</div>
+    <h2 class="slide-title">Variables: cajas con etiqueta</h2>
+    <div class="columns">
+      <div>
+        <p class="subtitle" style="font-size:19px;">Una variable es como una <b>caja con una etiqueta</b>. Adentro guardamos info que el programa necesita; la etiqueta es su nombre.</p>
+        <div class="callout">📦 Un cajón etiquetado <b>“velocidad”</b> con un <code>200</code> adentro. Cuando el juego necesita saber qué tan rápido va el personaje, abre ese cajón.</div>
+      </div>
+      <div class="code-wrap" style="align-self:center;">
+        <pre class="code" style="font-size:14px;"><span class="c"># "var" crea una variable</span>
+<span class="k">var</span> velocidad = <span class="n">200</span>
+<span class="k">var</span> nombre = <span class="s">"Héroe"</span>
+<span class="k">var</span> esta_vivo = <span class="k">true</span>
+<span class="k">var</span> energia = <span class="n">85.5</span>
+
+<span class="t">print</span>(velocidad)   <span class="c"># → 200</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Variables" data-topic="Tipos de datos">
+    <div class="slide-eyebrow">Variables</div>
+    <h2 class="slide-title">Tipos de datos fundamentales</h2>
+    <table class="tbl">
+      <thead><tr><th>Tipo</th><th>Qué guarda</th><th>Ejemplo</th></tr></thead>
+      <tbody>
+        <tr><td><code>int</code></td><td>Número entero</td><td><code>200</code></td></tr>
+        <tr><td><code>float</code></td><td>Número decimal</td><td><code>85.5</code></td></tr>
+        <tr><td><code>String</code></td><td>Texto</td><td><code>"Héroe"</code></td></tr>
+        <tr><td><code>bool</code></td><td>Verdadero / falso</td><td><code>true</code> · <code>false</code></td></tr>
+      </tbody>
+    </table>
+    <div class="callout" style="margin-top:18px;">🔤 <b>Nota sobre <code>str()</code>:</b> para pegar un número con texto hay que convertirlo: <code>str(100)</code> → <code>"100"</code>. Lo van a ver mucho.</div>
+  </section>
+
+  <section class="slide" data-chapter="Variables" data-topic="Tipado estático">
+    <div class="slide-eyebrow">Buena práctica</div>
+    <h2 class="slide-title">Le podés decir el tipo: <code>: int</code>, <code>: float</code>…</h2>
+    <div class="columns">
+      <div class="code-wrap">
+        <pre class="code" style="font-size:13px;"><span class="c"># Sin tipo (válido):</span>
+<span class="k">var</span> vida = <span class="n">100</span>
+
+<span class="c"># Con tipo (recomendado):</span>
+<span class="k">var</span> vida: <span class="t">int</span> = <span class="n">100</span>
+<span class="k">var</span> velocidad: <span class="t">float</span> = <span class="n">200.0</span>
+<span class="k">var</span> nombre: <span class="t">String</span> = <span class="s">"Héroe"</span>
+<span class="k">var</span> tiene_espada: <span class="t">bool</span> = <span class="k">false</span></pre>
+      </div>
+      <div style="align-self:center;">
+        <div class="card">
+          <h3>Por qué conviene</h3>
+          <ul>
+            <li>El editor te <b>avisa errores</b> antes de ejecutar (por ejemplo, si guardás texto en <code>vida</code>)</li>
+            <li>Mejor <b>autocompletado</b></li>
+            <li>El juego corre un poco <b>más rápido</b></li>
+          </ul>
+        </div>
+        <p class="small-note" style="margin-top:12px;">Hoy lo vamos a escribir sin tipo para que se vea más corto. Cuando te sientas cómodo, sumale el tipo.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Variables" data-topic="En vivo: 01_variables">
+    <div class="slide-eyebrow">Bloque 1 <span class="vivo">● EN VIVO</span></div>
+    <h2 class="slide-title">Escena <code>01_variables</code>: la ficha del personaje</h2>
+    <div class="live">
+      <div class="code-wrap">
+        <pre class="code" style="font-size:13.5px;"><span class="k">extends</span> <span class="t">Node</span>
+
+<span class="k">var</span> nombre = <span class="s">"Héroe"</span>
+<span class="k">var</span> vida = <span class="n">100</span>
+<span class="k">var</span> velocidad = <span class="n">200.5</span>
+<span class="k">var</span> tiene_espada = <span class="k">false</span>
+
+<span class="k">func</span> <span class="t">_ready</span>():
+	<span class="t">print</span>(<span class="s">"Personaje: "</span> + nombre)
+	<span class="t">print</span>(<span class="s">"Vida: "</span> + <span class="t">str</span>(vida))
+	<span class="t">print</span>(<span class="s">"Velocidad: "</span> + <span class="t">str</span>(velocidad))
+	<span class="t">print</span>(<span class="s">"Tiene espada: "</span> + <span class="t">str</span>(tiene_espada))</pre>
+      </div>
+      <div>
+        <ol class="steps compact">
+          <li>El ritual: nodo <code>Variables</code>, script <code>01_variables.gd</code></li>
+          <li>Cuatro variables, una de cada tipo</li>
+          <li>En <code>_ready()</code>, un <code>print</code> por variable</li>
+          <li><span class="kbd">F6</span> y mirá el Output</li>
+        </ol>
+        <div class="consola"><span class="lbl">✅ Punto de control · Output</span>Personaje: Héroe
+Vida: 100
+Velocidad: 200.5
+Tiene espada: false</div>
+        <div class="callout proba">🧪 <b>Probá:</b> sacale el <code>str()</code> a <code>vida</code>. ¿Qué dice la consola? Ese error en rojo lo vas a ver mil veces: <b>texto + número no se suman</b>.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CONDICIONALES ============ -->
+  <section class="slide" data-chapter="Condicionales" data-topic="if / else">
+    <div class="slide-eyebrow">Tomar decisiones</div>
+    <h2 class="slide-title">Condicionales: <code>if</code> / <code>else</code></h2>
+    <div class="columns">
+      <div>
+        <p class="subtitle" style="font-size:18px;">Sin <code>if</code>, el código siempre hace lo mismo. Con <code>if</code>, <b>reacciona</b>.</p>
+        <p class="small-note" style="font-size:16px;">Toda decisión en un juego es un condicional: ¿tocó el suelo? → salta. ¿Vida en 0? → Game Over. ¿Recogió el ítem? → suma puntos.</p>
+      </div>
+      <div class="code-wrap" style="align-self:center;">
+        <pre class="code" style="font-size:14px;"><span class="k">var</span> vida = <span class="n">50</span>
+
+<span class="k">if</span> vida <= <span class="n">0</span>:
+	<span class="t">print</span>(<span class="s">"Game Over — murió"</span>)
+<span class="k">else</span>:
+	<span class="t">print</span>(<span class="s">"Sigo vivo con "</span> + <span class="t">str</span>(vida))</pre>
+      </div>
+    </div>
+    <div class="title-photo" style="border:none; box-shadow:none; background:transparent;">
+        <img src="assets/diagrama-if.png" alt="Diagrama de flujo de un if" style="max-height:420px; width:auto; margin:0 auto; display:block;" />
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Condicionales" data-topic="elif y operadores">
+    <div class="slide-eyebrow">Condicionales</div>
+    <h2 class="slide-title"><code>elif</code>: múltiples caminos</h2>
+    <div class="columns">
+      <div class="code-wrap">
+        <pre class="code" style="font-size:13px;"><span class="k">var</span> vida = <span class="n">30</span>
+
+<span class="k">if</span> vida <= <span class="n">0</span>:
+	<span class="t">print</span>(<span class="s">"💀 Game Over"</span>)
+<span class="k">elif</span> vida <= <span class="n">25</span>:
+	<span class="t">print</span>(<span class="s">"🔴 ¡Vida crítica!"</span>)
+<span class="k">elif</span> vida <= <span class="n">50</span>:
+	<span class="t">print</span>(<span class="s">"🟡 Vida baja"</span>)
+<span class="k">else</span>:
+	<span class="t">print</span>(<span class="s">"🟢 Estás bien"</span>)</pre>
+      </div>
+      <div>
+        <h4 style="color:var(--accent); font-size:15px; letter-spacing:0.05em; text-transform:uppercase; margin:0 0 10px;">Operadores de comparación</h4>
+        <table class="tbl" style="font-size:15px;">
+          <tbody>
+            <tr><td><code>==</code></td><td>igual a</td></tr>
+            <tr><td><code>!=</code></td><td>distinto de</td></tr>
+            <tr><td><code>&lt;</code> &nbsp; <code>&gt;</code></td><td>menor / mayor</td></tr>
+            <tr><td><code>&lt;=</code> &nbsp; <code>&gt;=</code></td><td>menor o igual / mayor o igual</td></tr>
+          </tbody>
+        </table>
+        <div class="callout" style="margin-top:14px;">Godot evalúa las condiciones <b>de arriba hacia abajo</b> y entra en la <b>primera</b> que sea verdadera. Con <code>vida = 30</code>, la de <code>&lt;= 25</code> es falsa y la de <code>&lt;= 50</code> es la que entra: 🟡.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Condicionales" data-topic="En vivo: 02_condicionales">
+    <div class="slide-eyebrow">Bloque 2 <span class="vivo">● EN VIVO</span></div>
+    <h2 class="slide-title">Escena <code>02_condicionales</code>: recibir daño</h2>
+    <div class="live">
+      <div class="code-wrap">
+        <pre class="code" style="font-size:13.5px;"><span class="k">extends</span> <span class="t">Node</span>
+
+<span class="k">var</span> vida = <span class="n">100</span>
+<span class="k">var</span> dano = <span class="n">30</span>
+
+<span class="k">func</span> <span class="t">_ready</span>():
+	vida = vida - dano
+	<span class="t">print</span>(<span class="s">"Vida actual: "</span> + <span class="t">str</span>(vida))
+	<span class="k">if</span> vida <= <span class="n">0</span>:
+		<span class="t">print</span>(<span class="s">"💀 Game Over"</span>)
+	<span class="k">elif</span> vida <= <span class="n">30</span>:
+		<span class="t">print</span>(<span class="s">"🔴 Vida crítica"</span>)
+	<span class="k">else</span>:
+		<span class="t">print</span>(<span class="s">"🟢 Seguís en pie"</span>)</pre>
+      </div>
+      <div>
+        <ol class="steps compact">
+          <li>El ritual: nodo <code>Condicionales</code>, script <code>02_condicionales.gd</code></li>
+          <li>Dos variables y la resta en <code>_ready()</code></li>
+          <li>Primero solo el <code>if</code> / <code>else</code>. Correr. Después sumar el <code>elif</code></li>
+          <li><span class="kbd">F6</span> y mirá el Output</li>
+        </ol>
+        <div class="consola"><span class="lbl">✅ Punto de control · Output</span>Vida actual: 70
+🟢 Seguís en pie</div>
+        <div class="callout proba">🧪 <b>Probá:</b> <code>dano = 70</code> → 🔴. <code>dano = 100</code> → 💀. ¿Y con <code>dano = 30</code> y <code>vida = 60</code>? Predecí antes de correr.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ LOOPS ============ -->
+  <section class="slide" data-chapter="Loops" data-topic="El loop for">
+    <div class="slide-eyebrow">Repetir</div>
+    <h2 class="slide-title">Loops: repetir sin copiar y pegar</h2>
+    <div class="columns">
+      <div>
+        <p class="subtitle" style="font-size:18px;">En vez de escribir lo mismo 100 veces, un loop lo repite automáticamente.</p>
+        <div class="callout"><code>range(5)</code> genera <code>0, 1, 2, 3, 4</code>. Arranca en <b>0</b> y termina <b>uno antes</b>.</div>
+      </div>
+      <div class="code-wrap" style="align-self:center;">
+        <pre class="code" style="font-size:14px;"><span class="k">for</span> i <span class="k">in</span> <span class="t">range</span>(<span class="n">5</span>):
+	<span class="t">print</span>(<span class="s">"Vuelta número: "</span> + <span class="t">str</span>(i))
+
+<span class="c"># Consola:</span>
+<span class="c"># Vuelta número: 0 ... hasta 4</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Loops" data-topic="Arreglos y loops en juegos">
+    <div class="slide-eyebrow">Loops</div>
+    <h2 class="slide-title">Arreglos: una caja con varias cosas adentro</h2>
+    <div class="columns">
+      <div class="code-wrap">
+        <pre class="code" style="font-size:13px;"><span class="c"># Un arreglo: varios valores, en orden</span>
+<span class="k">var</span> inventario = [<span class="s">"Espada"</span>, <span class="s">"Escudo"</span>, <span class="s">"Poción"</span>]
+
+<span class="t">print</span>(inventario[<span class="n">0</span>])      <span class="c"># → Espada (¡se cuenta desde 0!)</span>
+<span class="t">print</span>(inventario.size())  <span class="c"># → 3</span>
+
+<span class="c"># Recorrerlo con for</span>
+<span class="k">for</span> item <span class="k">in</span> inventario:
+	<span class="t">print</span>(<span class="s">"Tenés: "</span> + item)</pre>
+      </div>
+      <div style="align-self:center;">
+        <div class="card">
+          <h3>🎮 Dónde aparecen</h3>
+          <ul>
+            <li>El <b>inventario</b> del jugador</li>
+            <li>La lista de <b>enemigos</b> vivos</li>
+            <li>Las <b>torres</b> colocadas en un Tower Defense</li>
+          </ul>
+        </div>
+        <div class="callout" style="margin-top:14px;">⚠️ Los loops <b>no</b> se usan para la lógica en tiempo real (para eso está <code>_process()</code>). Sirven para inicializar, generar contenido y recorrer listas.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Loops" data-topic="Ejemplo: Tower Defense">
+    <div class="slide-eyebrow">Aplicado a un género real</div>
+    <h2 class="slide-title">Ejemplo: una oleada de Tower Defense</h2>
+    <div class="columns">
+      <div class="code-wrap">
+        <pre class="code" style="font-size:12.5px;"><span class="k">extends</span> <span class="t">Node2D</span>
+
+<span class="k">var</span> cantidad_enemigos = <span class="n">5</span>
+<span class="k">var</span> torres = [<span class="s">"Arquero"</span>, <span class="s">"Cañón"</span>, <span class="s">"Hielo"</span>]
+
+<span class="k">func</span> <span class="t">_ready</span>():
+	spawnear_oleada()
+	revisar_torres()
+
+<span class="c"># Genera N enemigos con un for</span>
+<span class="k">func</span> <span class="t">spawnear_oleada</span>():
+	<span class="k">for</span> i <span class="k">in</span> <span class="t">range</span>(cantidad_enemigos):
+		<span class="t">print</span>(<span class="s">"👾 Enemigo "</span> + <span class="t">str</span>(i + <span class="n">1</span>) + <span class="s">" avanza por el camino"</span>)
+
+<span class="c"># Recorre la lista de torres colocadas</span>
+<span class="k">func</span> <span class="t">revisar_torres</span>():
+	<span class="k">for</span> torre <span class="k">in</span> torres:
+		<span class="t">print</span>(<span class="s">"🏹 Torre "</span> + torre + <span class="s">" lista para disparar"</span>)</pre>
+      </div>
+      <div>
+          <div class="title-photo" style="border:none; box-shadow:none; background:transparent;">
+              <img src="assets/tw-defense.png" alt="Tower Defense" style="max-height:340px; width:auto; margin:0 auto; display:block;" />
+          </div>
+        <div class="callout" style="margin-top:14px;">🎯 En un Tower Defense los loops están en todos lados: generar una <b>oleada</b> de enemigos, ubicar <b>torres</b> en una grilla, y recorrer la lista de torres para ver cuál dispara.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Loops" data-topic="En vivo: 03_for">
+    <div class="slide-eyebrow">Bloque 3 <span class="vivo">● EN VIVO</span></div>
+    <h2 class="slide-title">Escena <code>03_for</code>: la horda y el inventario</h2>
+    <div class="live">
+      <div class="code-wrap">
+        <pre class="code" style="font-size:13.5px;"><span class="k">extends</span> <span class="t">Node</span>
+
+<span class="k">var</span> inventario = [<span class="s">"Espada"</span>, <span class="s">"Escudo"</span>, <span class="s">"Poción"</span>]
+
+<span class="k">func</span> <span class="t">_ready</span>():
+	<span class="k">for</span> i <span class="k">in</span> <span class="t">range</span>(<span class="n">3</span>):
+		<span class="t">print</span>(<span class="s">"Enemigo "</span> + <span class="t">str</span>(i + <span class="n">1</span>) + <span class="s">" entra a la arena"</span>)
+
+	<span class="t">print</span>(<span class="s">"Llevás "</span> + <span class="t">str</span>(inventario.size()) + <span class="s">" cosas:"</span>)
+	<span class="k">for</span> item <span class="k">in</span> inventario:
+		<span class="t">print</span>(<span class="s">"  - "</span> + item)</pre>
+      </div>
+      <div>
+        <ol class="steps compact">
+          <li>El ritual: nodo <code>For</code>, script <code>03_for.gd</code></li>
+          <li>Primero el <code>for</code> con <code>range(3)</code>. Correr. ¿Por qué el <code>i + 1</code>?</li>
+          <li>Después el arreglo y el segundo <code>for</code></li>
+          <li><span class="kbd">F6</span> y mirá el Output</li>
+        </ol>
+        <div class="consola"><span class="lbl">✅ Punto de control · Output</span>Enemigo 1 entra a la arena
+Enemigo 2 entra a la arena
+Enemigo 3 entra a la arena
+Llevás 3 cosas:
+  - Espada
+  - Escudo
+  - Poción</div>
+        <div class="callout proba">🧪 <b>Probá:</b> <code>range(10)</code>. Agregá <code>"Arco"</code> al arreglo: ¿hace falta tocar el <code>for</code>? Sacale el <code>str()</code> al <code>i + 1</code> y leé el error.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FUNCIONES ============ -->
+  <section class="slide" data-chapter="Funciones" data-topic="Sin vs con funciones">
+    <div class="slide-eyebrow">Reutilizar</div>
+    <h2 class="slide-title">Funciones: escribir una vez, usar mil</h2>
+    <div class="columns">
+      <div>
+        <h4 style="color:var(--red); font-size:14px; text-transform:uppercase; margin:0 0 8px;">Sin funciones — repetido</h4>
+        <pre class="code" style="font-size:13px; margin:0;"><span class="t">print</span>(<span class="s">"Saltando"</span>)
+velocidad.y = <span class="n">-300</span>
+<span class="c"># ...y otra vez más abajo</span>
+<span class="t">print</span>(<span class="s">"Saltando"</span>)
+velocidad.y = <span class="n">-300</span></pre>
+      </div>
+      <div>
+        <h4 style="color:var(--green); font-size:14px; text-transform:uppercase; margin:0 0 8px;">Con funciones — limpio</h4>
+        <pre class="code" style="font-size:13px; margin:0;"><span class="k">func</span> <span class="t">saltar</span>():
+	<span class="t">print</span>(<span class="s">"Saltando"</span>)
+	velocidad.y = <span class="n">-300</span>
+
+saltar()
+saltar()</pre>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:18px;">Una función es un <b>bloque de código con nombre</b>. Se define una vez y se <b>llama</b> cuando hace falta.</div>
+  </section>
+
+  <section class="slide" data-chapter="Funciones" data-topic="Parámetros y return">
+    <div class="slide-eyebrow">Funciones</div>
+    <h2 class="slide-title">Parámetros y valor de retorno</h2>
+    <div class="columns">
+      <div class="code-wrap">
+        <pre class="code" style="font-size:13px;"><span class="k">var</span> vida = <span class="n">100</span>
+
+<span class="c"># Recibe un parámetro</span>
+<span class="k">func</span> <span class="t">recibir_dano</span>(cantidad):
+	vida = vida - cantidad
+	<span class="t">print</span>(<span class="s">"Vida: "</span> + <span class="t">str</span>(vida))
+
+<span class="c"># Retorna un valor</span>
+<span class="k">func</span> <span class="t">esta_vivo</span>():
+	<span class="k">return</span> vida > <span class="n">0</span>
+
+recibir_dano(<span class="n">25</span>)
+<span class="k">if</span> esta_vivo():
+	<span class="t">print</span>(<span class="s">"Sigo en pie"</span>)</pre>
+      </div>
+      <div style="align-self:center;">
+        <div class="card">
+          <h3>Anatomía</h3>
+          <ul>
+            <li><code>func nombre():</code> → definición</li>
+            <li><code>nombre()</code> → llamado (¡los <code>()</code> son obligatorios!)</li>
+            <li><code>(cantidad)</code> → parámetro de entrada</li>
+            <li><code>return</code> → devuelve un resultado</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Funciones" data-topic="Funciones especiales de Godot">
+    <div class="slide-eyebrow">Funciones</div>
+    <h2 class="slide-title">Las funciones especiales de Godot</h2>
+    <table class="tbl">
+      <thead><tr><th>Función</th><th>Cuándo se ejecuta</th></tr></thead>
+      <tbody>
+        <tr><td><code>func _ready():</code></td><td>Una sola vez, cuando el nodo entra a la escena. Ideal para <b>inicialización</b>.</td></tr>
+        <tr><td><code>func _process(delta):</code></td><td>En <b>cada frame</b> (~60/seg). Para lógica continua, como detectar input.</td></tr>
+        <tr><td><code>func _physics_process(delta):</code></td><td>En cada paso de <b>física</b>. Para movimiento y colisiones.</td></tr>
+      </tbody>
+    </table>
+    <div class="callout" style="margin-top:18px;">Godot <b>llama solo</b> a estas funciones en el momento correcto. Vos solo las escribís. Las tuyas (<code>saltar()</code>, <code>recibir_dano()</code>) las llamás vos.</div>
+  </section>
+
+  <section class="slide" data-chapter="Funciones" data-topic="En vivo: 04_funciones">
+    <div class="slide-eyebrow">Bloque 4 <span class="vivo">● EN VIVO</span></div>
+    <h2 class="slide-title">Escena <code>04_funciones</code>: daño y estado</h2>
+    <div class="live">
+      <div class="code-wrap">
+        <pre class="code" style="font-size:13px;"><span class="k">extends</span> <span class="t">Node</span>
+
+<span class="k">var</span> vida = <span class="n">100</span>
+
+<span class="k">func</span> <span class="t">recibir_dano</span>(cantidad):
+	vida = vida - cantidad
+	<span class="t">print</span>(<span class="s">"Vida: "</span> + <span class="t">str</span>(vida))
+
+<span class="k">func</span> <span class="t">esta_vivo</span>():
+	<span class="k">return</span> vida > <span class="n">0</span>
+
+<span class="k">func</span> <span class="t">_ready</span>():
+	recibir_dano(<span class="n">25</span>)
+	recibir_dano(<span class="n">50</span>)
+	<span class="k">if</span> esta_vivo():
+		<span class="t">print</span>(<span class="s">"Sigo en pie"</span>)
+	<span class="k">else</span>:
+		<span class="t">print</span>(<span class="s">"💀 Game Over"</span>)</pre>
+      </div>
+      <div>
+        <ol class="steps compact">
+          <li>El ritual: nodo <code>Funciones</code>, script <code>04_funciones.gd</code></li>
+          <li>Primero <code>recibir_dano()</code> y dos llamados en <code>_ready()</code>. Correr</li>
+          <li>Después <code>esta_vivo()</code> con su <code>return</code>, y el <code>if</code></li>
+          <li><span class="kbd">F6</span> y mirá el Output</li>
+        </ol>
+        <div class="consola"><span class="lbl">✅ Punto de control · Output</span>Vida: 75
+Vida: 25
+Sigo en pie</div>
+        <div class="callout proba">🧪 <b>Probá:</b> un tercer <code>recibir_dano(30)</code>. Escribí <code>curar(cantidad)</code> que sume vida. ¿Qué pasa si llamás <code>esta_vivo</code> sin los <code>()</code>?</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ INPUT ============ -->
+  <section class="slide" data-chapter="Input" data-topic="Detectar input">
+    <div class="slide-eyebrow">Interactividad</div>
+    <h2 class="slide-title">Input: el puente jugador ↔ juego</h2>
+    <div class="columns">
+      <div>
+        <p class="subtitle" style="font-size:18px;">Godot tiene un sistema <code>Input</code> que detecta teclas y botones. Se consulta dentro de <code>_process()</code>, cada frame.</p>
+        <div class="callout" style="margin-top:10px;"><code>is_action_pressed</code> es <b>true mientras</b> la tecla está apretada. <code>is_action_just_pressed</code> es true <b>un solo frame</b>: el del toque.</div>
+      </div>
+      <div class="code-wrap" style="align-self:center;">
+        <pre class="code" style="font-size:13px;"><span class="k">func</span> <span class="t">_process</span>(delta):
+	<span class="c"># mientras esté presionada</span>
+	<span class="k">if</span> <span class="t">Input</span>.is_action_pressed(<span class="s">"ui_accept"</span>):
+		<span class="t">print</span>(<span class="s">"Espacio presionado"</span>)
+	<span class="c"># solo el instante en que se presiona</span>
+	<span class="k">if</span> <span class="t">Input</span>.is_action_just_pressed(<span class="s">"ui_accept"</span>):
+		<span class="t">print</span>(<span class="s">"¡Acaba de presionar!"</span>)</pre>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Input" data-topic="Acciones predeterminadas">
+    <div class="slide-eyebrow">Input</div>
+    <h2 class="slide-title">Acciones de input predeterminadas</h2>
+    <table class="tbl">
+      <thead><tr><th>Acción</th><th>Tecla</th><th>Uso típico</th></tr></thead>
+      <tbody>
+        <tr><td><code>ui_accept</code></td><td><span class="kbd">Espacio</span> / <span class="kbd">Enter</span></td><td>Saltar, confirmar</td></tr>
+        <tr><td><code>ui_left</code> · <code>ui_right</code></td><td><span class="kbd">←</span> <span class="kbd">→</span></td><td>Mover horizontal</td></tr>
+        <tr><td><code>ui_up</code> · <code>ui_down</code></td><td><span class="kbd">↑</span> <span class="kbd">↓</span></td><td>Mover vertical, menús</td></tr>
+        <tr><td><code>ui_cancel</code></td><td><span class="kbd">Esc</span></td><td>Cancelar, pausa</td></tr>
+      </tbody>
+    </table>
+    <div class="callout" style="margin-top:16px;">Ya vienen definidas, pero podés crear las tuyas en <code>Project → Project Settings → Input Map</code>. Lo vemos la semana que viene.</div>
+  </section>
+
+  <section class="slide" data-chapter="Input" data-topic="En vivo: 05_input">
+    <div class="slide-eyebrow">Bloque 5 <span class="vivo">● EN VIVO</span></div>
+    <h2 class="slide-title">Escena <code>05_input</code>: todo junto</h2>
+    <div class="live" style="grid-template-columns:1.1fr 0.9fr;">
+      <div class="code-wrap">
+        <pre class="code" style="font-size:12.5px;"><span class="k">extends</span> <span class="t">Node</span>
+
+<span class="k">var</span> nombre = <span class="s">"Héroe"</span>
+<span class="k">var</span> saltos = <span class="n">0</span>
+
+<span class="k">func</span> <span class="t">_ready</span>():
+	<span class="t">print</span>(<span class="s">"ESPACIO para saltar, ← → para moverte"</span>)
+
+<span class="k">func</span> <span class="t">_process</span>(delta):
+	<span class="k">if</span> <span class="t">Input</span>.is_action_just_pressed(<span class="s">"ui_accept"</span>):
+		saltar()
+	<span class="k">if</span> <span class="t">Input</span>.is_action_pressed(<span class="s">"ui_right"</span>):
+		mover(<span class="s">"derecha"</span>)
+	<span class="k">if</span> <span class="t">Input</span>.is_action_pressed(<span class="s">"ui_left"</span>):
+		mover(<span class="s">"izquierda"</span>)
+
+<span class="k">func</span> <span class="t">saltar</span>():
+	saltos = saltos + <span class="n">1</span>
+	<span class="t">print</span>(nombre + <span class="s">" saltó ("</span> + <span class="t">str</span>(saltos) + <span class="s">")"</span>)
+
+<span class="k">func</span> <span class="t">mover</span>(direccion):
+	<span class="t">print</span>(nombre + <span class="s">" → "</span> + direccion)</pre>
+      </div>
+      <div>
+        <ol class="steps compact">
+          <li>El ritual: nodo <code>Input</code>, script <code>05_input.gd</code></li>
+          <li>Primero <code>_process()</code> con el <code>if</code> del espacio y <code>saltar()</code>. Correr</li>
+          <li>Después las flechas y <code>mover()</code></li>
+          <li><span class="kbd">F6</span>, <b>clic en la ventana del juego</b>, y apretá teclas</li>
+        </ol>
+        <div class="consola"><span class="lbl">✅ Punto de control · Output</span>ESPACIO para saltar, ← → para moverte
+Héroe saltó (1)
+Héroe saltó (2)
+Héroe → derecha
+Héroe → derecha
+Héroe → derecha   <span class="err">← muchas por segundo</span></div>
+        <div class="callout proba">🧪 <b>Probá:</b> cambiá <code>just_pressed</code> por <code>pressed</code> en el salto y mantené apretado. Eso es <code>_process()</code>: 60 veces por segundo.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ DESAFÍO ============ -->
+  <section class="slide" data-chapter="Práctica" data-topic="Desafío en clase">
+    <div class="slide-eyebrow">Ahora sin mí</div>
+    <h2 class="slide-title">Desafío: seguí la escena <code>05_input</code></h2>
+    <div class="columns">
+      <div>
+        <ol class="steps" style="font-size:16px;">
+          <li>Una variable <code>monedas</code> que suba al apretar <span class="kbd">↑</span> (<code>ui_up</code>)</li>
+          <li>Una función <code>mostrar_estado()</code> que imprima nombre, saltos y monedas de una</li>
+          <li>Llamala al apretar <span class="kbd">Esc</span> (<code>ui_cancel</code>)</li>
+          <li><b>Extra:</b> una variable <code>golpes</code> que suba con <span class="kbd">↓</span>. A los 3, imprimir <code>💀 Game Over</code> una sola vez</li>
+        </ol>
+      </div>
+      <div style="align-self:center;">
+        <div class="callout">🎯 <b>Objetivo:</b> usar <b>todo</b> lo de hoy sin mirar las diapos anteriores: variables, <code>if</code>, funciones e input.</div>
+        <div class="card" style="margin-top:14px;">
+          <h3>🛟 Si te trabás</h3>
+          <ul>
+            <li>¿La consola dice algo en rojo? Leé el número de línea.</li>
+            <li>¿Sangría con Tab, no con espacios?</li>
+            <li>¿Los <code>()</code> después del nombre de la función?</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CIERRE ============ -->
+  <section class="slide" data-chapter="Cierre" data-topic="Resumen">
+    <div class="slide-eyebrow">Cierre</div>
+    <h2 class="slide-title">Todo lo que escribieron hoy</h2>
+    <table class="tbl">
+      <thead><tr><th>Concepto</th><th>Para qué sirve</th><th>Escena</th></tr></thead>
+      <tbody>
+        <tr><td><b>Variables</b></td><td>Guardar información (vida, velocidad, nombre…)</td><td><code>01_variables</code></td></tr>
+        <tr><td><b>Condicionales</b></td><td>Tomar decisiones: <code>if</code> / <code>elif</code> / <code>else</code></td><td><code>02_condicionales</code></td></tr>
+        <tr><td><b>Loops y arreglos</b></td><td>Repetir y recorrer listas: <code>for … in</code></td><td><code>03_for</code></td></tr>
+        <tr><td><b>Funciones</b></td><td>Agrupar y reutilizar código con nombre</td><td><code>04_funciones</code></td></tr>
+        <tr><td><b>Input</b></td><td>Detectar al jugador y crear interactividad</td><td><code>05_input</code></td></tr>
+      </tbody>
+    </table>
+    <div class="callout" style="margin-top:16px;">🧭 <b>Para pensar:</b> ¿qué parte de un juego que conocen usa un <code>if</code>? ¿Cuál un loop? ¿Cuál detecta input?</div>
+  </section>
+
+  <section class="slide title-slide" data-chapter="Cierre" data-topic="TP y recursos">
+    <div class="slide-eyebrow">Para seguir</div>
+    <h2 class="slide-title">El TP de la semana</h2>
+    <div class="columns">
+      <div class="card">
+        <h3>📝 TP 1: tu primera escena y tu primer juego de texto</h3>
+        <ul>
+          <li><b>Parte A:</b> una escena con piso, un jugador animado y una caja que cae</li>
+          <li><b>Parte B:</b> una escena por cada tema de hoy, como hicimos en clase</li>
+          <li><b>Final:</b> <i>La Cripta del Golem</i>, un combate por consola que junta todo</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>📚 Recursos</h3>
+        <ul>
+          <li>Docs de GDScript: <code>docs.godotengine.org</code></li>
+          <li>Sección <i>Scripting → GDScript basics</i></li>
+          <li>Traé tu proyecto <code>clase-02</code> a la clase práctica: el TP arranca de ahí</li>
+        </ul>
+      </div>
+    </div>
+    <p class="small-note" style="margin-top:24px; text-align:center;">“Hoy dejaron de usar el motor… y empezaron a <b>controlarlo</b>.” · Logo y mascota de Godot © Godot Foundation — CC BY 4.0.</p>
+  </section>
+
+</div>
+
+<script src="deck.js"></script>
+</body>
+</html>

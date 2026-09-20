@@ -98,7 +98,7 @@ Notas de Javier sobre la v1, para aplicar al construir cada clase de la v2. **No
 - [ ] Juntar TP3 y TP4 en uno. No hace falta que lo terminen entero: se unifica y se recorta.
 
 ### Clase 05
-- [ ] Diapo 7: queda rara, no se sabe dónde va. Quizás a C2.
+- [x] Diapo 7 (tipado estático): queda rara, no se sabe dónde va. Quizás a C2. *(movida a C2 v2, después de "Tipos de datos")*
 - [ ] Reescribir como POO pura (ver semana 3). Lo de spawning pasa a C5+.
 
 ## 4 · Decisiones pendientes
