@@ -78,8 +78,8 @@ Cada semana: **T** (teórica) → **T/P** (teórico-práctica: mismo formato, mu
 Notas de Javier sobre la v1, para aplicar al construir cada clase de la v2. **No es una lista cerrada:** se va a ir detallando al trabajar cada semana.
 
 ### Clase 01
-- [ ] Diapos 9 y 10: unificar texto e imagen.
-- [ ] Diapo 12 ("qué es un nodo"): mejorar la explicación. Revisar si la 13 sigue haciendo falta.
+- [x] Diapos 9 y 10: unificar texto e imagen. *(hecho en `v2/semana-01/teorica`)*
+- [x] Diapo 12 ("qué es un nodo"): mejorar la explicación. Revisar si la 13 sigue haciendo falta. *(reescrita: tipo / propiedades / hijos + ejemplo del personaje; la 13 se absorbió y se quitó)*
 - [ ] Quitar la diapo 26.
 - [ ] Diapo 29 (UI en Godot): demasiado específica. Mover a la clase de UI (C6).
 
