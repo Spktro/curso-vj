@@ -6,6 +6,8 @@ Material de las clases de la diplomatura, en forma de presentaciones HTML navega
 
 Si están publicadas con GitHub Pages: **https://spktro.github.io/curso-vj/**
 
+> 🚧 **Segunda versión en preparación** en la carpeta [`v2/`](v2/) (plan: [mapa de contenidos](v2/mapa-de-contenidos.md)). La versión que se está cursando es la de abajo, congelada en el tag `v1-2026`.
+
 ## 📚 Clases
 
 | # | Clase | Contenido |

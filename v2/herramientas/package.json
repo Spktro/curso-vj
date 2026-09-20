@@ -1,0 +1,12 @@
+{
+  "name": "curso-vj-tp-pdf",
+  "version": "1.0.0",
+  "description": "Genera los PDF de los trabajos prácticos desde el Markdown.",
+  "private": true,
+  "scripts": {
+    "build": "node build-pdf.js"
+  },
+  "dependencies": {
+    "marked": "^12.0.0"
+  }
+}
