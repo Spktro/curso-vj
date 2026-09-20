@@ -80,8 +80,8 @@ Notas de Javier sobre la v1, para aplicar al construir cada clase de la v2. **No
 ### Clase 01
 - [x] Diapos 9 y 10: unificar texto e imagen. *(hecho en `v2/semana-01/teorica`)*
 - [x] Diapo 12 ("qué es un nodo"): mejorar la explicación. Revisar si la 13 sigue haciendo falta. *(reescrita: tipo / propiedades / hijos + ejemplo del personaje; la 13 se absorbió y se quitó)*
-- [ ] Quitar la diapo 26.
-- [ ] Diapo 29 (UI en Godot): demasiado específica. Mover a la clase de UI (C6).
+- [x] Quitar la diapo 26 ("Cómo se arma un 2.5D en Godot"). *(hecho)*
+- [x] Diapo 29 (UI en Godot): demasiado específica. Mover a la clase de UI (C6). *(decisión 20/9: se deja en C1)*
 
 ### TP1 + TP2 (semana 1)
 - [ ] Del TP1 se usa solo hasta el punto 3 (piso, jugador, caja).

@@ -600,30 +600,6 @@
   </section>
 
   <!-- 8.9 2.5D en Godot -->
-  <section class="slide" data-chapter="Tipos" data-topic="2.5D en Godot">
-    <div class="slide-eyebrow">2.5D · en el motor</div>
-    <h2 class="slide-title">Cómo se arma un 2.5D en Godot</h2>
-    <p class="subtitle" style="font-size:18px;">No hay un modo “2.5D”. Elegís uno de los dos mundos y lo <b>disfrazás</b>.</p>
-    <div class="columns three" style="margin-top:4px;">
-      <div class="card">
-        <h3>Escena 3D, cámara plana</h3>
-        <p>Escena 3D normal + <code>Camera3D</code> con <b>Projection: Orthogonal</b> (se apaga la perspectiva) y el movimiento del <code>CharacterBody3D</code> bloqueado en un eje.</p>
-        <span class="pill">estilo Little Nightmares</span>
-      </div>
-      <div class="card">
-        <h3>Sprites parados en 3D</h3>
-        <p><code>Sprite3D</code> / <code>AnimatedSprite3D</code> con <b>Billboard: Enabled</b> dentro de una escena 3D: la imagen plana siempre rota hacia la cámara.</p>
-        <span class="pill">estilo HD-2D / DOOM</span>
-      </div>
-      <div class="card">
-        <h3>Todo 2D con falsa profundidad</h3>
-        <p><code>Parallax2D</code> para capas de fondo a distinta velocidad + <b>Y-Sort</b> para que lo que está más abajo se dibuje encima. <code>TileMapLayer</code> tiene modo <b>Isometric</b>.</p>
-        <span class="pill">estilo Hades / Stardew</span>
-      </div>
-    </div>
-    <div class="callout" style="margin-top:20px;">Regla práctica: si el <b>arte</b> es plano → hacelo en 2D. Si el <b>arte</b> tiene volumen y luces → hacelo en 3D y limitá el movimiento. Nunca mezcles los dos árboles.</div>
-  </section>
-
   <!-- 8.10 Qué es UI -->
   <section class="slide" data-chapter="Tipos" data-topic="Qué es la UI">
     <div class="slide-eyebrow">UI</div>
