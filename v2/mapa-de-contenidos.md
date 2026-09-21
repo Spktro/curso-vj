@@ -90,12 +90,12 @@ Notas de Javier sobre la v1, para aplicar al construir cada clase de la v2. **No
 - [x] TP1 y TP2 se juntan en un solo TP, el de la clase práctica. *(hecho)*
 
 ### Clase 03
-- [ ] Hablar más de **vectores** antes de usarlos en el código.
-- [ ] Diapo 22: no se entiende; probablemente sacarla.
+- [x] Hablar más de **vectores** antes de usarlos en el código. *(C3 v2: tres diapos "Qué es un vector", "Sumar y multiplicar", "Vector2 en Godot", más `Input.get_vector`)*
+- [x] Diapo 22 ("Extensiones guiadas"): no se entiende; probablemente sacarla. *(quitada; sus ideas viven en el TP2)*
 
 ### Clases 03 y 04
-- [ ] C4 es señales: agregar más práctica. Ver si algo de C4 puede pasar a C3.
-- [ ] Juntar TP3 y TP4 en uno. No hace falta que lo terminen entero: se unifica y se recorta.
+- [x] C4 es señales: agregar más práctica. Ver si algo de C4 puede pasar a C3. *(C4 v2: cuatro bloques en vivo, "señales que ya usaste", "cuando la señal no dispara", desafío. "`_process` vs `_physics_process`" pasó a C3)*
+- [x] Juntar TP3 y TP4 en uno. No hace falta que lo terminen entero: se unifica y se recorta. *(`v2/semana-02/tp.md`: Parte A sin correr ni dash, Parte B sin cámara ni victoria; todo eso quedó en extras)*
 
 ### Clase 05
 - [x] Diapo 7 (tipado estático): queda rara, no se sabe dónde va. Quizás a C2. *(movida a C2 v2, después de "Tipos de datos")*
@@ -106,7 +106,7 @@ Notas de Javier sobre la v1, para aplicar al construir cada clase de la v2. **No
 1. **Semana 5:** qué entra del TP8 actual (cámara, piso infinito, ranking guardado, exportar) y dónde vive el **aporte propio** para que tengan algo que mostrar en el cierre.
 2. **C5+ como deck nuevo:** conviene que traiga un **proyecto Godot de partida** versionado (`v2/semana-03/proyecto-clase/`) para el código en vivo. Mismo criterio para C2, C4, C8+ y C6.
 3. **Godot 4.3+** como mínimo si queda `Parallax2D`. Fijarlo en C1.
-4. **TP3+4:** dónde cortar. Propuesta: movimiento + salto + monedas con señales; sin dash ni victoria.
+4. ~~**TP3+4:** dónde cortar.~~ Resuelto: movimiento + `clamp` (A) y salto + monedas con señales (B); correr, dash, cámara y victoria como extras. Un solo proyecto `tp2` con dos escenas.
 
 ## 5 · Estructura de carpetas de la v2
 
