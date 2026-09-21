@@ -510,3 +510,28 @@
   .axes .lbl  { fill: var(--muted); font-size: 13px; font-family: "SF Mono", Menlo, Consolas, monospace; }
   .axes .hot  { fill: var(--accent); }
   .axes .hotln{ stroke: var(--accent); stroke-width: 2; stroke-dasharray: 4 4; fill: none; }
+
+  /* Capturas de juegos (mismo estilo que la Clase 1) */
+  .shots { display: grid; gap: 14px; margin-top: 12px; }
+  .shots.two   { grid-template-columns: 1fr 1fr; }
+  .shots.three { grid-template-columns: repeat(3, 1fr); }
+  .shots.four  { grid-template-columns: repeat(4, 1fr); }
+  .shot { margin: 0; display: flex; flex-direction: column; gap: 9px; }
+  .shot img, .shot .ph {
+    width: 100%; height: 180px;
+    object-fit: cover;
+    border-radius: 10px;
+    display: block;
+  }
+  .shot img { box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+  .shot .ph {
+    border: 2px dashed var(--border);
+    background: var(--panel-2);
+    display: flex; align-items: center; justify-content: center;
+    text-align: center; padding: 10px;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 11.5px; line-height: 1.4; color: var(--muted);
+  }
+  .shot img[hidden], .shot .ph[hidden] { display: none !important; }
+  .shot figcaption { font-size: 14px; line-height: 1.4; color: var(--muted); }
+  .shot figcaption b { display: block; font-size: 15.5px; color: var(--text); margin-bottom: 2px; }
