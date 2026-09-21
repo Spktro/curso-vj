@@ -17,6 +17,31 @@
   .consola .err { color: #ff7b72; }
   .proba { margin-top: 10px; font-size: 14.5px; line-height: 1.45; padding: 10px 14px; }
   .proba b { color: var(--accent); }
+  /* Hook: dos mini escenas animadas */
+  .hook { display: block; background: var(--panel-2); border-radius: 10px; overflow: hidden; }
+  .hook .plat.sprite { fill: #8fd18f; }
+  .hook .plat.body   { fill: #4caf50; }
+  .hook .shape { fill: none; stroke: #2ea3ff; stroke-width: 2; stroke-dasharray: 5 3; }
+  .hook .hero { fill: #7c3aed; }
+  .hook .hero.ok { fill: #2563eb; }
+  .hook .hlbl { fill: var(--muted); font-size: 11.5px; font-family: "SF Mono", Menlo, Consolas, monospace; }
+  .hook .fall-through { animation: caeAtraviesa 2.6s cubic-bezier(.4,0,1,1) infinite; }
+  .hook .land-jump { animation: caeYSalta 4s ease-in infinite; }
+  @keyframes caeAtraviesa {
+    0%   { transform: translateY(0); }
+    100% { transform: translateY(250px); }
+  }
+  @keyframes caeYSalta {
+    0%   { transform: translateY(-140px); animation-timing-function: ease-in; }
+    30%  { transform: translateY(0);      animation-timing-function: ease-out; }
+    45%  { transform: translateY(0);      animation-timing-function: ease-out; }
+    55%  { transform: translateY(-60px);  animation-timing-function: ease-in; }
+    65%  { transform: translateY(0);      animation-timing-function: ease-out; }
+    72%  { transform: translateY(0);      animation-timing-function: ease-out; }
+    80%  { transform: translateY(-45px);  animation-timing-function: ease-in; }
+    88%  { transform: translateY(0); }
+    100% { transform: translateY(0); }
+  }
 </style>
 </head>
 <body>
@@ -56,7 +81,7 @@
         <div class="card">
           <h3>👐 Las reglas de siempre</h3>
           <ul>
-            <li><b>Escribí el código vos.</b> Los nodos también: nada de abrir un proyecto ya armado.</li>
+            <li><b>El código se escribe, no se pega.</b> Los nodos también: nada de abrir un proyecto ya armado.</li>
             <li>Cada bloque termina con un <b>punto de control</b>: algo que tiene que pasar en pantalla o en la consola.</li>
             <li>Si algo no choca o una señal no dispara, hay una diapo de errores típicos al final. Pero primero: <b>¿tiene <code>CollisionShape2D</code>?</b></li>
           </ul>
@@ -71,10 +96,32 @@
     <div class="slide-eyebrow">Arranque</div>
     <h2 class="slide-title">¿Por qué uno cae y el otro no?</h2>
     <div class="columns">
-      <div class="card" style="text-align:center; border-top:3px solid var(--red);"><h3 style="color:var(--red);">🕳️ Escena A</h3><p>Un sprite <b>atraviesa el suelo</b> y cae al vacío, como si el piso no existiera.</p></div>
-      <div class="card" style="text-align:center; border-top:3px solid var(--green);"><h3 style="color:var(--green);">🧍 Escena B</h3><p>El mismo personaje se <b>detiene sobre la plataforma</b> y se mueve con el teclado.</p></div>
+      <div class="card" style="text-align:center; border-top:3px solid var(--red); padding:14px 18px;">
+        <h3 style="color:var(--red); margin-bottom:6px;">🕳️ Escena A</h3>
+        <svg class="hook" viewBox="0 0 320 190" width="100%" height="236">
+          <rect class="plat sprite" x="70" y="120" width="180" height="16" rx="3" />
+          <text class="hlbl" x="160" y="152" text-anchor="middle">plataforma: Sprite2D</text>
+          <rect class="hero fall-through" x="146" y="-40" width="28" height="28" rx="4" />
+          <text class="hlbl" x="160" y="180" text-anchor="middle">personaje: Sprite2D, nada más</text>
+        </svg>
+        <p style="margin-top:6px;">Un sprite <b>atraviesa el suelo</b> y cae al vacío, como si el piso no existiera.</p>
+      </div>
+      <div class="card" style="text-align:center; border-top:3px solid var(--green); padding:14px 18px;">
+        <h3 style="color:var(--green); margin-bottom:6px;">🧍 Escena B</h3>
+        <svg class="hook" viewBox="0 0 320 190" width="100%" height="236">
+          <rect class="plat body" x="70" y="120" width="180" height="16" rx="3" />
+          <rect class="shape" x="70" y="120" width="180" height="16" rx="3" />
+          <text class="hlbl" x="160" y="152" text-anchor="middle">plataforma: StaticBody2D + CollisionShape2D</text>
+          <g class="hero-g land-jump">
+            <rect class="hero ok" x="146" y="92" width="28" height="28" rx="4" />
+            <rect class="shape" x="146" y="92" width="28" height="28" rx="4" />
+          </g>
+          <text class="hlbl" x="160" y="180" text-anchor="middle">personaje: CharacterBody2D + CollisionShape2D</text>
+        </svg>
+        <p style="margin-top:6px;">El mismo personaje <b>aterriza sobre la plataforma</b>, y hasta salta.</p>
+      </div>
     </div>
-    <div class="callout" style="margin-top:22px;">🤔 <b>Para el grupo:</b> ¿qué tiene la segunda escena que no tiene la primera? La respuesta es el <b>tipo de nodo</b> y su <b>forma de colisión</b>.</div>
+    <div class="callout" style="margin-top:14px;">🤔 <b>Para el grupo:</b> ¿qué tiene la segunda escena que no tiene la primera? La respuesta es el <b>tipo de nodo</b> y su <b>forma de colisión</b>.</div>
   </section>
 
   <!-- ============ CUERPOS FÍSICOS ============ -->
@@ -85,11 +132,11 @@
       <thead><tr><th>Nodo</th><th>¿Para qué sirve?</th></tr></thead>
       <tbody>
         <tr><td><code>StaticBody2D</code></td><td><b>No se mueve.</b> Suelo, paredes, plataformas fijas. El motor lo respeta pero nunca lo mueve.</td></tr>
-        <tr><td><code>CharacterBody2D</code></td><td><b>Lo controlás vos</b> por código. El personaje jugable, enemigos con IA. Sin gravedad automática.</td></tr>
+        <tr><td><code>CharacterBody2D</code></td><td><b>Lo controla el programador</b>, por código. El personaje jugable, enemigos con IA. Sin gravedad automática.</td></tr>
         <tr><td><code>RigidBody2D</code></td><td><b>Lo mueve el motor</b> con física realista: gravedad, rebote, impulsos. Objetos que se tiran o explotan.</td></tr>
       </tbody>
     </table>
-    <div class="callout" style="margin-top:16px;">🎭 <b>Analogía:</b> <code>CharacterBody2D</code> es un <b>actor</b> que vos dirigís. <code>RigidBody2D</code> es un <b>extra</b> al que empujás y se cae solo. <code>StaticBody2D</code> es la <b>escenografía</b>.</div>
+    <div class="callout" style="margin-top:16px;">🎭 <b>Analogía:</b> <code>CharacterBody2D</code> es un <b>actor</b> dirigido por el programador. <code>RigidBody2D</code> es un <b>extra</b> que, si lo empujan, se cae solo. <code>StaticBody2D</code> es la <b>escenografía</b>.</div>
   </section>
 
   <section class="slide" data-chapter="Cuerpos físicos" data-topic="Regla práctica">
@@ -316,7 +363,7 @@ Salta con Espacio, una vez por toque</div>
         <tr><td><code>RigidBody2D</code></td><td><code>body_entered(body)</code></td><td>chocó contra algo (con <i>Contact Monitor</i> activado).</td></tr>
       </tbody>
     </table>
-    <div class="callout" style="margin-top:16px;">Y las funciones <code>_ready()</code> y <code>_process()</code> son <b>casi lo mismo</b>: Godot te avisa que pasó algo (“el nodo entró”, “pasó un frame”) y vos escribís qué hacer. Con las señales elegís <b>qué avisos escuchar</b>.</div>
+    <div class="callout" style="margin-top:16px;">Y las funciones <code>_ready()</code> y <code>_process()</code> son <b>casi lo mismo</b>: Godot avisa que pasó algo (“el nodo entró”, “pasó un frame”) y el programador escribe qué hacer. Con las señales se elige <b>qué avisos escuchar</b>.</div>
   </section>
 
   <!-- ============ Area2D ============ -->
