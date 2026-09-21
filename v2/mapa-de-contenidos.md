@@ -84,10 +84,10 @@ Notas de Javier sobre la v1, para aplicar al construir cada clase de la v2. **No
 - [x] Diapo 29 (UI en Godot): demasiado específica. Mover a la clase de UI (C6). *(decisión 20/9: se deja en C1)*
 
 ### TP1 + TP2 (semana 1)
-- [ ] Del TP1 se usa solo hasta el punto 3 (piso, jugador, caja).
-- [ ] TP2, punto 2: no se entiende si hay que crear un nodo nuevo, dónde va, ni si es una escena por ejemplo. Falta el paso "creá un nodo, ponele tal nombre, adjuntale el script".
-- [ ] Decisión: **una escena por cada ejemplo** y una última escena para *La Cripta del Golem*.
-- [ ] TP1 y TP2 se juntan en un solo TP, el de la clase práctica.
+- [x] Del TP1 se usa solo hasta el punto 3 (piso, jugador, caja). *(Parte A del `v2/semana-01/tp.md`; cámara y música quedaron como extras)*
+- [x] TP2, punto 2: no se entiende si hay que crear un nodo nuevo, dónde va, ni si es una escena por ejemplo. Falta el paso "creá un nodo, ponele tal nombre, adjuntale el script". *(sección B.0 "El ritual", y cada parte dice nodo, script y escena)*
+- [x] Decisión: **una escena por cada ejemplo** y una última escena para *La Cripta del Golem*. *(`01_variables` … `06_input` + `07_cripta`)*
+- [x] TP1 y TP2 se juntan en un solo TP, el de la clase práctica. *(hecho)*
 
 ### Clase 03
 - [ ] Hablar más de **vectores** antes de usarlos en el código.
