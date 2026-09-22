@@ -104,7 +104,7 @@ Notas de Javier sobre la v1, para aplicar al construir cada clase de la v2. **No
 ## 4 · Decisiones pendientes
 
 1. **Semana 5:** qué entra del TP8 actual (cámara, piso infinito, ranking guardado, exportar) y dónde vive el **aporte propio** para que tengan algo que mostrar en el cierre.
-2. **C5+ como deck nuevo:** conviene que traiga un **proyecto Godot de partida** versionado (`v2/semana-03/proyecto-clase/`) para el código en vivo. Mismo criterio para C2, C4, C8+ y C6.
+2. *(C5+ hecho sin proyecto de partida: la clase arranca con 5 min armando la arena y el jugador, ya vistos en la semana 2. Sigue abierto para C8+ y C6.)* **C5+ como deck nuevo:** conviene que traiga un **proyecto Godot de partida** versionado (`v2/semana-03/proyecto-clase/`) para el código en vivo. Mismo criterio para C2, C4, C8+ y C6.
 3. **Godot 4.3+** como mínimo si queda `Parallax2D`. Fijarlo en C1.
 4. ~~**TP3+4:** dónde cortar.~~ Resuelto: movimiento + `clamp` (A) y salto + monedas con señales (B); correr, dash, cámara y victoria como extras. Un solo proyecto `tp2` con dos escenas.
 

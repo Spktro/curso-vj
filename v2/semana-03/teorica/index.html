@@ -234,7 +234,7 @@ enemigo.recibir_dano(<span class="n">10</span>)
       <div class="code-wrap">
         <pre class="code" style="font-size:12.5px;"><span class="c"># enemigo.gd  ← la clase base</span>
 <span class="k">class_name</span> <span class="t">Enemigo</span>
-<span class="k">extends</span> <span class="t">CharacterBody2D</span>
+<span class="k">extends</span> <span class="t">Area2D</span>
 
 <span class="k">var</span> vida = <span class="n">3</span>
 <span class="k">var</span> velocidad = <span class="n">60</span>
@@ -299,9 +299,9 @@ enemigo.recibir_dano(<span class="n">10</span>)
       <div class="code-wrap">
         <pre class="code" style="font-size:12.5px;"><span class="c"># La bala no sabe qué enemigo tocó.</span>
 <span class="c"># Solo sabe que es un Enemigo:</span>
-<span class="k">func</span> <span class="t">_on_body_entered</span>(body):
-	<span class="k">if</span> body <span class="k">is</span> <span class="t">Enemigo</span>:
-		body.recibir_dano(<span class="n">1</span>)
+<span class="k">func</span> <span class="t">_on_area_entered</span>(area):
+	<span class="k">if</span> area <span class="k">is</span> <span class="t">Enemigo</span>:
+		area.recibir_dano(<span class="n">1</span>)
 
 <span class="c"># Y cada uno responde a su manera:</span>
 <span class="c">#   Slime      → se divide en dos</span>
@@ -348,7 +348,7 @@ enemigo.recibir_dano(<span class="n">10</span>)
         <h3>🧬 Herencia (script)</h3>
         <p>Para lo que el objeto <b>es</b>.</p>
         <pre class="code" style="font-size:12.5px; margin:8px 0 0;">SlimeElite <span class="k">extends</span> Enemigo
-Enemigo    <span class="k">extends</span> CharacterBody2D</pre>
+Enemigo    <span class="k">extends</span> Area2D</pre>
       </div>
       <div class="card" style="border-top:3px solid var(--green);">
         <h3>🧱 Composición (nodos hijos)</h3>
