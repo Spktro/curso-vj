@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Diplomatura de Videojuegos · Semana 5 · Clase 6 — La cara del juego</title>
+<link rel="stylesheet" href="deck.css" />
+<style>
+  /* Diapos "en vivo": código a la izquierda, pasos + punto de control a la derecha */
+  .live { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 22px; align-items: start; }
+  .live pre.code { margin: 0; }
+  .vivo { display: inline-block; background: #dc2626; color: #fff; font-size: 11px; font-weight: 800; letter-spacing: 0.12em; padding: 3px 9px; border-radius: 999px; margin-left: 10px; vertical-align: middle; }
+  ol.steps.compact li { padding: 6px 0 6px 38px; font-size: 15px; line-height: 1.4; }
+  ol.steps.compact li::before { width: 26px; height: 26px; font-size: 12px; top: 6px; }
+  .consola { background: #1e222a; color: #d6deeb; font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 13.5px; line-height: 1.5; padding: 10px 14px; border-radius: 10px; margin: 10px 0 0; white-space: pre; }
+  .consola .lbl { display: block; color: #7f8aa3; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 4px; font-family: inherit; }
+  .proba { margin-top: 10px; font-size: 14.5px; line-height: 1.45; padding: 10px 14px; }
+  .proba b { color: var(--accent); }
+  .nuevo { background: rgba(124, 58, 237, 0.16); border-radius: 3px; }
+  /* Las maquetas de pantalla, con cara de arena del survivors */
+  .screen, html[data-theme="dark"] .screen { background: #3f6b3a; }
+  .screen .hero { bottom: 42%; left: 46%; background: #93c5fd; border: 2px solid #1e3a8a; }
+  .screen .prop { width: 28px; height: 22px; border-radius: 50% 50% 42% 42%; background: #4ade80; border: 2px solid #166534; }
+  /* Flujo de pantallas */
+  .flow { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 12px; align-items: center; }
+  .flow .arrow { font-size: 28px; color: var(--accent); font-weight: 800; }
+  .flow .card { text-align: center; }
+  .flow .card p { margin: 2px 0 0; }
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck" data-brand="Diplomatura de Videojuegos · Semana 5 · Clase 6" data-home="../../index.html">
+
+  <!-- ============ INICIO ============ -->
+  <section class="slide title-slide active" data-chapter="Inicio" data-topic="Portada">
+    <div class="title-grid">
+      <div>
+        <div class="slide-eyebrow">Semana 5 · Clase 6 · Teórico-práctica</div>
+        <h1 class="title">La cara del <span class="accent">juego</span></h1>
+        <p class="subtitle">HUD, menú y pantalla de Game Over, escritos en vivo sobre el survivors. <code>CanvasLayer</code>, nodos <code>Control</code>, botones, cambio de escenas y un Autoload que recuerda la partida.</p>
+        <p class="small-note">“La UI no es decoración: es lo que el juego le <b>dice</b> al jugador.”</p>
+      </div>
+      <div class="title-photo" style="border:none; box-shadow:none; background:transparent;">
+        <img src="assets/godot-logo.png" alt="Godot Engine" style="max-height:420px; width:auto; margin:0 auto; display:block;" />
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Inicio" data-topic="Cómo va a ser hoy">
+    <div class="slide-eyebrow">Antes de empezar</div>
+    <h2 class="slide-title">Cómo va a ser la clase de hoy</h2>
+    <div class="columns">
+      <div class="card">
+        <h3>🔴 Cuatro bloques en vivo</h3>
+        <p>Sobre el proyecto <code>clase-05</code>, con el jefe de la Clase 8+.</p>
+        <ol class="steps compact" style="margin-top:8px;">
+          <li><b>HUD:</b> una barra de vida que cambia de color</li>
+          <li><b>Menú:</b> botones y cambio de escena</li>
+          <li><b>Partida:</b> tiempo y slimes que sobreviven al cambio de escena</li>
+          <li><b>Game Over:</b> el resultado, el récord y “Reintentar”</li>
+        </ol>
+      </div>
+      <div>
+        <div class="card">
+          <h3>👐 Las reglas de siempre</h3>
+          <ul>
+            <li><b>El código se escribe, no se pega.</b></li>
+            <li>Cada bloque termina con un <b>punto de control</b> en pantalla o en la consola.</li>
+            <li>Hoy se arma mucho <b>en el editor</b>: nodos, anclas, contenedores. El código es corto.</li>
+          </ul>
+        </div>
+        <div class="callout" style="margin-top:14px;">Al final de la clase el survivors es un juego que <b>empieza y termina</b>: se abre en un menú, se juega, se pierde y se vuelve a intentar.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Inicio" data-topic="Tres pantallas">
+    <div class="slide-eyebrow">Punto de partida</div>
+    <h2 class="slide-title">Un juego no es una pantalla: son varias</h2>
+    <div class="flow" style="margin-top:6px;">
+      <div class="card"><h3>🏠 Menú</h3><p><code>menu.tscn</code></p><p class="small-note">título + Jugar + Salir</p></div>
+      <div class="arrow">→</div>
+      <div class="card" style="border-color:var(--accent);"><h3>⚔️ Arena</h3><p><code>arena.tscn</code></p><p class="small-note">el juego + el HUD</p></div>
+      <div class="arrow">→</div>
+      <div class="card"><h3>💀 Game Over</h3><p><code>game_over.tscn</code></p><p class="small-note">resultado + Reintentar + Menú</p></div>
+    </div>
+    <div class="columns three" style="margin-top:12px; gap:14px;">
+      <p class="small-note" style="margin:0; text-align:center;">Botón <b>Jugar</b> → <code>change_scene_to_file()</code></p>
+      <p class="small-note" style="margin:0; text-align:center;">La vida llega a 0 → <code>change_scene_to_file()</code></p>
+      <p class="small-note" style="margin:0; text-align:center;">Botón <b>Reintentar</b> → <code>change_scene_to_file()</code></p>
+    </div>
+    <div class="callout" style="margin-top:16px;">Hoy la <code>arena.tscn</code> tiene el jugador, los slimes, el jefe y la bomba de Enter (<code>arena.gd</code>). Cuando la vida llega a 0… no pasa nada: el jugador sigue con vida negativa. Eso se arregla en el bloque 2.</div>
+  </section>
+
+  <!-- ============ BLOQUE 1: HUD ============ -->
+  <section class="slide" data-chapter="HUD" data-topic="CanvasLayer">
+    <div class="slide-eyebrow">Bloque 1 · la idea</div>
+    <h2 class="slide-title">La cámara se mueve… ¿y la UI?</h2>
+    <div class="camdemo">
+      <div>
+        <div class="screen moving">
+          <div class="world">
+            <div class="prop" style="left:14%;"></div>
+            <div class="prop" style="left:64%; bottom:62%;"></div>
+            <div class="hero"></div>
+            <div class="fakehud"><span class="chip">❤ 80</span><span class="chip">Slimes: 12</span></div>
+          </div>
+        </div>
+        <p class="cap"><b>❌ UI dentro del mundo</b>El HUD cuelga de la arena: <b>se va con la cámara</b>.</p>
+      </div>
+      <div>
+        <div class="screen moving">
+          <div class="world">
+            <div class="prop" style="left:14%;"></div>
+            <div class="prop" style="left:64%; bottom:62%;"></div>
+            <div class="hero"></div>
+          </div>
+          <div class="fakehud"><span class="chip">❤ 80</span><span class="chip">Slimes: 12</span></div>
+        </div>
+        <p class="cap"><b>✅ UI en un <code>CanvasLayer</code></b>Otra capa, pegada a la pantalla: no se mueve nunca.</p>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:14px;">Los nodos de interfaz son de tipo <b><code>Control</code></b> y se ubican respecto a la <b>pantalla</b>. Si la arena tiembla con el <i>screenshake</i> de la Clase 7, el HUD en un <code>CanvasLayer</code> <b>no tiembla</b>.</div>
+  </section>
+
+  <section class="slide" data-chapter="HUD" data-topic="Nodos de Control">
+    <div class="slide-eyebrow">Bloque 1 · los nodos</div>
+    <h2 class="slide-title">Los nodos <code>Control</code> de hoy</h2>
+    <div class="ctrl-demo">
+      <div class="box"><div class="nm">Label</div><div class="stage"><span style="font-size:20px; font-weight:800;">Tiempo: 42</span></div><p>Texto que cambia desde el código con <code>.text</code>.</p></div>
+      <div class="box"><div class="nm">Button</div><div class="stage"><button class="gbtn">Jugar</button></div><p>Emite la señal <code>pressed</code> al hacer clic.</p></div>
+      <div class="box"><div class="nm">ProgressBar</div><div class="stage"><div class="gbar"><i></i></div></div><p>Barra de vida: <code>value</code> entre <code>min_value</code> y <code>max_value</code>.</p></div>
+      <div class="box"><div class="nm">ColorRect</div><div class="stage"><div style="width:70%; height:34px; border-radius:4px; background:#1f2937;"></div></div><p>Un rectángulo de color: el fondo de un menú.</p></div>
+      <div class="box"><div class="nm">VBoxContainer</div><div class="stage" style="flex-direction:column; gap:4px;"><span style="font-size:12px; background:var(--panel); padding:1px 10px; border-radius:4px;">A</span><span style="font-size:12px; background:var(--panel); padding:1px 10px; border-radius:4px;">B</span><span style="font-size:12px; background:var(--panel); padding:1px 10px; border-radius:4px;">C</span></div><p>Acomoda a sus hijos en columna, solos. <code>HBox</code>: en fila.</p></div>
+      <div class="box"><div class="nm">CanvasLayer</div><div class="stage"><span style="font-size:26px;">🗂️</span></div><p>No es un <code>Control</code>: es la <b>capa</b> donde viven.</p></div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="HUD" data-topic="HUD en juegos reales">
+    <div class="slide-eyebrow">🎮 En juegos reales</div>
+    <h2 class="slide-title">El mismo HUD, en juegos de verdad</h2>
+    <div class="hudshots">
+      <figure>
+        <img src="assets/hud-doom.jpg" alt="HUD de DOOM (1993) en la parte inferior de la pantalla">
+        <figcaption><b>DOOM (1993)</b>Munición, vida y armadura en una franja abajo: <code>Label</code> y <code>TextureRect</code> en un contenedor.</figcaption>
+      </figure>
+      <figure>
+        <img src="assets/hud-hollowknight.jpg" alt="HUD de Hollow Knight con máscaras de vida arriba a la izquierda">
+        <figcaption><b>Hollow Knight</b>Máscaras de vida y contador de geo arriba a la izquierda: íconos en un <code>HBoxContainer</code>.</figcaption>
+      </figure>
+      <figure>
+        <img src="assets/hud-deadspace.jpg" alt="Dead Space: la barra de vida está en la espalda del personaje">
+        <figcaption><b>Dead Space</b>La vida está <b>en el traje</b>: UI <b>diegética</b> (Clase 1), como la barra sobre el jefe.</figcaption>
+      </figure>
+    </div>
+    <div class="callout" style="margin-top:14px;">Los dos primeros son UI <b>no diegética</b>: en un <code>CanvasLayer</code>. La del élite del survivors es <b>diegética</b>: un <code>ProgressBar</code> hijo de un nodo del mundo. Los mismos nodos, en otro lugar del árbol.</div>
+  </section>
+
+  <section class="slide" data-chapter="HUD" data-topic="El jugador avisa, el HUD muestra">
+    <div class="slide-eyebrow">Bloque 1 · el diseño</div>
+    <h2 class="slide-title">El jugador <b>avisa</b>; el HUD <b>muestra</b></h2>
+    <div class="columns" style="grid-template-columns:0.9fr 1.1fr;">
+      <div class="card">
+        <h3>El árbol</h3>
+        <pre class="code" style="margin:0; font-size:12.5px;">Arena  (Node2D)             arena.gd
+├── Jugador                 jugador.gd
+├── Spawner
+├── Enemigos
+└── HUD  (CanvasLayer)      hud.gd
+    ├── BarraVida   (ProgressBar)
+    ├── LabelTiempo (Label)
+    └── LabelKills  (Label)</pre>
+      </div>
+      <div>
+        <div class="card">
+          <h3>🔌 <code>@onready</code>: buscar un nodo cuando el árbol ya existe</h3>
+          <pre class="code" style="font-size:12.5px; margin:6px 0 0;"><span class="k">@onready</span> <span class="k">var</span> barra = $BarraVida
+<span class="c"># es lo mismo que:</span>
+<span class="k">var</span> barra
+<span class="k">func</span> <span class="t">_ready</span>():
+	barra = $BarraVida</pre>
+          <p class="small-note" style="margin-top:8px;">Sin <code>@onready</code>, la variable se llena al <b>crear</b> el script, antes de que el nodo esté en el árbol: <code>$BarraVida</code> todavía no existe.</p>
+        </div>
+        <div class="callout" style="margin-top:12px; font-size:15px;">Encapsulamiento otra vez (Clase 5): el jugador no toca la barra; le pide al HUD <code>actualizar_vida(vida)</code>. Si mañana la vida se muestra con corazones, se cambia <b>solo</b> <code>hud.gd</code>.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="HUD" data-topic="En vivo: el HUD">
+    <div class="slide-eyebrow">Bloque 1 <span class="vivo">● EN VIVO</span></div>
+    <h2 class="slide-title">Una barra de vida que cambia de color</h2>
+    <div class="live">
+      <div class="code-wrap">
+        <pre class="code" style="font-size:12.4px;"><span class="c"># hud.gd (en el nodo HUD)</span>
+<span class="k">extends</span> <span class="t">CanvasLayer</span>
+
+<span class="k">@onready</span> <span class="k">var</span> barra = $BarraVida
+
+<span class="k">func</span> <span class="t">actualizar_vida</span>(vida):
+	barra.value = vida
+	<span class="k">if</span> vida <= <span class="n">25</span>:
+		barra.modulate = <span class="t">Color</span>.RED
+	<span class="k">elif</span> vida <= <span class="n">50</span>:
+		barra.modulate = <span class="t">Color</span>.YELLOW
+	<span class="k">else</span>:
+		barra.modulate = <span class="t">Color</span>.GREEN
+
+<span class="c"># jugador.gd: lo marcado es nuevo</span>
+<span class="nuevo"><span class="k">@onready</span> <span class="k">var</span> hud = get_node(<span class="s">"../HUD"</span>)</span>
+
+<span class="k">func</span> <span class="t">recibir_dano</span>(cantidad):
+	vida -= cantidad
+	<span class="nuevo">hud.actualizar_vida(vida)</span></pre>
+      </div>
+      <div>
+        <ol class="steps compact">
+          <li>Hijo de <code>Arena</code>: <code>CanvasLayer</code> llamado <b>HUD</b></li>
+          <li>Hijo de <code>HUD</code>: <code>ProgressBar</code> <b>BarraVida</b>. Max <code>100</code>, Value <code>100</code>, <i>Show Percentage</i> apagado, arriba a la izquierda</li>
+          <li><b>Attach Script</b> en <code>HUD</code>: <code>hud.gd</code></li>
+          <li>En <code>jugador.gd</code>: el <code>@onready</code> y la llamada. El <code>print</code> de la vida se puede borrar</li>
+          <li><b>F6</b> y dejarse tocar</li>
+        </ol>
+        <div class="consola"><span class="lbl">✅ Punto de control · en pantalla</span>La barra baja 10 con cada slime
+y 15 con cada golpe del jefe.
+Por debajo de 50: amarilla.
+Por debajo de 25: roja.</div>
+        <div class="callout proba">🧪 <b>Probá:</b> sacar el <code>@onready</code> del jugador: error <i>Node not found</i>, porque se busca el HUD antes de que exista el árbol.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ BLOQUE 2: MENÚ ============ -->
+  <section class="slide" data-chapter="Menú" data-topic="Anclas y contenedores">
+    <div class="slide-eyebrow">Bloque 2 · la idea</div>
+    <h2 class="slide-title">Un menú: anclas, un contenedor y dos botones</h2>
+    <div class="columns" style="grid-template-columns:0.95fr 1.05fr;">
+      <div class="card">
+        <h3>El árbol de <code>menu.tscn</code></h3>
+        <pre class="code" style="margin:0; font-size:12.5px;">Menu  (Control)                menu.gd
+├── Fondo     (ColorRect)      ← ancla Full Rect
+└── Botonera  (VBoxContainer)  ← ancla Center
+    ├── Titulo     (Label)
+    ├── BtnJugar   (Button)
+    └── BtnSalir   (Button)</pre>
+        <p class="small-note" style="margin-top:10px;">En 2D, lo que está <b>más abajo</b> en el árbol se dibuja <b>encima</b>: el <code>Fondo</code> va primero.</p>
+      </div>
+      <div>
+        <div class="card">
+          <h3>⚓ Anclas</h3>
+          <p style="font-size:15px;">Le dicen a un <code>Control</code> a qué parte de la pantalla <b>pegarse</b>. <b>Full Rect</b>: ocupar todo. <b>Center</b>: quedarse en el medio. Con anclas, el menú se ve bien en cualquier resolución.</p>
+        </div>
+        <div class="card" style="margin-top:12px;">
+          <h3>🖱️ La señal <code>pressed</code></h3>
+          <p style="font-size:15px;">Un <code>Button</code> la emite al hacer clic. Se conecta igual que <code>body_entered</code> o <code>timeout</code>: <code>$Boton.pressed.connect(funcion)</code>.</p>
+        </div>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:12px;">💬 El texto del botón es la <b>acción</b>, corto: “Jugar”, no “Comenzar una nueva partida”.</div>
+  </section>
+
+  <section class="slide" data-chapter="Menú" data-topic="En vivo: el menú">
+    <div class="slide-eyebrow">Bloque 2 <span class="vivo">● EN VIVO</span></div>
+    <h2 class="slide-title">El menú, y que el juego arranque ahí</h2>
+    <div class="live">
+      <div class="code-wrap">
+        <pre class="code" style="font-size:12.4px;"><span class="c"># menu.gd</span>
+<span class="k">extends</span> <span class="t">Control</span>
+
+<span class="k">func</span> <span class="t">_ready</span>():
+	$Botonera/BtnJugar.pressed.connect(_on_jugar)
+	$Botonera/BtnSalir.pressed.connect(_on_salir)
+	$Botonera/BtnJugar.grab_focus()   <span class="c"># Enter también juega</span>
+
+<span class="k">func</span> <span class="t">_on_jugar</span>():
+	get_tree().change_scene_to_file(<span class="s">"res://arena.tscn"</span>)
+
+<span class="k">func</span> <span class="t">_on_salir</span>():
+	get_tree().quit()
+
+<span class="c"># jugador.gd: al quedarse sin vida, al menú</span>
+<span class="k">func</span> <span class="t">recibir_dano</span>(cantidad):
+	vida -= cantidad
+	hud.actualizar_vida(vida)
+	<span class="nuevo"><span class="k">if</span> vida <= <span class="n">0</span>:</span>
+		<span class="nuevo">get_tree().change_scene_to_file(<span class="s">"res://menu.tscn"</span>)</span></pre>
+      </div>
+      <div>
+        <ol class="steps compact">
+          <li>Escena nueva: <code>Control</code> <b>Menu</b>, guardar como <code>menu.tscn</code></li>
+          <li><code>ColorRect</code> <b>Fondo</b> (Full Rect) y <code>VBoxContainer</code> <b>Botonera</b> (Center) con el título y los dos botones</li>
+          <li><code>menu.gd</code> y el cambio en <code>jugador.gd</code></li>
+          <li><b>Project Settings → Application → Run → Main Scene</b> = <code>menu.tscn</code></li>
+          <li><b>F5</b> (no F6): corre el juego desde la escena principal</li>
+        </ol>
+        <div class="consola"><span class="lbl">✅ Punto de control · en pantalla</span>F5: aparece el menú.
+Jugar: la arena.
+Sin vida: de vuelta al menú.
+Salir: se cierra la ventana.</div>
+        <div class="callout proba">🧪 <b>Probá:</b> escribir <code>"res://Arena.tscn"</code>, con mayúscula: el botón no hace nada y la consola avisa. Las rutas se copian del FileSystem, exactas.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ BLOQUE 3: PARTIDA ============ -->
+  <section class="slide" data-chapter="Partida" data-topic="Qué se pierde al cambiar de escena">
+    <div class="slide-eyebrow">Bloque 3 · la idea</div>
+    <h2 class="slide-title">Al cambiar de escena, se borra todo</h2>
+    <div class="columns">
+      <div class="card" style="border-top:3px solid var(--red);">
+        <h3 style="color:var(--red);">El problema</h3>
+        <p style="font-size:15px;"><code>change_scene_to_file()</code> <b>descarga la escena entera</b>: el jugador, sus variables, los slimes. Si el tiempo y los slimes eliminados viven en el jugador, la pantalla de Game Over <b>no tiene de dónde leerlos</b>.</p>
+      </div>
+      <div class="card" style="border-top:3px solid var(--green);">
+        <h3 style="color:var(--green);">La solución: un <b>Autoload</b></h3>
+        <p style="font-size:15px;">Un script que Godot carga <b>una vez</b>, al abrir el juego, y deja <b>siempre</b> en el árbol, fuera de cualquier escena. Desde cualquier script se lo llama por su nombre: <code>Partida.kills</code>.</p>
+      </div>
+    </div>
+    <div class="columns" style="margin-top:14px; grid-template-columns:1fr 1fr; align-items:center;">
+      <pre class="code" style="font-size:12.5px; margin:0;">root
+├── Partida        ← el Autoload: nunca se borra
+└── Arena          ← la escena actual: se cambia
+    ├── Jugador
+    └── …</pre>
+      <div class="callout" style="font-size:15px;">Se registra en <b>Project Settings → Globals → Autoload</b>: el archivo <code>partida.gd</code> con el nombre <b><code>Partida</code></b>. Es la forma estándar de compartir datos entre escenas.</div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Partida" data-topic="En vivo: el Autoload Partida">
+    <div class="slide-eyebrow">Bloque 3 <span class="vivo">● EN VIVO</span></div>
+    <h2 class="slide-title"><code>Partida</code>: tiempo y slimes</h2>
+    <div class="live">
+      <div class="code-wrap">
+        <pre class="code" style="font-size:11.9px;"><span class="c"># partida.gd  (Autoload "Partida")</span>
+<span class="k">extends</span> <span class="t">Node</span>
+<span class="k">var</span> kills = <span class="n">0</span>
+<span class="k">var</span> tiempo = <span class="n">0.0</span>
+<span class="k">var</span> mejor_tiempo = <span class="n">0.0</span>
+
+<span class="k">func</span> <span class="t">reiniciar</span>():
+	kills = <span class="n">0</span>
+	tiempo = <span class="n">0.0</span>
+
+<span class="c"># arena.gd, dentro de _process (junto a la bomba):</span>
+	<span class="nuevo">Partida.tiempo += delta</span>
+<span class="c"># enemigo.gd, en morir(), antes del queue_free():</span>
+	<span class="nuevo">Partida.kills += <span class="n">1</span></span>
+<span class="c"># menu.gd, en _on_jugar(), antes de cambiar de escena:</span>
+	<span class="nuevo">Partida.reiniciar()</span>
+
+<span class="c"># hud.gd: mostrar lo que hay en Partida</span>
+<span class="k">func</span> <span class="t">_process</span>(delta):
+	$LabelTiempo.text = <span class="s">"Tiempo: "</span> + str(int(Partida.tiempo))
+	$LabelKills.text = <span class="s">"Slimes: "</span> + str(Partida.kills)</pre>
+      </div>
+      <div>
+        <ol class="steps compact">
+          <li>FileSystem → <b>New Script</b>, hereda de <code>Node</code>: <code>partida.gd</code></li>
+          <li><b>Project Settings → Globals → Autoload</b>: ese archivo, nombre <b>Partida</b>, <b>Add</b></li>
+          <li>En el <code>HUD</code>: dos <code>Label</code>, <b>LabelTiempo</b> y <b>LabelKills</b></li>
+          <li>Las cuatro líneas nuevas y el <code>_process</code> del HUD</li>
+          <li>F5, jugar, morir, volver a jugar</li>
+        </ol>
+        <div class="consola"><span class="lbl">✅ Punto de control · en pantalla</span>Tiempo: 1, 2, 3…
+Slimes: sube con cada bala
+(y con la bomba de Enter)
+Al volver a jugar: todo en 0</div>
+        <div class="callout proba">🧪 <b>Probá:</b> comentar <code>Partida.reiniciar()</code>: al volver a jugar, el tiempo <b>sigue</b> desde donde estaba. Es la prueba de que <code>Partida</code> no se borra con la escena.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ BLOQUE 4: GAME OVER ============ -->
+  <section class="slide" data-chapter="Game Over" data-topic="La pantalla de Game Over">
+    <div class="slide-eyebrow">Bloque 4 · la idea</div>
+    <h2 class="slide-title">Game Over: el menú, con un resultado</h2>
+    <div class="columns" style="grid-template-columns:1fr 1fr;">
+      <div class="card">
+        <h3>El árbol de <code>game_over.tscn</code></h3>
+        <pre class="code" style="margin:0; font-size:12.5px;">GameOver  (Control)            game_over.gd
+├── Fondo      (ColorRect)     ← Full Rect, rojo oscuro
+└── Botonera   (VBoxContainer) ← Center
+    ├── Titulo          (Label)  "GAME OVER"
+    ├── LabelResultado  (Label)
+    ├── LabelRecord     (Label)
+    ├── BtnReintentar   (Button)
+    └── BtnMenu         (Button)</pre>
+        <p class="small-note" style="margin-top:8px;">Es la estructura del menú con dos <code>Label</code> más. Se puede <b>duplicar</b> <code>menu.tscn</code> y cambiarla.</p>
+      </div>
+      <div>
+        <div class="card">
+          <h3>🏆 El récord de la sesión</h3>
+          <p style="font-size:15px;">Al abrir la pantalla: si el tiempo de esta partida supera a <code>Partida.mejor_tiempo</code>, es el nuevo récord. Como <code>Partida</code> no se borra, el récord dura <b>mientras el juego esté abierto</b>.</p>
+        </div>
+        <div class="callout" style="margin-top:12px; font-size:15px;">¿Y al cerrar el juego? Se pierde: está en memoria. Guardarlo en un <b>archivo</b> (<code>FileAccess</code>) queda como extra del TP.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Game Over" data-topic="En vivo: Game Over">
+    <div class="slide-eyebrow">Bloque 4 <span class="vivo">● EN VIVO</span></div>
+    <h2 class="slide-title">Resultado, récord y “Reintentar”</h2>
+    <div class="live" style="grid-template-columns:1.14fr 0.86fr;">
+      <div class="code-wrap">
+        <pre class="code" style="font-size:11.4px; line-height:1.36;"><span class="c"># game_over.gd</span>
+<span class="k">extends</span> <span class="t">Control</span>
+
+<span class="k">func</span> <span class="t">_ready</span>():
+	<span class="k">var</span> s = str(int(Partida.tiempo))
+	$Botonera/LabelResultado.text = <span class="s">"Sobreviviste "</span> + s + <span class="s">" s y eliminaste "</span> + str(Partida.kills) + <span class="s">" slimes"</span>
+	<span class="k">if</span> Partida.tiempo > Partida.mejor_tiempo:
+		Partida.mejor_tiempo = Partida.tiempo
+		$Botonera/LabelRecord.text = <span class="s">"¡Nuevo récord!"</span>
+	<span class="k">else</span>:
+		$Botonera/LabelRecord.text = <span class="s">"Récord: "</span> + str(int(Partida.mejor_tiempo)) + <span class="s">" s"</span>
+	$Botonera/BtnReintentar.pressed.connect(_on_reintentar)
+	$Botonera/BtnMenu.pressed.connect(_on_menu)
+
+<span class="k">func</span> <span class="t">_on_reintentar</span>():
+	Partida.reiniciar()
+	get_tree().change_scene_to_file(<span class="s">"res://arena.tscn"</span>)
+
+<span class="k">func</span> <span class="t">_on_menu</span>():
+	get_tree().change_scene_to_file(<span class="s">"res://menu.tscn"</span>)
+
+<span class="c"># jugador.gd, en recibir_dano(): al Game Over</span>
+		get_tree().change_scene_to_file(<span class="s">"<span class="nuevo">res://game_over.tscn</span>"</span>)</pre>
+      </div>
+      <div>
+        <ol class="steps compact">
+          <li><b>Duplicar</b> <code>menu.tscn</code> como <code>game_over.tscn</code>: renombrar, sumar los dos <code>Label</code>, cambiar los botones</li>
+          <li>Quitarle el script del menú y crear <code>game_over.gd</code></li>
+          <li>En <code>jugador.gd</code>, la ruta nueva</li>
+          <li>F5 y perder dos veces</li>
+        </ol>
+        <div class="consola"><span class="lbl">✅ Punto de control · en pantalla</span>1.ª: Sobreviviste 37 s y
+    eliminaste 12 slimes
+    ¡Nuevo récord!
+2.ª: Sobreviviste 21 s y
+    eliminaste 7 slimes
+    Récord: 37 s</div>
+        <div class="callout proba">🧪 <b>Probá:</b> cerrar el juego y volver a abrirlo: el récord vuelve a 0. <code>Partida</code> vive mientras el juego está abierto, no más.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Game Over" data-topic="Línea por línea">
+    <div class="slide-eyebrow">Bloques 1 a 4 · línea por línea</div>
+    <h2 class="slide-title">Qué hace cada pieza nueva</h2>
+    <table class="tbl" style="font-size:14.5px;">
+      <thead><tr><th style="width:38%">Línea</th><th>Qué hace y por qué</th></tr></thead>
+      <tbody>
+        <tr><td><code>extends CanvasLayer</code></td><td>El HUD es una capa aparte: no se mueve con la cámara ni tiembla con ella.</td></tr>
+        <tr><td><code>@onready var barra = $BarraVida</code></td><td>Guarda el nodo cuando el árbol ya está armado. Sin <code>@onready</code>, todavía no existe.</td></tr>
+        <tr><td><code>barra.modulate = Color.RED</code></td><td>Tiñe la barra. La información más urgente, con el color más urgente.</td></tr>
+        <tr><td><code>$Boton.pressed.connect(f)</code></td><td>La misma forma de conectar señales de siempre, ahora con un botón.</td></tr>
+        <tr><td><code>change_scene_to_file("res://…")</code></td><td>Descarga la escena actual entera y carga otra. Todo lo que había, se pierde.</td></tr>
+        <tr><td><code>Partida.tiempo += delta</code></td><td>Suma los segundos reales de cada frame en el Autoload, que sobrevive al cambio.</td></tr>
+        <tr><td><code>str(int(Partida.tiempo))</code></td><td><code>int()</code> corta los decimales (37.82 → 37) y <code>str()</code> lo vuelve texto.</td></tr>
+        <tr><td><code>grab_focus()</code></td><td>Deja un botón seleccionado: se puede jugar con Enter, sin mouse.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============ CIERRE ============ -->
+  <section class="slide" data-chapter="Cierre" data-topic="Cuando no anda">
+    <div class="slide-eyebrow">🛟 Antes de levantar la mano</div>
+    <h2 class="slide-title">Cuando “no anda”: los sospechosos de hoy</h2>
+    <table class="tbl" style="font-size:14.5px;">
+      <thead><tr><th>Síntoma</th><th>Casi siempre es…</th></tr></thead>
+      <tbody>
+        <tr><td>El menú no aparece al apretar F5</td><td>Falta la <b>Main Scene</b>, o se está usando <b>F6</b> (corre la escena abierta).</td></tr>
+        <tr><td>El botón no hace nada</td><td>La señal no se conectó, o la ruta <code>$Botonera/BtnJugar</code> no coincide con el árbol.</td></tr>
+        <tr><td><code>Identifier "Partida" not declared</code></td><td>El Autoload no está registrado, o se llama distinto (mayúsculas incluidas).</td></tr>
+        <tr><td>El tiempo no vuelve a 0 al jugar de nuevo</td><td>Falta <code>Partida.reiniciar()</code> en el botón.</td></tr>
+        <tr><td>El fondo tapa los botones</td><td>El <code>ColorRect</code> está <b>debajo</b> de la <code>Botonera</code> en el árbol: tiene que ir primero.</td></tr>
+        <tr><td>Los botones quedan en una esquina</td><td>Falta el ancla <b>Center</b> en la <code>Botonera</code>, o los botones no son hijos del contenedor.</td></tr>
+        <tr><td>La barra no cambia de color</td><td>Se tiñe el <code>HUD</code> en vez de la <code>barra</code>, o la función no se llama desde el jugador.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="slide" data-chapter="Cierre" data-topic="Desafío en clase">
+    <div class="slide-eyebrow">Ahora sin ayuda</div>
+    <h2 class="slide-title">Desafío: pausa con Esc</h2>
+    <div class="columns">
+      <div>
+        <ol class="steps" style="font-size:15.5px;">
+          <li>Otro <code>CanvasLayer</code> en la arena: <b>Pausa</b>, con un <code>Label</code> grande que diga <b>PAUSA</b>. Invisible al empezar</li>
+          <li>Un script en <code>Pausa</code>: con <code>ui_cancel</code> (Esc), <code>get_tree().paused = not get_tree().paused</code>, y el cartel visible solo si está en pausa</li>
+          <li>Probar… y descubrir por qué la segunda vez Esc <b>no responde</b></li>
+        </ol>
+      </div>
+      <div style="align-self:center;">
+        <div class="callout">🎯 <b>Pista:</b> en pausa, Godot deja de llamar a <code>_process</code> en <b>todos</b> los nodos, también en el que escucha Esc. Buscar en el Inspector de <code>Pausa</code> la propiedad <b>Process → Mode</b>.</div>
+        <p class="small-note" style="margin-top:12px;">¿Y el tiempo de <code>Partida</code>? Se detiene solo, porque <code>arena.gd</code> también está en pausa. Es justo lo que tiene que pasar.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Cierre" data-topic="Resumen">
+    <div class="slide-eyebrow">Cierre</div>
+    <h2 class="slide-title">Todo lo que se escribió hoy</h2>
+    <table class="tbl" style="font-size:15px;">
+      <thead><tr><th>Pieza</th><th>Para qué sirve</th><th>Bloque</th></tr></thead>
+      <tbody>
+        <tr><td><b><code>CanvasLayer</code> + <code>Control</code></b></td><td>UI pegada a la pantalla, encima del juego</td><td>1</td></tr>
+        <tr><td><b><code>@onready</code></b></td><td>Guardar un nodo cuando el árbol ya existe</td><td>1</td></tr>
+        <tr><td><b><code>ProgressBar</code> + <code>modulate</code></b></td><td>Mostrar la vida, y teñirla según cuánto queda</td><td>1</td></tr>
+        <tr><td><b>Anclas + <code>VBoxContainer</code></b></td><td>Un menú que se acomoda solo en cualquier pantalla</td><td>2</td></tr>
+        <tr><td><b><code>pressed</code> + <code>change_scene_to_file()</code></b></td><td>Pasar de una pantalla a otra</td><td>2</td></tr>
+        <tr><td><b>Main Scene + F5</b></td><td>Que el juego arranque en el menú</td><td>2</td></tr>
+        <tr><td><b>Autoload <code>Partida</code></b></td><td>Datos que sobreviven al cambio de escena</td><td>3</td></tr>
+        <tr><td><b>Récord de la sesión</b></td><td>Comparar con lo guardado y actualizarlo</td><td>4</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="slide title-slide" data-chapter="Cierre" data-topic="TP y recursos">
+    <div class="slide-eyebrow">Para seguir</div>
+    <h2 class="slide-title">El TP de la semana: terminar el juego</h2>
+    <div class="columns">
+      <div class="card">
+        <h3>📝 TP 5: el survivors, completo</h3>
+        <ul>
+          <li>Lo de hoy sobre el <b>TP4</b>: menú, HUD con tiempo, <code>Partida</code> y Game Over</li>
+          <li>La planilla de la Clase 7: <b>sonido</b>, flash, parpadeo y temblor</li>
+          <li><b>Exportar</b> a un <code>.exe</code> que corra sin Godot</li>
+          <li><b>El aporte propio</b>: una idea que se muestra en la semana 6</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>📚 Recursos</h3>
+        <ul>
+          <li>Docs: <i>Size and anchors</i> y <i>Using containers</i>, en <code>docs.godotengine.org</code></li>
+          <li>Docs: <i>Singletons (Autoload)</i></li>
+          <li>Docs: <i>Change scenes manually</i></li>
+        </ul>
+      </div>
+    </div>
+    <p class="small-note" style="margin-top:24px; text-align:center;">La semana que viene: cada uno muestra su juego. · Capturas de juegos: uso educativo, © de sus dueños. · Logo de Godot © Godot Foundation — CC BY 4.0.</p>
+  </section>
+
+</div>
+
+<script src="deck.js"></script>
+</body>
+</html>
