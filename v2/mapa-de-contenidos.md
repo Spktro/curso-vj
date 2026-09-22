@@ -99,7 +99,7 @@ Notas de Javier sobre la v1, para aplicar al construir cada clase de la v2. **No
 
 ### Clase 05
 - [x] Diapo 7 (tipado estático): queda rara, no se sabe dónde va. Quizás a C2. *(movida a C2 v2, después de "Tipos de datos")*
-- [ ] Reescribir como POO pura (ver semana 3). Lo de spawning pasa a C5+.
+- [x] Reescribir como POO pura (ver semana 3). Lo de spawning pasa a C5+. *(C5 v2: objeto, clase vs objeto, 4 pilares con ejemplos de juegos, herencia en GDScript, "es un" vs "tiene un", ejercicio de diseño del survivors. Hueco de imagen pendiente en la diapo 7)*
 
 ## 4 · Decisiones pendientes
 
