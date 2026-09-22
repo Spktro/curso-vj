@@ -1,4 +1,3 @@
 Capturas de juegos usadas con fines educativos.
 - mario.png: Super Mario Bros. (Nintendo, 1985), captura de la Clase 1.
 - hollow-knight.jpg: Hollow Knight (Team Cherry), captura de la Clase 1.
-- angry-birds.png: Angry Birds (Rovio). Wikimedia Commons, "Angry Birds gameplay.png", CC BY 3.0. https://commons.wikimedia.org/wiki/File:Angry_Birds_gameplay.png (redimensionada a 900 px)
