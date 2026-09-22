@@ -22,7 +22,7 @@ Reglas de trabajo:
 * **Imágenes:** no buscar ni descargar nada de internet (ni scrapear videos o tiendas). Reusar lo que haya en el repo; si falta, dejar `🖼️ IMAGEN PENDIENTE` con la descripción y listarlo en el resumen. Yo las consigo.
 * **Ahorrar tokens:** verificar overflow con un chequeo por JavaScript (alto de cada diapo ≤ 584 px a 1280×720, servidor `python -m http.server 4599` o el `curso-vj` de `.claude/launch.json`), no con capturas de pantalla, salvo que haya un diagrama nuevo que ver.
 * TPs: formato de los v1 (árbol final, partes numeradas, ✅ puntos de control, 🧠 por qué, 🛟 `<details>` de errores, checklist, extras, recursos). Código con tabs y sin tipado estático. PDF con `node v2/herramientas/build-pdf.js v2/semana-0N/tp.md`.
-* Continuidad del código: el survivors nace en la semana 3 (`arena.tscn`, `jugador.gd`, `enemigo.gd` con `class_name Enemigo extends Area2D`, `slime.tscn`, `slime_elite.tscn` heredada, `spawner.gd`, `bala.gd`). Las semanas 4 y 5 construyen sobre eso con los mismos nombres.
+* Continuidad del código: el survivors nace en la semana 3 (`arena.tscn`, `jugador.gd`, `enemigo.gd` con `class_name Enemigo extends Area2D`, `slime.tscn`, `slime_elite.tscn` heredada, `spawner.gd`, `bala.gd`). Las semanas 4 y 5 construyen sobre eso con los mismos nombres. En la semana 4, `slime_elite.gd` pasó a ser el jefe con máquina de estados (`enum Estado`, `cambiar_estado()`) y `slime_elite.tscn` sumó `LabelEstado`, `TimerAtaque` y `TimerGolpe`.
 * Al terminar cada pieza: enlazarla en `v2/index.html`, marcar el mapa, commit en `main` con mensaje en español sin tildes, push, y pasarme los links. Si una decisión es mía, preguntá una vez y seguí con lo demás.
 
 ---
@@ -34,7 +34,7 @@ Reglas de trabajo:
 | 1 | ✅ C1 | ✅ C2 | ✅ TP1 (escena + juego de texto) |
 | 2 | ✅ C3 (con vectores) | ✅ C4 (físicas y señales) | ✅ TP2 (arena + plataformero) |
 | 3 | ✅ C5 (POO pura) | ✅ C5+ (la horda en vivo) | ✅ TP3 (base del survivors) |
-| 4 | C8 · IA | C8+ · el jefe en vivo | TP8 · el jefe piensa |
+| 4 | ✅ C8 (IA y máquinas de estado) | ✅ C8+ (el jefe en vivo) | ✅ TP4 (el jefe piensa) |
 | 5 | C7 · look and feel | C6 · UI | TP7+6 · terminar el juego |
 | 6 | Presentación de los TPs | — | — |
 

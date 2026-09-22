@@ -104,10 +104,15 @@ Notas de Javier sobre la v1, para aplicar al construir cada clase de la v2. **No
 - [x] Diapo 7 (tipado estático): queda rara, no se sabe dónde va. Quizás a C2. *(movida a C2 v2, después de "Tipos de datos")*
 - [x] Reescribir como POO pura (ver semana 3). Lo de spawning pasa a C5+. *(C5 v2: objeto, clase vs objeto, 4 pilares con ejemplos de juegos, herencia en GDScript, "es un" vs "tiene un", ejercicio de diseño del survivors. Hueco de imagen pendiente en la diapo 7)*
 
+### Semana 4 (C8, C8+, TP4)
+- [x] C8 teórica: la parte de IA de la Clase 08 v1 sin voseo y sin tipado estático. Salen las diapos de código fino ("funciones cortas", "agregar GOLPEADO"), que pasan al C8+, y el cierre de la diplomatura (juegos comerciales, recorrido, recursos), que queda para la semana 6. Se suman un ejercicio en papel (la máquina de Boo + la pregunta de histéresis), su solución, resumen y próxima clase.
+- [x] C8+ teórico-práctica: cuatro bloques en vivo sobre el proyecto `clase-05` (sin proyecto de partida nuevo): ACECHAR ⇄ PERSEGUIR con `LabelEstado`, ATACAR con `TimerAtaque` y el kamikaze anulado, GOLPEADO con la bomba de Enter, y `cambiar_estado()` con un color por estado. Desafío: estado AVISO (Hollow Knight).
+- [x] TP4 "El jefe piensa": sobre el `tp3`, en `slime_elite.gd` (no `enemigo_elite.gd`). Los nodos nuevos se agregan en el editor, no por código. Jefe con vida 12, velocidad 70, daño 15. Parte 4 `cambiar_estado()`, Parte 5 ajustar números. **La exportación del TP8 anterior salió de acá** y queda para la semana 5 (decisión pendiente 1).
+
 ## 4 · Decisiones pendientes
 
-1. **Semana 5:** qué entra del TP8 actual (cámara, piso infinito, ranking guardado, exportar) y dónde vive el **aporte propio** para que tengan algo que mostrar en el cierre.
-2. *(C5+ hecho sin proyecto de partida: la clase arranca con 5 min armando la arena y el jugador, ya vistos en la semana 2. Sigue abierto para C8+ y C6.)* **C5+ como deck nuevo:** conviene que traiga un **proyecto Godot de partida** versionado (`v2/semana-03/proyecto-clase/`) para el código en vivo. Mismo criterio para C2, C4, C8+ y C6.
+1. **Semana 5:** qué entra del TP8 actual (cámara, piso infinito, ranking guardado, exportar; la exportación ya no está en el TP del jefe) y dónde vive el **aporte propio** para que tengan algo que mostrar en el cierre.
+2. *(C5+ hecho sin proyecto de partida: la clase arranca con 5 min armando la arena y el jugador, ya vistos en la semana 2. C8+ también se hizo sin proyecto de partida: arranca del `clase-05` de la semana 3. Sigue abierto para C6.)* **C5+ como deck nuevo:** conviene que traiga un **proyecto Godot de partida** versionado (`v2/semana-03/proyecto-clase/`) para el código en vivo. Mismo criterio para C2, C4, C8+ y C6.
 3. **Godot 4.3+** como mínimo si queda `Parallax2D`. Fijarlo en C1.
 4. ~~**TP3+4:** dónde cortar.~~ Resuelto: movimiento + `clamp` (A) y salto + monedas con señales (B); correr, dash, cámara y victoria como extras. Un solo proyecto `tp2` con dos escenas.
 

@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Diplomatura de Videojuegos · Semana 4 · Clase 8+ — El jefe piensa</title>
+<link rel="stylesheet" href="deck.css" />
+<style>
+  /* Diapos "en vivo": código a la izquierda, pasos + punto de control a la derecha */
+  .live { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 22px; align-items: start; }
+  .live pre.code { margin: 0; }
+  .vivo { display: inline-block; background: #dc2626; color: #fff; font-size: 11px; font-weight: 800; letter-spacing: 0.12em; padding: 3px 9px; border-radius: 999px; margin-left: 10px; vertical-align: middle; }
+  ol.steps.compact li { padding: 6px 0 6px 38px; font-size: 15px; line-height: 1.4; }
+  ol.steps.compact li::before { width: 26px; height: 26px; font-size: 12px; top: 6px; }
+  .consola { background: #1e222a; color: #d6deeb; font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 13.5px; line-height: 1.5; padding: 10px 14px; border-radius: 10px; margin: 10px 0 0; white-space: pre; }
+  .consola .lbl { display: block; color: #7f8aa3; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 4px; font-family: inherit; }
+  .proba { margin-top: 10px; font-size: 14.5px; line-height: 1.45; padding: 10px 14px; }
+  .proba b { color: var(--accent); }
+  .nuevo { background: rgba(124, 58, 237, 0.16); border-radius: 3px; }
+  /* Línea de tiempo del Timer */
+  .tl { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin-top: 8px; }
+  .tl div { text-align: center; font-size: 12.5px; padding: 6px 2px; border-radius: 6px; background: var(--panel-2); color: var(--muted); }
+  .tl div.hit { background: var(--accent); color: #fff; font-weight: 700; }
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck" data-brand="Diplomatura de Videojuegos · Semana 4 · Clase 8+" data-home="../../index.html">
+
+  <!-- ============ INICIO ============ -->
+  <section class="slide title-slide active" data-chapter="Inicio" data-topic="Portada">
+    <div class="title-grid">
+      <div>
+        <div class="slide-eyebrow">Semana 4 · Clase 8+ · Teórico-práctica</div>
+        <h1 class="title">El jefe <span class="accent">piensa</span></h1>
+        <p class="subtitle">La máquina de estados de la clase anterior, escrita en vivo sobre el élite: acechar, perseguir, atacar y sentir el golpe. Un estado por vez, probando cada uno antes de seguir.</p>
+        <p class="small-note">“Se dibuja el diagrama. Cada flecha es un <code>if</code>.”</p>
+      </div>
+      <div class="title-photo" style="border:none; box-shadow:none; background:transparent;">
+        <img src="assets/godot-logo.png" alt="Godot Engine" style="max-height:420px; width:auto; margin:0 auto; display:block;" />
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Inicio" data-topic="Cómo va a ser hoy">
+    <div class="slide-eyebrow">Antes de empezar</div>
+    <h2 class="slide-title">Cómo va a ser la clase de hoy</h2>
+    <div class="columns">
+      <div class="card">
+        <h3>🔴 Cuatro bloques en vivo</h3>
+        <p>Sobre el proyecto <code>clase-05</code> de la semana pasada. Se toca <b>un solo script</b>: <code>slime_elite.gd</code>.</p>
+        <ol class="steps compact" style="margin-top:8px;">
+          <li><b>Dos estados:</b> <code>ACECHAR</code> ⇄ <code>PERSEGUIR</code>, con etiqueta</li>
+          <li><b>Atacar:</b> deja de ser kamikaze y pega cada segundo</li>
+          <li><b>Golpeado:</b> una flecha que entra por un evento</li>
+          <li><b>Que se note:</b> una función <code>cambiar_estado()</code></li>
+        </ol>
+      </div>
+      <div>
+        <div class="card">
+          <h3>👐 Las reglas de siempre</h3>
+          <ul>
+            <li><b>El código se escribe, no se pega.</b></li>
+            <li>Cada bloque termina con un <b>punto de control</b> en pantalla o en la consola.</li>
+            <li>Antes de cada bloque, se mira <b>el diagrama</b>: qué estado y qué flechas se agregan.</li>
+          </ul>
+        </div>
+        <div class="callout" style="margin-top:14px;">La horda <b>no se toca</b>: <code>enemigo.gd</code> queda igual. El slime común sigue siendo kamikaze a propósito; el que piensa es el jefe.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Inicio" data-topic="Punto de partida">
+    <div class="slide-eyebrow">Punto de partida</div>
+    <h2 class="slide-title">Lo que ya hace el élite, y lo que hereda</h2>
+    <div class="columns" style="grid-template-columns:1fr 1fr; align-items:start;">
+      <div>
+        <pre class="code" style="font-size:13px;"><span class="c"># slime_elite.gd, como quedó en la Clase 5+</span>
+<span class="k">extends</span> <span class="t">Enemigo</span>
+
+<span class="k">func</span> <span class="t">_ready</span>():
+	<span class="k">super</span>()
+	vida = <span class="n">5</span>
+	velocidad = <span class="n">35</span>
+	dano = <span class="n">25</span>
+
+<span class="k">func</span> <span class="t">morir</span>():
+	<span class="t">print</span>(<span class="s">"💜 ¡Cayó un élite!"</span>)
+	<span class="k">super</span>()</pre>
+      </div>
+      <div>
+        <table class="tbl" style="font-size:14.5px;">
+          <thead><tr><th>Viene de <code>Enemigo</code></th><th>Hoy…</th></tr></thead>
+          <tbody>
+            <tr><td><code>_process</code>: perseguir siempre</td><td>se <b>reemplaza</b> por la máquina</td></tr>
+            <tr><td><code>_on_body_entered</code>: kamikaze</td><td>se <b>anula</b> (bloque 2)</td></tr>
+            <tr><td><code>recibir_dano()</code></td><td>se <b>amplía</b> con <code>super()</code> (bloque 3)</td></tr>
+            <tr><td><code>morir()</code></td><td>queda igual</td></tr>
+          </tbody>
+        </table>
+        <div class="callout proba">🧪 Para probar sin esperar al spawner: instanciar un <code>slime_elite.tscn</code> a mano dentro de <code>Enemigos</code>, <b>lejos</b> del jugador. Al terminar la clase, se borra.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ BLOQUE 1: DOS ESTADOS ============ -->
+  <section class="slide" data-chapter="Dos estados" data-topic="Sobreescribir _process">
+    <div class="slide-eyebrow">Bloque 1 · la idea</div>
+    <h2 class="slide-title">La hija trae su propio <code>_process</code></h2>
+    <div class="columns">
+      <div class="card">
+        <h3>Sobreescribir una función</h3>
+        <p>Si la clase hija define una función con <b>el mismo nombre</b> que la madre, para ese objeto corre <b>la de la hija</b>.</p>
+        <ul style="font-size:15px;">
+          <li><b>Con <code>super()</code></b> adentro: hace lo de la madre <b>y además</b> lo suyo (como el <code>_ready</code> del élite)</li>
+          <li><b>Sin <code>super()</code></b>: la de la madre <b>no corre</b>. Se reemplaza</li>
+        </ul>
+        <p class="small-note" style="margin-top:6px;">El <code>_process</code> del jefe va <b>sin</b> <code>super()</code>: si no, perseguiría siempre, además de la máquina.</p>
+      </div>
+      <div>
+        <div class="card">
+          <h3>El jugador, una sola vez</h3>
+          <p>El slime común busca al jugador <b>en cada frame</b>. El jefe lo guarda en una variable en <code>_ready()</code>: es siempre el mismo nodo.</p>
+          <pre class="code" style="font-size:12.5px; margin:8px 0 0;"><span class="k">var</span> jugador = <span class="k">null</span>
+<span class="c"># en _ready():</span>
+jugador = get_tree().get_first_node_in_group(<span class="s">"jugador"</span>)</pre>
+        </div>
+        <div class="callout" style="margin-top:12px;">Y una <b>etiqueta</b> sobre la cabeza con el nombre del estado: <code>Estado.keys()[estado]</code> convierte el número del <code>enum</code> en texto. Es la mejor herramienta para depurar una máquina.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Dos estados" data-topic="En vivo: acechar y perseguir">
+    <div class="slide-eyebrow">Bloque 1 <span class="vivo">● EN VIVO</span></div>
+    <h2 class="slide-title"><code>ACECHAR</code> ⇄ <code>PERSEGUIR</code></h2>
+    <div class="live" style="grid-template-columns:1.12fr 0.88fr;">
+      <div class="code-wrap">
+        <pre class="code" style="font-size:11.3px; line-height:1.34;"><span class="k">extends</span> <span class="t">Enemigo</span>
+<span class="k">enum</span> <span class="t">Estado</span> { ACECHAR, PERSEGUIR }
+<span class="k">var</span> estado = <span class="t">Estado</span>.ACECHAR
+<span class="k">var</span> jugador = <span class="k">null</span>
+<span class="k">func</span> <span class="t">_ready</span>():
+	<span class="k">super</span>()
+	vida = <span class="n">12</span>             <span class="c"># es el jefe: aguanta más</span>
+	velocidad = <span class="n">70</span>
+	dano = <span class="n">15</span>
+	jugador = get_tree().get_first_node_in_group(<span class="s">"jugador"</span>)
+
+<span class="k">func</span> <span class="t">_process</span>(delta):     <span class="c"># REEMPLAZA el de Enemigo</span>
+	<span class="k">if</span> jugador == <span class="k">null</span>: <span class="k">return</span>
+	<span class="k">var</span> d = position.distance_to(jugador.position)
+	<span class="k">match</span> estado:
+		<span class="t">Estado</span>.ACECHAR:
+			acechar(delta)                          <span class="c"># hacer</span>
+			<span class="k">if</span> d < <span class="n">250</span>: estado = <span class="t">Estado</span>.PERSEGUIR   <span class="c"># decidir</span>
+		<span class="t">Estado</span>.PERSEGUIR:
+			perseguir(delta)
+			<span class="k">if</span> d > <span class="n">350</span>: estado = <span class="t">Estado</span>.ACECHAR
+	$LabelEstado.text = <span class="t">Estado</span>.keys()[estado]
+<span class="k">func</span> <span class="t">acechar</span>(delta):        <span class="c"># hacia el jugador, a mitad de velocidad</span>
+	<span class="k">var</span> dir = (jugador.position - position).normalized()
+	position += dir * velocidad * <span class="n">0.5</span> * delta
+
+<span class="k">func</span> <span class="t">perseguir</span>(delta):      <span class="c"># lo mismo, a toda velocidad</span>
+	<span class="k">var</span> dir = (jugador.position - position).normalized()
+	position += dir * velocidad * delta</pre>
+      </div>
+      <div>
+        <ol class="steps compact">
+          <li>En <code>slime_elite.tscn</code>: hijo <code>Label</code> llamado <b>LabelEstado</b>, arriba de la cabeza</li>
+          <li><code>enum</code>, <code>estado</code> y <code>jugador</code>. Los números nuevos en <code>_ready()</code></li>
+          <li><code>_process</code> con el <code>match</code>, y las dos funciones</li>
+          <li>Un élite a mano, lejos del jugador. <b>F6</b></li>
+        </ol>
+        <div class="consola"><span class="lbl">✅ Punto de control · en pantalla</span>ACECHAR: se acerca despacio
+A menos de 250 px: PERSEGUIR, acelera
+A más de 350 px: ACECHAR otra vez</div>
+        <div class="callout proba">🧪 <b>Probá:</b> poner <code>250</code> en las dos flechas y quedarse justo en el borde: la etiqueta parpadea. Por eso son dos números distintos.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ BLOQUE 2: ATACAR ============ -->
+  <section class="slide" data-chapter="Atacar" data-topic="Pegar cada segundo">
+    <div class="slide-eyebrow">Bloque 2 · la idea</div>
+    <h2 class="slide-title">Atacar: quieto, y un golpe por segundo</h2>
+    <div class="columns">
+      <div class="card">
+        <h3>⏱️ Un <code>Timer</code> <i>one shot</i> como “enfriamiento”</h3>
+        <p>En cada frame de <code>ATACAR</code> se pregunta: ¿el Timer está frenado? Si sí, pega y lo arranca. Mientras corre, no pega.</p>
+        <div class="tl">
+          <div class="hit">0 s<br>pega</div><div>corre…</div><div>corre…</div><div class="hit">1 s<br>pega</div><div>corre…</div><div class="hit">2 s<br>pega</div>
+        </div>
+        <pre class="code" style="font-size:12.5px; margin:10px 0 0;"><span class="k">if</span> $TimerAtaque.is_stopped():
+	jugador.recibir_dano(dano)
+	$TimerAtaque.start()</pre>
+      </div>
+      <div>
+        <div class="card">
+          <h3>🚫 Anular el kamikaze</h3>
+          <p><code>Enemigo</code> conecta <code>body_entered</code> a <code>_on_body_entered</code>, que pega y se borra. El jefe la redefine <b>vacía</b>:</p>
+          <pre class="code" style="font-size:12.5px; margin:8px 0 0;"><span class="k">func</span> <span class="t">_on_body_entered</span>(body):
+	<span class="k">pass</span>     <span class="c"># el jefe no se sacrifica</span></pre>
+          <p class="small-note" style="margin-top:8px;">La conexión la sigue haciendo el <code>super()</code> de <code>_ready()</code>, pero ahora llama a la función <b>de la hija</b>, que no hace nada.</p>
+        </div>
+        <div class="callout" style="margin-top:12px;">Entra a atacar a <b>40 px</b> y sale a <b>60 px</b>: el margen del ejercicio de Boo (histéresis).</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Atacar" data-topic="En vivo: atacar">
+    <div class="slide-eyebrow">Bloque 2 <span class="vivo">● EN VIVO</span></div>
+    <h2 class="slide-title">Tercer estado: <code>ATACAR</code></h2>
+    <div class="live">
+      <div class="code-wrap">
+        <pre class="code" style="font-size:12.3px;"><span class="k">enum</span> <span class="t">Estado</span> { ACECHAR, PERSEGUIR, <span class="nuevo">ATACAR</span> }
+
+<span class="c"># en el match: PERSEGUIR tiene ahora dos salidas</span>
+		<span class="t">Estado</span>.PERSEGUIR:
+			perseguir(delta)
+			<span class="k">if</span> d < <span class="n">40</span>:    estado = <span class="t">Estado</span>.ATACAR
+			<span class="k">elif</span> d > <span class="n">350</span>: estado = <span class="t">Estado</span>.ACECHAR
+		<span class="t">Estado</span>.ATACAR:
+			atacar()
+			<span class="k">if</span> d > <span class="n">60</span>: estado = <span class="t">Estado</span>.PERSEGUIR
+
+<span class="k">func</span> <span class="t">atacar</span>():                 <span class="c"># quieto: no se mueve</span>
+	<span class="k">if</span> $TimerAtaque.is_stopped():
+		jugador.recibir_dano(dano)
+		$TimerAtaque.start()
+
+<span class="k">func</span> <span class="t">_on_body_entered</span>(body):   <span class="c"># ANULA el kamikaze</span>
+	<span class="k">pass</span></pre>
+      </div>
+      <div>
+        <ol class="steps compact">
+          <li>En <code>slime_elite.tscn</code>: hijo <code>Timer</code> llamado <b>TimerAtaque</b>. Wait Time <code>1</code>, <b>One Shot ✓</b>, Autostart ✗</li>
+          <li><code>ATACAR</code> en el <code>enum</code> y las dos flechas en el <code>match</code></li>
+          <li><code>atacar()</code> y la anulación de <code>_on_body_entered</code></li>
+          <li>F6 y dejarse alcanzar</li>
+        </ol>
+        <div class="consola"><span class="lbl">✅ Punto de control · Output</span>Jugador: 85 de vida
+Jugador: 70 de vida
+Jugador: 55 de vida
+(uno por segundo, y el jefe no desaparece)</div>
+        <div class="callout proba">🧪 <b>Probá:</b> borrar la función con el <code>pass</code>: el jefe vuelve a ser kamikaze. Destildar <b>One Shot</b>: pega una sola vez y nunca más (¿por qué?).</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ BLOQUE 3: GOLPEADO ============ -->
+  <section class="slide" data-chapter="Golpeado" data-topic="Una flecha que entra por evento">
+    <div class="slide-eyebrow">Bloque 3 · la idea</div>
+    <h2 class="slide-title">Una flecha que no sale del <code>match</code></h2>
+    <div class="columns" style="grid-template-columns:1.1fr 0.9fr; align-items:center;">
+      <div class="card" style="padding:10px;">
+        <img src="../assets/diagrama-4-estados.png" alt="Máquina de estados del jefe con GOLPEADO: se entra desde recibir_dano y se sale cuando termina el TimerGolpe" style="width:100%; display:block; border-radius:8px; background:#fff;">
+      </div>
+      <div>
+        <table class="tbl" style="font-size:14.5px;">
+          <thead><tr><th>Flecha</th><th>Disparador</th><th>Dónde vive</th></tr></thead>
+          <tbody>
+            <tr><td>entre los tres de arriba</td><td><b>distancia</b></td><td>el <code>match</code></td></tr>
+            <tr><td>de cualquiera a <code>GOLPEADO</code></td><td><b>evento</b>: un golpe</td><td><code>recibir_dano()</code></td></tr>
+            <tr><td>de <code>GOLPEADO</code> a <code>PERSEGUIR</code></td><td><b>tiempo</b>: 0.5 s</td><td>el <code>match</code></td></tr>
+          </tbody>
+        </table>
+        <div class="callout" style="margin-top:12px;">💥 El <b>empujón</b> es “perseguir al revés”: <code>(position - jugador.position)</code>. Y <b>no lleva <code>delta</code></b>: no es un movimiento por frame, es un salto de 20 px, una sola vez.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Golpeado" data-topic="En vivo: golpeado">
+    <div class="slide-eyebrow">Bloque 3 <span class="vivo">● EN VIVO</span></div>
+    <h2 class="slide-title">Cuarto estado: <code>GOLPEADO</code></h2>
+    <div class="live">
+      <div class="code-wrap">
+        <pre class="code" style="font-size:12.1px;"><span class="k">enum</span> <span class="t">Estado</span> { ACECHAR, PERSEGUIR, ATACAR, <span class="nuevo">GOLPEADO</span> }
+
+<span class="c"># en el match, al final:</span>
+		<span class="t">Estado</span>.GOLPEADO:
+			golpeado()
+			<span class="k">if</span> $TimerGolpe.is_stopped():   <span class="c"># pasó el medio segundo</span>
+				modulate = <span class="t">Color</span>.WHITE
+				estado = <span class="t">Estado</span>.PERSEGUIR
+
+<span class="k">func</span> <span class="t">golpeado</span>():              <span class="c"># ni se mueve ni pega</span>
+	modulate = <span class="t">Color</span>(<span class="n">1</span>, <span class="n">0.4</span>, <span class="n">0.4</span>)
+
+<span class="c"># la flecha de ENTRADA:</span>
+<span class="k">func</span> <span class="t">recibir_dano</span>(cantidad):
+	<span class="k">super</span>(cantidad)            <span class="c"># resta vida; si llega a 0, muere</span>
+	<span class="k">if</span> vida > <span class="n">0</span>:
+		position += (position - jugador.position).normalized() * <span class="n">20</span>
+		$TimerGolpe.start()
+		estado = <span class="t">Estado</span>.GOLPEADO</pre>
+      </div>
+      <div>
+        <ol class="steps compact">
+          <li>Otro <code>Timer</code>: <b>TimerGolpe</b>, Wait Time <code>0.5</code>, <b>One Shot ✓</b></li>
+          <li><code>GOLPEADO</code> en el <code>enum</code>, su rama y <code>golpeado()</code></li>
+          <li><code>recibir_dano()</code> con <code>super(cantidad)</code> y la flecha de entrada</li>
+          <li>F6. Los golpes los da la <b>bomba</b> de la Clase 5+: <b>Enter</b></li>
+        </ol>
+        <div class="consola"><span class="lbl">✅ Punto de control · en pantalla</span>Enter: el jefe retrocede, se pone
+rojo, dice GOLPEADO, queda quieto
+medio segundo y vuelve a PERSEGUIR.
+Al Enter número 12: 💜 ¡Cayó un élite!</div>
+        <div class="callout proba">🧪 <b>Probá:</b> apretar Enter muy seguido: el jefe queda trabado (<i>stun lock</i>). Mover el <code>Color.WHITE</code> adentro de <code>golpeado()</code>: nunca se ve rojo.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Golpeado" data-topic="Línea por línea">
+    <div class="slide-eyebrow">Bloques 1 a 3 · línea por línea</div>
+    <h2 class="slide-title">Qué hace cada parte nueva de <code>slime_elite.gd</code></h2>
+    <table class="tbl" style="font-size:14.5px;">
+      <thead><tr><th style="width:38%">Línea</th><th>Qué hace y por qué</th></tr></thead>
+      <tbody>
+        <tr><td><code>enum Estado { … }</code></td><td>Nombres para los estados. Por dentro son 0, 1, 2, 3; en el código se lee la palabra.</td></tr>
+        <tr><td><code>var estado = Estado.ACECHAR</code></td><td>La única pregunta: ¿qué está haciendo ahora? Arranca donde está el punto del diagrama.</td></tr>
+        <tr><td><code>func _process(delta)</code> sin <code>super()</code></td><td>Reemplaza al de <code>Enemigo</code>. Los slimes comunes siguen usando el de la madre.</td></tr>
+        <tr><td><code>match estado:</code></td><td>Elige <b>una</b> rama por frame. En cada una: hacer, y después decidir.</td></tr>
+        <tr><td><code>$TimerAtaque.is_stopped()</code></td><td>“¿Ya pasó el segundo?”. Sin variables extra ni contar <code>delta</code> a mano.</td></tr>
+        <tr><td><code>func _on_body_entered(body): pass</code></td><td>Anula el kamikaze: misma función, cuerpo vacío.</td></tr>
+        <tr><td><code>super(cantidad)</code> + <code>if vida > 0</code></td><td>La madre resta la vida y decide si muere. Solo si sobrevivió, hay golpe que sentir.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============ BLOQUE 4: QUE SE NOTE ============ -->
+  <section class="slide" data-chapter="Que se note" data-topic="Una sola vez al cambiar">
+    <div class="slide-eyebrow">Bloque 4 · la idea</div>
+    <h2 class="slide-title">Lo que pasa <b>una sola vez</b>, al cambiar de estado</h2>
+    <div class="columns">
+      <div class="card" style="border-top:3px solid var(--red);">
+        <h3 style="color:var(--red);">Hoy: repartido por todos lados</h3>
+        <ul style="font-size:15px;">
+          <li><code>estado = …</code> aparece en <b>seis</b> lugares</li>
+          <li>La etiqueta se reescribe <b>cada frame</b></li>
+          <li>El rojo se pone en <code>golpeado()</code> y se saca en otra rama</li>
+          <li>¿Un color por estado? Habría que tocar cada flecha</li>
+        </ul>
+      </div>
+      <div class="card" style="border-top:3px solid var(--green);">
+        <h3 style="color:var(--green);">Mejor: una función que cambia el estado</h3>
+        <pre class="code" style="font-size:12.5px; margin:6px 0 0;"><span class="k">func</span> <span class="t">cambiar_estado</span>(nuevo):
+	estado = nuevo
+	<span class="c"># y todo lo que tiene que pasar</span>
+	<span class="c"># UNA vez al entrar a un estado</span></pre>
+        <p class="small-note" style="margin-top:8px;">Cada flecha pasa a ser <code>cambiar_estado(Estado.X)</code>. Un solo lugar para el cartel, el color, un sonido o una animación.</p>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:14px;">🎮 Es la <b>animación de aviso</b> de <i>Hollow Knight</i> y el “<b>!</b>” de <i>Metal Gear</i>: lo que el juego muestra justo cuando el enemigo <b>cambia</b> de estado.</div>
+  </section>
+
+  <section class="slide" data-chapter="Que se note" data-topic="En vivo: cambiar_estado">
+    <div class="slide-eyebrow">Bloque 4 <span class="vivo">● EN VIVO</span></div>
+    <h2 class="slide-title"><code>cambiar_estado()</code>: un color y un aviso por estado</h2>
+    <div class="live">
+      <div class="code-wrap">
+        <pre class="code" style="font-size:12px;"><span class="k">func</span> <span class="t">cambiar_estado</span>(nuevo):
+	estado = nuevo
+	<span class="k">var</span> nombre = <span class="t">Estado</span>.keys()[estado]
+	$LabelEstado.text = nombre
+	<span class="t">print</span>(<span class="s">"Jefe → "</span> + nombre)
+	<span class="k">match</span> estado:
+		<span class="t">Estado</span>.ACECHAR:   modulate = <span class="t">Color</span>(<span class="n">1</span>, <span class="n">1</span>, <span class="n">1</span>, <span class="n">0.5</span>)
+		<span class="t">Estado</span>.PERSEGUIR: modulate = <span class="t">Color</span>.WHITE
+		<span class="t">Estado</span>.ATACAR:    modulate = <span class="t">Color</span>(<span class="n">1</span>, <span class="n">0.6</span>, <span class="n">0.2</span>)
+		<span class="t">Estado</span>.GOLPEADO:  modulate = <span class="t">Color</span>(<span class="n">1</span>, <span class="n">0.4</span>, <span class="n">0.4</span>)
+
+<span class="c"># en _ready(), al final:</span>
+	cambiar_estado(<span class="t">Estado</span>.ACECHAR)
+
+<span class="c"># en el match y en recibir_dano(), cada flecha:</span>
+			<span class="k">if</span> d < <span class="n">250</span>: cambiar_estado(<span class="t">Estado</span>.PERSEGUIR)</pre>
+      </div>
+      <div>
+        <ol class="steps compact">
+          <li>Escribir <code>cambiar_estado()</code></li>
+          <li>Reemplazar las seis <code>estado = …</code> (cinco en el <code>match</code>, una en <code>recibir_dano</code>)</li>
+          <li>Borrar la línea de la etiqueta del final de <code>_process</code>, <code>golpeado()</code> y el <code>Color.WHITE</code>: ya los hace la función</li>
+        </ol>
+        <div class="consola"><span class="lbl">✅ Punto de control · Output</span>Jefe → ACECHAR
+Jefe → PERSEGUIR
+Jefe → ATACAR
+Jugador: 85 de vida
+Jefe → GOLPEADO
+Jefe → PERSEGUIR</div>
+        <div class="callout proba">🧪 <b>Probá:</b> poner el <code>print</code> en <code>_process</code> en vez de acá: 60 líneas por segundo. La diferencia entre “cada frame” y “una vez al cambiar”.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CIERRE ============ -->
+  <section class="slide" data-chapter="Cierre" data-topic="Cuando no anda">
+    <div class="slide-eyebrow">🛟 Antes de levantar la mano</div>
+    <h2 class="slide-title">Cuando “no anda”: los sospechosos de hoy</h2>
+    <table class="tbl" style="font-size:14.5px;">
+      <thead><tr><th>Síntoma</th><th>Casi siempre es…</th></tr></thead>
+      <tbody>
+        <tr><td>El jefe <b>no se mueve</b> y la etiqueta está vacía</td><td><code>jugador</code> es <code>null</code>: el élite a mano quedó <b>arriba</b> del Jugador en el árbol. Va dentro de <code>Enemigos</code>.</td></tr>
+        <tr><td>Los slimes comunes <b>también</b> cambiaron</td><td>Se modificó <code>enemigo.gd</code>. Todo lo de hoy va en <code>slime_elite.gd</code>.</td></tr>
+        <tr><td><code>Node not found: "TimerAtaque"</code></td><td>El nodo no existe en <code>slime_elite.tscn</code>, o tiene otro nombre (mayúsculas incluidas).</td></tr>
+        <tr><td>Pega <b>todo el tiempo</b>, no cada segundo</td><td>Falta el <code>$TimerAtaque.start()</code> después de pegar.</td></tr>
+        <tr><td>Parpadea entre dos estados</td><td>El mismo número en la flecha de ida y la de vuelta. Falta el margen.</td></tr>
+        <tr><td>Nunca llega a <code>ATACAR</code></td><td>40 px es poco para sprites grandes: probar <code>d < 60</code> y <code>d > 80</code>.</td></tr>
+        <tr><td>Queda <b>rojo</b> para siempre</td><td>El <code>Color.WHITE</code> no está en la salida de <code>GOLPEADO</code> (o falta <code>cambiar_estado</code> en esa flecha).</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="slide" data-chapter="Cierre" data-topic="Desafío en clase">
+    <div class="slide-eyebrow">Ahora sin ayuda</div>
+    <h2 class="slide-title">Desafío: el aviso antes del golpe</h2>
+    <div class="columns">
+      <div>
+        <ol class="steps" style="font-size:15.5px;">
+          <li>Un estado nuevo, <code>AVISO</code>, entre <code>PERSEGUIR</code> y <code>ATACAR</code>: a menos de 40 px, el jefe pasa a <code>AVISO</code> en vez de atacar</li>
+          <li>En <code>AVISO</code> se queda quieto y <b>amarillo</b> durante 0.4 s (un <code>TimerAviso</code>)</li>
+          <li>Al terminar el Timer: si el jugador sigue a menos de 60 px, <code>ATACAR</code>; si no, <code>PERSEGUIR</code></li>
+        </ol>
+      </div>
+      <div style="align-self:center;">
+        <div class="callout">🎯 <b>Objetivo:</b> primero <b>dibujar</b> la flecha nueva en el diagrama; después, un valor en el <code>enum</code>, una rama en el <code>match</code> y un color en <code>cambiar_estado()</code>. Nada más.</div>
+        <p class="small-note" style="margin-top:12px;">Es el <b>aviso</b> de <i>Hollow Knight</i>: el jugador que lo lee a tiempo, se salva. El jefe se vuelve <b>justo</b>.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Cierre" data-topic="Resumen">
+    <div class="slide-eyebrow">Cierre</div>
+    <h2 class="slide-title">Todo lo que se escribió hoy</h2>
+    <table class="tbl" style="font-size:15px;">
+      <thead><tr><th>Pieza</th><th>Para qué sirve</th><th>Bloque</th></tr></thead>
+      <tbody>
+        <tr><td><b><code>enum</code> + <code>match</code></b></td><td>Nombrar los estados y ejecutar solo la rama del estado actual</td><td>1</td></tr>
+        <tr><td><b>Sobreescribir sin <code>super()</code></b></td><td>Que el jefe tenga su propio <code>_process</code> sin tocar a la horda</td><td>1</td></tr>
+        <tr><td><b><code>Estado.keys()[estado]</code></b></td><td>Ver el estado en una etiqueta: depurar mirando</td><td>1</td></tr>
+        <tr><td><b>Timer <i>one shot</i> + <code>is_stopped()</code></b></td><td>Hacer algo cada X segundos dentro de un estado</td><td>2</td></tr>
+        <tr><td><b>Anular con <code>pass</code></b></td><td>Apagar un comportamiento heredado</td><td>2</td></tr>
+        <tr><td><b>Flecha por evento</b></td><td>Entrar a un estado desde <code>recibir_dano()</code>, fuera del <code>match</code></td><td>3</td></tr>
+        <tr><td><b><code>cambiar_estado()</code></b></td><td>Un solo lugar para lo que pasa una vez al cambiar</td><td>4</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="slide title-slide" data-chapter="Cierre" data-topic="TP y recursos">
+    <div class="slide-eyebrow">Para seguir</div>
+    <h2 class="slide-title">El TP de la semana: el jefe piensa</h2>
+    <div class="columns">
+      <div class="card">
+        <h3>📝 TP 4: el jefe del survivors</h3>
+        <ul>
+          <li>Lo de hoy, sobre el <b>TP3</b>: el élite con sprite animado y barra de vida</li>
+          <li>Los golpes los dan las <b>balas automáticas</b>, no la bomba</li>
+          <li>Colores por estado y un <b>aviso</b> por consola en cada cambio</li>
+          <li>Ajustar los números hasta que el jefe se sienta bien</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>📚 Recursos</h3>
+        <ul>
+          <li>Docs: <i>GDScript basics</i>, secciones <code>enum</code> y <code>match</code>, en <code>docs.godotengine.org</code></li>
+          <li>La referencia de <code>Timer</code></li>
+          <li>GDQuest: <i>Finite State Machine</i> (para ir más lejos)</li>
+        </ul>
+      </div>
+    </div>
+    <p class="small-note" style="margin-top:24px; text-align:center;">La semana que viene el juego se viste: menú, HUD, sonido y game feel. · Logo de Godot © Godot Foundation — CC BY 4.0.</p>
+  </section>
+
+</div>
+
+<script src="deck.js"></script>
+</body>
+</html>

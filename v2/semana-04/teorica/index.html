@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Diplomatura de Videojuegos · Semana 4 · Clase 8 — Enemigos con cerebro</title>
+<link rel="stylesheet" href="deck.css" />
+</head>
+<body>
+
+<div class="deck" id="deck" data-brand="Diplomatura de Videojuegos · Semana 4 · Clase 8" data-home="../../index.html">
+
+  <!-- ============ INICIO ============ -->
+  <section class="slide title-slide active" data-chapter="Inicio" data-topic="Portada">
+    <div class="title-grid">
+      <div>
+        <div class="slide-eyebrow">Semana 4 · Clase 8 · Teórica</div>
+        <h1 class="title">Enemigos con <span class="accent">cerebro</span></h1>
+        <p class="subtitle">Cómo un enemigo <b>decide</b> qué hacer: comportamientos, detección y <b>máquinas de estado</b>. Y al final, tres juegos famosos vistos con esos ojos.</p>
+        <p class="small-note">“El slime de la semana pasada tiene una sola idea. Hoy recibe <b>varias</b>, y la capacidad de cambiar de idea.”</p>
+      </div>
+      <div class="title-photo" style="border:none; box-shadow:none; background:transparent;">
+        <img src="assets/godot-logo.png" alt="Godot Engine" style="max-height:420px; width:auto; margin:0 auto; display:block;" />
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Inicio" data-topic="Objetivos">
+    <div class="slide-eyebrow">Objetivos</div>
+    <h2 class="slide-title">Al terminar la clase van a poder…</h2>
+    <ul class="bullets">
+      <li>Entender qué es la <b>IA de un videojuego</b> (y qué no es), con ejemplos de juegos famosos</li>
+      <li>Reconocer los <b>comportamientos básicos</b> de un enemigo: acechar, perseguir, atacar, reaccionar al golpe</li>
+      <li>Modelar un enemigo como una <b>máquina de estados</b>: estados + transiciones</li>
+      <li>Implementarla en GDScript con <code>enum</code> y <code>match</code></li>
+    </ul>
+    <div class="callout" style="margin-top:18px;">Puente con la semana 3: el slime que <b>persigue</b> es el punto de partida. Hoy el élite se convierte en un jefe que <b>decide</b>.</div>
+  </section>
+
+  <!-- ============ HOOK ============ -->
+  <section class="slide" data-chapter="Hook" data-topic="Hook inicial">
+    <div class="slide-eyebrow">Arranque</div>
+    <h2 class="slide-title">El slime de la semana 3 tiene una sola idea</h2>
+    <div class="columns">
+      <div class="card" style="border-top:3px solid var(--red);"><h3 style="color:var(--red);">Hoy</h3><p>Aparece → persigue al jugador → lo toca. <b>Siempre lo mismo.</b> A los 10 segundos ya se sabe exactamente qué va a hacer. Es <b>predecible</b>, y lo predecible aburre.</p></div>
+      <div class="card" style="border-top:3px solid var(--green);"><h3 style="color:var(--green);">Lo que queremos (para el jefe)</h3><p>Que <b>aceche</b> al jugador de lejos, despacio. Que al acercarse el jugador <b>lo vea</b> y salga a perseguirlo a toda velocidad. Que al alcanzarlo <b>ataque</b>. Que si el jugador se aleja mucho, <b>se calme</b> y vuelva a acechar. Y que cuando recibe un golpe, <b>lo sienta</b>.</p></div>
+    </div>
+    <div class="callout" style="margin-top:22px;">🤔 <b>Para el grupo:</b> ¿cómo escribirían eso con lo que saben? Con <code>if</code>… muchos <code>if</code>. Y ahí está el problema que se resuelve hoy.</div>
+  </section>
+
+  <!-- ============ QUÉ ES IA ============ -->
+  <section class="slide" data-chapter="IA" data-topic="Qué es la IA de un juego">
+    <div class="slide-eyebrow">Concepto</div>
+    <h2 class="slide-title">“IA” en un juego no es lo que parece</h2>
+    <div class="columns">
+      <div class="card" style="border-top:3px solid var(--red);">
+        <h3 style="color:var(--red);">❌ No es</h3>
+        <p>Machine learning, redes neuronales, ChatGPT. Nada de eso corre dentro de un enemigo de videojuego.</p>
+      </div>
+      <div class="card" style="border-top:3px solid var(--green);">
+        <h3 style="color:var(--green);">✅ Es</h3>
+        <p>Un conjunto de <b>reglas simples</b> que hacen que el enemigo <b>parezca</b> que piensa. Comportamiento <b>creíble</b>, no inteligencia real.</p>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:20px;">📏 <b>La regla de oro:</b> la IA de un juego no tiene que ser <b>inteligente</b>, tiene que ser <b>divertida</b>. Un enemigo perfecto que nunca falla es injugable. El arte está en que <b>parezca</b> listo y que igual se lo pueda vencer.</div>
+    <p class="small-note" style="margin-top:14px;">🎮 Cuatro ejemplos famosos, en las próximas diapositivas: <i>Pac-Man</i>, <i>Space Invaders</i>, <i>Commandos</i> y <i>Doom</i>. Ninguno tiene más de tres líneas de “inteligencia”.</p>
+  </section>
+
+  <section class="slide" data-chapter="IA" data-topic="IA famosa: Pac-Man">
+    <div class="slide-eyebrow">🎮 IA famosa · 1 de 4</div>
+    <h2 class="slide-title">Pac-Man (1980): cuatro fantasmas, cuatro reglas</h2>
+    <div class="columns" style="grid-template-columns:0.95fr 1.05fr; align-items:center;">
+      <div class="card" style="padding:12px;">
+        <svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Pac-Man: Blinky apunta a Pac-Man, Pinky apunta cuatro casillas adelante" style="width:100%;height:auto;max-height:330px;display:block;">
+  <defs><marker id="pm-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker></defs>
+  <rect width="400" height="260" rx="12" fill="#1b2230"/>
+  <circle cx="40" cy="150" r="3" fill="#f5d78a"/><circle cx="80" cy="150" r="3" fill="#f5d78a"/><circle cx="200" cy="150" r="3" fill="#f5d78a"/><circle cx="240" cy="150" r="3" fill="#f5d78a"/><circle cx="320" cy="150" r="3" fill="#f5d78a"/><circle cx="360" cy="150" r="3" fill="#f5d78a"/>
+  <line x1="60" y1="150" x2="380" y2="150" stroke="#2d3a52" stroke-width="1" stroke-dasharray="2 6"/>
+  <!-- Pac-Man -->
+  <circle cx="120" cy="150" r="22" fill="#ffe13a"/>
+  <path d="M120,150 L150,132 L150,168 Z" fill="#1b2230"/>
+  <line x1="150" y1="112" x2="196" y2="112" stroke="#ffe13a" stroke-width="2.5" marker-end="url(#pm-ah)"/>
+  <text x="152" y="102" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#ffe13a">va para →</text>
+  <!-- objetivo de Pinky: 4 casillas adelante -->
+  <circle cx="280" cy="150" r="14" fill="none" stroke="#ff9ce6" stroke-width="2.5" stroke-dasharray="5 4"/>
+  <line x1="266" y1="150" x2="294" y2="150" stroke="#ff9ce6" stroke-width="1.5"/><line x1="280" y1="136" x2="280" y2="164" stroke="#ff9ce6" stroke-width="1.5"/>
+  <text x="280" y="196" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#ff9ce6">objetivo de Pinky: 4 casillas adelante</text>
+  <!-- Blinky -->
+  <path d="M34,76 v-16 a16,16 0 0 1 32,0 v16 l-5,-6 l-6,6 l-5,-6 l-5,6 l-6,-6 l-5,6 z" fill="#ff3b3b"/><circle cx="44" cy="58" r="4" fill="#fff"/><circle cx="56" cy="58" r="4" fill="#fff"/><circle cx="45" cy="58" r="2" fill="#1b2230"/><circle cx="57" cy="58" r="2" fill="#1b2230"/>
+  <line x1="62" y1="78" x2="106" y2="128" stroke="#ff3b3b" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#pm-ah)"/>
+  <text x="22" y="34" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#ff3b3b">Blinky: directo a Pac-Man</text>
+  <!-- Pinky -->
+  <path d="M324,76 v-16 a16,16 0 0 1 32,0 v16 l-5,-6 l-6,6 l-5,-6 l-5,6 l-6,-6 l-5,6 z" fill="#ff9ce6"/><circle cx="334" cy="58" r="4" fill="#fff"/><circle cx="346" cy="58" r="4" fill="#fff"/><circle cx="335" cy="58" r="2" fill="#1b2230"/><circle cx="347" cy="58" r="2" fill="#1b2230"/>
+  <line x1="330" y1="80" x2="290" y2="132" stroke="#ff9ce6" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#pm-ah)"/>
+  <text x="378" y="34" text-anchor="end" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#ff9ce6">Pinky: le sale al cruce</text>
+  <text x="200" y="240" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#9aa5b8">dos reglas distintas → sensación de que “lo rodean”</text>
+</svg>
+        <div class="imgcaption">Ilustración propia. Cada fantasma calcula una <b>casilla objetivo</b> distinta.</div>
+      </div>
+      <div>
+        <p style="font-size:16px; line-height:1.5; margin:0 0 12px;">Parece que los fantasmas se <b>coordinan</b> para rodear al jugador. No hay coordinación: cada uno tiene <b>una regla de una línea</b>. Blinky (rojo) apunta a la casilla de Pac-Man. Pinky (rosa) apunta <b>cuatro casillas adelante</b>, así que le sale al cruce. Con dos reglas distintas ya se siente que lo encierran.</p>
+        <div class="code-wrap"><pre class="code" style="font-size:12px;"><span class="c"># Blinky (rojo): persigue directo</span>
+objetivo = pacman.position
+
+<span class="c"># Pinky (rosa): apunta 4 casillas ADELANTE de Pac-Man</span>
+objetivo = pacman.position + pacman.direccion * <span class="n">4</span>
+
+<span class="c"># Inky y Clyde: otras dos reglas, igual de cortas</span></pre></div>
+        <p class="small-note" style="margin-top:10px;">Y cada tanto entran en modo <b>Scatter</b>: se van a su esquina y dejan respirar al jugador. La regla de oro: <b>divertido</b>, no perfecto.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="IA" data-topic="IA famosa: Space Invaders">
+    <div class="slide-eyebrow">🎮 IA famosa · 2 de 4</div>
+    <h2 class="slide-title">Space Invaders (1978): la IA que fue un accidente</h2>
+    <div class="columns" style="grid-template-columns:0.95fr 1.05fr; align-items:center;">
+      <div class="card" style="padding:12px;">
+        <svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Space Invaders: quedan pocos aliens y se mueven más rápido" style="width:100%;height:auto;max-height:330px;display:block;">
+  <defs>
+    <g id="inv" fill="#7cf29a"><rect x="6" y="0" width="3" height="3"/><rect x="15" y="0" width="3" height="3"/><rect x="3" y="3" width="3" height="3"/><rect x="6" y="3" width="3" height="3"/><rect x="9" y="3" width="3" height="3"/><rect x="12" y="3" width="3" height="3"/><rect x="15" y="3" width="3" height="3"/><rect x="18" y="3" width="3" height="3"/><rect x="0" y="6" width="3" height="3"/><rect x="3" y="6" width="3" height="3"/><rect x="9" y="6" width="3" height="3"/><rect x="12" y="6" width="3" height="3"/><rect x="18" y="6" width="3" height="3"/><rect x="21" y="6" width="3" height="3"/><rect x="0" y="9" width="3" height="3"/><rect x="3" y="9" width="3" height="3"/><rect x="6" y="9" width="3" height="3"/><rect x="9" y="9" width="3" height="3"/><rect x="12" y="9" width="3" height="3"/><rect x="15" y="9" width="3" height="3"/><rect x="18" y="9" width="3" height="3"/><rect x="21" y="9" width="3" height="3"/><rect x="3" y="12" width="3" height="3"/><rect x="18" y="12" width="3" height="3"/><rect x="0" y="15" width="3" height="3"/><rect x="6" y="15" width="3" height="3"/><rect x="15" y="15" width="3" height="3"/><rect x="21" y="15" width="3" height="3"/></g>
+    <marker id="si-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker>
+  </defs>
+  <rect width="400" height="260" rx="12" fill="#1b2230"/>
+  <use href="#inv" x="70" y="40"/><use href="#inv" x="116" y="40"/><use href="#inv" x="208" y="40"/><use href="#inv" x="300" y="40"/><use href="#inv" x="70" y="74"/><use href="#inv" x="162" y="74"/><use href="#inv" x="254" y="74"/><use href="#inv" x="116" y="108"/><use href="#inv" x="162" y="108"/><use href="#inv" x="254" y="108"/><use href="#inv" x="300" y="108"/>
+  <text x="174" y="54" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="12" fill="#3a4a66">✕</text><text x="266" y="54" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="12" fill="#3a4a66">✕</text><text x="128" y="88" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="12" fill="#3a4a66">✕</text><text x="220" y="88" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="12" fill="#3a4a66">✕</text><text x="312" y="88" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="12" fill="#3a4a66">✕</text><text x="82" y="122" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="12" fill="#3a4a66">✕</text><text x="220" y="122" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="12" fill="#3a4a66">✕</text>
+  <line x1="60" y1="152" x2="340" y2="152" stroke="#7cf29a" stroke-width="2.5" marker-end="url(#si-ah)"/>
+  <text x="200" y="172" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#7cf29a">quedan 11 de 18 → ya van al doble de velocidad</text>
+  <rect x="180" y="212" width="40" height="14" fill="#5ac8ff"/><rect x="196" y="204" width="8" height="10" fill="#5ac8ff"/>
+  <text x="200" y="246" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#9aa5b8">con 1 solo alien vivo: 55 veces más rápido que al empezar</text>
+</svg>
+        <div class="imgcaption">Ilustración propia. A menos aliens, más velocidad.</div>
+      </div>
+      <div>
+        <p style="font-size:16px; line-height:1.5; margin:0 0 12px;">Los aliens <b>aceleran</b> a medida que mueren, y el final de cada oleada es pura tensión. No fue diseño: el hardware dibujaba <b>más rápido cuantos menos sprites</b> había en pantalla. Tomohiro Nishikado lo vio, le gustó, y <b>lo dejó</b>.</p>
+        <div class="code-wrap"><pre class="code" style="font-size:12px;"><span class="c"># Cada vez que muere un alien, los que quedan se apuran</span>
+<span class="k">func</span> <span class="t">_on_alien_muerto</span>():
+	vivos -= <span class="n">1</span>
+	velocidad = velocidad_base * (<span class="n">55.0</span> / vivos)</pre></div>
+        <p class="small-note" style="margin-top:10px;">Una sola línea de “IA” y es el mecanismo más recordado del juego. <b>Lo que se siente bien, se queda.</b></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="IA" data-topic="IA famosa: Commandos">
+    <div class="slide-eyebrow">🎮 IA famosa · 3 de 4</div>
+    <h2 class="slide-title">Commandos (1998): el cono de visión que se ve</h2>
+    <div class="columns" style="grid-template-columns:0.95fr 1.05fr; align-items:center;">
+      <div class="card" style="padding:12px;">
+        <svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Commandos: cono de visión con zona clara y zona oscura; el comando agachado en la zona oscura no es visto" style="width:100%;height:auto;max-height:330px;display:block;">
+  <rect width="400" height="260" rx="12" fill="#cfc6a3"/>
+  <!-- zona oscura (lejos) -->
+  <polygon points="150,90 370,28 370,232 150,170" fill="#4b5563" opacity="0.45"/>
+  <!-- zona clara (cerca) -->
+  <polygon points="58,130 150,90 150,170" fill="#ffd54a" opacity="0.75"/>
+  <!-- soldado -->
+  <ellipse cx="58" cy="130" rx="18" ry="10" fill="#3f5a3a"/><circle cx="58" cy="130" r="9" fill="#556b4f" stroke="#2c3d2a" stroke-width="2"/>
+  <text x="58" y="160" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" font-weight="700" fill="#2c3d2a">soldado</text>
+  <text x="104" y="126" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="10.5" font-weight="700" fill="#5a4a00">CERCA</text>
+  <text x="104" y="139" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="9.5" fill="#5a4a00">ve siempre</text>
+  <text x="270" y="120" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="10.5" font-weight="700" fill="#e5e7eb">LEJOS</text>
+  <text x="270" y="133" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="9.5" fill="#e5e7eb">solo si está de pie</text>
+  <!-- comando de pie: visto -->
+  <ellipse cx="300" cy="72" rx="8" ry="11" fill="#1f5f3f"/><circle cx="300" cy="58" r="6" fill="#d9a066"/>
+  <text x="322" y="66" font-family="Segoe UI,Arial,sans-serif" font-size="20" font-weight="900" fill="#dc2626">!</text>
+  <text x="300" y="96" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="10" fill="#fff">de pie → visto</text>
+  <!-- comando agachado: no visto -->
+  <ellipse cx="300" cy="196" rx="11" ry="6" fill="#1f5f3f"/><circle cx="300" cy="188" r="5" fill="#d9a066"/>
+  <text x="322" y="196" font-family="Segoe UI,Arial,sans-serif" font-size="16" font-weight="900" fill="#16a34a">✓</text>
+  <text x="300" y="216" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="10" fill="#fff">agachado → invisible</text>
+  <text x="200" y="248" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#3f3a22">el cono se dibuja en el piso: el jugador ve exactamente lo que ve el enemigo</text>
+</svg>
+        <div class="imgcaption">Ilustración propia. Dos zonas: <b>clara</b> (cerca) y <b>oscura</b> (lejos).</div>
+      </div>
+      <div>
+        <p style="font-size:16px; line-height:1.5; margin:0 0 12px;">Hecho en Madrid por <b>Pyro Studios</b>. Cada soldado tiene un cono de visión <b>dibujado en el piso</b>. En la zona <b>clara</b> ve al comando siempre. En la zona <b>oscura</b>, solo si está <b>de pie</b>: agachado, pasa. Todo el sigilo del juego sale de esa única regla.</p>
+        <div class="code-wrap"><pre class="code" style="font-size:12px;"><span class="c"># El cono es un Area2D hijo del soldado (Clase 4)</span>
+<span class="k">func</span> <span class="t">_on_cono_body_entered</span>(body):
+	<span class="k">if</span> body.is_in_group(<span class="s">"comando"</span>):
+		<span class="k">if</span> zona == CERCA <span class="k">or</span> body.de_pie:
+			dar_alarma()</pre></div>
+        <p class="small-note" style="margin-top:10px;">Y esto <b>ya se sabe hacer</b>: un <code>Area2D</code> con forma de cono y la señal <code>body_entered</code>. Vuelve a aparecer en dos diapositivas.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="IA" data-topic="IA famosa: Doom">
+    <div class="slide-eyebrow">🎮 IA famosa · 4 de 4</div>
+    <h2 class="slide-title">Doom (1993): un <code>if</code> y los monstruos se pelean</h2>
+    <div class="columns" style="grid-template-columns:0.95fr 1.05fr; align-items:center;">
+      <div class="card" style="padding:12px;">
+        <svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Doom: el monstruo A le tira una bola de fuego al jugador, le pega al monstruo B, y B ataca a A" style="width:100%;height:auto;max-height:330px;display:block;">
+  <defs><marker id="dm-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker></defs>
+  <rect width="400" height="260" rx="12" fill="#1b2230"/>
+  <!-- jugador -->
+  <circle cx="60" cy="205" r="11" fill="#5ac8ff"/><rect x="52" y="216" width="16" height="18" rx="3" fill="#5ac8ff"/>
+  <text x="60" y="250" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#5ac8ff">jugador</text>
+  <!-- A dispara hacia el jugador -->
+  <line x1="300" y1="82" x2="196" y2="143" stroke="#ff8a3b" stroke-width="2" stroke-dasharray="6 4"/>
+  <line x1="196" y1="143" x2="88" y2="196" stroke="#ff8a3b" stroke-width="1.5" stroke-dasharray="2 6" opacity="0.5"/>
+  <circle cx="196" cy="143" r="9" fill="#ff8a3b"/><circle cx="196" cy="143" r="4" fill="#ffe13a"/>
+  <text x="60" y="64" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#ff8a3b">1 · A le tira una bola de fuego…</text>
+  <rect x="286" y="50" width="28" height="26" rx="6" fill="#b45309"/><rect x="291" y="57" width="6" height="6" fill="#fff"/><rect x="303" y="57" width="6" height="6" fill="#fff"/><rect x="293" y="59" width="3" height="3" fill="#1b2230"/><rect x="305" y="59" width="3" height="3" fill="#1b2230"/><path d="M292,68 l4,4 l4,-4 l4,4 l4,-4" stroke="#fff" stroke-width="2" fill="none"/><text x="300" y="92" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#e5e7eb">monstruo A</text>
+  <rect x="166" y="138" width="28" height="26" rx="6" fill="#7c3aed"/><rect x="171" y="145" width="6" height="6" fill="#fff"/><rect x="183" y="145" width="6" height="6" fill="#fff"/><rect x="173" y="147" width="3" height="3" fill="#1b2230"/><rect x="185" y="147" width="3" height="3" fill="#1b2230"/><path d="M172,156 l4,4 l4,-4 l4,4 l4,-4" stroke="#fff" stroke-width="2" fill="none"/><text x="180" y="180" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#e5e7eb">monstruo B</text>
+  <text x="112" y="150" text-anchor="end" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#ffe13a">2 · …y le pega a B</text>
+  <!-- B contraataca a A -->
+  <path d="M200,132 C240,120 260,100 284,84" stroke="#dc2626" stroke-width="2.5" fill="none" marker-end="url(#dm-ah)"/>
+  <text x="330" y="132" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" font-weight="700" fill="#dc2626">3 · B ahora ataca a A</text>
+  <text x="200" y="235" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#9aa5b8">se olvidan del jugador y se pelean entre ellos: “infighting”</text>
+</svg>
+        <div class="imgcaption">Ilustración propia. El <i>infighting</i>: una regla, un comportamiento que nadie programó.</div>
+      </div>
+      <div>
+        <p style="font-size:16px; line-height:1.5; margin:0 0 12px;">Regla: cuando un monstruo <b>recibe daño</b>, pasa a atacar <b>a quien lo golpeó</b>. Si a un monstruo se le escapa una bola de fuego y le pega a otro, el otro <b>se da vuelta y lo ataca</b>. Los jugadores lo usan como táctica: ponerse en el medio y dejar que se maten entre ellos.</p>
+        <div class="code-wrap"><pre class="code" style="font-size:12px;"><span class="c"># Cuando un monstruo recibe daño, apunta a quien lo golpeó</span>
+<span class="k">func</span> <span class="t">recibir_dano</span>(cantidad, atacante):
+	vida -= cantidad
+	<span class="k">if</span> atacante != jugador:
+		objetivo = atacante        <span class="c"># ¡se pelean entre ellos!</span></pre></div>
+        <p class="small-note" style="margin-top:10px;"><b>Ninguno de los cuatro ejemplos tiene más de tres líneas de decisión.</b> Eso es la IA de un videojuego. Y atención a este: el jefe de hoy también va a <b>cambiar de comportamiento al recibir daño</b>.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ COMPORTAMIENTOS ============ -->
+  <section class="slide" data-chapter="IA" data-topic="Comportamientos básicos">
+    <div class="slide-eyebrow">Los ladrillos</div>
+    <h2 class="slide-title">Los comportamientos básicos de un enemigo</h2>
+    <div class="columns" style="grid-template-columns:1.15fr 0.85fr;">
+      <div class="card" style="border-top:3px solid var(--green); padding:14px 16px;">
+        <h3 style="color:var(--green); margin-bottom:8px;">✅ Lo que va (nuestro jefe)</h3>
+        <table class="tbl" style="font-size:14px;">
+          <thead><tr><th>Comportamiento</th><th>Qué hace</th><th>En una línea</th></tr></thead>
+          <tbody>
+            <tr><td><b>🏃 Perseguir</b></td><td>Va hacia el jugador <i>(ya está: semana 3)</i></td><td><code>dir = (jugador.position - position).normalized()</code></td></tr>
+            <tr><td><b>🕵️ Acechar</b></td><td>Lo sigue de lejos, <b>despacio</b></td><td><code>position += dir * vel * 0.5 * delta</code></td></tr>
+            <tr><td><b>⚔️ Atacar</b></td><td>Se frena y pega cada tanto</td><td><code>if $Timer.is_stopped(): pegar()</code></td></tr>
+            <tr><td><b>💥 Golpeado</b></td><td><i>On hit</i>: knockback y <b>congelado 0.5 s</b></td><td><code>position += dir_atras * 20</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card" style="border-top:3px solid var(--muted); padding:14px 16px;">
+        <h3 style="color:var(--muted); margin-bottom:8px;">🧭 Otras opciones (hoy no)</h3>
+        <ul style="font-size:14px; line-height:1.45; margin:0; padding-left:18px;">
+          <li><b>Patrullar</b> (caminar al azar): en un <i>survivors</i> es un error. Los enemigos se van de pantalla y el jugador los evita para siempre.</li>
+          <li><b>Huir</b> con poca vida: un jefe que escapa es un jefe que <b>no se enfrenta</b>. Frustra.</li>
+          <li><b>Esquivar balas</b>: se puede con un <code>Area2D</code> que detecte la bala venir. Queda para proyectos propios.</li>
+          <li><b>Invocar</b> minions: <code>instantiate()</code> desde el jefe. Todo lo que hace falta ya se vio en la semana 3.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:14px;">Cada uno es <b>trivial</b> por separado: ya saben escribirlos. Lo difícil no es cada comportamiento, es <b>cuándo cambiar de uno a otro</b>.</div>
+  </section>
+
+  <section class="slide" data-chapter="IA" data-topic="Detectar al jugador">
+    <div class="slide-eyebrow">Sentidos</div>
+    <h2 class="slide-title">¿Cómo “ve” al jugador?</h2>
+    <div class="columns">
+      <div class="card">
+        <h3>📏 Por distancia</h3>
+        <p>Un número: si está a menos de <b>X píxeles</b>, lo vio. Ojo: <b>el slime de la semana 3 no detecta nada</b>, siempre sabe dónde está el jugador y va. El <code>distance_to</code> lo usó el <b>jugador</b> para elegir a quién disparar; ahora se lo damos al <b>enemigo</b>, para que <b>decida</b>.</p>
+        <pre class="code" style="margin:10px 0 0; font-size:12.5px;"><span class="k">var</span> d = position.distance_to(jugador.position)
+<span class="k">if</span> d < <span class="n">250</span>:
+	<span class="c"># ¡lo vi!</span></pre>
+        <p class="small-note" style="margin-top:8px;">Simple, barato, sirve para el 90 % de los casos. <b>Es lo que usa el jefe.</b></p>
+      </div>
+      <div class="card">
+        <h3>👁️ Con un Area2D de visión</h3>
+        <p>Un <code>Area2D</code> hijo del enemigo, con forma de círculo o cono. Cuando el jugador <b>entra</b>, se emite <code>body_entered</code>; cuando <b>sale</b>, <code>body_exited</code>.</p>
+        <p class="small-note" style="margin-top:8px;">Más flexible: conos de visión, sigilo. Es <b>exactamente</b> el cono de <i>Commandos</i>, y todo lo que necesitan ya lo vieron en la Clase 4.</p>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:14px;">🎮 <i>Commandos</i> y <i>Metal Gear Solid</i> hacen lo mismo con la segunda opción: el cono es un <b>área</b>. El jugador entra → “<b>!</b>” → cambia de estado. El jefe de hoy, para empezar, usa la primera: <b>un número</b>.</div>
+  </section>
+
+  <!-- ============ EL PROBLEMA ============ -->
+  <section class="slide" data-chapter="Máquina de estados" data-topic="El problema del if">
+    <div class="slide-eyebrow">El problema</div>
+    <h2 class="slide-title">Con <code>if</code> se vuelve un spaghetti</h2>
+    <div class="columns">
+      <div class="code-wrap">
+        <pre class="code" style="font-size:11.5px;"><span class="k">func</span> <span class="t">_process</span>(delta):
+	<span class="k">if</span> golpeado:
+		<span class="k">if</span> $TimerGolpe.is_stopped(): golpeado = <span class="k">false</span>
+	<span class="k">elif</span> lo_vi <span class="k">and</span> <span class="k">not</span> atacando:
+		perseguir(delta)
+		<span class="k">if</span> d < <span class="n">40</span>: atacando = <span class="k">true</span>
+	<span class="k">elif</span> atacando <span class="k">and</span> <span class="k">not</span> golpeado:
+		atacar()
+		<span class="k">if</span> d > <span class="n">60</span>: atacando = <span class="k">false</span>
+	<span class="k">elif</span> <span class="k">not</span> lo_vi:
+		acechar(delta)
+		<span class="k">if</span> d < <span class="n">250</span>: lo_vi = <span class="k">true</span>
+
+<span class="k">func</span> <span class="t">recibir_dano</span>(cantidad):
+	golpeado = <span class="k">true</span>   <span class="c"># ¿y atacando? ¿y lo_vi? ¿los toco o no?</span>
+	<span class="c"># ¿y si golpeado y atacando son true a la vez? 🤯</span></pre>
+      </div>
+      <div style="align-self:center;">
+        <div class="card" style="border-color:var(--red);">
+          <h3 style="color:var(--red);">Lo que sale mal</h3>
+          <ul>
+            <li>Tres booleanos que <b>pueden contradecirse</b></li>
+            <li>Cada comportamiento nuevo <b>rompe los anteriores</b></li>
+            <li>Imposible saber “¿qué está haciendo ahora?”</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FSM ============ -->
+  <section class="slide" data-chapter="Máquina de estados" data-topic="Qué es una máquina de estados">
+    <div class="slide-eyebrow">La solución</div>
+    <h2 class="slide-title">Máquina de estados: una sola pregunta</h2>
+    <div class="columns">
+      <div>
+        <p class="subtitle" style="font-size:18px;">En vez de tres booleanos, <b>una variable</b>: <code>estado</code>. El enemigo está <b>en un estado a la vez</b>, y solo cambia por <b>transiciones</b> definidas.</p>
+        <ul class="bullets" style="font-size:17px;">
+          <li><b>Estado:</b> qué está haciendo (acechar, perseguir…)</li>
+          <li><b>Transición:</b> la condición para pasar a otro</li>
+          <li>Un estado <b>a la vez</b>. Nunca dos.</li>
+        </ul>
+      </div>
+      <div class="card" style="align-self:center;">
+        <h3>🚦 Analogía: el semáforo</h3>
+        <p>Tres estados: <b>verde</b>, <b>amarillo</b>, <b>rojo</b>. Nunca dos prendidos. Y las transiciones son fijas: verde → amarillo → rojo → verde. Nadie se confunde.</p>
+        <p class="small-note" style="margin-top:8px;">Se llama <i>Finite State Machine</i> (FSM). “Finita” porque los estados son pocos y conocidos.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Máquina de estados" data-topic="El diagrama del slime">
+    <div class="slide-eyebrow">Primero se dibuja, después se programa</div>
+    <h2 class="slide-title">La máquina de estados del jefe</h2>
+    <svg viewBox="0 0 1100 440" width="100%" height="360" style="display:block; margin:0 auto;" aria-label="Diagrama de estados del jefe: acechar, perseguir, atacar y golpeado (on hit)">
+      <defs>
+        <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"/></marker>
+        <marker id="ahr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--red)"/></marker>
+      </defs>
+      <!-- inicio -->
+      <circle cx="170" cy="28" r="7" fill="var(--accent)"/>
+      <line x1="170" y1="36" x2="170" y2="104" stroke="var(--accent)" stroke-width="2.5" marker-end="url(#ah)"/>
+      <text x="186" y="66" font-size="13" fill="var(--muted)">arranca acá</text>
+      <!-- estados -->
+      <rect x="60" y="110" width="220" height="80" rx="40" fill="var(--panel)" stroke="var(--accent)" stroke-width="3"/>
+      <text x="170" y="158" text-anchor="middle" font-size="22" font-weight="800" fill="var(--text)">ACECHAR</text>
+      <rect x="440" y="110" width="220" height="80" rx="40" fill="var(--panel)" stroke="var(--accent)" stroke-width="3"/>
+      <text x="550" y="158" text-anchor="middle" font-size="22" font-weight="800" fill="var(--text)">PERSEGUIR</text>
+      <rect x="820" y="110" width="220" height="80" rx="40" fill="var(--panel)" stroke="var(--accent)" stroke-width="3"/>
+      <text x="930" y="158" text-anchor="middle" font-size="22" font-weight="800" fill="var(--text)">ATACAR</text>
+      <!-- transiciones por distancia -->
+      <line x1="284" y1="135" x2="434" y2="135" stroke="var(--accent)" stroke-width="2.5" marker-end="url(#ah)"/>
+      <text x="359" y="121" text-anchor="middle" font-size="13" fill="var(--muted)">jugador a menos de 250 px</text>
+      <line x1="436" y1="168" x2="286" y2="168" stroke="var(--accent)" stroke-width="2.5" marker-end="url(#ah)"/>
+      <text x="359" y="194" text-anchor="middle" font-size="13" fill="var(--muted)">lo perdió: más de 350 px</text>
+      <line x1="664" y1="135" x2="814" y2="135" stroke="var(--accent)" stroke-width="2.5" marker-end="url(#ah)"/>
+      <text x="739" y="121" text-anchor="middle" font-size="13" fill="var(--muted)">a menos de 40 px</text>
+      <line x1="816" y1="168" x2="666" y2="168" stroke="var(--accent)" stroke-width="2.5" marker-end="url(#ah)"/>
+      <text x="739" y="194" text-anchor="middle" font-size="13" fill="var(--muted)">se alejó: más de 60 px</text>
+      <!-- GOLPEADO (on hit) -->
+      <rect x="440" y="300" width="220" height="80" rx="40" fill="var(--panel)" stroke="var(--red)" stroke-width="3"/>
+      <text x="550" y="348" text-anchor="middle" font-size="22" font-weight="800" fill="var(--red)">GOLPEADO</text>
+      <text x="550" y="404" text-anchor="middle" font-size="13" fill="var(--muted)">on hit: empujón (knockback) + 0.5 s congelado</text>
+      <line x1="230" y1="192" x2="444" y2="318" stroke="var(--red)" stroke-width="2.5" stroke-dasharray="7 5" marker-end="url(#ahr)"/>
+      <text x="296" y="282" text-anchor="middle" font-size="13" fill="var(--red)">le pega una bala</text>
+      <line x1="515" y1="192" x2="515" y2="296" stroke="var(--red)" stroke-width="2.5" stroke-dasharray="7 5" marker-end="url(#ahr)"/>
+      <text x="503" y="250" text-anchor="end" font-size="13" fill="var(--red)">le pega una bala</text>
+      <line x1="870" y1="192" x2="656" y2="318" stroke="var(--red)" stroke-width="2.5" stroke-dasharray="7 5" marker-end="url(#ahr)"/>
+      <text x="804" y="282" text-anchor="middle" font-size="13" fill="var(--red)">le pega una bala</text>
+      <line x1="585" y1="296" x2="585" y2="194" stroke="var(--accent)" stroke-width="2.5" marker-end="url(#ah)"/>
+      <text x="597" y="250" font-size="13" fill="var(--muted)">pasan 0.5 s</text>
+      <!-- nota -->
+      <text x="550" y="432" text-anchor="middle" font-size="14" fill="var(--muted)">Violeta: por distancia o por tiempo · Rojas punteadas: por evento (salen de recibir_dano) · solo UN estado activo a la vez</text>
+    </svg>
+    <div class="callout" style="margin-top:8px;">💡 <b>Se dibuja antes de programar.</b> Si no se puede dibujar, no se puede programar. Y si está dibujado, el código sale casi solo.</div>
+  </section>
+
+  <!-- ============ CÓDIGO ============ -->
+  <section class="slide" data-chapter="Máquina de estados" data-topic="enum y match">
+    <div class="slide-eyebrow">Dos herramientas nuevas</div>
+    <h2 class="slide-title"><code>enum</code> para nombrar, <code>match</code> para elegir</h2>
+    <div class="columns">
+      <div class="code-wrap">
+        <pre class="code" style="font-size:12.5px;"><span class="c"># enum: una lista de nombres. Cada uno</span>
+<span class="c"># es un número por dentro, pero en el</span>
+<span class="c"># código se usa el nombre. Cero confusión.</span>
+<span class="k">enum</span> <span class="t">Estado</span> { ACECHAR, PERSEGUIR, ATACAR, GOLPEADO }
+
+<span class="k">var</span> estado = <span class="t">Estado</span>.ACECHAR</pre>
+      </div>
+      <div class="code-wrap">
+        <pre class="code" style="font-size:12.5px;"><span class="c"># match: un if/elif especializado para</span>
+<span class="c"># comparar UNA variable contra varios</span>
+<span class="c"># valores. Más limpio que elif, elif…</span>
+<span class="k">match</span> estado:
+	<span class="t">Estado</span>.ACECHAR:
+		acechar(delta)
+	<span class="t">Estado</span>.PERSEGUIR:
+		perseguir(delta)
+	<span class="t">Estado</span>.ATACAR:
+		atacar()
+	<span class="t">Estado</span>.GOLPEADO:
+		golpeado()</pre>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:16px;">Podrían escribirlo con <code>if estado == Estado.ACECHAR: … elif …</code> y funcionaría igual. <code>match</code> es lo mismo, pero <b>se lee como el diagrama</b>.</div>
+  </section>
+
+  <section class="slide" data-chapter="Máquina de estados" data-topic="El _process completo">
+    <div class="slide-eyebrow">El corazón</div>
+    <h2 class="slide-title">El <code>_process</code>: hacer + decidir</h2>
+    <div class="columns" style="grid-template-columns:1.15fr 0.85fr;">
+      <div class="code-wrap">
+        <pre class="code" style="font-size:12px;"><span class="k">func</span> <span class="t">_process</span>(delta):
+	<span class="k">var</span> d = distancia_al_jugador()
+	<span class="k">match</span> estado:
+		<span class="t">Estado</span>.ACECHAR:
+			acechar(delta)                  <span class="c"># hacer</span>
+			<span class="k">if</span> d < <span class="n">250</span>: estado = <span class="t">Estado</span>.PERSEGUIR   <span class="c"># decidir</span>
+		<span class="t">Estado</span>.PERSEGUIR:
+			perseguir(delta)
+			<span class="k">if</span> d < <span class="n">40</span>:    estado = <span class="t">Estado</span>.ATACAR
+			<span class="k">elif</span> d > <span class="n">350</span>: estado = <span class="t">Estado</span>.ACECHAR
+		<span class="t">Estado</span>.ATACAR:
+			atacar()
+			<span class="k">if</span> d > <span class="n">60</span>:  estado = <span class="t">Estado</span>.PERSEGUIR
+		<span class="t">Estado</span>.GOLPEADO:
+			golpeado()                      <span class="c"># on hit: quieto y rojo</span>
+			<span class="k">if</span> $TimerGolpe.is_stopped(): estado = <span class="t">Estado</span>.PERSEGUIR</pre>
+      </div>
+      <div style="align-self:center;">
+        <div class="card">
+          <h3>El patrón, siempre igual</h3>
+          <p>En cada estado, dos cosas y en este orden:</p>
+          <ol style="margin:8px 0 0; padding-left:20px; font-size:15px; line-height:1.5;">
+            <li><b>Hacer</b> lo que corresponde al estado</li>
+            <li><b>Decidir</b> si cambio de estado</li>
+          </ol>
+          <p class="small-note" style="margin-top:10px;">Comparado con el diagrama: <b>cada <code>if</code> es una flecha</b>. Falta una sola: la de <b>entrada</b> a <code>GOLPEADO</code>, que no depende de la distancia y vive en <code>recibir_dano()</code>. Se escribe en vivo en la Clase 8+.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Máquina de estados" data-topic="En juegos reales: Pac-Man">
+    <div class="slide-eyebrow">🎮 Máquinas de estado en juegos que conocés · 1 de 3</div>
+    <h2 class="slide-title">Pac-Man: el fantasma tiene cuatro estados</h2>
+    <div class="columns" style="grid-template-columns:0.9fr 1.1fr; align-items:start;">
+      <div class="card" style="padding:12px; display:flex; flex-direction:column; align-items:center;">
+        <img src="assets/pacman-gameplay.png" alt="Recreación píxel a píxel del original (Wikimedia Commons). Pac-Man © Bandai Namco." style="width:auto; max-width:100%; max-height:300px; image-rendering:pixelated; border-radius:8px;">
+        <div class="imgcaption">Recreación píxel a píxel del original (Wikimedia Commons). <i>Pac-Man</i> © Bandai Namco.</div>
+      </div>
+      <div>
+        <div class="card" style="padding:10px 12px 6px;"><svg viewBox="0 0 560 170" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Estados del fantasma: scatter, chase, frightened, eaten" style="width:100%;height:auto;display:block;">
+  <defs><marker id="pk-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--accent)"/></marker></defs><defs><marker id="pk-r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--red)"/></marker></defs>
+  <rect x="20" y="33" width="120" height="34" rx="17" style="fill:var(--panel);stroke:var(--accent);stroke-width:2.5"/><text x="80" y="55" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="12.5" font-weight="800" style="fill:var(--text)">SCATTER</text><rect x="220" y="33" width="120" height="34" rx="17" style="fill:var(--panel);stroke:var(--accent);stroke-width:2.5"/><text x="280" y="55" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="12.5" font-weight="800" style="fill:var(--text)">CHASE</text><rect x="395" y="33" width="150" height="34" rx="17" style="fill:var(--panel);stroke:var(--accent);stroke-width:2.5"/><text x="470" y="55" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="12.5" font-weight="800" style="fill:var(--text)">FRIGHTENED</text>
+  <line x1="142" y1="42" x2="218" y2="42" style="stroke:var(--accent);stroke-width:2"  marker-end="url(#pk-a)"/><text x="180" y="34" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" style="fill:var(--muted)">pasan 7 s</text>
+  <line x1="218" y1="58" x2="142" y2="58" style="stroke:var(--accent);stroke-width:2"  marker-end="url(#pk-a)"/><text x="180" y="74" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" style="fill:var(--muted)">pasan 20 s</text>
+  <line x1="342" y1="42" x2="393" y2="42" style="stroke:var(--red);stroke-width:2" stroke-dasharray="6 4" marker-end="url(#pk-r)"/><text x="367" y="30" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" style="fill:var(--red)">come la píldora</text>
+  <line x1="393" y1="58" x2="342" y2="58" style="stroke:var(--accent);stroke-width:2"  marker-end="url(#pk-a)"/><text x="367" y="88" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" style="fill:var(--muted)">pasan unos segundos</text>
+  <rect x="410" y="113" width="120" height="34" rx="17" style="fill:var(--panel);stroke:var(--accent);stroke-width:2.5"/><text x="470" y="135" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="12.5" font-weight="800" style="fill:var(--text)">EATEN</text>
+  <line x1="470" y1="68" x2="470" y2="112" style="stroke:var(--red);stroke-width:2" stroke-dasharray="6 4" marker-end="url(#pk-r)"/><text x="478" y="95" text-anchor="start" font-family="Segoe UI,Arial,sans-serif" font-size="11" style="fill:var(--red)">Pac-Man lo come</text>
+  <path d="M410,130 L300,130 L300,72" fill="none" style="stroke:var(--accent);stroke-width:2" marker-end="url(#pk-a)"/><text x="355" y="146" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" style="fill:var(--muted)">vuelve a la casa</text>
+  <circle cx="80" cy="8" r="4" style="fill:var(--accent)"/><line x1="80" y1="12" x2="80" y2="32" style="stroke:var(--accent);stroke-width:2"  marker-end="url(#pk-a)"/>
+</svg></div>
+        <ul style="font-size:14.5px; line-height:1.45; margin:10px 0 0; padding-left:18px;">
+          <li><b>Estados:</b> <b>Scatter</b> (cada uno a su esquina), <b>Chase</b> (cazan a Pac-Man), <b>Frightened</b> (azules, huyen), <b>Eaten</b> (ojos que vuelven a la casa).</li>
+          <li><b>Qué dispara los cambios:</b> Scatter ⇄ Chase cambian <b>por tiempo</b>, con un reloj fijo: 7 s, 20 s, 7 s, 20 s… Frightened entra <b>por evento</b> (la píldora grande) y sale por tiempo.</li>
+          <li><b>Cómo lo muestra:</b> El color. Azul = se lo puede comer. Y <b>parpadea</b> justo antes de salir del estado: el juego avisa que se le acaba el tiempo.</li>
+        </ul>
+        <p class="small-note" style="margin-top:8px;">Es exactamente la máquina del jefe: flechas por <b>tiempo</b> y flechas por <b>evento</b> conviviendo. En 1980.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Máquina de estados" data-topic="En juegos reales: Metal Gear Solid">
+    <div class="slide-eyebrow">🎮 Máquinas de estado en juegos que conocés · 2 de 3</div>
+    <h2 class="slide-title">Metal Gear Solid: el estado está en pantalla</h2>
+    <div class="columns" style="grid-template-columns:0.9fr 1.1fr; align-items:start;">
+      <div class="card" style="padding:12px; display:flex; flex-direction:column; align-items:center;">
+        <img src="assets/mgs-gameplay.jpg" alt="Metal Gear Solid (1998): Snake escondido tras el tanque, el guardia en Patrol; arriba a la derecha, el radar. © Konami. Uso educativo." style="width:100%; max-height:300px; object-fit:contain; border-radius:8px;">
+        <div class="imgcaption"><i>Metal Gear Solid</i> (1998): Snake escondido tras el tanque, el guardia en <b>Patrol</b>; arriba a la derecha, el radar. © Konami. Uso educativo.</div>
+      </div>
+      <div>
+        <div class="card" style="padding:10px 12px 6px;"><svg viewBox="0 0 560 150" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Estados del guardia: patrol, alert, evasion, caution" style="width:100%;height:auto;display:block;">
+  <defs><marker id="mg-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--accent)"/></marker></defs><defs><marker id="mg-r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--red)"/></marker></defs>
+  <rect x="15" y="33" width="110" height="34" rx="17" style="fill:var(--panel);stroke:var(--accent);stroke-width:2.5"/><text x="70" y="55" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="12.5" font-weight="800" style="fill:var(--text)">PATROL</text><rect x="160" y="33" width="100" height="34" rx="17" style="fill:var(--panel);stroke:var(--accent);stroke-width:2.5"/><text x="210" y="55" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="12.5" font-weight="800" style="fill:var(--text)">ALERT</text><rect x="295" y="33" width="110" height="34" rx="17" style="fill:var(--panel);stroke:var(--accent);stroke-width:2.5"/><text x="350" y="55" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="12.5" font-weight="800" style="fill:var(--text)">EVASION</text><rect x="435" y="33" width="110" height="34" rx="17" style="fill:var(--panel);stroke:var(--accent);stroke-width:2.5"/><text x="490" y="55" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="12.5" font-weight="800" style="fill:var(--text)">CAUTION</text>
+  <line x1="127" y1="50" x2="158" y2="50" style="stroke:var(--red);stroke-width:2" stroke-dasharray="6 4" marker-end="url(#mg-r)"/><text x="142" y="34" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" style="fill:var(--red)">lo ve: “!”</text>
+  <line x1="262" y1="50" x2="293" y2="50" style="stroke:var(--accent);stroke-width:2"  marker-end="url(#mg-a)"/><text x="277" y="34" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" style="fill:var(--muted)">lo pierde</text>
+  <line x1="407" y1="50" x2="433" y2="50" style="stroke:var(--accent);stroke-width:2"  marker-end="url(#mg-a)"/><text x="420" y="34" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" style="fill:var(--muted)">contador a 0</text>
+  <path d="M490,68 L490,110 L70,110 L70,68" fill="none" style="stroke:var(--accent);stroke-width:2" marker-end="url(#mg-a)"/>
+  <text x="280" y="128" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" style="fill:var(--muted)">contador a 0: se olvida de Snake y vuelve a patrullar</text>
+  <path d="M350,68 C330,96 230,96 214,70" fill="none" style="stroke:var(--red);stroke-width:2" stroke-dasharray="6 4" marker-end="url(#mg-r)"/><text x="280" y="98" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" style="fill:var(--red)">lo vuelve a ver: “!”</text>
+</svg></div>
+        <ul style="font-size:14.5px; line-height:1.45; margin:10px 0 0; padding-left:18px;">
+          <li><b>Estados:</b> <b>Patrol</b> (ruta fija), <b>Alert</b> (vio a Snake y llama a todos), <b>Evasion</b> (lo buscan donde lo vieron), <b>Caution</b> (patrullan nerviosos).</li>
+          <li><b>Qué dispara los cambios:</b> Entrar a Alert es <b>por evento</b>: el cono de visión agarró a Snake. Salir de Evasion y de Caution es <b>por tiempo</b>: un contador que baja hasta cero.</li>
+          <li><b>Cómo lo muestra:</b> El “<b>!</b>” sobre la cabeza es la transición dibujada. Y el <b>contador</b> aparece en el radar: es un <code>Timer</code> a la vista, como el <code>TimerGolpe</code> del jefe.</li>
+        </ul>
+        <p class="small-note" style="margin-top:8px;">Todo el sigilo es jugar con esa máquina: esconderse hasta que el contador llegue a cero.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Máquina de estados" data-topic="En juegos reales: Hollow Knight">
+    <div class="slide-eyebrow">🎮 Máquinas de estado en juegos que conocés · 3 de 3</div>
+    <h2 class="slide-title">Hollow Knight y los <i>souls</i>: leer el estado es el juego</h2>
+    <div class="columns" style="grid-template-columns:0.9fr 1.1fr; align-items:start;">
+      <div class="card" style="padding:12px; display:flex; flex-direction:column; align-items:center;">
+        <img src="assets/hollow-knight-gameplay.jpg" alt="Hollow Knight (2017): el False Knight, en el estado aviso, con la maza arriba. © Team Cherry. Uso educativo." style="width:100%; max-height:300px; object-fit:contain; border-radius:8px;">
+        <div class="imgcaption"><i>Hollow Knight</i> (2017): el False Knight, en el estado <b>aviso</b>, con la maza arriba. © Team Cherry. Uso educativo.</div>
+      </div>
+      <div>
+        <div class="card" style="padding:10px 12px 6px;"><svg viewBox="0 0 560 150" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Estados del enemigo: idle, aggro, y dentro de ataque: aviso, golpe, recuperación" style="width:100%;height:auto;display:block;">
+  <defs><marker id="hk-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--accent)"/></marker></defs><defs><marker id="hk-r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--red)"/></marker></defs>
+  <rect x="15" y="43" width="90" height="34" rx="17" style="fill:var(--panel);stroke:var(--accent);stroke-width:2.5"/><text x="60" y="65" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="12.5" font-weight="800" style="fill:var(--text)">IDLE</text><rect x="135" y="43" width="100" height="34" rx="17" style="fill:var(--panel);stroke:var(--accent);stroke-width:2.5"/><text x="185" y="65" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="12.5" font-weight="800" style="fill:var(--text)">AGGRO</text>
+  <line x1="106" y1="60" x2="133" y2="60" style="stroke:var(--accent);stroke-width:2"  marker-end="url(#hk-a)"/><text x="119" y="46" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" style="fill:var(--muted)">lo ve</text>
+  <rect x="255" y="20" width="295" height="96" rx="12" fill="none" style="stroke:var(--red);stroke-width:2" stroke-dasharray="6 4"/>
+  <text x="268" y="36" text-anchor="start" font-family="Segoe UI,Arial,sans-serif" font-size="11" style="fill:var(--red)">ATAQUE</text>
+  <rect x="265" y="51" width="80" height="34" rx="17" style="fill:var(--panel);stroke:var(--red);stroke-width:2.5"/><text x="305" y="73" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="12.5" font-weight="800" style="fill:var(--red)">AVISO</text><rect x="362" y="51" width="80" height="34" rx="17" style="fill:var(--panel);stroke:var(--red);stroke-width:2.5"/><text x="402" y="73" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="12.5" font-weight="800" style="fill:var(--red)">GOLPE</text><rect x="458" y="51" width="84" height="34" rx="17" style="fill:var(--panel);stroke:var(--red);stroke-width:2.5"/><text x="500" y="73" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="12.5" font-weight="800" style="fill:var(--red)">RECUPERA</text>
+  <line x1="237" y1="60" x2="262" y2="60" style="stroke:var(--accent);stroke-width:2"  marker-end="url(#hk-a)"/><text x="250" y="48" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" style="fill:var(--muted)">cerca</text>
+  <line x1="347" y1="68" x2="360" y2="68" style="stroke:var(--red);stroke-width:2"  marker-end="url(#hk-r)"/><line x1="444" y1="68" x2="456" y2="68" style="stroke:var(--red);stroke-width:2"  marker-end="url(#hk-r)"/>
+  <path d="M500,87 L500,128 L185,128 L185,80" fill="none" style="stroke:var(--accent);stroke-width:2" marker-end="url(#hk-a)"/>
+  <text x="345" y="142" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" style="fill:var(--muted)">termina la animación: vuelve a acechar</text>
+  <text x="305" y="106" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" style="fill:var(--red)">“ahí va”</text><text x="402" y="106" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" style="fill:var(--red)">daño</text><text x="500" y="106" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" style="fill:var(--red)">indefenso</text>
+</svg></div>
+        <ul style="font-size:14.5px; line-height:1.45; margin:10px 0 0; padding-left:18px;">
+          <li><b>Estados:</b> <b>Idle</b>, <b>Aggro</b> (sigue al jugador), y el <b>ataque</b> partido en tres: <b>aviso</b> (levanta el arma), <b>golpe</b> (el daño) y <b>recuperación</b> (queda indefenso).</li>
+          <li><b>Qué dispara los cambios:</b> Idle → Aggro por <b>distancia</b>. Aggro → Ataque cuando el jugador está cerca. Dentro del ataque, <b>por tiempo</b>: cada parte es una animación con su duración.</li>
+          <li><b>Cómo lo muestra:</b> La animación de <b>aviso</b> es el juego diciendo “cambié de estado, queda medio segundo”. Aprender a leerla es <i>la</i> habilidad de estos juegos.</li>
+        </ul>
+        <p class="small-note" style="margin-top:8px;">La <b>recuperación</b> es la ventana para pegarle: el equivalente al jefe <b>golpeado</b>, congelado medio segundo.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Máquina de estados" data-topic="En juegos reales: en común">
+    <div class="slide-eyebrow">🎮 Máquinas de estado en juegos que conocés</div>
+    <h2 class="slide-title">¿Qué tienen en común?</h2>
+    <table class="tbl" style="font-size:14.5px;">
+      <thead><tr><th>Juego</th><th>Estados</th><th>Qué dispara los cambios</th><th>Cómo lo muestra</th></tr></thead>
+      <tbody>
+        <tr><td><b>👻 Pac-Man</b></td><td>scatter · chase · frightened · eaten</td><td><b>tiempo</b> (reloj fijo) + <b>evento</b> (píldora)</td><td>el color azul y el parpadeo</td></tr>
+        <tr><td><b>❗ Metal Gear Solid</b></td><td>patrol · alert · evasion · caution</td><td><b>evento</b> (lo ve) + <b>tiempo</b> (contador)</td><td>el “!” y el contador en el radar</td></tr>
+        <tr><td><b>🗡️ Hollow Knight</b></td><td>idle · aggro · aviso · golpe · recuperación</td><td><b>distancia</b> + <b>tiempo</b> (animaciones)</td><td>la animación de aviso</td></tr>
+        <tr style="background:var(--panel-2);"><td><b>🟣 El jefe de hoy</b></td><td>acechar · perseguir · atacar · golpeado</td><td><b>distancia</b> + <b>evento</b> (bala) + <b>tiempo</b> (Timer)</td><td>la etiqueta encima y el rojo</td></tr>
+      </tbody>
+    </table>
+    <div class="callout" style="margin-top:18px;">Cuando decimos que un enemigo es “interesante”, casi siempre estamos diciendo que tiene <b>varios estados</b> y que <b>se nota cuándo cambia</b>. Los tres disparadores que existen ya se conocen: <b>distancia, evento y tiempo</b>.</div>
+  </section>
+
+  <!-- ============ CIERRE ============ -->
+  <section class="slide" data-chapter="Cierre" data-topic="Ejercicio: dibujar una máquina">
+    <div class="slide-eyebrow">✏️ Ejercicio en papel · 10 minutos</div>
+    <h2 class="slide-title">Dibujar la máquina de estados de Boo</h2>
+    <div class="columns" style="grid-template-columns:1.05fr 0.95fr;">
+      <div>
+        <p class="subtitle" style="font-size:17px;">El fantasma <b>Boo</b> de <i>Super Mario</i> tiene una regla famosa: si Mario <b>lo mira</b>, se tapa la cara y se queda quieto; si Mario le da <b>la espalda</b>, avanza hacia él. Si está lejos, flota en el lugar.</p>
+        <ol class="steps" style="font-size:15.5px;">
+          <li>¿Cuántos <b>estados</b> tiene? Ponerles nombre en MAYÚSCULAS, como en el <code>enum</code></li>
+          <li>Dibujar las <b>flechas</b> y escribir la condición de cada una</li>
+          <li>Marcar cada flecha: ¿es por <b>distancia</b>, por <b>evento</b> o por <b>tiempo</b>?</li>
+          <li>¿Qué dato del jugador necesita <b>consultar</b> Boo para decidir?</li>
+        </ol>
+      </div>
+      <div style="align-self:center;">
+        <div class="card">
+          <h3>🧠 Y una pregunta sobre el jefe</h3>
+          <p>El jefe pasa a <code>ATACAR</code> a menos de <b>40 px</b>, pero vuelve a <code>PERSEGUIR</code> recién a más de <b>60 px</b>. ¿Por qué no usar 40 en las dos flechas?</p>
+          <p class="small-note" style="margin-top:8px;">Pista: pensar en un jugador parado justo a 40 px, moviéndose un píxel para cada lado.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Cierre" data-topic="Una solución posible">
+    <div class="slide-eyebrow">✏️ Ejercicio · una solución posible</div>
+    <h2 class="slide-title">Boo: tres estados, y el “evento” es hacia dónde se mira</h2>
+    <div class="columns" style="grid-template-columns:1.1fr 0.9fr; align-items:center;">
+      <div class="card" style="padding:10px 12px 6px;"><svg viewBox="0 0 560 190" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Estados de Boo: flotar, avanzar, taparse" style="width:100%;height:auto;display:block;">
+  <defs><marker id="bo-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--accent)"/></marker></defs>
+  <circle cx="80" cy="14" r="5" style="fill:var(--accent)"/><line x1="80" y1="19" x2="80" y2="46" style="stroke:var(--accent);stroke-width:2" marker-end="url(#bo-a)"/>
+  <rect x="20" y="50" width="120" height="36" rx="18" style="fill:var(--panel);stroke:var(--accent);stroke-width:2.5"/><text x="80" y="73" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="13" font-weight="800" style="fill:var(--text)">FLOTAR</text>
+  <rect x="240" y="50" width="120" height="36" rx="18" style="fill:var(--panel);stroke:var(--accent);stroke-width:2.5"/><text x="300" y="73" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="13" font-weight="800" style="fill:var(--text)">AVANZAR</text>
+  <rect x="420" y="50" width="120" height="36" rx="18" style="fill:var(--panel);stroke:var(--accent);stroke-width:2.5"/><text x="480" y="73" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="13" font-weight="800" style="fill:var(--text)">TAPARSE</text>
+  <line x1="142" y1="60" x2="238" y2="60" style="stroke:var(--accent);stroke-width:2" marker-end="url(#bo-a)"/><text x="190" y="50" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" style="fill:var(--muted)">Mario cerca</text>
+  <line x1="238" y1="78" x2="142" y2="78" style="stroke:var(--accent);stroke-width:2" marker-end="url(#bo-a)"/><text x="190" y="98" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" style="fill:var(--muted)">Mario lejos</text>
+  <line x1="362" y1="60" x2="418" y2="60" style="stroke:var(--accent);stroke-width:2" marker-end="url(#bo-a)"/><text x="390" y="46" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" style="fill:var(--muted)">lo mira</text>
+  <line x1="418" y1="78" x2="362" y2="78" style="stroke:var(--accent);stroke-width:2" marker-end="url(#bo-a)"/><text x="390" y="98" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" style="fill:var(--muted)">le da la espalda</text>
+  <text x="280" y="150" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="12" style="fill:var(--muted)">en cada frame, Boo consulta dos datos de Mario:</text>
+  <text x="280" y="170" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="12" font-weight="700" style="fill:var(--accent)">la distancia y hacia dónde mira (izquierda o derecha)</text>
+</svg></div>
+      <div>
+        <pre class="code" style="font-size:12.5px;"><span class="t">Estado</span>.AVANZAR:
+	avanzar(delta)
+	<span class="k">if</span> mario_me_mira():
+		estado = <span class="t">Estado</span>.TAPARSE
+<span class="t">Estado</span>.TAPARSE:
+	<span class="c"># quieto: no hace nada</span>
+	<span class="k">if</span> <span class="k">not</span> mario_me_mira():
+		estado = <span class="t">Estado</span>.AVANZAR</pre>
+        <div class="callout" style="margin-top:12px;">Sobre los 40 y 60 px: con el mismo número, un jugador parado en el borde haría que el jefe <b>parpadee</b> entre dos estados cada frame. Dejar un margen entre entrar y salir se llama <b>histéresis</b>.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Cierre" data-topic="Resumen">
+    <div class="slide-eyebrow">Cierre</div>
+    <h2 class="slide-title">Lo que hay que llevarse de hoy</h2>
+    <table class="tbl" style="font-size:15px;">
+      <thead><tr><th>Idea</th><th>En una línea</th></tr></thead>
+      <tbody>
+        <tr><td><b>IA de un juego</b></td><td>Reglas simples que hacen que un enemigo <b>parezca</b> pensar. Divertida, no perfecta</td></tr>
+        <tr><td><b>Comportamientos</b></td><td>Acechar, perseguir, atacar, reaccionar al golpe: cada uno es trivial por separado</td></tr>
+        <tr><td><b>Detectar</b></td><td>Por distancia (<code>distance_to</code>) o con un <code>Area2D</code> de visión</td></tr>
+        <tr><td><b>Máquina de estados</b></td><td>Una variable <code>estado</code>, un estado a la vez, transiciones definidas</td></tr>
+        <tr><td><b><code>enum</code> + <code>match</code></b></td><td>Nombrar los estados y elegir qué hacer en cada uno</td></tr>
+        <tr><td><b>Hacer + decidir</b></td><td>En cada estado: primero el comportamiento, después la pregunta “¿cambio?”</td></tr>
+        <tr><td><b>Tres disparadores</b></td><td><b>Distancia</b>, <b>evento</b> (un golpe) y <b>tiempo</b> (un <code>Timer</code>)</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="slide title-slide" data-chapter="Cierre" data-topic="Próxima clase">
+    <div class="slide-eyebrow">Para seguir</div>
+    <h2 class="slide-title">Próxima clase: el jefe, en vivo</h2>
+    <div class="columns">
+      <div class="card">
+        <h3>🔴 Clase 8+ · en vivo</h3>
+        <ul>
+          <li>El élite deja de ser kamikaze: su propio <code>_process</code> con <code>match</code></li>
+          <li><code>ACECHAR</code> ⇄ <code>PERSEGUIR</code>, con una etiqueta que muestra el estado</li>
+          <li><code>ATACAR</code> con un <code>Timer</code>, y <code>GOLPEADO</code> al recibir daño</li>
+          <li>Una función <code>cambiar_estado()</code> para que cada cambio se note</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>📝 Para traer</h3>
+        <ul>
+          <li>El proyecto de la Clase 5+ (o el TP3) con el élite funcionando</li>
+          <li>El diagrama de Boo, en papel o foto</li>
+          <li>Pensar: ¿cómo se “anula” en la clase hija una función de la madre?</li>
+        </ul>
+      </div>
+    </div>
+    <p class="small-note" style="margin-top:24px; text-align:center;">Ilustraciones propias. Capturas de juegos: uso educativo, © de sus dueños. · Logo y mascota de Godot © Godot Foundation — CC BY 4.0.</p>
+  </section>
+
+</div>
+
+<script src="deck.js"></script>
+</body>
+</html>
