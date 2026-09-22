@@ -97,6 +97,9 @@ Notas de Javier sobre la v1, para aplicar al construir cada clase de la v2. **No
 - [x] C4 es señales: agregar más práctica. Ver si algo de C4 puede pasar a C3. *(C4 v2: cuatro bloques en vivo, "señales que ya usaste", "cuando la señal no dispara", desafío. "`_process` vs `_physics_process`" pasó a C3)*
 - [x] Juntar TP3 y TP4 en uno. No hace falta que lo terminen entero: se unifica y se recorta. *(`v2/semana-02/tp.md`: Parte A sin correr ni dash, Parte B sin cámara ni victoria; todo eso quedó en extras)*
 
+### TP5+ (semana 3)
+- [x] Survivors base a partir del TP7 v1, con los nombres de C5+ (`arena`, `slime`, `class_name Enemigo`, élite como escena heredada + `extends Enemigo`). *(hecho: `v2/semana-03/tp.md`)*
+
 ### Clase 05
 - [x] Diapo 7 (tipado estático): queda rara, no se sabe dónde va. Quizás a C2. *(movida a C2 v2, después de "Tipos de datos")*
 - [x] Reescribir como POO pura (ver semana 3). Lo de spawning pasa a C5+. *(C5 v2: objeto, clase vs objeto, 4 pilares con ejemplos de juegos, herencia en GDScript, "es un" vs "tiene un", ejercicio de diseño del survivors. Hueco de imagen pendiente en la diapo 7)*
