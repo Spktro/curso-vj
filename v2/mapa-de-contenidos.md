@@ -88,6 +88,10 @@ Notas de Javier sobre la v1, para aplicar al construir cada clase de la v2. **No
 - [x] TP2, punto 2: no se entiende si hay que crear un nodo nuevo, dónde va, ni si es una escena por ejemplo. Falta el paso "creá un nodo, ponele tal nombre, adjuntale el script". *(sección B.0 "El ritual", y cada parte dice nodo, script y escena)*
 - [x] Decisión: **una escena por cada ejemplo** y una última escena para *La Cripta del Golem*. *(`01_variables` … `06_input` + `07_cripta`)*
 - [x] TP1 y TP2 se juntan en un solo TP, el de la clase práctica. *(hecho)*
+- [x] (24/9) Se quita la Parte A (piso, jugador, caja) del TP1: queda solo el juego de texto, con las partes renumeradas 0–7.
+
+### Todo el material (24/9/2026)
+- [x] Redacción impersonal en decks y TPs: instrucciones en infinitivo, explicaciones con "se". Pendiente de decidir: los textos que imprime el propio juego ("Tenés:", "Presioná:", "¡Ganaste!", "Movete con WASD", "Sobreviviste…").
 
 ### Clase 03
 - [x] Hablar más de **vectores** antes de usarlos en el código. *(C3 v2: tres diapos "Qué es un vector", "Sumar y multiplicar", "Vector2 en Godot", más `Input.get_vector`)*

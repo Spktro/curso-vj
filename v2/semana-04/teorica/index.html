@@ -27,7 +27,7 @@
 
   <section class="slide" data-chapter="Inicio" data-topic="Objetivos">
     <div class="slide-eyebrow">Objetivos</div>
-    <h2 class="slide-title">Al terminar la clase van a poder…</h2>
+    <h2 class="slide-title">Al finalizar la clase…</h2>
     <ul class="bullets">
       <li>Entender qué es la <b>IA de un videojuego</b> (y qué no es), con ejemplos de juegos famosos</li>
       <li>Reconocer los <b>comportamientos básicos</b> de un enemigo: acechar, perseguir, atacar, reaccionar al golpe</li>
@@ -258,7 +258,7 @@ objetivo = pacman.position + pacman.direccion * <span class="n">4</span>
     <div class="columns">
       <div class="card">
         <h3>📏 Por distancia</h3>
-        <p>Un número: si está a menos de <b>X píxeles</b>, lo vio. Ojo: <b>el slime de la semana 3 no detecta nada</b>, siempre sabe dónde está el jugador y va. El <code>distance_to</code> lo usó el <b>jugador</b> para elegir a quién disparar; ahora se lo damos al <b>enemigo</b>, para que <b>decida</b>.</p>
+        <p>Un número: si está a menos de <b>X píxeles</b>, lo vio. Atención: <b>el slime de la semana 3 no detecta nada</b>, siempre sabe dónde está el jugador y va. El <code>distance_to</code> lo usó el <b>jugador</b> para elegir a quién disparar; ahora se lo damos al <b>enemigo</b>, para que <b>decida</b>.</p>
         <pre class="code" style="margin:10px 0 0; font-size:12.5px;"><span class="k">var</span> d = position.distance_to(jugador.position)
 <span class="k">if</span> d < <span class="n">250</span>:
 	<span class="c"># ¡lo vi!</span></pre>
@@ -444,7 +444,7 @@ objetivo = pacman.position + pacman.direccion * <span class="n">4</span>
   </section>
 
   <section class="slide" data-chapter="Máquina de estados" data-topic="En juegos reales: Pac-Man">
-    <div class="slide-eyebrow">🎮 Máquinas de estado en juegos que conocés · 1 de 3</div>
+    <div class="slide-eyebrow">🎮 Máquinas de estado en juegos conocidos · 1 de 3</div>
     <h2 class="slide-title">Pac-Man: el fantasma tiene cuatro estados</h2>
     <div class="columns" style="grid-template-columns:0.9fr 1.1fr; align-items:start;">
       <div class="card" style="padding:12px; display:flex; flex-direction:column; align-items:center;">
@@ -475,7 +475,7 @@ objetivo = pacman.position + pacman.direccion * <span class="n">4</span>
   </section>
 
   <section class="slide" data-chapter="Máquina de estados" data-topic="En juegos reales: Metal Gear Solid">
-    <div class="slide-eyebrow">🎮 Máquinas de estado en juegos que conocés · 2 de 3</div>
+    <div class="slide-eyebrow">🎮 Máquinas de estado en juegos conocidos · 2 de 3</div>
     <h2 class="slide-title">Metal Gear Solid: el estado está en pantalla</h2>
     <div class="columns" style="grid-template-columns:0.9fr 1.1fr; align-items:start;">
       <div class="card" style="padding:12px; display:flex; flex-direction:column; align-items:center;">
@@ -504,7 +504,7 @@ objetivo = pacman.position + pacman.direccion * <span class="n">4</span>
   </section>
 
   <section class="slide" data-chapter="Máquina de estados" data-topic="En juegos reales: Hollow Knight">
-    <div class="slide-eyebrow">🎮 Máquinas de estado en juegos que conocés · 3 de 3</div>
+    <div class="slide-eyebrow">🎮 Máquinas de estado en juegos conocidos · 3 de 3</div>
     <h2 class="slide-title">Hollow Knight y los <i>souls</i>: leer el estado es el juego</h2>
     <div class="columns" style="grid-template-columns:0.9fr 1.1fr; align-items:start;">
       <div class="card" style="padding:12px; display:flex; flex-direction:column; align-items:center;">
@@ -536,7 +536,7 @@ objetivo = pacman.position + pacman.direccion * <span class="n">4</span>
   </section>
 
   <section class="slide" data-chapter="Máquina de estados" data-topic="En juegos reales: en común">
-    <div class="slide-eyebrow">🎮 Máquinas de estado en juegos que conocés</div>
+    <div class="slide-eyebrow">🎮 Máquinas de estado en juegos conocidos</div>
     <h2 class="slide-title">¿Qué tienen en común?</h2>
     <table class="tbl" style="font-size:14.5px;">
       <thead><tr><th>Juego</th><th>Estados</th><th>Qué dispara los cambios</th><th>Cómo lo muestra</th></tr></thead>

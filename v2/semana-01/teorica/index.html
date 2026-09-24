@@ -27,12 +27,12 @@
 
   <section class="slide" data-chapter="Inicio" data-topic="Requisitos">
     <div class="slide-eyebrow">Antes de empezar</div>
-    <h2 class="slide-title">Qué necesitás para la clase de hoy</h2>
+    <h2 class="slide-title">Qué hace falta para la clase de hoy</h2>
     <div class="columns">
       <div class="card">
-        <h3>Traé</h3>
+        <h3>Traer</h3>
         <ul>
-          <li>Tu notebook (cualquiera sirve, Godot es liviano)</li>
+          <li>Una notebook (cualquiera sirve, Godot es liviano)</li>
           <li>Cargador y ganas de romper cosas</li>
           <li>Conexión para descargar el editor</li>
         </ul>
@@ -59,7 +59,7 @@
           <li>Entender qué es un <b>motor de videojuegos</b></li>
           <li>Instalar Godot y recorrer su interfaz</li>
           <li>El concepto clave: <b>nodos</b> y <b>escenas</b></li>
-          <li>Armar tu primera escena con nodos</li>
+          <li>Armar una primera escena con nodos</li>
         </ul>
         <div class="callout" style="margin-top:22px;">Objetivo del día: <b>perder el miedo al editor</b> y entender el modelo mental de Godot.</div>
       </div>
@@ -88,12 +88,12 @@
         <h3>Con motor</h3>
         <ul>
           <li>Todo eso ya está resuelto</li>
-          <li>Te concentrás en el <b>juego en sí</b></li>
+          <li>El foco queda en el <b>juego en sí</b></li>
           <li>Reglas, niveles, la experiencia</li>
         </ul>
       </div>
     </div>
-    <div class="callout">🍳 <b>Analogía:</b> un motor es una <b>cocina equipada</b>. Podés fabricar tu horno y tus cuchillos… o entrar a una cocina lista y dedicarte a cocinar.</div>
+    <div class="callout">🍳 <b>Analogía:</b> un motor es una <b>cocina equipada</b>. Se puede fabricar el horno y los cuchillos… o entrar a una cocina lista y dedicarte a cocinar.</div>
   </section>
 
   <section class="slide" data-chapter="Motores" data-topic="Panorama de motores">
@@ -144,7 +144,7 @@
     <div class="slide-eyebrow">Nuestra elección</div>
     <h2 class="slide-title">¿Por qué Godot para empezar?</h2>
     <div class="columns three">
-      <div class="card"><h3>Gratis y libre</h3><p>Open source, sin royalties ni licencias. Nada te frena para publicar.</p></div>
+      <div class="card"><h3>Gratis y libre</h3><p>Open source, sin royalties ni licencias. Nada impide publicar.</p></div>
       <div class="card"><h3>Liviano</h3><p>Corre en máquinas modestas. El editor pesa menos de 100&nbsp;MB.</p></div>
       <div class="card"><h3>Curva amable</h3><p>Su sistema de <b>nodos</b> es uno de los modelos mentales más claros que existen.</p></div>
     </div>
@@ -155,7 +155,7 @@
   <section class="slide" data-chapter="Instalación" data-topic="Descarga y versiones">
     <div class="slide-eyebrow">Instalación</div>
     <h2 class="slide-title">Descarga y primer contacto</h2>
-    <p class="subtitle">Se descarga de <code>godotengine.org</code>. Es un único ejecutable: no hay instalador, ni registro, ni cuenta. Lo descomprimís y lo abrís.</p>
+    <p class="subtitle">Se descarga de <code>godotengine.org</code>. Es un único ejecutable: no hay instalador, ni registro, ni cuenta. Se descomprime y se abre.</p>
     <table class="tbl" style="margin-top:8px;">
       <thead><tr><th>Versión / sabor</th><th>Qué es</th><th>Cuándo</th></tr></thead>
       <tbody>
@@ -169,7 +169,7 @@
 
   <section class="slide" data-chapter="Instalación" data-topic="Crear un proyecto">
     <div class="slide-eyebrow">Práctica en clase</div>
-    <h2 class="slide-title">Crear tu primer proyecto</h2>
+    <h2 class="slide-title">Crear el primer proyecto</h2>
     <div class="columns">
       <div>
         <ol class="steps">
@@ -177,15 +177,15 @@
           <li>Clic en <b>New Project</b></li>
           <li>Elegir <b>nombre</b> y <b>carpeta</b></li>
           <li>Dejar el resto por defecto → <b>Create &amp; Edit</b></li>
-          <li>Eso te lleva al <b>editor</b> 🎉</li>
+          <li>Eso lleva al <b>editor</b> 🎉</li>
         </ol>
       </div>
       <div class="imgcard card" style="justify-content:center;">
           <img src="assets/nuevo-projecto.png" alt="Project Manager de Godot" style="max-height:360px;" />
-          <figcaption class="imgcaption">El Project Manager lista tus proyectos existentes y permite crear nuevos.</figcaption>
+          <figcaption class="imgcaption">El Project Manager lista los proyectos existentes y permite crear nuevos.</figcaption>
       </div>
     </div>
-    <div class="callout">El Project Manager es donde se <b>listan</b> tus proyectos y se <b>crean</b> nuevos.</div>
+    <div class="callout">El Project Manager es donde se <b>listan</b> los proyectos y se <b>crean</b> nuevos.</div>
   </section>
 
   <!-- ============ 5. INTERFAZ ============ -->
@@ -200,7 +200,7 @@
       <div style="display:grid; gap:9px;">
         <div class="card" style="padding:9px 15px;"><h3 style="font-size:15.5px; margin-bottom:2px;">🌳 Escena <span class="pill" style="margin-left:6px;">arriba izq.</span></h3><p style="font-size:14px; line-height:1.42;">La <b>jerarquía de nodos</b> en árbol. El panel más importante de Godot: lo profundizamos hoy.</p></div>
         <div class="card" style="padding:9px 15px;"><h3 style="font-size:15.5px; margin-bottom:2px;">📁 FileSystem <span class="pill" style="margin-left:6px;">abajo izq.</span></h3><p style="font-size:14px; line-height:1.42;">Todos los archivos del proyecto. Las rutas internas empiezan con <code>res://</code>.</p></div>
-        <div class="card" style="padding:9px 15px;"><h3 style="font-size:15.5px; margin-bottom:2px;">🎬 Viewport <span class="pill" style="margin-left:6px;">centro</span></h3><p style="font-size:14px; line-height:1.42;">La ventana grande donde “ves” tu juego. Pestañas arriba para <b>2D</b>, <b>3D</b> y editor de <b>Script</b>.</p></div>
+        <div class="card" style="padding:9px 15px;"><h3 style="font-size:15.5px; margin-bottom:2px;">🎬 Viewport <span class="pill" style="margin-left:6px;">centro</span></h3><p style="font-size:14px; line-height:1.42;">La ventana grande donde “se ve” el juego. Pestañas arriba para <b>2D</b>, <b>3D</b> y editor de <b>Script</b>.</p></div>
         <div class="card" style="padding:9px 15px;"><h3 style="font-size:15.5px; margin-bottom:2px;">🔧 Inspector <span class="pill" style="margin-left:6px;">derecha</span></h3><p style="font-size:14px; line-height:1.42;">Las <b>propiedades</b> del nodo seleccionado: posición, rotación, color, tamaño… sin escribir código.</p></div>
       </div>
     </div>
@@ -234,12 +234,12 @@
   <section class="slide" data-chapter="Nodos" data-topic="Qué es un nodo">
     <div class="slide-eyebrow">Bloque clave</div>
     <h2 class="slide-title">¿Qué es un nodo?</h2>
-    <p class="subtitle" style="font-size:18px; margin-bottom:10px;">Un <b>nodo</b> es una pieza de Godot que sabe hacer <b>una sola cosa</b>: mostrar una imagen, sonar, chocar, contar tiempo. Tu juego es un montón de esas piezas <b>colgadas unas de otras</b>.</p>
+    <p class="subtitle" style="font-size:18px; margin-bottom:10px;">Un <b>nodo</b> es una pieza de Godot que sabe hacer <b>una sola cosa</b>: mostrar una imagen, sonar, chocar, contar tiempo. Un juego es un montón de esas piezas <b>colgadas unas de otras</b>.</p>
     <div class="columns" style="grid-template-columns:1fr 1.15fr; gap:22px; align-items:start;">
       <div style="display:grid; gap:10px;">
         <div class="card" style="padding:10px 16px;"><h3 style="font-size:16px; margin-bottom:4px;">1 · Tiene un tipo</h3><p style="font-size:14.5px; line-height:1.45;">El tipo dice <b>qué sabe hacer</b>: <code>Sprite2D</code> muestra una imagen, <code>AudioStreamPlayer</code> reproduce un sonido, <code>Timer</code> cuenta segundos.</p></div>
-        <div class="card" style="padding:10px 16px;"><h3 style="font-size:16px; margin-bottom:4px;">2 · Tiene propiedades</h3><p style="font-size:14.5px; line-height:1.45;">Lo que ves en el <b>Inspector</b>: dónde está, qué imagen muestra, a qué volumen suena. Las cambiás sin escribir código.</p></div>
-        <div class="card" style="padding:10px 16px;"><h3 style="font-size:16px; margin-bottom:4px;">3 · Puede tener hijos</h3><p style="font-size:14.5px; line-height:1.45;">Un nodo se cuelga de otro y <b>se mueve con él</b>. Así, con piezas simples, armás algo grande: un personaje, un enemigo, un nivel.</p></div>
+        <div class="card" style="padding:10px 16px;"><h3 style="font-size:16px; margin-bottom:4px;">2 · Tiene propiedades</h3><p style="font-size:14.5px; line-height:1.45;">Lo que se ve en el <b>Inspector</b>: dónde está, qué imagen muestra, a qué volumen suena. Se cambian sin escribir código.</p></div>
+        <div class="card" style="padding:10px 16px;"><h3 style="font-size:16px; margin-bottom:4px;">3 · Puede tener hijos</h3><p style="font-size:14.5px; line-height:1.45;">Un nodo se cuelga de otro y <b>se mueve con él</b>. Así, con piezas simples, se arma algo grande: un personaje, un enemigo, un nivel.</p></div>
       </div>
       <div class="card" style="padding:14px 18px;">
         <h3 style="font-size:17px;">🧱 Ejemplo: un personaje no es un nodo, son cuatro</h3>
@@ -282,11 +282,11 @@
     <h2 class="slide-title">Las escenas son anidables</h2>
     <p class="subtitle">Una escena puede instanciarse <b>dentro</b> de otra como si fuera un solo nodo. <code>Nivel1</code> puede contener la escena <code>Player</code> y diez instancias de <code>Enemigo</code>.</p>
     <div class="columns">
-      <div class="callout" style="margin-top:8px;">Si modificás la escena <code>Enemigo</code>, <b>todas las instancias</b> en todos los niveles se actualizan solas. En Godot, <b>la escena ES el prefab</b> — no hay distinción (Unity → prefabs, Unreal → blueprints).</div>
+      <div class="callout" style="margin-top:8px;">Si se modifica la escena <code>Enemigo</code>, <b>todas las instancias</b> en todos los niveles se actualizan solas. En Godot, <b>la escena ES el prefab</b> — no hay distinción (Unity → prefabs, Unreal → blueprints).</div>
       <div class="card">
         <h3>Reglas de la jerarquía</h3>
         <ul>
-          <li>El hijo <b>hereda la transformación</b> del padre: movés el padre, se mueven los hijos</li>
+          <li>El hijo <b>hereda la transformación</b> del padre: si se mueve el padre, se mueven los hijos</li>
           <li>El orden importa en 2D: los de más abajo se dibujan <b>encima</b></li>
           <li>Cualquier nodo → <code>Save Branch as Scene</code></li>
         </ul>
@@ -297,9 +297,9 @@
   <!-- ============ 8. TIPOS DE NODOS: 2D · 2.5D · 3D · UI ============ -->
 
   <!-- 8.0 Mapa del bloque -->
-  <section class="slide" data-chapter="Tipos" data-topic="Mapa: dónde vive tu juego">
+  <section class="slide" data-chapter="Tipos" data-topic="Mapa: dónde vive el juego">
     <div class="slide-eyebrow">Familias de nodos</div>
-    <h2 class="slide-title">¿Dónde vive tu juego?</h2>
+    <h2 class="slide-title">¿Dónde vive el juego?</h2>
     <p class="subtitle">Antes de elegir nodos hay que elegir <b>en qué espacio</b> ocurre el juego. Godot tiene tres sistemas separados —y un cuarto que en realidad es un truco.</p>
     <div class="dim-hero">
       <div class="dim" style="border-top-color:#2563eb;">
@@ -403,7 +403,7 @@
   <section class="slide" data-chapter="Tipos" data-topic="2D: perspectivas y ejemplos">
     <div class="slide-eyebrow">2D · juegos reales</div>
     <h2 class="slide-title">Plano no quiere decir aburrido</h2>
-    <p class="subtitle" style="font-size:18px;">Con dos ejes se pueden simular puntos de vista muy distintos. La cámara no cambia: cambia <b>cómo dibujás</b>.</p>
+    <p class="subtitle" style="font-size:18px;">Con dos ejes se pueden simular puntos de vista muy distintos. La cámara no cambia: cambia <b>cómo se dibuja</b>.</p>
     <div class="shots three">
       <figure class="shot">
         <img src="assets/tipos/2d-lateral.jpg" alt="Captura de Hollow Knight: vista lateral con plataformas">
@@ -413,7 +413,7 @@
       <figure class="shot">
         <img src="assets/tipos/2d-cenital.jpg" alt="Captura de Stardew Valley: vista desde arriba de una granja">
         <div class="ph" hidden>assets/tipos/2d-cenital.jpg</div>
-        <figcaption><b>Vista cenital (top-down)</b>Mirás desde arriba: X e Y son el piso. <span><i>Stardew Valley</i> · <i>Zelda</i> clásico · <i>Brotato</i></span></figcaption>
+        <figcaption><b>Vista cenital (top-down)</b>Se mira desde arriba: X e Y son el piso. <span><i>Stardew Valley</i> · <i>Zelda</i> clásico · <i>Brotato</i></span></figcaption>
       </figure>
       <figure class="shot">
         <img src="assets/tipos/2d-isometrico.jpg" alt="Captura de Age of Empires II: ciudad en perspectiva isométrica">
@@ -443,10 +443,10 @@
         </table>
       </div>
       <div class="card" style="align-self:start;">
-        <h3>🔍 Detalles que te van a morder</h3>
+        <h3>🔍 Detalles que suelen traer problemas</h3>
         <ul>
           <li>Los nodos 2D <b>terminan en <code>2D</code></b>. Si el nombre no lo tiene, casi seguro no es 2D.</li>
-          <li><b>El orden en el árbol es el orden de dibujo:</b> el hermano de más abajo se dibuja <b>encima</b>. ¿El personaje quedó tapado por el piso? Movelo abajo en la lista.</li>
+          <li><b>El orden en el árbol es el orden de dibujo:</b> el hermano de más abajo se dibuja <b>encima</b>. ¿El personaje quedó tapado por el piso? Moverlo abajo en la lista.</li>
           <li>Para saltear esa regla existe <code>z_index</code>.</li>
           <li>Todos heredan de <code>CanvasItem</code>: por eso comparten <code>modulate</code> (tinte), <code>visible</code> y las capas de dibujo.</li>
         </ul>
@@ -460,7 +460,7 @@
     <h2 class="slide-title">Sumar un eje lo cambia todo</h2>
     <div class="columns" style="grid-template-columns: 1.05fr 0.95fr;">
       <div>
-        <p class="subtitle" style="font-size:18px; margin-bottom:14px;">3D agrega el eje <b>Z</b>: la <b>profundidad</b>. Cada objeto vive en <code>(x, y, z)</code> dentro de un volumen, y la cámara se encarga de <b>proyectar</b> ese volumen sobre tu pantalla, que sigue siendo plana.</p>
+        <p class="subtitle" style="font-size:18px; margin-bottom:14px;">3D agrega el eje <b>Z</b>: la <b>profundidad</b>. Cada objeto vive en <code>(x, y, z)</code> dentro de un volumen, y la cámara se encarga de <b>proyectar</b> ese volumen sobre la pantalla, que sigue siendo plana.</p>
         <ul class="bullets" style="font-size:17px;">
           <li>En Godot, <b>Y apunta hacia arriba</b> (al revés que en 2D) y <b>−Z es “hacia adelante”</b>.</li>
           <li>La unidad ya no es el píxel: por convención <b>1 unidad = 1 metro</b>.</li>
@@ -499,12 +499,12 @@
       <figure class="shot">
         <img src="assets/tipos/3d-elden-ring.webp" alt="Captura de Elden Ring: el personaje a caballo mirando un paisaje abierto">
         <div class="ph" hidden>assets/tipos/3d-elden-ring.jpg</div>
-        <figcaption><b>Tercera persona</b><span><i>Elden Ring</i> — la cámara va <b>detrás</b> del personaje: lo ves a él y al mundo</span></figcaption>
+        <figcaption><b>Tercera persona</b><span><i>Elden Ring</i> — la cámara va <b>detrás</b> del personaje: se ve al personaje y al mundo</span></figcaption>
       </figure>
       <figure class="shot">
         <img src="assets/tipos/3d-portal.jpg" alt="Captura de Portal 2: una sala de pruebas vista en primera persona">
         <div class="ph" hidden>assets/tipos/3d-portal.jpg</div>
-        <figcaption><b>Primera persona</b><span><i>Portal 2</i> — la cámara <b>es</b> los ojos del personaje: no lo ves nunca</span></figcaption>
+        <figcaption><b>Primera persona</b><span><i>Portal 2</i> — la cámara <b>es</b> los ojos del personaje: nunca se lo ve</span></figcaption>
       </figure>
       <figure class="shot">
         <img src="assets/tipos/3d-minecraft.jpg" alt="Imagen oficial de Minecraft: paisaje de bloques">
@@ -514,7 +514,7 @@
       <figure class="shot">
         <img src="assets/tipos/3d-diablo4.jpg" alt="Captura de Diablo IV: combate visto desde una cámara elevada">
         <div class="ph" hidden>assets/tipos/3d-diablo4.jpg</div>
-        <figcaption><b>3D con cámara fija</b><span><i>Diablo IV</i> — <i>parece</i> isométrico, pero mirá las sombras: es 3D real</span></figcaption>
+        <figcaption><b>3D con cámara fija</b><span><i>Diablo IV</i> — <i>parece</i> isométrico, pero las sombras lo delatan: es 3D real</span></figcaption>
       </figure>
     </div>
     <div class="callout" style="margin-top:16px;">Costo real del 3D: modelado, texturizado, rigging, animación, iluminación y optimización. <b>Es mucho más trabajo por objeto</b> — por eso arrancamos en 2D.</div>
@@ -543,7 +543,7 @@
         <ul>
           <li>Los nodos <b>terminan en <code>3D</code></b>. <code>Sprite2D</code> y <code>Sprite3D</code> <b>no se mezclan</b>: cada mundo tiene su rama.</li>
           <li>Ya no importa el orden del árbol para dibujar: el motor usa la <b>distancia a la cámara</b> (buffer de profundidad).</li>
-          <li>La escena arranca <b>negra</b> hasta que agregás una luz y una cámara. No está rota: le falta iluminación.</li>
+          <li>La escena arranca <b>negra</b> hasta que se agregan una luz y una cámara. No está rota: le falta iluminación.</li>
           <li>El Viewport tiene su propia pestaña <b>3D</b> arriba, con controles de órbita y navegación.</li>
         </ul>
       </div>
@@ -558,7 +558,7 @@
     <div class="columns" style="margin-top:4px;">
       <div class="card" style="border-top:3px solid var(--accent-2);">
         <h3>A · Mundo 3D, juego 2D</h3>
-        <p>Todo está modelado en 3D —con luces, sombras y cámara real— pero el jugador <b>sólo se mueve en dos ejes</b>. Ganás la belleza del 3D con la simpleza de diseño del 2D.</p>
+        <p>Todo está modelado en 3D —con luces, sombras y cámara real— pero el jugador <b>sólo se mueve en dos ejes</b>. Se gana la belleza del 3D con la simpleza de diseño del 2D.</p>
         <p style="margin-top:8px;"><b>Ejemplos:</b> <i>Little Nightmares</i>, <i>Trine</i>, <i>New Super Mario Bros. U</i>, <i>Donkey Kong Country Returns</i>.</p>
       </div>
       <div class="card" style="border-top:3px solid var(--yellow);">
@@ -567,7 +567,7 @@
         <p style="margin-top:8px;"><b>Ejemplos:</b> <i>DOOM</i> (1993), <i>Don't Starve</i>, <i>Octopath Traveler</i> (HD-2D), <i>Age of Empires II</i>.</p>
       </div>
     </div>
-    <div class="callout" style="margin-top:18px;">¿Por qué tanto juego elige 2.5D? <b>Cuesta menos producir</b>, <b>se lee mejor</b> (una cámara previsible no te marea) y <b>diseñar niveles en dos ejes es mucho más simple</b>.</div>
+    <div class="callout" style="margin-top:18px;">¿Por qué tanto juego elige 2.5D? <b>Cuesta menos producir</b>, <b>se lee mejor</b> (una cámara previsible no marea) y <b>diseñar niveles en dos ejes es mucho más simple</b>.</div>
   </section>
 
   <!-- 8.8 Juegos 2.5D -->
@@ -588,7 +588,7 @@
       <figure class="shot">
         <img src="assets/tipos/25d-doom.jpg" alt="Captura de DOOM 1993: enemigos planos de frente y HUD inferior">
         <div class="ph" hidden>assets/tipos/25d-doom.jpg</div>
-        <figcaption><b>DOOM (1993)</b><span>Los enemigos son imágenes planas que <b>siempre giran hacia la cámara</b>. Nunca les ves la espalda.</span></figcaption>
+        <figcaption><b>DOOM (1993)</b><span>Los enemigos son imágenes planas que <b>siempre giran hacia la cámara</b>. Nunca se les ve la espalda.</span></figcaption>
       </figure>
       <figure class="shot">
         <img src="assets/tipos/25d-dont-starve.jpg" alt="Captura de Don't Starve: personajes dibujados a mano entre pinos">
@@ -635,7 +635,7 @@
       <figure class="shot">
         <img src="assets/tipos/deadspace1.jpg" alt="Captura de Dead Space: Isaac de espaldas con la barra de vida luminosa en la columna" style="height:250px; object-position:top;">
         <div class="ph" hidden style="height:250px;">assets/tipos/ui-dead-space.jpg</div>
-        <figcaption style="font-size:13.5px;"><b>Diegética — <i>Dead Space</i></b>Mirale <b>la columna</b>: esa barra luminosa <b>es</b> su vida, y la munición se proyecta sobre el arma. Ni un píxel de HUD flotando.</figcaption>
+        <figcaption style="font-size:13.5px;"><b>Diegética — <i>Dead Space</i></b>En <b>la columna</b>: esa barra luminosa <b>es</b> su vida, y la munición se proyecta sobre el arma. Ni un píxel de HUD flotando.</figcaption>
       </figure>
       <figure class="shot">
         <img src="assets/tipos/ui-no-diegetica.jpg" alt="Captura de Hollow Knight con el HUD de máscaras de vida en la esquina superior izquierda" style="height:250px; object-position:top;">
@@ -656,7 +656,7 @@
         <tr><td><b>Diegética</b></td><td>Sí</td><td>En el mundo</td><td><i>Dead Space</i> (vida en la espalda) · <i>Far Cry 2</i> (mapa de papel en la mano) · <i>Metro Exodus</i> (reloj de muñeca) · <i>Alien: Isolation</i> (detector de movimiento)</td></tr>
         <tr><td><b>No diegética</b></td><td>No</td><td>En la pantalla</td><td><i>Hollow Knight</i> (máscaras de vida) · <i>League of Legends</i> (minimapa) · el puntaje de <i>Tetris</i></td></tr>
         <tr><td><b>Espacial</b></td><td>No</td><td>En el mundo</td><td>Siluetas de compañeros a través de las paredes en <i>Left 4 Dead</i> · nombres flotando sobre los NPC en <i>WoW</i> · el cartel “E para abrir” pegado a la puerta</td></tr>
-        <tr><td><b>Meta</b></td><td>Sí</td><td>En la pantalla</td><td>Salpicaduras de sangre cuando te disparan en <i>Call of Duty</i> · gotas de lluvia sobre “el lente” · estática cuando te detectan</td></tr>
+        <tr><td><b>Meta</b></td><td>Sí</td><td>En la pantalla</td><td>Salpicaduras de sangre al recibir disparos en <i>Call of Duty</i> · gotas de lluvia sobre “el lente” · estática al ser detectado</td></tr>
       </tbody>
     </table>
     <div class="callout" style="margin-top:16px;">Ningún juego elige uno solo: <b>los mezclan</b>. Más diegético = más inmersión, pero menos legible y más caro de producir. Es un intercambio, no una escala de calidad.</div>
@@ -672,7 +672,7 @@
           <thead><tr><th>Nodo</th><th>Para qué</th></tr></thead>
           <tbody>
             <tr><td><code>Control</code></td><td>Base de <b>toda</b> la UI. No usa posición suelta: usa un rectángulo con <b>anclas</b></td></tr>
-            <tr><td><code>CanvasLayer</code></td><td>Capa aparte que <b>no se mueve con la cámara</b>. Acá va tu HUD</td></tr>
+            <tr><td><code>CanvasLayer</code></td><td>Capa aparte que <b>no se mueve con la cámara</b>. Acá va el HUD</td></tr>
             <tr><td><code>Label</code> · <code>Button</code></td><td>Texto y botones</td></tr>
             <tr><td><code>TextureProgressBar</code></td><td>La clásica barra de vida con arte propio</td></tr>
             <tr><td><code>VBox</code>/<code>HBoxContainer</code></td><td>Acomodan a los hijos solos: la UI sobrevive a cualquier resolución</td></tr>
@@ -683,9 +683,9 @@
         <h3>🎭 ¿Y la UI diegética?</h3>
         <p>No se hace con nodos de UI: <b>se hace con nodos del mundo</b>.</p>
         <ul>
-          <li>En 2D: colgá un <code>Label</code> o un <code>Sprite2D</code> como <b>hijo del personaje</b> —fuera del <code>CanvasLayer</code>— y se moverá con él.</li>
+          <li>En 2D: colgar un <code>Label</code> o un <code>Sprite2D</code> como <b>hijo del personaje</b> —fuera del <code>CanvasLayer</code>— y se moverá con él.</li>
           <li>En 3D: <code>Label3D</code> o <code>Sprite3D</code> pegados al modelo.</li>
-          <li>Para una pantalla dentro del juego (un monitor, un celular): armás la UI con <code>Control</code> dentro de un <code>SubViewport</code> y usás <b>esa textura</b> en un <code>MeshInstance3D</code>.</li>
+          <li>Para una pantalla dentro del juego (un monitor, un celular): se arma la UI con <code>Control</code> dentro de un <code>SubViewport</code> y se usa <b>esa textura</b> en un <code>MeshInstance3D</code>.</li>
         </ul>
       </div>
     </div>
@@ -716,10 +716,10 @@
     <div class="columns">
       <div>
         <ol class="steps">
-          <li>En una escena con raíz <code>Node2D</code>, agregá un <code>Sprite2D</code> y movelo en el Viewport. Mirá cómo cambia <code>position</code> en el Inspector: <b>Y sube el número al bajar</b>.</li>
-          <li>Agregá un <code>Button</code>. Fijate que aparece <b>en otro lugar</b> y que su panel de propiedades es <b>completamente distinto</b>: tiene anclas, no posición libre.</li>
-          <li>Agregá un <code>Camera2D</code> y movelo: el sprite se corre… <b>y el botón no</b>.</li>
-          <li>Meté el botón dentro de un <code>CanvasLayer</code> y confirmá que ahí sí queda clavado a la pantalla, pase lo que pase con la cámara.</li>
+          <li>En una escena con raíz <code>Node2D</code>, agregar un <code>Sprite2D</code> y moverlo en el Viewport. Mirar cómo cambia <code>position</code> en el Inspector: <b>Y sube el número al bajar</b>.</li>
+          <li>Agregar un <code>Button</code>. Notar que aparece <b>en otro lugar</b> y que su panel de propiedades es <b>completamente distinto</b>: tiene anclas, no posición libre.</li>
+          <li>Agregar un <code>Camera2D</code> y moverlo: el sprite se corre… <b>y el botón no</b>.</li>
+          <li>Meter el botón dentro de un <code>CanvasLayer</code> y confirmar que ahí sí queda clavado a la pantalla, pase lo que pase con la cámara.</li>
         </ol>
       </div>
       <div class="card" style="align-self:start;">
@@ -729,7 +729,7 @@
           <li>¿Ese botón es UI diegética o no diegética?</li>
           <li>¿Cómo lo harían diegético, sin cambiar el nodo por otro?</li>
         </ul>
-        <p class="small-note" style="margin-top:12px;">🕹️ <b>Extra para casa:</b> elegí un juego que te guste, sacale una captura y marcá cada elemento de UI como <b>diegético</b>, <b>no diegético</b>, <b>espacial</b> o <b>meta</b>.</p>
+        <p class="small-note" style="margin-top:12px;">🕹️ <b>Extra para casa:</b> elegir un juego conocido, sacarle una captura y marcar cada elemento de UI como <b>diegético</b>, <b>no diegético</b>, <b>espacial</b> o <b>meta</b>.</p>
       </div>
     </div>
   </section>
@@ -763,7 +763,7 @@
   <section class="slide" data-chapter="GDScript" data-topic="Sintaxis y semántica">
     <div class="slide-eyebrow">Las reglas del idioma</div>
     <h2 class="slide-title">Sintaxis y semántica</h2>
-    <p class="subtitle" style="font-size:18px;">Todo lenguaje tiene reglas de <b>forma</b> y de <b>significado</b>. La computadora <b>no interpreta intenciones</b>: hace lo que escribiste, no lo que quisiste decir.</p>
+    <p class="subtitle" style="font-size:18px;">Todo lenguaje tiene reglas de <b>forma</b> y de <b>significado</b>. La computadora <b>no interpreta intenciones</b>: hace lo que está escrito, no lo que se quiso decir.</p>
     <div class="columns" style="margin-top:8px;">
       <div class="card">
         <h3>✍️ Sintaxis — cómo se escribe</h3>
@@ -782,7 +782,7 @@
 <span class="c"># crece hacia ABAJO…</span>
 position.y += <span class="n">50</span>  <span class="c"># ✗ "salta" al piso</span>
 position.y -= <span class="n">50</span>  <span class="c"># ✓ salta de verdad</span></pre>
-        <p class="small-note" style="margin-top:8px;">El error <b>difícil</b>: nadie te avisa. Solo lo ves al jugar.</p>
+        <p class="small-note" style="margin-top:8px;">El error <b>difícil</b>: nadie avisa. Solo se ve al jugar.</p>
       </div>
     </div>
   </section>
@@ -882,8 +882,8 @@ position.y -= <span class="n">50</span>  <span class="c"># ✓ salta de verdad</
     <h2 class="slide-title">Recursos y próximos pasos</h2>
     <div class="columns three">
       <div class="card"><h3>Documentación</h3><p><code>docs.godotengine.org</code><br>Guía oficial, completísima y en varios idiomas.</p></div>
-      <div class="card"><h3>Descargar</h3><p><code>godotengine.org</code><br>Godot 4.x estándar. Traelo instalado para la próxima.</p></div>
-      <div class="card"><h3>Comunidad</h3><p>Discord y foros oficiales. Miles de tutoriales en YouTube (ojo con la versión).</p></div>
+      <div class="card"><h3>Descargar</h3><p><code>godotengine.org</code><br>Godot 4.x estándar. Traerlo instalado para la próxima.</p></div>
+      <div class="card"><h3>Comunidad</h3><p>Discord y foros oficiales. Miles de tutoriales en YouTube (atención a la versión).</p></div>
     </div>
     <p class="small-note" style="margin-top:26px; text-align:center;">Logo, mascota (Godette) e ilustraciones de Godot © Godot Foundation — <b>CC BY 4.0</b>. Logos de Unity, Unreal Engine y GameMaker: marcas de sus respectivos dueños. Capturas de juegos © de sus respectivos estudios y editoras — reproducidas con fines ilustrativos y educativos.</p>
   </section>

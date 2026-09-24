@@ -5,10 +5,10 @@
 
 ---
 
-## 🎯 Qué vas a lograr
+## 🎯 Al finalizar este TP
 
 - El **jefe** con **cuatro estados** (`ACECHAR`, `PERSEGUIR`, `ATACAR`, `GOLPEADO`) y las transiciones entre ellos, escritas con `enum` + `match`.
-- Una **etiqueta sobre el jefe** que muestra en qué estado está: vas a *ver* la máquina funcionando.
+- Una **etiqueta sobre el jefe** que muestra en qué estado está: se *ve* la máquina funcionando.
 - El jefe **ya no es kamikaze**: se frena y pega **cada segundo** mientras el caballero esté cerca.
 - Cada bala lo **empuja** y lo **congela 0.5 s**: el golpe se siente.
 - Una función **`cambiar_estado()`** que le da un **color** a cada estado y avisa por consola cada cambio.
@@ -22,9 +22,9 @@
 
 ## 📍 Punto de partida
 
-Este TP continúa el **`tp3`**. Copiá la carpeta del proyecto y renombrala **`tp4`** (así el TP3 queda como estaba), y abrila con Godot.
+Este TP continúa el **`tp3`**. Copiar la carpeta del proyecto y renombrarla **`tp4`** (así el TP3 queda como estaba), y abrirla con Godot.
 
-Confirmá que el **punto de control 5 del TP3** sigue andando: los slimes persiguen al caballero, las balas salen solas y cada 8 enemigos aparece un élite violeta con su barra.
+Confirmar que el **punto de control 5 del TP3** sigue andando: los slimes persiguen al caballero, las balas salen solas y cada 8 enemigos aparece un élite violeta con su barra.
 
 > 🧠 **Cómo quedó el élite en el TP3.** `slime_elite.gd` hace `extends Enemigo`: en `_ready()` llama a `super()` y cambia `vida`, `velocidad`, `dano` y su `BarraVida`; en `recibir_dano()` llama a `super(cantidad)` y actualiza la barra; en `morir()` imprime y llama a `super()`. Todo lo demás lo **hereda tal cual**: perseguir en `_process` y el `_on_body_entered` kamikaze. Hoy el élite recibe **su propio `_process`**.
 
@@ -64,8 +64,8 @@ Se construye **de a un estado por vez**, probando cada uno antes de seguir:
 
 | Parte | Estados | Qué se ve |
 | :---- | :---- | :---- |
-| 1 | `ACECHAR` ⇄ `PERSEGUIR` | El jefe viene despacio; al acercarte, acelera |
-| 2 | + `ATACAR` | Se frena al alcanzarte y pega cada segundo |
+| 1 | `ACECHAR` ⇄ `PERSEGUIR` | El jefe viene despacio; cuando el caballero se acerca, acelera |
+| 2 | + `ATACAR` | Se frena al alcanzar al caballero y pega cada segundo |
 | 3 | + `GOLPEADO` | Cada bala lo empuja y lo congela 0.5 s |
 | 4 | `cambiar_estado()` | Un color por estado y un aviso por consola |
 | 5 | — | Ajustar los números hasta que se sienta bien |
@@ -74,14 +74,14 @@ Se construye **de a un estado por vez**, probando cada uno antes de seguir:
 
 ## ✏️ Parte 0 — Dibujar antes de programar
 
-Antes de escribir una línea, respondé estas tres preguntas **mirando el diagrama**:
+Antes de escribir una línea, responder estas tres preguntas **mirando el diagrama**:
 
 1. El jefe está **acechando** y el caballero pasa a **200 px**. ¿En qué estado queda?
 2. El jefe está **persiguiendo** y el caballero está a **300 px**. ¿Cambia de estado?
 3. El jefe está **atacando** y el caballero se aleja a **50 px**. ¿Cambia? ¿Y si se aleja a **70 px**?
 
 <details>
-<summary>Respuestas (abrí después de pensarlas)</summary>
+<summary>Respuestas (ver después de pensarlas)</summary>
 
 1. **`PERSEGUIR`**: 200 es menos de 250, así que cruza la flecha de “lo vio”.
 2. **No.** 300 no es menos de 40 (no ataca) ni más de 350 (no lo perdió). **Se queda persiguiendo.** Las flechas solo se cruzan cuando se cumple su condición.
@@ -90,7 +90,7 @@ Antes de escribir una línea, respondé estas tres preguntas **mirando el diagra
 > 🧠 **¿Por qué entra a atacar a 40 y sale a 60?** Si el número fuera el mismo, un jugador parado justo en el borde haría que el jefe **parpadee** entre atacar y perseguir cada frame. Dejar un margen entre “entrar” y “salir” se llama **histéresis**, y se usa en toda máquina de estados.
 </details>
 
-✅ **Punto de control 0:** contestaste las tres, entendés que cada flecha tiene **su** condición, y por qué los números de entrada y salida son distintos.
+✅ **Punto de control 0:** las tres preguntas están respondidas, y queda claro que cada flecha tiene **su** condición, y por qué los números de entrada y salida son distintos.
 
 ---
 
@@ -100,12 +100,12 @@ Antes de escribir una línea, respondé estas tres preguntas **mirando el diagra
 
 ### 1.1 · La etiqueta
 
-1. Abrí **`slime_elite.tscn`**.
-2. Hijo de `SlimeElite` → **`Label`** → renombralo **`LabelEstado`**. **Position** ≈ `-40, -70` (arriba de la barra). En **Text** poné `ACECHAR`, para verla en el editor.
+1. Abrir **`slime_elite.tscn`**.
+2. Hijo de `SlimeElite` → **`Label`** → renombrarlo **`LabelEstado`**. **Position** ≈ `-40, -70` (arriba de la barra). En **Text** poner `ACECHAR`, para verla en el editor.
 
 ### 1.2 · El script
 
-3. **Reemplazá `slime_elite.gd`** por esta versión:
+3. **Reemplazar `slime_elite.gd`** por esta versión:
 
 ```gdscript
 extends Enemigo
@@ -170,21 +170,21 @@ func morir():
 
 ### 1.3 · Probarlo
 
-4. Esperar 8 slimes cada vez es lento. En `arena.tscn`, seleccioná **`Enemigos`** → cadena 🔗 → **`slime_elite.tscn`**, y ubicalo **lejos** del caballero. Al terminar el TP, borralo.
+4. Esperar 8 slimes cada vez es lento. En `arena.tscn`, seleccionar **`Enemigos`** → cadena 🔗 → **`slime_elite.tscn`**, y ubicarlo **lejos** del caballero. Al terminar el TP, borrarlo.
 5. **F6**.
 
-✅ **Punto de control 1:** el jefe viene **despacio** con `ACECHAR` encima. Al acercarte a menos de 250 px la etiqueta cambia a **`PERSEGUIR`** y **acelera**. Si te alejás más de 350, vuelve a **`ACECHAR`**. Los slimes verdes siguen igual, sin etiqueta. **Por ahora el jefe sigue siendo kamikaze** (eso se arregla en la Parte 2).
+✅ **Punto de control 1:** el jefe viene **despacio** con `ACECHAR` encima. Cuando el caballero se acerca a menos de 250 px, la etiqueta cambia a **`PERSEGUIR`** y el jefe **acelera**. Si el caballero se aleja más de 350, vuelve a **`ACECHAR`**. Los slimes verdes siguen igual, sin etiqueta. **Por ahora el jefe sigue siendo kamikaze** (eso se arregla en la Parte 2).
 
 🛟 **Errores comunes en esta parte**
 
 <details>
-<summary>Abrí para ver soluciones</summary>
+<summary>Ver soluciones</summary>
 
-- **El jefe se queda quieto y la etiqueta no cambia:** `jugador` es `null`. Si lo instanciaste a mano, tiene que estar **dentro de `Enemigos`**, que va **debajo** de `Jugador` en el árbol: así el jugador ya se anotó en su grupo cuando el jefe arranca.
-- **`Node not found: "LabelEstado"`:** el `Label` no está en `slime_elite.tscn`, o tiene otro nombre (mayúsculas incluidas). Ojo: va en la escena del **élite**, no en `slime.tscn`.
+- **El jefe se queda quieto y la etiqueta no cambia:** `jugador` es `null`. Si se instanció a mano, tiene que estar **dentro de `Enemigos`**, que va **debajo** de `Jugador` en el árbol: así el jugador ya se anotó en su grupo cuando el jefe arranca.
+- **`Node not found: "LabelEstado"`:** el `Label` no está en `slime_elite.tscn`, o tiene otro nombre (mayúsculas incluidas). Atención: va en la escena del **élite**, no en `slime.tscn`.
 - **`Identifier "PERSEGUIR" not declared`:** los nombres van **en mayúsculas exactas** y con `Estado.` adelante.
-- **Los slimes verdes también cambiaron:** tocaste `enemigo.gd`. En este TP ese archivo **no se modifica**.
-- **La etiqueta parpadea entre los dos estados:** pusiste el mismo número en las dos flechas. Es la histéresis de la Parte 0.
+- **Los slimes verdes también cambiaron:** se editó `enemigo.gd`. En este TP ese archivo **no se modifica**.
+- **La etiqueta parpadea entre los dos estados:** se puso el mismo número en las dos flechas. Es la histéresis de la Parte 0.
 </details>
 
 ---
@@ -193,8 +193,8 @@ func morir():
 
 > **Concepto:** al alcanzar al caballero, el jefe **se frena** y pega **cada segundo** mientras esté cerca. Es un estado más y una función más: nada del resto se toca. Y deja de ser kamikaze.
 
-1. En `slime_elite.tscn`, hijo de `SlimeElite` → **`Timer`** → renombralo **`TimerAtaque`**. **Wait Time** `1`, **One Shot** activado, **Autostart** desactivado.
-2. En `slime_elite.gd`, agregá el estado al `enum`:
+1. En `slime_elite.tscn`, hijo de `SlimeElite` → **`Timer`** → renombrarlo **`TimerAtaque`**. **Wait Time** `1`, **One Shot** activado, **Autostart** desactivado.
+2. En `slime_elite.gd`, agregar el estado al `enum`:
 
 ```gdscript
 enum Estado { ACECHAR, PERSEGUIR, ATACAR }
@@ -228,22 +228,22 @@ func _on_body_entered(body):       # ANULA el kamikaze de Enemigo
 
 > 🧠 **Anular una función heredada.** `Enemigo` conecta `body_entered` a `_on_body_entered` en su `_ready()` (que el jefe llama con `super()`). Como el jefe **redefine** esa función **vacía** (`pass`), la señal sigue llegando, pero ahora llama a la de la hija, que no hace nada. El ataque llega por un **estado**, no por el choque.
 
-5. **F6**. Dejá que el jefe te alcance.
+5. **F6**. Dejar que el jefe alcance al caballero.
 
-✅ **Punto de control 2:** la etiqueta pasa a **`ATACAR`**, el jefe se frena pegado al caballero y la barra de vida baja **15 cada segundo**, sin que el jefe desaparezca. Date un paso atrás: vuelve a **`PERSEGUIR`**. Compará con el diagrama: **cada `if` es una flecha**.
+✅ **Punto de control 2:** la etiqueta pasa a **`ATACAR`**, el jefe se frena pegado al caballero y la barra de vida baja **15 cada segundo**, sin que el jefe desaparezca. Si el caballero da un paso atrás, el jefe vuelve a **`PERSEGUIR`**. Comparar con el diagrama: **cada `if` es una flecha**.
 
-> 💡 Para probar tranquilo, bajá `dano = 15` a `dano = 2` un rato, y después volvelo.
+> 💡 Para probar con calma, bajar `dano = 15` a `dano = 2` un rato, y después restaurarlo.
 
 🛟 **Errores comunes en esta parte**
 
 <details>
-<summary>Abrí para ver soluciones</summary>
+<summary>Ver soluciones</summary>
 
 - **`Node not found: "TimerAtaque"`:** falta el nodo en `slime_elite.tscn`, o tiene otro nombre.
 - **Pega todo el tiempo, no cada segundo:** falta el `$TimerAtaque.start()` después de pegar.
 - **Pega una sola vez y nunca más:** **One Shot** está desactivado. El Timer se reinicia solo y `is_stopped()` nunca vuelve a dar `true`.
-- **El jefe sigue desapareciendo al tocarte:** la función tiene que llamarse **exactamente** `_on_body_entered`, con un parámetro, igual que en `enemigo.gd`. Si no, no está anulando nada.
-- **Nunca llega a `ATACAR`:** 40 px es poco si el sprite del jefe es grande. Probá con `d < 60` y `d > 80`.
+- **El jefe sigue desapareciendo al tocar al caballero:** la función tiene que llamarse **exactamente** `_on_body_entered`, con un parámetro, igual que en `enemigo.gd`. Si no, no está anulando nada.
+- **Nunca llega a `ATACAR`:** 40 px es poco si el sprite del jefe es grande. Probar con `d < 60` y `d > 80`.
 </details>
 
 ---
@@ -298,20 +298,20 @@ func recibir_dano(cantidad):
 
 > 🧠 **`modulate`** (sin `$` adelante) es el color del **jefe entero**: tiñe el sprite, la barra y la etiqueta. `Color.WHITE` es “sin teñir”.
 
-6. **F6**. Dejá que las balas le peguen al jefe.
+6. **F6**. Dejar que las balas le peguen al jefe.
 
 ✅ **Punto de control 3:** con cada bala el jefe retrocede un poco, se pone **rojo**, la etiqueta dice **`GOLPEADO`** y se queda clavado medio segundo. Después vuelve a **`PERSEGUIR`**, con su color normal. Con varias balas seguidas se lo ve trabarse a cada golpe: eso hace que un jefe se sienta **pesado**. Los slimes comunes no cambiaron.
 
 🛟 **Errores comunes en esta parte**
 
 <details>
-<summary>Abrí para ver soluciones</summary>
+<summary>Ver soluciones</summary>
 
 - **`Identifier "GOLPEADO" not declared`:** falta agregarlo al `enum`.
 - **No se congela ni se pone rojo:** las tres líneas van **después** de `super(cantidad)`, adentro del `if vida > 0:`, y la última tiene que ser `estado = Estado.GOLPEADO`.
-- **Nunca sale de `GOLPEADO` mientras le disparás:** el `TimerDisparo` tira una bala cada **0.4 s**, más seguido que los 0.5 s del congelado. Si el jefe es el blanco más cercano, cada bala **reinicia** el Timer y queda trabado hasta morir (*stun lock*). En muchos *survivors* eso es a propósito. Si no te gusta, bajá el **Wait Time** de `TimerGolpe` a `0.3`.
+- **Nunca sale de `GOLPEADO` mientras recibe disparos:** el `TimerDisparo` tira una bala cada **0.4 s**, más seguido que los 0.5 s del congelado. Si el jefe es el blanco más cercano, cada bala **reinicia** el Timer y queda trabado hasta morir (*stun lock*). En muchos *survivors* eso es a propósito. Si no se busca ese efecto, bajar el **Wait Time** de `TimerGolpe` a `0.3`.
 - **Queda rojo para siempre:** el `modulate = Color.WHITE` va en la **salida** (adentro del `if` del `match`), no en `golpeado()`.
-- **Retrocede pero casi no se nota:** probá `40` en vez de `20`. Mucho más y parece que se teletransporta.
+- **Retrocede pero casi no se nota:** probar `40` en vez de `20`. Mucho más y parece que se teletransporta.
 </details>
 
 ---
@@ -320,7 +320,7 @@ func recibir_dano(cantidad):
 
 > **Concepto:** hay cosas que tienen que pasar **una sola vez**, justo al cambiar de estado: cambiar el cartel, el color, avisar. Hoy están repartidas: `estado = …` aparece en seis lugares, la etiqueta se reescribe **cada frame**, y el rojo se pone en un lado y se saca en otro. Se juntan en **una función**.
 
-1. Agregá esta función a `slime_elite.gd`:
+1. Agregar esta función a `slime_elite.gd`:
 
 ```gdscript
 func cambiar_estado(nuevo):
@@ -336,8 +336,8 @@ func cambiar_estado(nuevo):
 ```
 
 2. Al **final** de `_ready()`: `cambiar_estado(Estado.ACECHAR)`.
-3. Reemplazá **cada** `estado = Estado.ALGO` por `cambiar_estado(Estado.ALGO)`: son **cinco** en el `match` y **una** en `recibir_dano()`. (La de arriba, `var estado = Estado.ACECHAR`, queda: es la declaración.)
-4. Borrá lo que ahora hace la función:
+3. Reemplazar **cada** `estado = Estado.ALGO` por `cambiar_estado(Estado.ALGO)`: son **cinco** en el `match` y **una** en `recibir_dano()`. (La de arriba, `var estado = Estado.ACECHAR`, queda: es la declaración.)
+4. Borrar lo que ahora hace la función:
    - la línea `$LabelEstado.text = Estado.keys()[estado]` del final de `_process`;
    - la función `golpeado()` y su llamada en el `match`;
    - el `modulate = Color.WHITE` de la rama `GOLPEADO`.
@@ -367,10 +367,10 @@ Jefe → PERSEGUIR
 🛟 **Errores comunes en esta parte**
 
 <details>
-<summary>Abrí para ver soluciones</summary>
+<summary>Ver soluciones</summary>
 
 - **La consola se llena de líneas iguales, 60 por segundo:** el `print` quedó en `_process`, o se llama a `cambiar_estado()` fuera de un `if`.
-- **La etiqueta ya no cambia:** algún `estado = …` quedó sin reemplazar. Buscalos con **Ctrl + F** en el script.
+- **La etiqueta ya no cambia:** algún `estado = …` quedó sin reemplazar. Buscarlos con **Ctrl + F** en el script.
 - **Queda rojo:** la salida de `GOLPEADO` todavía hace `estado = Estado.PERSEGUIR` en vez de `cambiar_estado(Estado.PERSEGUIR)`.
 - **`Node not found: "LabelEstado"` al arrancar:** el `cambiar_estado(Estado.ACECHAR)` tiene que ir **al final** de `_ready()`, después del `super()`.
 </details>
@@ -391,15 +391,15 @@ Ya está todo. Ahora hay que **jugar** y ajustar hasta que el jefe se sienta bie
 | `recibir_dano()` del jefe | el `20` del empujón | Cuánto retrocede |
 | `spawner.gd` | `contador % 8` | Cada cuántos enemigos aparece un jefe |
 
-(Opcional) Para la versión final, ocultá la etiqueta: seleccioná `LabelEstado` y destildá **Visible**. O dejala: muestra que el jefe piensa.
+(Opcional) Para la versión final, ocultar la etiqueta: seleccionar `LabelEstado` y destildar **Visible**. O dejarla: muestra que el jefe piensa.
 
-✅ **Punto de control 5 (final):** jugaste al menos tres partidas cambiando números, y el jefe se siente **distinto** de la horda: acecha, acelera, se frena para pegar y acusa cada bala. ¡Terminaste el TP! 🎉
+✅ **Punto de control 5 (final):** se jugaron al menos tres partidas cambiando números, y el jefe se siente **distinto** de la horda: acecha, acelera, se frena para pegar y acusa cada bala. TP terminado. 🎉
 
 ---
 
 ## 📤 Entrega
 
-Entregá **una** de estas opciones (según indique el/la docente):
+Entregar **una** de estas opciones (según indique el/la docente):
 
 1. La **carpeta del proyecto** comprimida en `.zip` (sin la carpeta `.godot/`), **o**
 2. Un **video corto** (o GIF) de una partida donde se vea al jefe acechando de lejos, acelerando, atacando y frenándose con cada bala, con la etiqueta y los colores.
@@ -420,7 +420,7 @@ Entregá **una** de estas opciones (según indique el/la docente):
 
 ## 📄 Código completo de referencia
 
-Por si te perdiste en algún paso, así tiene que quedar `slime_elite.gd` al final. **`enemigo.gd` es el mismo del TP3, sin cambios.**
+Como referencia ante cualquier duda en algún paso, así tiene que quedar `slime_elite.gd` al final. **`enemigo.gd` es el mismo del TP3, sin cambios.**
 
 <details>
 <summary><code>slime_elite.gd</code> completo</summary>
@@ -511,10 +511,10 @@ func morir():
 
 - **El aviso antes del golpe** (el desafío de la Clase 8+). Un estado `AVISO` entre `PERSEGUIR` y `ATACAR`: a menos de 40 px el jefe se queda quieto y **amarillo** 0.4 s (un `TimerAviso`); al terminar, si el caballero sigue a menos de 60 px, `ATACAR`; si no, `PERSEGUIR`. Es la animación de aviso de *Hollow Knight*: el jugador que la lee a tiempo, se salva.
 - **Un quinto estado: `EMBESTIR`.** Desde `PERSEGUIR`, si el caballero está entre 100 y 150 px, que cargue en línea recta al triple de velocidad durante medio segundo (guardando la dirección al entrar) y después vuelva a perseguir. Es el ataque clásico de un jefe.
-- **Un jefe que dispara.** Que en vez de acercarse a pegar, se **frene a distancia** y cada segundo instancie una bala hacia el caballero. Todo lo que hace falta ya está en `bala.gd` y en `disparar()` del jugador (ojo: esa bala tiene que dañar al **jugador**, no a los enemigos).
+- **Un jefe que dispara.** Que en vez de acercarse a pegar, se **frene a distancia** y cada segundo instancie una bala hacia el caballero. Todo lo que hace falta ya está en `bala.gd` y en `disparar()` del jugador (atención: esa bala tiene que dañar al **jugador**, no a los enemigos).
 - **Un jefe a la vez.** En `_ready()` del jefe, `add_to_group("jefe")`; en el spawner, que solo cree uno si `get_tree().get_nodes_in_group("jefe").size() == 0`.
 - **Dificultad progresiva.** Que la `velocidad` y el radio de visión del jefe suban un poco con cada jefe nuevo (una variable en el spawner que se le pasa antes del `add_child`, como la posición).
-- **¿Y si la horda también pensara?** Se podría darle una máquina a `enemigo.gd`. Pero antes contestá: ¿cuál sería su estado tranquilo? Si la respuesta es “patrullar al azar”, releé la decisión de diseño del principio.
+- **¿Y si la horda también pensara?** Se podría darle una máquina a `enemigo.gd`. Pero antes, contestar: ¿cuál sería su estado tranquilo? Si la respuesta es “patrullar al azar”, releer la decisión de diseño del principio.
 
 ---
 

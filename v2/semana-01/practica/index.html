@@ -62,7 +62,7 @@
             <li>Ante un error, primero la consola; después, la mano levantada.</li>
           </ul>
         </div>
-        <div class="callout" style="margin-top:14px;">El TP de esta semana sigue exactamente el mismo formato: una escena por ejemplo. Lo que armás hoy te sirve de base.</div>
+        <div class="callout" style="margin-top:14px;">El TP de esta semana sigue exactamente el mismo formato: una escena por ejemplo. Lo que se arma hoy sirve de base.</div>
       </div>
     </div>
   </section>
@@ -88,7 +88,7 @@
   <section class="slide" data-chapter="Programar" data-topic="¿Qué es programar?">
     <div class="slide-eyebrow">Concepto</div>
     <h2 class="slide-title">¿Qué es programar?</h2>
-    <p class="subtitle">No es magia: es <b>comunicación</b>. Le hablás a una máquina que hace exactamente lo que le decís, ni más ni menos.</p>
+    <p class="subtitle">No es magia: es <b>comunicación</b>. Se le habla a una máquina que hace exactamente lo que se le dice, ni más ni menos.</p>
     <div class="columns">
       <div class="card" style="border-top:3px solid var(--red);">
         <h3 style="color:var(--red);">❌ Mito</h3>
@@ -112,7 +112,7 @@
         <ul class="bullets" style="font-size:19px;">
           <li>Sintaxis simple y clara</li>
           <li>Integrado con el motor</li>
-          <li>Familiar si sabés Python</li>
+          <li>Familiar para quien sabe Python</li>
           <li>Pensado para juegos: <code>_process</code>, <code>_ready</code>, <code>Input</code>…</li>
         </ul>
       </div>
@@ -139,7 +139,7 @@
         <tr><td><code>print(...)</code></td><td>Imprime texto en la consola: nuestro <b>mejor amigo</b> para depurar.</td></tr>
       </tbody>
     </table>
-    <div class="callout" style="margin-top:18px;">🔍 Fijate la <b>sangría</b>: la línea del <code>print</code> está corrida con <b>Tab</b>. Así Godot sabe que está <i>adentro</i> de <code>_ready()</code>. En GDScript la sangría no es estética: es parte del lenguaje.</div>
+    <div class="callout" style="margin-top:18px;">🔍 Notar la <b>sangría</b>: la línea del <code>print</code> está corrida con <b>Tab</b>. Así Godot sabe que está <i>adentro</i> de <code>_ready()</code>. En GDScript la sangría no es estética: es parte del lenguaje.</div>
   </section>
 
   <!-- ============ EL RITUAL ============ -->
@@ -149,11 +149,11 @@
     <div class="columns">
       <div>
         <ol class="steps" style="font-size:16px;">
-          <li><b>Scene → New Scene</b> (<span class="kbd">Ctrl</span>+<span class="kbd">N</span>) → <b>Other Node</b> → buscá <code>Node</code> → <b>Create</b></li>
-          <li>Doble clic sobre el nodo y <b>renombralo</b>: <code>Variables</code></li>
+          <li><b>Scene → New Scene</b> (<span class="kbd">Ctrl</span>+<span class="kbd">N</span>) → <b>Other Node</b> → buscar <code>Node</code> → <b>Create</b></li>
+          <li>Doble clic sobre el nodo y <b>renombrarlo</b>: <code>Variables</code></li>
           <li>Botón 📜 <b>Attach Script</b> → nombre <code>01_variables.gd</code> → <b>Create</b></li>
-          <li><span class="kbd">Ctrl</span>+<span class="kbd">S</span>: guardá la escena como <code>01_variables.tscn</code></li>
-          <li><span class="kbd">F6</span> (<b>Run Current Scene</b>) → mirá el panel <b>Output</b></li>
+          <li><span class="kbd">Ctrl</span>+<span class="kbd">S</span>: guardar la escena como <code>01_variables.tscn</code></li>
+          <li><span class="kbd">F6</span> (<b>Run Current Scene</b>) → mirar el panel <b>Output</b></li>
         </ol>
       </div>
       <div style="align-self:start;">
@@ -191,7 +191,7 @@ res://
           <img src="assets/godot-console.png" alt="Panel Output de Godot" style="max-height:420px; width:auto; margin:0 auto; display:block;" />
       </div>
     </div>
-    <div class="callout" style="margin-top:18px;">💡 Regla de oro: si algo <b>“no funciona”</b>, lo primero es mirar la consola. Godot casi siempre te dice ahí qué salió mal.</div>
+    <div class="callout" style="margin-top:18px;">💡 Regla de oro: si algo <b>“no funciona”</b>, lo primero es mirar la consola. Godot casi siempre dice ahí qué salió mal.</div>
   </section>
 
   <!-- ============ VARIABLES ============ -->
@@ -232,7 +232,7 @@ res://
 
   <section class="slide" data-chapter="Variables" data-topic="Tipado estático">
     <div class="slide-eyebrow">Buena práctica</div>
-    <h2 class="slide-title">Le podés decir el tipo: <code>: int</code>, <code>: float</code>…</h2>
+    <h2 class="slide-title">Se le puede decir el tipo: <code>: int</code>, <code>: float</code>…</h2>
     <div class="columns">
       <div class="code-wrap">
         <pre class="code" style="font-size:13px;"><span class="c"># Sin tipo (válido):</span>
@@ -248,12 +248,12 @@ res://
         <div class="card">
           <h3>Por qué conviene</h3>
           <ul>
-            <li>El editor te <b>avisa errores</b> antes de ejecutar (por ejemplo, si guardás texto en <code>vida</code>)</li>
+            <li>El editor <b>avisa errores</b> antes de ejecutar (por ejemplo, si se guarda texto en <code>vida</code>)</li>
             <li>Mejor <b>autocompletado</b></li>
             <li>El juego corre un poco <b>más rápido</b></li>
           </ul>
         </div>
-        <p class="small-note" style="margin-top:12px;">Hoy lo vamos a escribir sin tipo para que se vea más corto. Cuando te sientas cómodo, sumale el tipo.</p>
+        <p class="small-note" style="margin-top:12px;">Hoy lo vamos a escribir sin tipo para que se vea más corto. Con más práctica, conviene sumarle el tipo.</p>
       </div>
     </div>
   </section>
@@ -281,13 +281,13 @@ res://
           <li>El ritual: nodo <code>Variables</code>, script <code>01_variables.gd</code></li>
           <li>Cuatro variables, una de cada tipo</li>
           <li>En <code>_ready()</code>, un <code>print</code> por variable</li>
-          <li><span class="kbd">F6</span> y mirá el Output</li>
+          <li><span class="kbd">F6</span> y mirar el Output</li>
         </ol>
         <div class="consola"><span class="lbl">✅ Punto de control · Output</span>Personaje: Héroe
 Vida: 100
 Velocidad: 200.5
 Tiene espada: false</div>
-        <div class="callout proba">🧪 <b>Probá:</b> sacale el <code>str()</code> a <code>vida</code>. ¿Qué dice la consola? Ese error en rojo lo vas a ver mil veces: <b>texto + número no se suman</b>.</div>
+        <div class="callout proba">🧪 <b>Probar:</b> sacarle el <code>str()</code> a <code>vida</code>. ¿Qué dice la consola? Ese error en rojo va a aparecer mil veces: <b>texto + número no se suman</b>.</div>
       </div>
     </div>
   </section>
@@ -371,11 +371,11 @@ Tiene espada: false</div>
           <li>El ritual: nodo <code>Condicionales</code>, script <code>02_condicionales.gd</code></li>
           <li>Dos variables y la resta en <code>_ready()</code></li>
           <li>Primero solo el <code>if</code> / <code>else</code>. Correr. Después sumar el <code>elif</code></li>
-          <li><span class="kbd">F6</span> y mirá el Output</li>
+          <li><span class="kbd">F6</span> y mirar el Output</li>
         </ol>
         <div class="consola"><span class="lbl">✅ Punto de control · Output</span>Vida actual: 70
 🟢 Seguís en pie</div>
-        <div class="callout proba">🧪 <b>Probá:</b> <code>dano = 70</code> → 🔴. <code>dano = 100</code> → 💀. ¿Y con <code>dano = 30</code> y <code>vida = 60</code>? Predecí antes de correr.</div>
+        <div class="callout proba">🧪 <b>Probar:</b> <code>dano = 70</code> → 🔴. <code>dano = 100</code> → 💀. ¿Y con <code>dano = 30</code> y <code>vida = 60</code>? Predecir antes de correr.</div>
       </div>
     </div>
   </section>
@@ -483,7 +483,7 @@ Tiene espada: false</div>
           <li>El ritual: nodo <code>For</code>, script <code>03_for.gd</code></li>
           <li>Primero el <code>for</code> con <code>range(3)</code>. Correr. ¿Por qué el <code>i + 1</code>?</li>
           <li>Después el arreglo y el segundo <code>for</code></li>
-          <li><span class="kbd">F6</span> y mirá el Output</li>
+          <li><span class="kbd">F6</span> y mirar el Output</li>
         </ol>
         <div class="consola"><span class="lbl">✅ Punto de control · Output</span>Enemigo 1 entra a la arena
 Enemigo 2 entra a la arena
@@ -492,7 +492,7 @@ Llevás 3 cosas:
   - Espada
   - Escudo
   - Poción</div>
-        <div class="callout proba">🧪 <b>Probá:</b> <code>range(10)</code>. Agregá <code>"Arco"</code> al arreglo: ¿hace falta tocar el <code>for</code>? Sacale el <code>str()</code> al <code>i + 1</code> y leé el error.</div>
+        <div class="callout proba">🧪 <b>Probar:</b> <code>range(10)</code>. Agregar <code>"Arco"</code> al arreglo: ¿hace falta tocar el <code>for</code>? Sacarle el <code>str()</code> al <code>i + 1</code> y leer el error.</div>
       </div>
     </div>
   </section>
@@ -600,12 +600,12 @@ recibir_dano(<span class="n">25</span>)
           <li>El ritual: nodo <code>Funciones</code>, script <code>04_funciones.gd</code></li>
           <li>Primero <code>recibir_dano()</code> y dos llamados en <code>_ready()</code>. Correr</li>
           <li>Después <code>esta_vivo()</code> con su <code>return</code>, y el <code>if</code></li>
-          <li><span class="kbd">F6</span> y mirá el Output</li>
+          <li><span class="kbd">F6</span> y mirar el Output</li>
         </ol>
         <div class="consola"><span class="lbl">✅ Punto de control · Output</span>Vida: 75
 Vida: 25
 Sigo en pie</div>
-        <div class="callout proba">🧪 <b>Probá:</b> un tercer <code>recibir_dano(30)</code>. Escribí <code>curar(cantidad)</code> que sume vida. ¿Qué pasa si llamás <code>esta_vivo</code> sin los <code>()</code>?</div>
+        <div class="callout proba">🧪 <b>Probar:</b> un tercer <code>recibir_dano(30)</code>. Escribir <code>curar(cantidad)</code> que sume vida. ¿Qué pasa si se llama <code>esta_vivo</code> sin los <code>()</code>?</div>
       </div>
     </div>
   </section>
@@ -643,7 +643,7 @@ Sigo en pie</div>
         <tr><td><code>ui_cancel</code></td><td><span class="kbd">Esc</span></td><td>Cancelar, pausa</td></tr>
       </tbody>
     </table>
-    <div class="callout" style="margin-top:16px;">Ya vienen definidas, pero podés crear las tuyas en <code>Project → Project Settings → Input Map</code>. Lo vemos la semana que viene.</div>
+    <div class="callout" style="margin-top:16px;">Ya vienen definidas, pero se pueden crear otras en <code>Project → Project Settings → Input Map</code>. Lo vemos la semana que viene.</div>
   </section>
 
   <section class="slide" data-chapter="Input" data-topic="En vivo: 05_input">
@@ -679,7 +679,7 @@ Sigo en pie</div>
           <li>El ritual: nodo <code>Input</code>, script <code>05_input.gd</code></li>
           <li>Primero <code>_process()</code> con el <code>if</code> del espacio y <code>saltar()</code>. Correr</li>
           <li>Después las flechas y <code>mover()</code></li>
-          <li><span class="kbd">F6</span>, <b>clic en la ventana del juego</b>, y apretá teclas</li>
+          <li><span class="kbd">F6</span>, <b>clic en la ventana del juego</b>, y apretar teclas</li>
         </ol>
         <div class="consola"><span class="lbl">✅ Punto de control · Output</span>ESPACIO para saltar, ← → para moverte
 Héroe saltó (1)
@@ -687,7 +687,7 @@ Héroe saltó (2)
 Héroe → derecha
 Héroe → derecha
 Héroe → derecha   <span class="err">← muchas por segundo</span></div>
-        <div class="callout proba">🧪 <b>Probá:</b> cambiá <code>just_pressed</code> por <code>pressed</code> en el salto y mantené apretado. Eso es <code>_process()</code>: 60 veces por segundo.</div>
+        <div class="callout proba">🧪 <b>Probar:</b> cambiar <code>just_pressed</code> por <code>pressed</code> en el salto y mantener apretado. Eso es <code>_process()</code>: 60 veces por segundo.</div>
       </div>
     </div>
   </section>
@@ -695,22 +695,22 @@ Héroe → derecha   <span class="err">← muchas por segundo</span></div>
   <!-- ============ DESAFÍO ============ -->
   <section class="slide" data-chapter="Práctica" data-topic="Desafío en clase">
     <div class="slide-eyebrow">Ahora sin mí</div>
-    <h2 class="slide-title">Desafío: seguí la escena <code>05_input</code></h2>
+    <h2 class="slide-title">Desafío: seguir la escena <code>05_input</code></h2>
     <div class="columns">
       <div>
         <ol class="steps" style="font-size:16px;">
           <li>Una variable <code>monedas</code> que suba al apretar <span class="kbd">↑</span> (<code>ui_up</code>)</li>
           <li>Una función <code>mostrar_estado()</code> que imprima nombre, saltos y monedas de una</li>
-          <li>Llamala al apretar <span class="kbd">Esc</span> (<code>ui_cancel</code>)</li>
+          <li>Llamarla al apretar <span class="kbd">Esc</span> (<code>ui_cancel</code>)</li>
           <li><b>Extra:</b> una variable <code>golpes</code> que suba con <span class="kbd">↓</span>. A los 3, imprimir <code>💀 Game Over</code> una sola vez</li>
         </ol>
       </div>
       <div style="align-self:center;">
         <div class="callout">🎯 <b>Objetivo:</b> usar <b>todo</b> lo de hoy sin mirar las diapos anteriores: variables, <code>if</code>, funciones e input.</div>
         <div class="card" style="margin-top:14px;">
-          <h3>🛟 Si te trabás</h3>
+          <h3>🛟 Si algo se traba</h3>
           <ul>
-            <li>¿La consola dice algo en rojo? Leé el número de línea.</li>
+            <li>¿La consola dice algo en rojo? Leer el número de línea.</li>
             <li>¿Sangría con Tab, no con espacios?</li>
             <li>¿Los <code>()</code> después del nombre de la función?</li>
           </ul>
@@ -741,10 +741,9 @@ Héroe → derecha   <span class="err">← muchas por segundo</span></div>
     <h2 class="slide-title">El TP de la semana</h2>
     <div class="columns">
       <div class="card">
-        <h3>📝 TP 1: tu primera escena y tu primer juego de texto</h3>
+        <h3>📝 TP 1: primer juego de texto</h3>
         <ul>
-          <li><b>Parte A:</b> una escena con piso, un jugador animado y una caja que cae</li>
-          <li><b>Parte B:</b> una escena por cada tema (más una de arreglos), como hicimos en clase</li>
+          <li>Una escena por cada tema, como en clase: variables, arreglos, <code>if</code>, <code>for</code>, funciones e input</li>
           <li><b>Final:</b> <i>La Cripta del Golem</i>, un combate por consola que junta todo</li>
         </ul>
       </div>
@@ -753,7 +752,7 @@ Héroe → derecha   <span class="err">← muchas por segundo</span></div>
         <ul>
           <li>Docs de GDScript: <code>docs.godotengine.org</code></li>
           <li>Sección <i>Scripting → GDScript basics</i></li>
-          <li>El TP repite el mismo ritual en un proyecto nuevo, <code>tp1</code>: traé el de hoy para copiarte los nombres</li>
+          <li>El TP repite el mismo ritual en un proyecto nuevo, <code>tp1</code>: traer el de hoy para copiar los nombres</li>
         </ul>
       </div>
     </div>

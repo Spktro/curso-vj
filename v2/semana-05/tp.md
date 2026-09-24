@@ -1,21 +1,21 @@
-# Trabajo Práctico 5 — Terminá tu juego
+# Trabajo Práctico 5 — Terminar el juego
 
 > **Diplomatura de Videojuegos · Semana 5** (clases 7 y 6)
-> Objetivo: convertir el survivors del TP4 en un **juego terminado**: arranca en un **menú**, el HUD muestra la **vida, el tiempo y los slimes**, al perder aparece una pantalla de **Game Over** con tu resultado y el récord, y cada acción **se ve y se oye**. Después lo **exportás** a un `.exe` y le sumás **tu aporte**: una idea tuya que vas a mostrar en la semana 6.
+> Objetivo: convertir el survivors del TP4 en un **juego terminado**: arranca en un **menú**, el HUD muestra la **vida, el tiempo y los slimes**, al perder aparece una pantalla de **Game Over** con el resultado y el récord, y cada acción **se ve y se oye**. Después se **exporta** a un `.exe` y se le suma **el aporte propio**: una idea personal que se muestra en la semana 6.
 
 ---
 
-## 🎯 Qué vas a lograr
+## 🎯 Al finalizar este TP
 
 - Un Autoload **`Partida`** que guarda el tiempo y los slimes eliminados, aunque cambie la escena.
 - Un **HUD** con su propio script: barra de vida que cambia de color, tiempo y contador.
 - Un **menú de inicio** y una pantalla de **Game Over** con el resultado, el récord y “Reintentar”.
 - **Música y efectos de sonido**: disparo, golpe, slime que cae, game over.
 - **Game feel**: los enemigos destellan al recibir una bala y hacen *pop* al morir; el caballero parpadea y la pantalla tiembla cuando lo golpean.
-- El juego **exportado**: un `.exe` que corre en una compu sin Godot.
-- **Tu aporte**: una cosa que no estaba en ningún TP, contada en un `aporte.md`.
+- El juego **exportado**: un `.exe` que corre en una computadora sin Godot.
+- **El aporte propio**: una cosa que no estaba en ningún TP, contada en un `aporte.md`.
 
-> 💡 **Tiempo estimado:** 2 a 3 horas en total. Las partes 1 a 5 son lo de las clases (unos 90 min); la 6 es exportar (15 min); la 7 es tu aporte, y lleva lo que vos decidas. **Escribí el código vos**, y leé el “por qué” de cada bloque.
+> 💡 **Tiempo estimado:** 2 a 3 horas en total. Las partes 1 a 5 son lo de las clases (unos 90 min); la 6 es exportar (15 min); la 7 es el aporte propio, y lleva el tiempo que cada uno decida. **Escribir el código a mano**, y leer el “por qué” de cada bloque.
 
 > 🔗 **Viene de:** la Clase 7 (animación, `AnimationPlayer`, `Tween`, sonido, game feel, la planilla de feedback), la Clase 6 (HUD, menú, Autoload, Game Over, escritos en vivo) y los TP3 y TP4.
 
@@ -23,9 +23,9 @@
 
 ## 📍 Punto de partida
 
-Este TP continúa el **`tp4`**. Copiá la carpeta del proyecto y renombrala **`tp5`** (así el TP4 queda como estaba), y abrila con Godot.
+Este TP continúa el **`tp4`**. Copiar la carpeta del proyecto y renombrarla **`tp5`** (así el TP4 queda como estaba), y abrirla con Godot.
 
-Confirmá que el **punto de control 5 del TP4** sigue andando: los slimes persiguen al caballero, las balas salen solas, y cada 8 enemigos aparece el jefe con su etiqueta de estado y sus colores.
+Confirmar que el **punto de control 5 del TP4** sigue andando: los slimes persiguen al caballero, las balas salen solas, y cada 8 enemigos aparece el jefe con su etiqueta de estado y sus colores.
 
 > 🧠 **Qué cambia y qué no.** El spawner, las balas y la máquina de estados del jefe **no se tocan**. Se modifican `jugador.gd` (el HUD, el sonido, el game feel) y `enemigo.gd` (el destello y el *pop*). Todo lo demás son **escenas y scripts nuevos**.
 
@@ -33,7 +33,7 @@ Confirmá que el **punto de control 5 del TP4** sigue andando: los slimes persig
 
 ## 🧩 Cómo va a quedar el proyecto
 
-Tres escenas que se pasan la posta, y un Autoload que las sobrevive a todas:
+Tres escenas que se van relevando, y un Autoload que las sobrevive a todas:
 
 ```
 menu.tscn          Menu (Control)                           menu.gd
@@ -68,7 +68,7 @@ partida.gd         Autoload "Partida": kills, tiempo, mejor_tiempo
 | 4 | Sonido | Música y efectos |
 | 5 | Game feel | Destello, *pop*, parpadeo, temblor |
 | 6 | Exportar | Un `.exe` que anda sin Godot |
-| 7 | Tu aporte | Algo tuyo, para mostrar |
+| 7 | Aporte propio | Algo personal, para mostrar |
 
 ---
 
@@ -85,12 +85,12 @@ Están en la carpeta [`assets/`](assets/) de esta semana. Son **sintetizados par
 | `game_over.wav` | Pantalla de Game Over |
 | `clic.wav` | Botones (para el extra) |
 
-1. En el **FileSystem**, clic derecho en `res://` → **New → Folder** → `sonidos`. Arrastrá los seis archivos adentro.
-2. **La música en loop:** seleccioná `musica.wav` en el FileSystem → pestaña **Import** (arriba, al lado de *Scene*) → **Loop Mode** = **Forward** → **Reimport**.
+1. En el **FileSystem**, clic derecho en `res://` → **New → Folder** → `sonidos`. Arrastrar los seis archivos adentro.
+2. **La música en loop:** seleccionar `musica.wav` en el FileSystem → pestaña **Import** (arriba, al lado de *Scene*) → **Loop Mode** = **Forward** → **Reimport**.
 
 > 🧠 **¿Por qué el loop se configura al importar?** Porque es una propiedad **del archivo**, no del nodo que lo reproduce: cualquier `AudioStreamPlayer` que use `musica.wav` la va a repetir sin cortes. Los efectos quedan sin loop: suenan una vez y listo.
 
-✅ **Punto de control 0:** tenés la carpeta `sonidos` con los seis `.wav`, y al hacer doble clic en `musica.wav` el Inspector muestra el loop activado.
+✅ **Punto de control 0:** la carpeta `sonidos` tiene los seis `.wav`, y al hacer doble clic en `musica.wav` el Inspector muestra el loop activado.
 
 ---
 
@@ -100,7 +100,7 @@ Están en la carpeta [`assets/`](assets/) de esta semana. Son **sintetizados par
 
 > **Concepto (Clase 6, bloque 3):** al cambiar de escena, Godot **descarga la anterior entera**. Si el tiempo y los slimes viven en el jugador, la pantalla de Game Over no los puede leer. Van en un **Autoload**: un script que Godot mantiene cargado **siempre**, sea cual sea la escena.
 
-1. En el **FileSystem**, clic derecho en `res://` → **New → Script…** → **Inherits: `Node`**, path **`res://partida.gd`** → **Create**. Escribí:
+1. En el **FileSystem**, clic derecho en `res://` → **New → Script…** → **Inherits: `Node`**, path **`res://partida.gd`** → **Create**. Escribir:
 
 ```gdscript
 extends Node
@@ -114,7 +114,7 @@ func reiniciar():
 	tiempo = 0.0
 ```
 
-2. **Project → Project Settings → Globals → Autoload**. En **Path** elegí `partida.gd`; en **Node Name** escribí **`Partida`** → **Add**. Tiene que quedar en la lista, con **Global Variable** tildado.
+2. **Project → Project Settings → Globals → Autoload**. En **Path** elegir `partida.gd`; en **Node Name** escribir **`Partida`** → **Add**. Tiene que quedar en la lista, con **Global Variable** tildado.
 
    ![Pestaña Globals con Autoload](https://docs.godotengine.org/es/4.x/_images/autoload_tab.webp)
 
@@ -122,7 +122,7 @@ func reiniciar():
 
 ### 1.2 · Contar el tiempo
 
-3. Seleccioná **`Arena`** → **Attach Script** → `res://arena.gd` (si ya tenía script, por ejemplo por la bomba del extra del TP3, agregale solo la línea de `Partida`):
+3. Seleccionar **`Arena`** → **Attach Script** → `res://arena.gd` (si ya tenía script, por ejemplo por la bomba del extra del TP3, agregarle solo la línea de `Partida`):
 
 ```gdscript
 extends Node2D
@@ -135,8 +135,8 @@ func _process(delta):
 
 ### 1.3 · El HUD, con su script
 
-4. En `arena.tscn`, hijo de **`HUD`** → **`Label`** → renombralo **`LabelTiempo`**. **Text** = `Tiempo: 0`. Ubicalo debajo de `LabelKills`.
-5. Seleccioná **`HUD`** → **Attach Script** → `res://hud.gd`:
+4. En `arena.tscn`, hijo de **`HUD`** → **`Label`** → renombrarlo **`LabelTiempo`**. **Text** = `Tiempo: 0`. Ubicarlo debajo de `LabelKills`.
+5. Seleccionar **`HUD`** → **Attach Script** → `res://hud.gd`:
 
 ```gdscript
 extends CanvasLayer
@@ -167,9 +167,9 @@ func actualizar_vida(vida):
 ### 1.4 · El jugador, más liviano
 
 6. En **`jugador.gd`**:
-   - **Borrá** `var kills = 0` (ahora vive en `Partida`).
-   - **Borrá** la función `actualizar_hud()` entera, y su llamada en `_ready()`.
-   - Agregá la línea del `@onready` y cambiá `recibir_dano()` y `sumar_kill()`:
+   - **Borrar** `var kills = 0` (ahora vive en `Partida`).
+   - **Borrar** la función `actualizar_hud()` entera, y su llamada en `_ready()`.
+   - Agregar la línea del `@onready` y cambiar `recibir_dano()` y `sumar_kill()`:
 
 ```gdscript
 @onready var hud = get_node("../HUD")      # NUEVO, arriba con las variables
@@ -184,21 +184,21 @@ func sumar_kill():
 	Partida.kills += 1                    # antes: kills += 1 y actualizar_hud()
 ```
 
-> 🧠 **¿Por qué `sumar_kill()` sigue en el jugador?** En la clase, `morir()` escribía directo en `Partida`. Acá el slime ya le avisa al jugador (TP3), y lo dejamos así porque en la Parte 4 el **sonido** de cada kill va a vivir en el jugador: el slime se borra, y un sonido que es hijo del slime se borraría con él (Clase 7).
+> 🧠 **¿Por qué `sumar_kill()` sigue en el jugador?** En la clase, `morir()` escribía directo en `Partida`. Acá el slime ya le avisa al jugador (TP3), y se deja así porque en la Parte 4 el **sonido** de cada kill va a vivir en el jugador: el slime se borra, y un sonido que es hijo del slime se borraría con él (Clase 7).
 
 7. **F6** con `arena.tscn` abierta.
 
-✅ **Punto de control 1:** el HUD muestra `Tiempo: 1, 2, 3…` y `Slimes:` sube con cada kill. La barra es **verde**; al recibir golpes baja, se pone **amarilla** por debajo de 50 y **roja** por debajo de 25. Dejate matar: la escena se reinicia… **y el tiempo sigue desde donde estaba**. No es un error: `Partida` vive **fuera** de la escena. Ponerlo en cero es trabajo del menú.
+✅ **Punto de control 1:** el HUD muestra `Tiempo: 1, 2, 3…` y `Slimes:` sube con cada kill. La barra es **verde**; al recibir golpes baja, se pone **amarilla** por debajo de 50 y **roja** por debajo de 25. Dejarse matar: la escena se reinicia… **y el tiempo sigue desde donde estaba**. No es un error: `Partida` vive **fuera** de la escena. Ponerlo en cero es trabajo del menú.
 
 🛟 **Errores comunes en esta parte**
 
 <details>
-<summary>Abrí para ver soluciones</summary>
+<summary>Ver soluciones</summary>
 
-- **`Identifier "Partida" not declared`:** falta el Autoload, o el *Node Name* no es exactamente `Partida`. Mirá **Project Settings → Globals → Autoload**.
-- **`Invalid call. Nonexistent function 'actualizar_hud'`:** quedó una llamada a la función que borraste (en `_ready()` o en otro lado). Buscala con **Ctrl+F**.
+- **`Identifier "Partida" not declared`:** falta el Autoload, o el *Node Name* no es exactamente `Partida`. Revisar **Project Settings → Globals → Autoload**.
+- **`Invalid call. Nonexistent function 'actualizar_hud'`:** quedó una llamada a la función que se borró (en `_ready()` o en otro lado). Buscarla con **Ctrl+F**.
 - **`Node not found: "../HUD"`:** el HUD tiene otro nombre, o no es hijo de `Arena`.
-- **La barra no cambia de color:** revisá que `actualizar_vida()` tiña la **`barra`**, no el HUD.
+- **La barra no cambia de color:** revisar que `actualizar_vida()` tiña la **`barra`**, no el HUD.
 </details>
 
 ---
@@ -207,12 +207,12 @@ func sumar_kill():
 
 > **Concepto (Clase 6, bloque 2):** los menús se arman con nodos **`Control`** que ocupan toda la pantalla. Las **anclas** los pegan a una parte de la pantalla, y un **`VBoxContainer`** acomoda los botones solo.
 
-1. **Scene → New Scene** → **Otro Nodo** → **`Control`** → renombralo **`Menu`**. Guardá como **`menu.tscn`**.
-2. Hijo de `Menu` → **`ColorRect`** → renombralo **`Fondo`**. Con `Fondo` seleccionado, en la barra de arriba del Viewport abrí el menú de **anclas** y elegí **Full Rect**. Elegí un **Color** oscuro.
+1. **Scene → New Scene** → **Otro Nodo** → **`Control`** → renombrarlo **`Menu`**. Guardar como **`menu.tscn`**.
+2. Hijo de `Menu` → **`ColorRect`** → renombrarlo **`Fondo`**. Con `Fondo` seleccionado, en la barra de arriba del Viewport abrir el menú de **anclas** y elegir **Full Rect**. Elegir un **Color** oscuro.
 
    ![Menú de anclas](https://docs.godotengine.org/es/4.x/_images/anchor_presets.webp)
 
-3. Hijo de `Menu` → **`VBoxContainer`** → renombralo **`Botonera`**. Ancla → **Center**. **Theme Overrides → Constants → Separation** = `16`.
+3. Hijo de `Menu` → **`VBoxContainer`** → renombrarlo **`Botonera`**. Ancla → **Center**. **Theme Overrides → Constants → Separation** = `16`.
 4. Hijos de `Botonera`, en este orden:
    - **`Label`** → **`Titulo`**. **Text** = `Sobreviví a los slimes`. **Theme Overrides → Font Sizes → Font Size** = `48`. **Horizontal Alignment** = `Center`.
    - **`Button`** → **`BtnJugar`**. **Text** = `Jugar`.
@@ -227,7 +227,7 @@ Menu  (Control)
     └── BtnSalir  (Button)
 ```
 
-5. Seleccioná **`Menu`** → **Attach Script** → `res://menu.gd`:
+5. Seleccionar **`Menu`** → **Attach Script** → `res://menu.gd`:
 
 ```gdscript
 extends Control
@@ -246,7 +246,7 @@ func _on_salir():
 ```
 
 6. **Project → Project Settings → Application → Run → Main Scene** = **`menu.tscn`**.
-7. Apretá **F5** (no F6).
+7. Apretar **F5** (no F6).
 
 > 🧠 **`pressed`** es la señal del `Button`: se conecta igual que `body_entered` o `timeout`. **`change_scene_to_file()`** descarga el menú entero y carga la arena. **`grab_focus()`** deja “Jugar” seleccionado: se puede empezar con **Enter**, sin mouse.
 
@@ -257,11 +257,11 @@ func _on_salir():
 🛟 **El menú se ve mal o los botones no responden**
 
 <details>
-<summary>Abrí para ver soluciones</summary>
+<summary>Ver soluciones</summary>
 
 - **Los botones quedan en una esquina:** falta el ancla **Center** en la `Botonera`, o los botones no son hijos del `VBoxContainer`.
 - **El fondo tapa todo:** el `Fondo` tiene que estar **arriba** de la `Botonera` en el árbol. En 2D, lo que está más abajo se dibuja encima.
-- **Jugar no hace nada:** la ruta `"res://arena.tscn"` tiene que coincidir exacta con el FileSystem, mayúsculas incluidas. Mirá la consola.
+- **Jugar no hace nada:** la ruta `"res://arena.tscn"` tiene que coincidir exacta con el FileSystem, mayúsculas incluidas. Revisar la consola.
 - **F5 abre la arena, no el menú:** falta la *Main Scene*, o apunta a otra escena.
 </details>
 
@@ -269,13 +269,13 @@ func _on_salir():
 
 ## 💀 Parte 3 — La pantalla de Game Over
 
-1. En el FileSystem, clic derecho en **`menu.tscn`** → **Duplicate…** → **`game_over.tscn`**. Abrila.
-2. Renombrá la raíz a **`GameOver`**. Clic derecho en ella → **Detach Script** (se lleva el script del menú; va a tener el suyo).
-3. Cambiá el **Color** del `Fondo` por un rojo oscuro.
+1. En el FileSystem, clic derecho en **`menu.tscn`** → **Duplicate…** → **`game_over.tscn`**. Abrirla.
+2. Renombrar la raíz a **`GameOver`**. Clic derecho en ella → **Detach Script** (se lleva el script del menú; va a tener el suyo).
+3. Cambiar el **Color** del `Fondo` por un rojo oscuro.
 4. En la `Botonera`:
    - `Titulo` → **Text** = `GAME OVER`.
-   - Agregá dos **`Label`** debajo del título: **`LabelResultado`** y **`LabelRecord`** (**Horizontal Alignment** = `Center` en los dos).
-   - Renombrá `BtnJugar` → **`BtnReintentar`** (**Text** = `Reintentar`) y `BtnSalir` → **`BtnMenu`** (**Text** = `Menú`).
+   - Agregar dos **`Label`** debajo del título: **`LabelResultado`** y **`LabelRecord`** (**Horizontal Alignment** = `Center` en los dos).
+   - Renombrar `BtnJugar` → **`BtnReintentar`** (**Text** = `Reintentar`) y `BtnSalir` → **`BtnMenu`** (**Text** = `Menú`).
 
 ```
 GameOver  (Control)
@@ -324,15 +324,15 @@ func _on_menu():
 
 > 🧠 **`int(Partida.tiempo)`** corta los decimales: `37.82` → `37`. Y `str()` convierte el número en texto para poder pegarlo con `+`.
 
-✅ **Punto de control 3:** con **F5**, jugá y perdé. Aparece la pantalla roja con, por ejemplo, `Sobreviviste 37 s y eliminaste 12 slimes` y `¡Nuevo récord!`. **Reintentar** arranca de cero. Si la segunda partida dura menos, dice `Récord: 37 s`. **Menú** vuelve al inicio.
+✅ **Punto de control 3:** con **F5**, jugar y perder. Aparece la pantalla roja con, por ejemplo, `Sobreviviste 37 s y eliminaste 12 slimes` y `¡Nuevo récord!`. **Reintentar** arranca de cero. Si la segunda partida dura menos, dice `Récord: 37 s`. **Menú** vuelve al inicio.
 
 🛟 **Errores comunes con el Game Over**
 
 <details>
-<summary>Abrí para ver soluciones</summary>
+<summary>Ver soluciones</summary>
 
 - **`Node not found: "Botonera/LabelResultado"`:** el nombre del `Label` no coincide, o no es hijo de `Botonera`.
-- **Los botones hacen lo del menú:** no se desconectó `menu.gd`. Revisá que la raíz tenga **`game_over.gd`**.
+- **Los botones hacen lo del menú:** no se desconectó `menu.gd`. Revisar que la raíz tenga **`game_over.gd`**.
 - **Siempre dice “¡Nuevo récord!”:** `mejor_tiempo` se está poniendo en 0 en `reiniciar()`. Solo se reinician `kills` y `tiempo`.
 - **El tiempo del Game Over no coincide con el del HUD:** falta `Partida.reiniciar()` en algún botón que lleva a la arena.
 </details>
@@ -345,9 +345,9 @@ func _on_menu():
 
 ### 4.1 · La música
 
-1. En `arena.tscn`, hijo de `Arena` → **`AudioStreamPlayer`** → renombralo **`Musica`**. **Stream** = `musica.wav` (arrastralo desde el FileSystem). **Autoplay** ✔. **Volume dB** = `-8`.
+1. En `arena.tscn`, hijo de `Arena` → **`AudioStreamPlayer`** → renombrarlo **`Musica`**. **Stream** = `musica.wav` (arrastrarlo desde el FileSystem). **Autoplay** ✔. **Volume dB** = `-8`.
 
-> 🧠 Como la música es hija de la arena, **se corta sola** al pasar al Game Over. Es lo que queremos: el silencio también es una respuesta.
+> 🧠 Como la música es hija de la arena, **se corta sola** al pasar al Game Over. Es lo buscado: el silencio también es una respuesta.
 
 ### 4.2 · Los efectos del caballero
 
@@ -392,13 +392,13 @@ func sumar_kill():
 🛟 **No suena nada**
 
 <details>
-<summary>Abrí para ver soluciones</summary>
+<summary>Ver soluciones</summary>
 
-- **Ningún sonido:** revisá el volumen de la compu y el **Stream** de cada nodo (si está vacío, dice `<empty>`).
+- **Ningún sonido:** revisar el volumen de la computadora y el **Stream** de cada nodo (si está vacío, dice `<empty>`).
 - **La música no suena:** falta **Autoplay**.
 - **La música suena una vez y se corta:** falta el **Loop Mode = Forward** en la importación (Parte 0).
 - **`Node not found: "SfxDisparo"`:** el nodo tiene otro nombre, o no es hijo de `Jugador`.
-- **El disparo tapa todo:** bajale más el **Volume dB** (`-20`).
+- **El disparo tapa todo:** bajarle más el **Volume dB** (`-20`).
 </details>
 
 ---
@@ -409,7 +409,7 @@ func sumar_kill():
 
 ### 5.1 · El destello: un `Tween` en la clase madre
 
-1. En **`enemigo.gd`**, cambiá `recibir_dano()` y agregá `destello()`:
+1. En **`enemigo.gd`**, cambiar `recibir_dano()` y agregar `destello()`:
 
 ```gdscript
 func recibir_dano(cantidad):
@@ -430,7 +430,7 @@ func destello():
 
 ### 5.2 · El *pop* al morir
 
-2. En **`enemigo.gd`**, reemplazá `morir()`:
+2. En **`enemigo.gd`**, reemplazar `morir()`:
 
 ```gdscript
 func morir():
@@ -455,9 +455,9 @@ func morir():
 ### 5.3 · El parpadeo del caballero: `AnimationPlayer`
 
 3. En `arena.tscn`, hijo de **`Jugador`** → **`AnimationPlayer`**.
-4. Con el `AnimationPlayer` seleccionado, abajo se abre el panel **Animation**. Botón **Animation → New** → nombre **`golpe`**. Poné el largo en **`0.4`** (el campo con el reloj, a la derecha del panel).
-5. Seleccioná el **`AnimatedSprite2D`** del jugador (el panel Animation queda abierto). Con el cursor de la línea de tiempo en **0**, en el Inspector, buscá **Visibility → Modulate** y hacé clic en la **llave 🔑** de al lado. Godot pregunta si crear la pista: **Create**.
-6. Mové el cursor a **0.1**, poné **Modulate** en rojo (`ff5555`) y clic en la llave. Repetí: **0.2** blanco, **0.3** rojo, **0.4** blanco.
+4. Con el `AnimationPlayer` seleccionado, abajo se abre el panel **Animation**. Botón **Animation → New** → nombre **`golpe`**. Poner el largo en **`0.4`** (el campo con el reloj, a la derecha del panel).
+5. Seleccionar el **`AnimatedSprite2D`** del jugador (el panel Animation queda abierto). Con el cursor de la línea de tiempo en **0**, en el Inspector, buscar **Visibility → Modulate** y hacer clic en la **llave 🔑** de al lado. Godot pregunta si crear la pista: **Create**.
+6. Mover el cursor a **0.1**, poner **Modulate** en rojo (`ff5555`) y clic en la llave. Repetir: **0.2** blanco, **0.3** rojo, **0.4** blanco.
 
    ![Panel de animación con pistas y keyframes](https://docs.godotengine.org/es/4.x/_images/animation_animation_panel.webp)
 
@@ -473,7 +473,7 @@ func morir():
 
 ### 5.4 · La pantalla tiembla
 
-8. En `arena.tscn`, hijo de **`Arena`** → **`Camera2D`** → renombralo **`Camara`**. **Position** = `0, 0`. **Anchor Mode** = **Fixed Top Left**. Ahora la cámara muestra exactamente lo mismo que antes: solo está para poder moverla.
+8. En `arena.tscn`, hijo de **`Arena`** → **`Camera2D`** → renombrarlo **`Camara`**. **Position** = `0, 0`. **Anchor Mode** = **Fixed Top Left**. Ahora la cámara muestra exactamente lo mismo que antes: solo está para poder moverla.
 9. En **`jugador.gd`**, una función nueva, y su llamada en `recibir_dano()`:
 
 ```gdscript
@@ -494,39 +494,39 @@ func sacudir_camara():
 
 > 🧠 **¿Y el HUD?** No tiembla: vive en un `CanvasLayer`, pegado a la pantalla, no al mundo (Clase 6).
 
-✅ **Punto de control 5:** cada bala que le pega al jefe lo hace **destellar**; cada slime que cae se **infla y desaparece**. Cuando un slime o el jefe tocan al caballero, este **parpadea en rojo**, la arena **tiembla** un instante y el HUD queda quieto. Jugá cinco minutos con sonido: ¿sobra algo? ¿falta algo? Ajustá los números (el `6` del temblor, los `0.12` del *pop*) hasta que te guste.
+✅ **Punto de control 5:** cada bala que le pega al jefe lo hace **destellar**; cada slime que cae se **infla y desaparece**. Cuando un slime o el jefe tocan al caballero, este **parpadea en rojo**, la arena **tiembla** un instante y el HUD queda quieto. Jugar cinco minutos con sonido: ¿sobra algo? ¿falta algo? Ajustar los números (el `6` del temblor, los `0.12` del *pop*) hasta que el resultado convenza.
 
 🛟 **Errores comunes con el game feel**
 
 <details>
-<summary>Abrí para ver soluciones</summary>
+<summary>Ver soluciones</summary>
 
 - **El caballero queda rojo:** el último keyframe de `golpe` no es blanco, o el largo de la animación es mayor que 0.4 y el último key no está al final.
 - **`Animation not found: "golpe"`:** la animación tiene otro nombre (mayúsculas incluidas).
 - **Se ve todo corrido o con zoom:** la `Camara` no está en `0, 0`, o su **Anchor Mode** quedó en *Drag Center*.
 - **Los slimes “muertos” le siguen pegando al caballero:** falta el `set_deferred("monitoring", false)`.
 - **El arma le sigue disparando a slimes que ya cayeron:** falta el `remove_from_group("enemigo")`.
-- **Un slime suma dos kills:** dos balas le pegaron en el mismo frame. Es raro y no rompe nada; si querés evitarlo, al principio de `morir()`: `if not is_in_group("enemigo"): return`.
+- **Un slime suma dos kills:** dos balas le pegaron en el mismo frame. Es raro y no rompe nada; para evitarlo, al principio de `morir()`: `if not is_in_group("enemigo"): return`.
 </details>
 
 ---
 
-## 📦 Parte 6 — Exportar: tu juego fuera de Godot
+## 📦 Parte 6 — Exportar: el juego fuera de Godot
 
-> **Concepto:** hasta ahora tu juego solo existe dentro del editor. **Exportar** es empaquetarlo en un `.exe` que cualquiera puede abrir. Godot necesita unas **plantillas** (los ejecutables base de cada plataforma) que se bajan una sola vez.
+> **Concepto:** hasta ahora el juego solo existe dentro del editor. **Exportar** es empaquetarlo en un `.exe` que cualquiera puede abrir. Godot necesita unas **plantillas** (los ejecutables base de cada plataforma) que se bajan una sola vez.
 
 ### 6.1 · Antes de exportar
 
 - **Main Scene** = `menu.tscn` (Parte 2).
-- **Project → Project Settings → Application → Config → Name** = el nombre de tu juego.
+- **Project → Project Settings → Application → Config → Name** = el nombre del juego.
 - (Opcional) **Application → Config → Icon**: un `.png` de 256×256 para el ícono del `.exe`.
-- Jugá una vez de punta a punta **sin errores rojos** en la consola.
+- Jugar una vez de punta a punta **sin errores rojos** en la consola.
 
-> ⚠️ Si en algún script escribiste una ruta como `C:\Users\...` en vez de `res://`, funciona en tu compu y **se rompe en cualquier otra**. Es el error número uno al exportar.
+> ⚠️ Si en algún script se escribió una ruta como `C:\Users\...` en vez de `res://`, funciona en la computadora propia y **se rompe en cualquier otra**. Es el error número uno al exportar.
 
 ### 6.2 · Exportar a Windows en 4 pasos
 
-1. **Editor → Manage Export Templates → Download and Install**. Una sola vez; pesan bastante. Esperá a que diga que están instaladas.
+1. **Editor → Manage Export Templates → Download and Install**. Una sola vez; pesan bastante. Esperar a que diga que están instaladas.
 
    ![Administrador de plantillas de exportación](assets/export-templates.webp)
 
@@ -534,45 +534,45 @@ func sacudir_camara():
 
    ![El botón Add… lista las plataformas](assets/export-preset.webp)
 
-3. Abajo, **Export Project…**: elegí una carpeta **nueva** (por ejemplo `export/`, **fuera** de la carpeta del proyecto) y el nombre `mi_juego.exe`. Destildá **Export With Debug** para la versión final.
-4. Godot genera **dos archivos**: `mi_juego.exe` y `mi_juego.pck`. **Van siempre juntos**: el `.exe` es el motor y el `.pck` es tu juego. Sin el `.pck`, el `.exe` no arranca.
+3. Abajo, **Export Project…**: elegir una carpeta **nueva** (por ejemplo `export/`, **fuera** de la carpeta del proyecto) y el nombre `mi_juego.exe`. Destildar **Export With Debug** para la versión final.
+4. Godot genera **dos archivos**: `mi_juego.exe` y `mi_juego.pck`. **Van siempre juntos**: el `.exe` es el motor y el `.pck` es el juego. Sin el `.pck`, el `.exe` no arranca.
 
-> 💡 Si preferís un solo archivo: en el preset, **Binary Format → Embed PCK** ✔. Queda todo dentro del `.exe`.
+> 💡 Para tener un solo archivo: en el preset, **Binary Format → Embed PCK** ✔. Queda todo dentro del `.exe`.
 
-5. **Probalo de verdad:** cerrá Godot, abrí `mi_juego.exe` desde la carpeta y jugá una partida entera: menú, arena, Game Over, Reintentar. Si podés, pasáselo a alguien que no tenga Godot.
+5. **Probarlo de verdad:** cerrar Godot, abrir `mi_juego.exe` desde la carpeta y jugar una partida entera: menú, arena, Game Over, Reintentar. Si es posible, pasárselo a alguien que no tenga Godot.
 
-✅ **Punto de control 6:** el `.exe` corre en una compu **sin Godot**, arranca en el menú, se escucha, y se juega igual que en el editor.
+✅ **Punto de control 6:** el `.exe` corre en una computadora **sin Godot**, arranca en el menú, se escucha, y se juega igual que en el editor.
 
 🛟 **Errores comunes al exportar**
 
 <details>
-<summary>Abrí para ver soluciones</summary>
+<summary>Ver soluciones</summary>
 
-- **“No export template found”:** las plantillas no se instalaron, o son de **otra versión** de Godot. Volvé a *Manage Export Templates* y fijate que la versión coincida.
-- **El `.exe` abre y se cierra:** falta el `.pck` al lado, o copiaste solo el `.exe` a otra carpeta.
+- **“No export template found”:** las plantillas no se instalaron, o son de **otra versión** de Godot. Volver a *Manage Export Templates* y verificar que la versión coincida.
+- **El `.exe` abre y se cierra:** falta el `.pck` al lado, o se copió solo el `.exe` a otra carpeta.
 - **Ventana negra:** la *Main Scene* no está configurada, o apunta a una escena borrada.
-- **En otra compu no encuentra un sonido o una imagen:** una ruta absoluta (`C:\...`) en algún script, o un archivo fuera de la carpeta del proyecto. Todo tiene que estar dentro de `res://`.
+- **En otra computadora no encuentra un sonido o una imagen:** una ruta absoluta (`C:\...`) en algún script, o un archivo fuera de la carpeta del proyecto. Todo tiene que estar dentro de `res://`.
 </details>
 
 ---
 
-## 🧩 Parte 7 — Tu aporte: algo que no estaba en ningún TP
+## 🧩 Parte 7 — Aporte propio: algo que no estaba en ningún TP
 
-> **Concepto:** ya tenés un juego terminado. Ahora **agregale una cosa tuya**. No importa cuál: importa que la elijas, la hagas andar y puedas explicar cómo la hiciste. Es lo que vas a **mostrar en la semana 6**.
+> **Concepto:** el juego ya está terminado. Ahora se le **agrega una cosa propia**. No importa cuál: importa elegirla, hacerla andar y poder explicar cómo se hizo. Es lo que se va a **mostrar en la semana 6**.
 
 ### Las reglas
 
 1. **Una sola cosa.** Bien hecha vale más que tres a medias.
 2. **Se tiene que notar jugando.** Si hay que leer el código para darse cuenta, no cuenta.
-3. **Con lo que ya sabés.** Todo lo de la lista se hace con nodos y funciones de las semanas 1 a 5. No hace falta buscar nada nuevo (aunque podés).
+3. **Con lo ya visto.** Todo lo de la lista se hace con nodos y funciones de las semanas 1 a 5. No hace falta buscar nada nuevo (aunque se puede).
 4. **Del tamaño justo:** un script nuevo **o** una función nueva. Si necesita más de dos escenas nuevas, es demasiado grande.
-5. **Contala** en un archivo **`aporte.md`** dentro del proyecto, de 5 a 10 líneas.
+5. **Contarla** en un archivo **`aporte.md`** dentro del proyecto, de 5 a 10 líneas.
 
-### Elegí una de estas (o proponé la tuya)
+### Elegir una de estas (o proponer una propia)
 
 La pista **no es la solución**: es el empujón.
 
-| # | Aporte | Qué usás | Pista |
+| # | Aporte | Qué se usa | Pista |
 | :--- | :--- | :--- | :--- |
 | 1 | **Disparo triple:** tres balas en abanico. | `for` (sem. 1), vectores (sem. 2) | En `disparar()`, `for angulo in [-15, 0, 15]:` y cada bala con `direccion.rotated(deg_to_rad(angulo))`. |
 | 2 | **Orbe que gira** alrededor del caballero y daña lo que toca. | `Area2D` y señales (sem. 2), `delta` | Un `Area2D` hijo del `Jugador`; en `_process`: `angulo += 3 * delta` y `position = Vector2(60, 0).rotated(angulo)`. En `area_entered`, `if area is Enemigo: area.recibir_dano(1)`. |
@@ -581,16 +581,16 @@ La pista **no es la solución**: es el empujón.
 | 5 | **El jefe dispara:** en vez de acercarse, se frena a distancia y tira balas. | Máquina de estados (sem. 4) | Una `bala_enemiga.tscn` que use `body_entered` y le pegue al grupo `"jugador"`. Que el jefe entre en `ATACAR` a 200 px y en `atacar()` instancie una hacia el caballero. |
 | 6 | **Corazones que curan:** cada 15 s aparece uno. | `body_entered` (sem. 2, las monedas), `Timer` | `corazon.tscn`; al tocarlo, `vida = min(vida + 20, 100)`, `hud.actualizar_vida(vida)` y `queue_free()`. |
 | 7 | **Mejora cada 10 kills:** el arma dispara más rápido. | `%` (sem. 1), `Timer` | En `sumar_kill()`: `if Partida.kills % 10 == 0: $TimerDisparo.wait_time *= 0.8`. Un aviso en el HUD durante un segundo. |
-| 8 | **Dificultad que sube** con el tiempo. | `Partida`, `Timer` | En `spawnear()`: `$Timer.wait_time = max(0.25, 1.0 - Partida.tiempo / 120)`. Mostrá el “nivel” en el HUD. |
+| 8 | **Dificultad que sube** con el tiempo. | `Partida`, `Timer` | En `spawnear()`: `$Timer.wait_time = max(0.25, 1.0 - Partida.tiempo / 120)`. Mostrar el “nivel” en el HUD. |
 | 9 | **Esquive:** con Shift, un *dash* y medio segundo invulnerable. | Input Map (sem. 2), `Timer` one shot | Un `TimerInvulnerable`; `recibir_dano()` no hace nada mientras corre. `modulate.a = 0.5` mientras dura. |
-| 10 | **Menú de pausa:** Esc congela el juego, con botones Seguir y Menú. | El desafío de la Clase 6, botones | `get_tree().paused`, y el `CanvasLayer` de la pausa con **Process → Mode = Always**. Ojo: al ir al menú, sacá la pausa antes de cambiar de escena. |
+| 10 | **Menú de pausa:** Esc congela el juego, con botones Seguir y Menú. | El desafío de la Clase 6, botones | `get_tree().paused`, y el `CanvasLayer` de la pausa con **Process → Mode = Always**. Importante: al ir al menú, sacar la pausa antes de cambiar de escena. |
 | 11 | **Récord que no se borra:** el mejor tiempo sobrevive a cerrar el juego. | `Partida`, `FileAccess` | Al terminar, `FileAccess.open("user://record.txt", FileAccess.WRITE)` y `store_string(str(mejor_tiempo))`; al abrir el juego, leerlo en `_ready()` de `Partida` si `FileAccess.file_exists(...)`. |
 
-**¿Tenés otra idea?** Genial: **consultala antes** de empezar (un mensaje con dos líneas: qué querés hacer y con qué nodos). Así nos aseguramos de que sea del tamaño justo.
+**¿Otra idea?** Se puede: **consultarla antes** de empezar (un mensaje con dos líneas: qué se quiere hacer y con qué nodos). Así se asegura que sea del tamaño justo.
 
 ### El archivo `aporte.md`
 
-Guardalo en la raíz del proyecto, al lado de `project.godot`. Plantilla:
+Guardarlo en la raíz del proyecto, al lado de `project.godot`. Plantilla:
 
 ```markdown
 # Mi aporte: <nombre de la idea>
@@ -601,15 +601,15 @@ Guardalo en la raíz del proyecto, al lado de `project.godot`. Plantilla:
 **Qué me costó / qué cambiaría:** (opcional) una línea honesta.
 ```
 
-> 🎤 **Para la semana 6:** cada uno muestra su juego **exportado** durante unos minutos: una partida corta, y después **tu aporte** en acción, contando cómo lo hiciste. `aporte.md` es tu machete.
+> 🎤 **Para la semana 6:** cada uno muestra su juego **exportado** durante unos minutos: una partida corta, y después **el aporte propio** en acción, contando cómo se hizo. `aporte.md` sirve de guía.
 
-✅ **Punto de control 7 (final):** tu aporte se nota jugando, el resto del juego sigue funcionando igual, y `aporte.md` lo explica. ¡Terminaste el juego! 🎉
+✅ **Punto de control 7 (final):** el aporte propio se nota jugando, el resto del juego sigue funcionando igual, y `aporte.md` lo explica. Juego terminado. 🎉
 
 ---
 
 ## 📤 Entrega
 
-Entregá **dos cosas**:
+Entregar **dos cosas**:
 
 1. La **carpeta del proyecto** comprimida en `.zip` (sin la carpeta `.godot/`), con **`aporte.md`** adentro.
 2. El **juego exportado**: `mi_juego.exe` + `mi_juego.pck` (o el `.exe` con el PCK embebido) en otro `.zip`.
@@ -627,13 +627,13 @@ Entregá **dos cosas**:
 - [ ] Los enemigos **destellan** al recibir una bala y hacen **pop** al morir (en `enemigo.gd`, heredado por el jefe).
 - [ ] El caballero **parpadea** (`AnimationPlayer`) y la pantalla **tiembla** al recibir daño; el HUD no tiembla.
 - [ ] El `.exe` exportado corre **sin Godot**.
-- [ ] **Mi aporte** se nota jugando y está explicado en `aporte.md`.
+- [ ] **El aporte propio** se nota jugando y está explicado en `aporte.md`.
 
 ---
 
 ## 📄 Código completo de referencia
 
-Por si te perdiste en algún paso. **`spawner.gd`, `bala.gd` y `slime_elite.gd` quedan igual que en el TP4.**
+Como referencia, por si algún paso no quedó claro. **`spawner.gd`, `bala.gd` y `slime_elite.gd` quedan igual que en el TP4.**
 
 <details>
 <summary><code>partida.gd</code>, <code>arena.gd</code> y <code>hud.gd</code></summary>
@@ -861,11 +861,11 @@ func _on_menu():
 
 ## 🌟 Extra (opcional, para los que quieran más)
 
-- **El clic que no se escucha.** Agregá un `AudioStreamPlayer` con `clic.wav` al menú y hacelo sonar en `_on_jugar()`. No se oye: el cambio de escena lo borra en el mismo frame (la trampa de la Clase 7). Arreglo: `$SfxClic.play()`, después `await $SfxClic.finished`, y recién ahí cambiar de escena.
+- **El clic que no se escucha.** Agregar un `AudioStreamPlayer` con `clic.wav` al menú y hacerlo sonar en `_on_jugar()`. No se oye: el cambio de escena lo borra en el mismo frame (la trampa de la Clase 7). Arreglo: `$SfxClic.play()`, después `await $SfxClic.finished`, y recién ahí cambiar de escena.
 - **Hit stop cuando cae el jefe.** En `morir()` de `slime_elite.gd`: `Engine.time_scale = 0.05`, `await get_tree().create_timer(0.08, true, false, true).timeout` y `Engine.time_scale = 1.0`, antes del `super()`. Solo para el jefe: con cada slime, el juego viviría congelado.
 - **Partículas al morir.** Una escena `explosion.tscn` con un `CPUParticles2D` (**One Shot** ✔, **Emitting** ✔, **Explosiveness** `1`, **Spread** `180`, **Gravity** `0, 0`, **Initial Velocity** `80`–`140`) y un script con `finished.connect(queue_free)`. El slime la instancia en su posición, en `Balas` o en la arena, antes del *pop*.
-- **Volumen de la música.** Panel **Audio** (abajo): agregá los buses `Musica` y `Efectos` y asigná cada `AudioStreamPlayer` al suyo. En el menú, un `HSlider` de 0 a 1 que haga `AudioServer.set_bus_volume_db(AudioServer.get_bus_index("Musica"), linear_to_db(value))`.
-- **Cámara que sigue y piso infinito.** Llevá la `Camara` adentro del `Jugador` (con **Anchor Mode** en *Drag Center* y la ruta de `sacudir_camara()` cambiada a `$Camara`), y sacá el `clamp`. Hay que cambiar también de dónde salen los slimes. La guía completa, con otros nombres de escena, está en las partes 1 y 2 del [TP8 de la versión anterior](../../trabajos-practicos/trabajo-practico-8.md).
+- **Volumen de la música.** Panel **Audio** (abajo): agregar los buses `Musica` y `Efectos` y asignar cada `AudioStreamPlayer` al suyo. En el menú, un `HSlider` de 0 a 1 que haga `AudioServer.set_bus_volume_db(AudioServer.get_bus_index("Musica"), linear_to_db(value))`.
+- **Cámara que sigue y piso infinito.** Llevar la `Camara` adentro del `Jugador` (con **Anchor Mode** en *Drag Center* y la ruta de `sacudir_camara()` cambiada a `$Camara`), y sacar el `clamp`. Hay que cambiar también de dónde salen los slimes. La guía completa, con otros nombres de escena, está en las partes 1 y 2 del [TP8 de la versión anterior](../../trabajos-practicos/trabajo-practico-8.md).
 - **Ranking con nombres.** Un `LineEdit` en el menú para el nombre, y un top 5 guardado en `user://ranking.json`. Está paso a paso en las partes 4 a 6 del mismo [TP8 anterior](../../trabajos-practicos/trabajo-practico-8.md).
 
 ---

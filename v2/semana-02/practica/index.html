@@ -151,7 +151,7 @@
   </section>
 
   <section class="slide" data-chapter="Cuerpos físicos" data-topic="En juegos reales">
-    <div class="slide-eyebrow">🎮 En juegos que conocés</div>
+    <div class="slide-eyebrow">🎮 En juegos conocidos</div>
     <h2 class="slide-title">Cada tipo, en un juego real</h2>
     <div class="shots three" style="margin-top:4px;">
       <figure class="shot">
@@ -193,12 +193,12 @@
           <li>Proyecto <code>clase-04</code>. Escena nueva, raíz <code>Node2D</code> llamada <code>Cuerpos</code></li>
           <li>El <b>suelo</b>: <code>StaticBody2D</code> con sprite y colisión, en <code>y = 300</code></li>
           <li>La <b>caja</b> y el <b>héroe</b>, igual, en <code>y = 0</code></li>
-          <li><span class="kbd">F6</span> y mirá qué hace cada uno</li>
+          <li><span class="kbd">F6</span> y mirar qué hace cada uno</li>
         </ol>
         <div class="consola"><span class="lbl">✅ Punto de control · en pantalla</span>Suelo:  no se mueve
 Caja:   cae, aterriza y se queda
-Héroe:  flota donde lo dejaste</div>
-        <div class="callout proba">🧪 <b>Probá:</b> sacale el <code>CollisionShape2D</code> al suelo. Después, al <code>Suelo</code> ponele <b>Rotation = 15</b>: la caja resbala, el héroe sigue flotando. ¿Por qué?</div>
+Héroe:  flota donde se lo dejó</div>
+        <div class="callout proba">🧪 <b>Probar:</b> sacarle el <code>CollisionShape2D</code> al suelo. Después, al <code>Suelo</code> ponerle <b>Rotation = 15</b>: la caja resbala, el héroe sigue flotando. ¿Por qué?</div>
       </div>
     </div>
   </section>
@@ -253,7 +253,7 @@ Héroe:  flota donde lo dejaste</div>
         <tr><td><b>1 · Gravedad</b></td><td><code>velocity.y += GRAVEDAD * delta</code>: se <b>acumula</b> (por eso <code>+=</code>) mientras <code>not is_on_floor()</code>. Sin esto, flota.</td></tr>
         <tr><td><b>2 · Input</b></td><td><code>get_axis()</code> devuelve un número entre <code>-1</code> y <code>1</code>. Multiplicado por la velocidad, da la parte horizontal del vector.</td></tr>
         <tr><td><b>3 · Salto</b></td><td>Un impulso hacia arriba (<code>velocity.y</code> negativo), <b>solo si está en el suelo</b>. Si no, saltaría en el aire.</td></tr>
-        <tr><td><b>4 · Mover</b></td><td><code>move_and_slide()</code> aplica <code>velocity</code>, resuelve choques y actualiza <code>is_on_floor()</code>. Fijate que <b>no multiplica por delta</b>: lo hace por dentro.</td></tr>
+        <tr><td><b>4 · Mover</b></td><td><code>move_and_slide()</code> aplica <code>velocity</code>, resuelve choques y actualiza <code>is_on_floor()</code>. Notar que <b>no multiplica por delta</b>: lo hace por dentro.</td></tr>
       </tbody>
     </table>
     <div class="callout" style="margin-top:14px;">🎮 Este patrón es el corazón de <i>Celeste</i>, <i>Super Meat Boy</i> y cualquier plataformero de precisión. Va en <code>_physics_process()</code> porque choca con cosas.</div>
@@ -315,7 +315,7 @@ Héroe:  flota donde lo dejaste</div>
         <div class="consola"><span class="lbl">✅ Punto de control · en pantalla</span>Cae y aterriza sobre el suelo
 Camina con A / D, frena en el borde
 Salta con Espacio, una vez por toque</div>
-        <div class="callout proba">🧪 <b>Probá:</b> <code>GRAVEDAD = 200</code> (la Luna). Sacá el <code>and is_on_floor()</code> y saltá en el aire. Poné el patrón en <code>_process()</code> en vez de <code>_physics_process()</code>: anda, pero ya sabés por qué no va ahí.</div>
+        <div class="callout proba">🧪 <b>Probar:</b> <code>GRAVEDAD = 200</code> (la Luna). Sacar el <code>and is_on_floor()</code> y saltar en el aire. Poner el patrón en <code>_process()</code> en vez de <code>_physics_process()</code>: anda, pero ya se vio por qué no va ahí.</div>
       </div>
     </div>
   </section>
@@ -327,7 +327,7 @@ Salta con Espacio, una vez por toque</div>
     <div class="columns">
       <div>
         <p class="subtitle" style="font-size:18px;">El sistema de comunicación de Godot. Permiten que un nodo <b>avise</b> que pasó algo, sin que los nodos necesiten conocerse.</p>
-        <div class="callout" style="background:rgba(220,38,38,0.08); border-left-color:var(--red);">❌ <b>Sin señales:</b> la moneda busca al jugador por su nombre y le modifica los puntos a mano. Si cambiás un nombre, <b>todo se rompe</b>.</div>
+        <div class="callout" style="background:rgba(220,38,38,0.08); border-left-color:var(--red);">❌ <b>Sin señales:</b> la moneda busca al jugador por su nombre y le modifica los puntos a mano. Si cambia un nombre, <b>todo se rompe</b>.</div>
       </div>
       <div class="card" style="align-self:center;">
         <h3>🔔 Analogía: la campana</h3>
@@ -347,12 +347,12 @@ Salta con Espacio, una vez por toque</div>
       <div class="arrow">→</div>
       <div class="card" style="text-align:center;"><h3>3 · Reaccionar</h3><p>Al emitirse, la función conectada <b>se ejecuta sola</b></p></div>
     </div>
-    <div class="callout" style="margin-top:20px;">🎮 Así funcionan los <b>logros</b> de Steam, el <b>puntaje</b> que sube al juntar un anillo en <i>Sonic</i>, o el “¡Nivel completado!” cuando cruzás la meta.</div>
+    <div class="callout" style="margin-top:20px;">🎮 Así funcionan los <b>logros</b> de Steam, el <b>puntaje</b> que sube al juntar un anillo en <i>Sonic</i>, o el “¡Nivel completado!” al cruzar la meta.</div>
   </section>
 
   <section class="slide" data-chapter="Señales" data-topic="Señales que ya usaste">
     <div class="slide-eyebrow">Señales</div>
-    <h2 class="slide-title">Ya venís usando señales sin saberlo</h2>
+    <h2 class="slide-title">Las señales ya se venían usando sin saberlo</h2>
     <table class="tbl" style="font-size:16px;">
       <thead><tr><th>Nodo</th><th>Señal</th><th>Se emite cuando…</th></tr></thead>
       <tbody>
@@ -395,10 +395,10 @@ Salta con Espacio, una vez por toque</div>
     <div class="columns">
       <div>
         <ol class="steps" style="font-size:15px;">
-          <li>Seleccioná el nodo <code>Area2D</code></li>
+          <li>Seleccionar el nodo <code>Area2D</code></li>
           <li>Panel lateral <b>Node</b> (al lado del Inspector) → pestaña <b>Signals</b></li>
           <li><b>Doble clic</b> en <code>body_entered(body: Node2D)</code></li>
-          <li>Elegí el nodo que va a recibir la señal (tiene que tener script)</li>
+          <li>Elegir el nodo que va a recibir la señal (tiene que tener script)</li>
           <li><b>Connect</b></li>
         </ol>
         <p class="small-note">Godot <b>genera la función sola</b> en el script del receptor, y le pone un ícono ⚡ al lado.</p>
@@ -429,7 +429,7 @@ Salta con Espacio, una vez por toque</div>
 	<span class="t">print</span>(<span class="s">"Algo entró: "</span> + body.name)
 	queue_free()        <span class="c"># la moneda se borra sola</span></pre>
         </div>
-        <p class="small-note" style="margin-top:8px;">Después, en <code>02_nivel</code>: botón 🔗 <b>Instantiate Child Scene</b> → <code>03_moneda.tscn</code>. Una moneda aparece en el nivel; movela al costado del jugador.</p>
+        <p class="small-note" style="margin-top:8px;">Después, en <code>02_nivel</code>: botón 🔗 <b>Instantiate Child Scene</b> → <code>03_moneda.tscn</code>. Una moneda aparece en el nivel; moverla al costado del jugador.</p>
       </div>
       <div>
         <ol class="steps compact">
@@ -439,7 +439,7 @@ Salta con Espacio, una vez por toque</div>
           <li>Sumar <code>queue_free()</code>. Correr de nuevo</li>
         </ol>
         <div class="consola"><span class="lbl">✅ Punto de control · Output</span>Algo entró: Jugador</div>
-        <div class="callout proba">🧪 <b>Probá:</b> borrá la shape de la moneda: no pasa nada, nunca. Poné una caja <code>RigidBody2D</code> que caiga sobre la moneda: <code>Algo entró: Caja</code>. ¿Cómo hacemos que solo cuente el jugador? Eso es el bloque 4.</div>
+        <div class="callout proba">🧪 <b>Probar:</b> borrar la shape de la moneda: no pasa nada, nunca. Poner una caja <code>RigidBody2D</code> que caiga sobre la moneda: <code>Algo entró: Caja</code>. ¿Cómo hacemos que solo cuente el jugador? Eso es el bloque 4.</div>
       </div>
     </div>
   </section>
@@ -464,14 +464,14 @@ Salta con Espacio, una vez por toque</div>
         <div class="card">
           <h3>¿Cuál conviene?</h3>
           <ul>
-            <li><b>Editor:</b> rápido, y ves la conexión con el ⚡. Ideal para empezar</li>
+            <li><b>Editor:</b> rápido, y la conexión se ve con el ⚡. Ideal para empezar</li>
             <li><b>Código:</b> queda todo en un lugar y funciona aunque instancies la escena por código (semana que viene)</li>
             <li><b>Nunca las dos a la vez:</b> la función se ejecutaría <b>dos veces</b></li>
           </ul>
         </div>
       </div>
     </div>
-    <div class="callout" style="margin-top:14px; background:rgba(220,38,38,0.08); border-left-color:var(--red);">⚠️ <b>Si la señal no dispara:</b> verificá que el <code>Area2D</code> tenga un <code>CollisionShape2D</code> hijo con shape asignado. Sin shape, el área <b>no tiene volumen</b> y nunca detecta nada.</div>
+    <div class="callout" style="margin-top:14px; background:rgba(220,38,38,0.08); border-left-color:var(--red);">⚠️ <b>Si la señal no dispara:</b> verificar que el <code>Area2D</code> tenga un <code>CollisionShape2D</code> hijo con shape asignado. Sin shape, el área <b>no tiene volumen</b> y nunca detecta nada.</div>
   </section>
 
   <!-- ============ GRUPOS ============ -->
@@ -480,7 +480,7 @@ Salta con Espacio, una vez por toque</div>
     <h2 class="slide-title">Grupos: una etiqueta para muchos nodos</h2>
     <div class="columns">
       <div>
-        <p class="subtitle" style="font-size:18px;">Permiten <b>etiquetar</b> nodos para preguntar “¿sos un jugador?” o para hablarle a <b>todos los de ese tipo a la vez</b>.</p>
+        <p class="subtitle" style="font-size:18px;">Permiten <b>etiquetar</b> nodos para preguntar “¿es un jugador?” o para hablarle a <b>todos los de ese tipo a la vez</b>.</p>
         <div class="callout">🎮 Una <b>explosión</b> que le pega a <b>todos los enemigos</b> a la vez, o un <b>hechizo</b> que congela a todo lo etiquetado como <code>"enemigo"</code>.</div>
       </div>
       <div class="code-wrap" style="align-self:center;">
@@ -527,13 +527,13 @@ get_tree().call_group(<span class="s">"enemigos"</span>, <span class="s">"recibi
         <ol class="steps compact">
           <li>El jugador se etiqueta en <code>_ready()</code> y gana <code>sumar_punto()</code></li>
           <li>La moneda pregunta <code>is_in_group</code> antes de hacer nada</li>
-          <li>En <code>02_nivel</code>, seleccioná la moneda y <span class="kbd">Ctrl</span>+<span class="kbd">D</span> dos veces. Repartilas</li>
+          <li>En <code>02_nivel</code>, seleccionar la moneda y <span class="kbd">Ctrl</span>+<span class="kbd">D</span> dos veces. Repartirlas</li>
           <li>Correr y juntar las tres</li>
         </ol>
         <div class="consola"><span class="lbl">✅ Punto de control · Output</span>¡Moneda! Puntos: 1
 ¡Moneda! Puntos: 2
 ¡Moneda! Puntos: 3</div>
-        <div class="callout proba">🧪 <b>Probá:</b> la caja ya no cuenta. Editá <code>03_moneda.tscn</code> (el sprite más chico): <b>las tres cambian</b>. Eso es la escena como molde, de la Clase 1.</div>
+        <div class="callout proba">🧪 <b>Probar:</b> la caja ya no cuenta. Editar <code>03_moneda.tscn</code> (el sprite más chico): <b>las tres cambian</b>. Eso es la escena como molde, de la Clase 1.</div>
       </div>
     </div>
   </section>
@@ -544,11 +544,11 @@ get_tree().call_group(<span class="s">"enemigos"</span>, <span class="s">"recibi
     <table class="tbl" style="font-size:15.5px;">
       <thead><tr><th>Síntoma</th><th>Casi siempre es…</th></tr></thead>
       <tbody>
-        <tr><td>El jugador <b>atraviesa</b> el suelo o la moneda <b>no detecta</b> nada</td><td>Falta el <code>CollisionShape2D</code>, o tiene la shape vacía (⚠️ amarillo). Uno de los dos nodos, no solo el que mirás.</td></tr>
-        <tr><td>La señal se conecta pero <b>la función no corre</b></td><td>El nombre de la función en el script <b>no coincide</b> con el que conectaste. Mirá el ⚡ al lado de la función.</td></tr>
-        <tr><td>Se ejecuta <b>dos veces</b></td><td>La conectaste desde el editor <b>y</b> por código.</td></tr>
+        <tr><td>El jugador <b>atraviesa</b> el suelo o la moneda <b>no detecta</b> nada</td><td>Falta el <code>CollisionShape2D</code>, o tiene la shape vacía (⚠️ amarillo). Uno de los dos nodos, no solo el que se está mirando.</td></tr>
+        <tr><td>La señal se conecta pero <b>la función no corre</b></td><td>El nombre de la función en el script <b>no coincide</b> con el que se conectó. Mirar el ⚡ al lado de la función.</td></tr>
+        <tr><td>Se ejecuta <b>dos veces</b></td><td>Se conectó desde el editor <b>y</b> por código.</td></tr>
         <tr><td><code>Invalid call. Nonexistent function 'sumar_punto'</code></td><td>Entró otro cuerpo (la caja). Faltó el <code>if body.is_in_group("jugador")</code>, o el jugador no está en el grupo.</td></tr>
-        <tr><td>La moneda <b>se mueve con el jugador</b></td><td>La instanciaste como <b>hija del Jugador</b>. Tiene que ser hija de <code>Nivel</code>.</td></tr>
+        <tr><td>La moneda <b>se mueve con el jugador</b></td><td>Se instanció como <b>hija del Jugador</b>. Tiene que ser hija de <code>Nivel</code>.</td></tr>
       </tbody>
     </table>
   </section>
@@ -568,11 +568,11 @@ get_tree().call_group(<span class="s">"enemigos"</span>, <span class="s">"recibi
       <div style="align-self:center;">
         <div class="callout">🎯 <b>Objetivo:</b> repetir el ciclo completo solo: escena nueva → <code>Area2D</code> + shape → señal → <code>is_in_group</code> → función del jugador.</div>
         <div class="card" style="margin-top:14px;">
-          <h3>🛟 Si te trabás</h3>
+          <h3>🛟 Si algo se traba</h3>
           <ul>
             <li>¿Los dos tienen <code>CollisionShape2D</code> con shape?</li>
             <li>¿La función tiene el ⚡ al lado?</li>
-            <li>¿El jugador tiene la función que le pedís?</li>
+            <li>¿El jugador tiene la función que se le pide?</li>
           </ul>
         </div>
       </div>
@@ -586,11 +586,11 @@ get_tree().call_group(<span class="s">"enemigos"</span>, <span class="s">"recibi
     <table class="tbl">
       <thead><tr><th>Concepto</th><th>Para qué sirve</th><th>Bloque</th></tr></thead>
       <tbody>
-        <tr><td><b>Tres cuerpos</b></td><td>Static para lo fijo, Character para lo que controlás, Rigid para lo que cae solo</td><td><code>01_cuerpos</code></td></tr>
+        <tr><td><b>Tres cuerpos</b></td><td>Static para lo fijo, Character para lo que controla el jugador, Rigid para lo que cae solo</td><td><code>01_cuerpos</code></td></tr>
         <tr><td><b><code>move_and_slide()</code></b></td><td>Mover con <code>velocity</code> y que el motor resuelva los choques</td><td><code>02_nivel</code></td></tr>
         <tr><td><b>Señales</b></td><td>Un nodo avisa, otro reacciona, sin conocerse</td><td><code>03_moneda</code></td></tr>
         <tr><td><b><code>Area2D</code></b></td><td>Detectar sin bloquear: monedas, daño, metas</td><td><code>03_moneda</code></td></tr>
-        <tr><td><b>Grupos</b></td><td>Etiquetar para preguntar “¿quién sos?” o hablarle a todos</td><td>Bloque 4</td></tr>
+        <tr><td><b>Grupos</b></td><td>Etiquetar para preguntar “¿quién es?” o hablarle a todos</td><td>Bloque 4</td></tr>
       </tbody>
     </table>
     <div class="callout" style="margin-top:16px;">🧭 <b>Para pensar:</b> un enemigo que persigue al jugador, ¿qué cuerpo es? ¿Y cómo se entera de que lo tocó? La semana que viene aparecen de a muchos.</div>
@@ -613,7 +613,7 @@ get_tree().call_group(<span class="s">"enemigos"</span>, <span class="s">"recibi
         <ul>
           <li>Docs: <i>Physics introduction</i> y <i>Using signals</i> en <code>docs.godotengine.org</code></li>
           <li>La referencia de <code>CharacterBody2D</code> y de <code>Area2D</code></li>
-          <li>Traé el proyecto <code>clase-04</code>: el TP le pone arte a lo mismo</li>
+          <li>Traer el proyecto <code>clase-04</code>: el TP le pone arte a lo mismo</li>
         </ul>
       </div>
     </div>

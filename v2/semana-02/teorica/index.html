@@ -27,7 +27,7 @@
 
   <section class="slide" data-chapter="Inicio" data-topic="Objetivos">
     <div class="slide-eyebrow">Objetivos</div>
-    <h2 class="slide-title">Al terminar la clase van a poder…</h2>
+    <h2 class="slide-title">Al finalizar la clase…</h2>
     <ul class="bullets">
       <li>Entender qué pasa cuando el juego arranca y <b>en cada frame</b></li>
       <li>Usar <code>_ready()</code> y <code>_process()</code> correctamente</li>
@@ -107,7 +107,7 @@
     <div class="callout" style="font-size:20px;">🎤 <code>_ready()</code> es como el <b>discurso de apertura</b>: se dice una vez, al principio, y después el juego toma su curso.</div>
     <div class="card" style="margin-top:22px;">
       <h3>👐 Mini práctica</h3>
-      <p>Cambiá la posición inicial y los valores de las variables, ejecutá el proyecto y observá cómo cambia el punto de partida. La idea: entender que <code>_ready()</code> define el <b>estado inicial</b> del mundo.</p>
+      <p>Cambiar la posición inicial y los valores de las variables, ejecutar el proyecto y observar cómo cambia el punto de partida. La idea: entender que <code>_ready()</code> define el <b>estado inicial</b> del mundo.</p>
     </div>
   </section>
 
@@ -203,7 +203,7 @@
     <div class="callout" style="font-size:21px;">📏 Cada vez que escriban <b>movimiento</b> dentro de <code>_process()</code>, <b>multiplican por <code>delta</code></b>. Siempre.</div>
     <div class="card" style="margin-top:22px;">
       <h3>🏠 Analogía</h3>
-      <p>Es como pagar el alquiler <b>por día</b> en vez de una cuota fija. Tenga el mes 28 o 31 días, siempre terminás pagando lo mismo al final.</p>
+      <p>Es como pagar el alquiler <b>por día</b> en vez de una cuota fija. Tenga el mes 28 o 31 días, siempre se termina pagando lo mismo al final.</p>
     </div>
   </section>
 
@@ -393,7 +393,7 @@ diagonal = diagonal.normalized()
       </div>
       <div class="card" style="border-top:3px solid var(--green);">
         <h3 style="color:var(--green);">✅ Con Input Map</h3>
-        <p>Detectás <b>acciones con nombre</b> (<code>mover_derecha</code>). Cambiás la tecla en <b>un solo lugar</b> y todo sigue funcionando.</p>
+        <p>Se detectan <b>acciones con nombre</b> (<code>mover_derecha</code>). La tecla se cambia en <b>un solo lugar</b> y todo sigue funcionando.</p>
       </div>
     </div>
     <div class="callout" style="margin-top:18px;">Se accede en <code>Project → Project Settings → Input Map</code>.</div>
@@ -415,7 +415,7 @@ diagonal = diagonal.normalized()
       <div class="code-wrap" style="align-self:center;">
         <pre class="code" style="font-size:13px;"><span class="k">if</span> <span class="t">Input</span>.is_action_pressed(<span class="s">"mover_derecha"</span>):
 	position.x += velocidad * delta</pre>
-        <p class="small-note">👐 Práctica: creá <code>mover_derecha</code> y <code>mover_izquierda</code>, asignalas a teclas y usalas. Rompé la dependencia de las acciones predeterminadas.</p>
+        <p class="small-note">👐 Práctica: crear <code>mover_derecha</code> y <code>mover_izquierda</code>, asignarlas a teclas y usarlas. Romper la dependencia de las acciones predeterminadas.</p>
       </div>
     </div>
   </section>
@@ -462,7 +462,7 @@ diagonal = diagonal.normalized()
             <li>Dos teclas: <code>(0.7, 0.7)</code>, <b>ya normalizado</b>. La diagonal no corre más</li>
           </ul>
         </div>
-        <p class="small-note" style="margin-top:10px;">El TP arranca con los cuatro <code>if</code> para que se entienda qué pasa; después pasás a esta versión.</p>
+        <p class="small-note" style="margin-top:10px;">El TP arranca con los cuatro <code>if</code> para que se entienda qué pasa; después se pasa a esta versión.</p>
       </div>
     </div>
   </section>
