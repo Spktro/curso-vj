@@ -12,7 +12,7 @@ Seis escenas chicas, una por concepto, cada una con su script y su salida en el 
 ```
 === LA CRIPTA DEL GOLEM ===
 Aria se enfrenta a un Golem de piedra!
-Tu arsenal:
+Arsenal:
   [0] Espada (daño 25)
   [1] Arco (daño 15)
   [2] Hacha (daño 40)
@@ -249,10 +249,10 @@ func _ready():
 		print("Golem #" + str(i + 1) + " entró a la cripta")
 
 	# 2) Recorrer un arreglo elemento por elemento
-	print("--- Tu arsenal ---")
+	print("--- Arsenal ---")
 	var armas = ["Espada", "Arco", "Hacha"]
 	for arma in armas:
-		print("Tenés: " + arma)
+		print("Arma: " + arma)
 
 	# 3) Recorrer con el índice (para arreglos en paralelo)
 	var danos = [25, 15, 40]
@@ -267,10 +267,10 @@ func _ready():
 Golem #1 entró a la cripta
 Golem #2 entró a la cripta
 Golem #3 entró a la cripta
---- Tu arsenal ---
-Tenés: Espada
-Tenés: Arco
-Tenés: Hacha
+--- Arsenal ---
+Arma: Espada
+Arma: Arco
+Arma: Hacha
 [0] Espada → daño 25
 [1] Arco → daño 15
 [2] Hacha → daño 40
@@ -351,17 +351,17 @@ Hasta ahora todo corría solo en `_ready()`. Para **reaccionar al jugador** hace
 extends Node
 
 func _ready():
-	print("Presioná: ENTER (atacar), ← →, o ↑")
+	print("Controles: ENTER (atacar), ← →, o ↑")
 
 func _process(delta):
 	if Input.is_action_just_pressed("ui_accept"):   # Enter / Espacio
 		print("¡Ataque!")
 	if Input.is_action_just_pressed("ui_right"):    # flecha →
-		print("Elegiste el arma de la derecha")
+		print("Arma de la derecha elegida")
 	if Input.is_action_just_pressed("ui_left"):     # flecha ←
-		print("Elegiste el arma de la izquierda")
+		print("Arma de la izquierda elegida")
 	if Input.is_action_just_pressed("ui_up"):       # flecha ↑
-		print("Tomaste una poción")
+		print("Poción tomada")
 ```
 
 Apretar **F6**. **Importante:** hacer **clic sobre la ventana del juego** para que reciba las teclas; los mensajes aparecen en el panel **Output** del editor.
@@ -444,7 +444,7 @@ func _process(delta):
 # ---- FUNCIONES (Parte 5) ----
 
 func mostrar_inventario():
-	print("Tu arsenal:")
+	print("Arsenal:")
 	for i in range(armas.size()):                  # FOR con índice
 		print("  [" + str(i) + "] " + armas[i] + " (daño " + str(danos[i]) + ")")
 
@@ -459,7 +459,7 @@ func atacar():
 	vida_enemigo = vida_enemigo - dano
 
 	if vida_enemigo <= 0:                           # CONDICIONAL (Parte 3)
-		print("🏆 ¡Derrotaste al " + enemigo + "! GANASTE.")
+		print("🏆 ¡" + enemigo + " derrotado! VICTORIA.")
 		terminado = true
 		return
 
@@ -476,7 +476,7 @@ func enemigo_contraataca():
 
 func curar():
 	if pociones <= 0:
-		print("No te quedan pociones.")
+		print("No quedan pociones.")
 		return
 	pociones = pociones - 1
 	vida = vida + 30

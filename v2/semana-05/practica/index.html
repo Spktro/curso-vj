@@ -407,7 +407,7 @@ Al volver a jugar: todo en 0</div>
 
 <span class="k">func</span> <span class="t">_ready</span>():
 	<span class="k">var</span> s = str(int(Partida.tiempo))
-	$Botonera/LabelResultado.text = <span class="s">"Sobreviviste "</span> + s + <span class="s">" s y eliminaste "</span> + str(Partida.kills) + <span class="s">" slimes"</span>
+	$Botonera/LabelResultado.text = <span class="s">"Tiempo: "</span> + s + <span class="s">" s · Slimes eliminados: "</span> + str(Partida.kills)
 	<span class="k">if</span> Partida.tiempo > Partida.mejor_tiempo:
 		Partida.mejor_tiempo = Partida.tiempo
 		$Botonera/LabelRecord.text = <span class="s">"¡Nuevo récord!"</span>
@@ -433,11 +433,11 @@ Al volver a jugar: todo en 0</div>
           <li>En <code>jugador.gd</code>, la ruta nueva</li>
           <li>F5 y perder dos veces</li>
         </ol>
-        <div class="consola"><span class="lbl">✅ Punto de control · en pantalla</span>1.ª: Sobreviviste 37 s y
-    eliminaste 12 slimes
+        <div class="consola"><span class="lbl">✅ Punto de control · en pantalla</span>1.ª: Tiempo: 37 s ·
+    Slimes eliminados: 12
     ¡Nuevo récord!
-2.ª: Sobreviviste 21 s y
-    eliminaste 7 slimes
+2.ª: Tiempo: 21 s ·
+    Slimes eliminados: 7
     Récord: 37 s</div>
         <div class="callout proba">🧪 <b>Probar:</b> cerrar el juego y volver a abrirlo: el récord vuelve a 0. <code>Partida</code> vive mientras el juego está abierto, no más.</div>
       </div>

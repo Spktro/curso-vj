@@ -168,7 +168,7 @@ var velocidad = 200
 
 func _ready():
 	print("=== " + nombre + " listo ===")
-	print("Movete con WASD o las flechas")
+	print("Moverse con WASD o las flechas")
 
 func _process(delta):
 	# 1) Armamos la dirección según las teclas apretadas
@@ -566,7 +566,7 @@ Entregar **una** de estas opciones (según indique el/la docente):
 
 **Sobre el nivel (Parte B)**
 
-- **Victoria:** una variable `@export var total_monedas = 3` en el jugador (aparece en el Inspector). En `sumar_punto()`, si `puntos == total_monedas`, imprimir “🏆 ¡Ganaste!”.
+- **Victoria:** una variable `@export var total_monedas = 3` en el jugador (aparece en el Inspector). En `sumar_punto()`, si `puntos == total_monedas`, imprimir “🏆 ¡Victoria!”.
 - **Cámara:** `Camera2D` hijo del `Jugador`, con **Zoom** `3, 3` (el mundo es pequeño). Como cuelga del jugador, lo sigue.
 - **Plataformas one-way:** en el TileSet, en la forma de colisión de un tile-plataforma, activar **One Way** (se atraviesa desde abajo y se aterriza desde arriba).
 - **Pinchos:** otra escena `Area2D` que al detectar al jugador imprima “¡Ouch!” y reinicie con `get_tree().reload_current_scene()`.

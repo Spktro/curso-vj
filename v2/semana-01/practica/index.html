@@ -329,7 +329,7 @@ Tiene espada: false</div>
 <span class="k">elif</span> vida <= <span class="n">50</span>:
 	<span class="t">print</span>(<span class="s">"🟡 Vida baja"</span>)
 <span class="k">else</span>:
-	<span class="t">print</span>(<span class="s">"🟢 Estás bien"</span>)</pre>
+	<span class="t">print</span>(<span class="s">"🟢 Vida en buen estado"</span>)</pre>
       </div>
       <div>
         <h4 style="color:var(--accent); font-size:15px; letter-spacing:0.05em; text-transform:uppercase; margin:0 0 10px;">Operadores de comparación</h4>
@@ -364,7 +364,7 @@ Tiene espada: false</div>
 	<span class="k">elif</span> vida <= <span class="n">30</span>:
 		<span class="t">print</span>(<span class="s">"🔴 Vida crítica"</span>)
 	<span class="k">else</span>:
-		<span class="t">print</span>(<span class="s">"🟢 Seguís en pie"</span>)</pre>
+		<span class="t">print</span>(<span class="s">"🟢 Todavía en pie"</span>)</pre>
       </div>
       <div>
         <ol class="steps compact">
@@ -374,7 +374,7 @@ Tiene espada: false</div>
           <li><span class="kbd">F6</span> y mirar el Output</li>
         </ol>
         <div class="consola"><span class="lbl">✅ Punto de control · Output</span>Vida actual: 70
-🟢 Seguís en pie</div>
+🟢 Todavía en pie</div>
         <div class="callout proba">🧪 <b>Probar:</b> <code>dano = 70</code> → 🔴. <code>dano = 100</code> → 💀. ¿Y con <code>dano = 30</code> y <code>vida = 60</code>? Predecir antes de correr.</div>
       </div>
     </div>
@@ -412,7 +412,7 @@ Tiene espada: false</div>
 
 <span class="c"># Recorrerlo con for</span>
 <span class="k">for</span> item <span class="k">in</span> inventario:
-	<span class="t">print</span>(<span class="s">"Tenés: "</span> + item)</pre>
+	<span class="t">print</span>(<span class="s">"Objeto: "</span> + item)</pre>
       </div>
       <div style="align-self:center;">
         <div class="card">
@@ -474,7 +474,7 @@ Tiene espada: false</div>
 	<span class="k">for</span> i <span class="k">in</span> <span class="t">range</span>(<span class="n">3</span>):
 		<span class="t">print</span>(<span class="s">"Enemigo "</span> + <span class="t">str</span>(i + <span class="n">1</span>) + <span class="s">" entra a la arena"</span>)
 
-	<span class="t">print</span>(<span class="s">"Llevás "</span> + <span class="t">str</span>(inventario.size()) + <span class="s">" cosas:"</span>)
+	<span class="t">print</span>(<span class="s">"Inventario: "</span> + <span class="t">str</span>(inventario.size()) + <span class="s">" cosas:"</span>)
 	<span class="k">for</span> item <span class="k">in</span> inventario:
 		<span class="t">print</span>(<span class="s">"  - "</span> + item)</pre>
       </div>
@@ -488,7 +488,7 @@ Tiene espada: false</div>
         <div class="consola"><span class="lbl">✅ Punto de control · Output</span>Enemigo 1 entra a la arena
 Enemigo 2 entra a la arena
 Enemigo 3 entra a la arena
-Llevás 3 cosas:
+Inventario: 3 cosas:
   - Espada
   - Escudo
   - Poción</div>
@@ -657,7 +657,7 @@ Sigo en pie</div>
 <span class="k">var</span> saltos = <span class="n">0</span>
 
 <span class="k">func</span> <span class="t">_ready</span>():
-	<span class="t">print</span>(<span class="s">"ESPACIO para saltar, ← → para moverte"</span>)
+	<span class="t">print</span>(<span class="s">"ESPACIO para saltar, ← → para moverse"</span>)
 
 <span class="k">func</span> <span class="t">_process</span>(delta):
 	<span class="k">if</span> <span class="t">Input</span>.is_action_just_pressed(<span class="s">"ui_accept"</span>):
@@ -681,7 +681,7 @@ Sigo en pie</div>
           <li>Después las flechas y <code>mover()</code></li>
           <li><span class="kbd">F6</span>, <b>clic en la ventana del juego</b>, y apretar teclas</li>
         </ol>
-        <div class="consola"><span class="lbl">✅ Punto de control · Output</span>ESPACIO para saltar, ← → para moverte
+        <div class="consola"><span class="lbl">✅ Punto de control · Output</span>ESPACIO para saltar, ← → para moverse
 Héroe saltó (1)
 Héroe saltó (2)
 Héroe → derecha

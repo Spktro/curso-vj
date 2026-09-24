@@ -214,7 +214,7 @@ func sumar_kill():
 
 3. Hijo de `Menu` → **`VBoxContainer`** → renombrarlo **`Botonera`**. Ancla → **Center**. **Theme Overrides → Constants → Separation** = `16`.
 4. Hijos de `Botonera`, en este orden:
-   - **`Label`** → **`Titulo`**. **Text** = `Sobreviví a los slimes`. **Theme Overrides → Font Sizes → Font Size** = `48`. **Horizontal Alignment** = `Center`.
+   - **`Label`** → **`Titulo`**. **Text** = `Sobrevivir a los slimes`. **Theme Overrides → Font Sizes → Font Size** = `48`. **Horizontal Alignment** = `Center`.
    - **`Button`** → **`BtnJugar`**. **Text** = `Jugar`.
    - **`Button`** → **`BtnSalir`**. **Text** = `Salir`.
 
@@ -295,7 +295,7 @@ extends Control
 
 func _ready():
 	var segundos = str(int(Partida.tiempo))
-	$Botonera/LabelResultado.text = "Sobreviviste " + segundos + " s y eliminaste " + str(Partida.kills) + " slimes"
+	$Botonera/LabelResultado.text = "Tiempo: " + segundos + " s · Slimes eliminados: " + str(Partida.kills)
 	if Partida.tiempo > Partida.mejor_tiempo:
 		Partida.mejor_tiempo = Partida.tiempo
 		$Botonera/LabelRecord.text = "¡Nuevo récord!"
@@ -324,7 +324,7 @@ func _on_menu():
 
 > 🧠 **`int(Partida.tiempo)`** corta los decimales: `37.82` → `37`. Y `str()` convierte el número en texto para poder pegarlo con `+`.
 
-✅ **Punto de control 3:** con **F5**, jugar y perder. Aparece la pantalla roja con, por ejemplo, `Sobreviviste 37 s y eliminaste 12 slimes` y `¡Nuevo récord!`. **Reintentar** arranca de cero. Si la segunda partida dura menos, dice `Récord: 37 s`. **Menú** vuelve al inicio.
+✅ **Punto de control 3:** con **F5**, jugar y perder. Aparece la pantalla roja con, por ejemplo, `Tiempo: 37 s · Slimes eliminados: 12` y `¡Nuevo récord!`. **Reintentar** arranca de cero. Si la segunda partida dura menos, dice `Récord: 37 s`. **Menú** vuelve al inicio.
 
 🛟 **Errores comunes con el Game Over**
 
@@ -838,7 +838,7 @@ extends Control
 
 func _ready():
 	var segundos = str(int(Partida.tiempo))
-	$Botonera/LabelResultado.text = "Sobreviviste " + segundos + " s y eliminaste " + str(Partida.kills) + " slimes"
+	$Botonera/LabelResultado.text = "Tiempo: " + segundos + " s · Slimes eliminados: " + str(Partida.kills)
 	if Partida.tiempo > Partida.mejor_tiempo:
 		Partida.mejor_tiempo = Partida.tiempo
 		$Botonera/LabelRecord.text = "¡Nuevo récord!"
