@@ -55,7 +55,7 @@
         <div class="slide-eyebrow">Semana 2 · Clase 4 · Teórico-práctica</div>
         <h1 class="title">El personaje <span class="accent">cobra vida</span></h1>
         <p class="subtitle"><code>CharacterBody2D</code>, colisiones y el sistema de <b>señales</b>: el personaje al fin choca con el mundo… y el mundo le responde. Todo escrito <b>en vivo</b>.</p>
-        <p class="small-note">“Hasta ahora movíamos cosas. Hoy hacemos que <b>interactúen</b>.”</p>
+        <p class="small-note">“Hasta ahora las cosas se movían. Hoy, además, <b>interactúan</b>.”</p>
       </div>
       <div class="title-photo" style="border:none; box-shadow:none; background:transparent;">
         <img src="assets/godot-logo.png" alt="Godot Engine" style="max-height:420px; width:auto; margin:0 auto; display:block;" />
@@ -69,7 +69,7 @@
     <div class="columns">
       <div class="card">
         <h3>🔴 Cuatro bloques en vivo</h3>
-        <p>En un proyecto nuevo, <code>clase-04</code>, armamos juntos:</p>
+        <p>En un proyecto nuevo, <code>clase-04</code>, se arma en conjunto:</p>
         <ol class="steps compact" style="margin-top:8px;">
           <li><code>01_cuerpos</code>: los tres cuerpos físicos, cayendo</li>
           <li><code>02_nivel</code>: el jugador que camina, salta y pisa el suelo</li>
@@ -86,7 +86,7 @@
             <li>Si algo no choca o una señal no dispara, hay una diapo de errores típicos al final. Pero primero: <b>¿tiene <code>CollisionShape2D</code>?</b></li>
           </ul>
         </div>
-        <div class="callout" style="margin-top:14px;">Lo de hoy es la <b>Parte B del TP</b>: el plataformero con monedas. En clase lo armamos con cuadrados; en el TP, con sprites y un mapa de tiles.</div>
+        <div class="callout" style="margin-top:14px;">Lo de hoy es la <b>Parte B del TP</b>: el plataformero con monedas. En clase se arma con cuadrados; en el TP, con sprites y un mapa de tiles.</div>
       </div>
     </div>
   </section>
@@ -148,7 +148,7 @@
       <div class="card" style="border-top:3px solid var(--green);"><h3>El suelo</h3><p>Siempre <code>StaticBody2D</code>. Fijo, sólido, no se mueve nunca.</p></div>
       <div class="card" style="border-top:3px solid var(--yellow);"><h3>Lo que se tira</h3><p>Siempre <code>RigidBody2D</code>. Cajas, barriles, proyectiles físicos.</p></div>
     </div>
-    <div class="callout" style="margin-top:20px;">📏 Elegir el nodo correcto es la <b>mitad del trabajo</b>. El tipo define cómo interactúa con el mundo. En el TP1, el piso era un <code>RigidBody2D</code> congelado: hoy lo hacemos bien.</div>
+    <div class="callout" style="margin-top:20px;">📏 Elegir el nodo correcto es la <b>mitad del trabajo</b>. El tipo define cómo interactúa con el mundo. En el TP1, el piso era un <code>RigidBody2D</code> congelado: hoy se hace bien.</div>
   </section>
 
   <section class="slide" data-chapter="Cuerpos físicos" data-topic="En juegos reales">
@@ -210,7 +210,7 @@ Héroe:  flota donde se lo dejó</div>
     <h2 class="slide-title">¿Por qué no alcanza con <code>position.x += ...</code>?</h2>
     <div class="columns">
       <div>
-        <p class="subtitle" style="font-size:18px;">En la Clase 3 movíamos cambiando <code>position</code> directamente. Sirve para objetos que <b>no chocan</b> con nada. El héroe del bloque 1 flota por eso: nadie le dijo que caiga.</p>
+        <p class="subtitle" style="font-size:18px;">En la Clase 3 se movía cambiando <code>position</code> directamente. Sirve para objetos que <b>no chocan</b> con nada. El héroe del bloque 1 flota por eso: nadie le dijo que caiga.</p>
         <div class="callout">Pero si el personaje tiene que <b>frenar contra una pared</b> o <b>pisar el suelo</b>, alguien tiene que resolver esas colisiones. Ese alguien es el <b>motor</b>.</div>
       </div>
       <div class="card" style="align-self:center;">
@@ -440,7 +440,7 @@ Salta con Espacio, una vez por toque</div>
           <li>Sumar <code>queue_free()</code>. Correr de nuevo</li>
         </ol>
         <div class="consola"><span class="lbl">✅ Punto de control · Output</span>Algo entró: Jugador</div>
-        <div class="callout proba">🧪 <b>Probar:</b> borrar la shape de la moneda: no pasa nada, nunca. Poner una caja <code>RigidBody2D</code> que caiga sobre la moneda: <code>Algo entró: Caja</code>. ¿Cómo hacemos que solo cuente el jugador? Eso es el bloque 4.</div>
+        <div class="callout proba">🧪 <b>Probar:</b> borrar la shape de la moneda: no pasa nada, nunca. Poner una caja <code>RigidBody2D</code> que caiga sobre la moneda: <code>Algo entró: Caja</code>. ¿Cómo se logra que solo cuente el jugador? Eso es el bloque 4.</div>
       </div>
     </div>
   </section>
@@ -618,7 +618,7 @@ get_tree().call_group(<span class="s">"enemigos"</span>, <span class="s">"recibi
         </ul>
       </div>
     </div>
-    <p class="small-note" style="margin-top:24px; text-align:center;">“Hasta ahora movíamos cosas. Hoy hicieron que <b>interactúen</b>.” · Logo y mascota de Godot © Godot Foundation — CC BY 4.0.</p>
+    <p class="small-note" style="margin-top:24px; text-align:center;">“Hasta ahora las cosas se movían. Desde hoy, además, <b>interactúan</b>.” · Logo y mascota de Godot © Godot Foundation — CC BY 4.0.</p>
   </section>
 
 </div>

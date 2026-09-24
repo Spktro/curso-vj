@@ -166,11 +166,11 @@ func _ready():
 
 	print("Primer arma: " + armas[0])     # índice 0 → Espada
 	print("Segunda arma: " + armas[1])    # índice 1 → Arco
-	print("Cuántas armas tengo: " + str(armas.size()))
+	print("Cantidad de armas: " + str(armas.size()))
 
 	armas.append("Daga")                  # agrega al final
 	print("Nueva arma agregada: " + armas[3])
-	print("Ahora tengo: " + str(armas.size()) + " armas")
+	print("Armas ahora: " + str(armas.size()))
 ```
 
 **Output:**
@@ -178,9 +178,9 @@ func _ready():
 ```
 Primer arma: Espada
 Segunda arma: Arco
-Cuántas armas tengo: 3
+Cantidad de armas: 3
 Nueva arma agregada: Daga
-Ahora tengo: 4 armas
+Armas ahora: 4
 ```
 
 > 🧠 **El índice empieza en 0.** En un arreglo de 3 elementos, las posiciones son `0`, `1` y `2`. Pedir `armas[3]` **antes** de agregar la Daga daría error (“índice fuera de rango”): esa posición todavía no existe.
@@ -308,7 +308,7 @@ func _ready():
 # Recibe un parámetro y modifica la vida
 func recibir_dano(cantidad):
 	vida = vida - cantidad
-	print("Recibí " + str(cantidad) + " de daño. Vida: " + str(vida))
+	print("Daño recibido: " + str(cantidad) + ". Vida: " + str(vida))
 
 # Devuelve un valor (true o false)
 func esta_vivo():
@@ -322,8 +322,8 @@ func mostrar_estado():
 
 ```
 === Vida actual: 100 ===
-Recibí 30 de daño. Vida: 70
-Recibí 50 de daño. Vida: 20
+Daño recibido: 30. Vida: 70
+Daño recibido: 50. Vida: 20
 Aria sigue en pie
 ```
 

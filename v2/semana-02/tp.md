@@ -171,7 +171,7 @@ func _ready():
 	print("Moverse con WASD o las flechas")
 
 func _process(delta):
-	# 1) Armamos la dirección según las teclas apretadas
+	# 1) Armar la dirección según las teclas apretadas
 	var direccion = Vector2.ZERO
 	if Input.is_action_pressed("mover_derecha"):
 		direccion.x += 1
@@ -182,7 +182,7 @@ func _process(delta):
 	if Input.is_action_pressed("mover_arriba"):
 		direccion.y -= 1
 
-	# 2) Movemos, SIEMPRE multiplicando por delta
+	# 2) Mover, SIEMPRE multiplicando por delta
 	position += direccion * velocidad * delta
 ```
 
@@ -474,7 +474,7 @@ func _ready():
 func _on_body_entered(body):
 	print("Algo entró: " + body.name)
 	if body.is_in_group("jugador"):   # ¿lo que entró es el jugador?
-		body.sumar_punto()            # le pedimos que sume un punto
+		body.sumar_punto()            # se le pide que sume un punto
 		queue_free()                  # y la moneda se elimina
 ```
 

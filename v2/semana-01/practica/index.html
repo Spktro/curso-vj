@@ -44,7 +44,7 @@
     <div class="columns">
       <div class="card">
         <h3>🔴 Cinco bloques, cinco escenas</h3>
-        <p>Por cada tema armamos <b>una escena con un script</b>, en vivo, en un proyecto nuevo que se llama <code>clase-02</code>:</p>
+        <p>Por cada tema se arma <b>una escena con un script</b>, en vivo, en un proyecto nuevo que se llama <code>clase-02</code>:</p>
         <ol class="steps compact" style="margin-top:8px;">
           <li><code>01_variables</code></li>
           <li><code>02_condicionales</code></li>
@@ -70,10 +70,10 @@
   <!-- ============ HOOK ============ -->
   <section class="slide" data-chapter="Hook" data-topic="Código en vivo">
     <div class="slide-eyebrow">Arranque</div>
-    <h2 class="slide-title">Hagamos que reaccione a una tecla</h2>
+    <h2 class="slide-title">Que reaccione a una tecla</h2>
     <div class="columns">
       <div>
-        <p class="subtitle" style="font-size:19px;">Un programador le dice a la computadora <b>qué</b> hacer, <b>cuándo</b> y <b>por qué</b>. Ejecutemos esto en vivo:</p>
+        <p class="subtitle" style="font-size:19px;">Un programador le dice a la computadora <b>qué</b> hacer, <b>cuándo</b> y <b>por qué</b>. Para verlo, esto se ejecuta en vivo:</p>
         <div class="callout">🤔 Antes de explicar nada: <b>¿qué creen que está pasando acá?</b></div>
       </div>
       <div class="code-wrap">
@@ -92,11 +92,11 @@
     <div class="columns">
       <div class="card" style="border-top:3px solid var(--red);">
         <h3 style="color:var(--red);">❌ Mito</h3>
-        <p>“La computadora es inteligente y entiende lo que queremos.”</p>
+        <p>“La computadora es inteligente y entiende lo que uno quiere.”</p>
       </div>
       <div class="card" style="border-top:3px solid var(--green);">
         <h3 style="color:var(--green);">✅ Realidad</h3>
-        <p>La computadora <b>no piensa</b>. Solo ejecuta instrucciones paso a paso, exactamente como se las damos.</p>
+        <p>La computadora <b>no piensa</b>. Solo ejecuta instrucciones paso a paso, exactamente como se le dan.</p>
       </div>
     </div>
     <div class="callout" style="margin-top:20px;">Humano: <i>“si presiono espacio, el personaje salta”</i> &nbsp;→&nbsp; Lógica: <code>SI (condición) ENTONCES (acción)</code>. Esa estructura <b>SI/ENTONCES</b> es el núcleo de todo programa.</div>
@@ -136,7 +136,7 @@
       <tbody>
         <tr><td><code>extends Node</code></td><td>Le dice a Godot <b>qué tipo de nodo</b> controla este script.</td></tr>
         <tr><td><code>func _ready():</code></td><td>Se ejecuta <b>una sola vez</b> cuando el nodo aparece en la escena.</td></tr>
-        <tr><td><code>print(...)</code></td><td>Imprime texto en la consola: nuestro <b>mejor amigo</b> para depurar.</td></tr>
+        <tr><td><code>print(...)</code></td><td>Imprime texto en la consola: la <b>herramienta principal</b> para depurar.</td></tr>
       </tbody>
     </table>
     <div class="callout" style="margin-top:18px;">🔍 Notar la <b>sangría</b>: la línea del <code>print</code> está corrida con <b>Tab</b>. Así Godot sabe que está <i>adentro</i> de <code>_ready()</code>. En GDScript la sangría no es estética: es parte del lenguaje.</div>
@@ -144,7 +144,7 @@
 
   <!-- ============ EL RITUAL ============ -->
   <section class="slide" data-chapter="GDScript" data-topic="El ritual: escena + script">
-    <div class="slide-eyebrow">Lo vamos a hacer cinco veces hoy</div>
+    <div class="slide-eyebrow">Se hace cinco veces hoy</div>
     <h2 class="slide-title">El ritual: una escena, un nodo, un script</h2>
     <div class="columns">
       <div>
@@ -159,7 +159,7 @@
       <div style="align-self:start;">
         <div class="card">
           <h3>🧠 Por qué un <code>Node</code> pelado</h3>
-          <p>Hoy no dibujamos nada: solo queremos <b>un lugar donde vive el script</b>. <code>Node</code> es el nodo más simple que existe; no muestra ni mueve nada, y con eso alcanza.</p>
+          <p>Hoy no se dibuja nada: solo hace falta <b>un lugar donde vive el script</b>. <code>Node</code> es el nodo más simple que existe; no muestra ni mueve nada, y con eso alcanza.</p>
         </div>
         <div class="callout" style="margin-top:14px;">⚠️ Si al apretar <span class="kbd">F6</span> se abre una ventana gris y vacía, <b>está bien</b>: el juego “es” lo que sale en la consola.</div>
         <pre class="code" style="margin-top:14px; font-size:13px;"><span class="c"># Así queda el FileSystem al final de la clase</span>
@@ -179,7 +179,7 @@ res://
     <h2 class="slide-title">La consola: la ventana a lo que pasa "adentro"</h2>
     <div class="columns">
       <div>
-        <p class="subtitle" style="font-size:19px;">La <b>consola</b> (panel <i>Output</i>) es donde Godot muestra todo lo que le pedimos con <code>print()</code>, además de errores y advertencias.</p>
+        <p class="subtitle" style="font-size:19px;">La <b>consola</b> (panel <i>Output</i>) es donde Godot muestra todo lo que se le pide con <code>print()</code>, además de errores y advertencias.</p>
         <ul class="bullets" style="font-size:18px;">
           <li>Se abre sola al ejecutar la escena con <span class="kbd">F6</span></li>
           <li>Vive en la parte <b>inferior</b> del editor, pestaña <b>“Output”</b></li>
@@ -200,7 +200,7 @@ res://
     <h2 class="slide-title">Variables: cajas con etiqueta</h2>
     <div class="columns">
       <div>
-        <p class="subtitle" style="font-size:19px;">Una variable es como una <b>caja con una etiqueta</b>. Adentro guardamos info que el programa necesita; la etiqueta es su nombre.</p>
+        <p class="subtitle" style="font-size:19px;">Una variable es como una <b>caja con una etiqueta</b>. Adentro se guarda la información que el programa necesita; la etiqueta es su nombre.</p>
         <div class="callout">📦 Un cajón etiquetado <b>“velocidad”</b> con un <code>200</code> adentro. Cuando el juego necesita saber qué tan rápido va el personaje, abre ese cajón.</div>
       </div>
       <div class="code-wrap" style="align-self:center;">
@@ -253,7 +253,7 @@ res://
             <li>El juego corre un poco <b>más rápido</b></li>
           </ul>
         </div>
-        <p class="small-note" style="margin-top:12px;">Hoy lo vamos a escribir sin tipo para que se vea más corto. Con más práctica, conviene sumarle el tipo.</p>
+        <p class="small-note" style="margin-top:12px;">Hoy se escribe sin tipo para que se vea más corto. Con más práctica, conviene sumarle el tipo.</p>
       </div>
     </div>
   </section>
@@ -643,7 +643,7 @@ Sigo en pie</div>
         <tr><td><code>ui_cancel</code></td><td><span class="kbd">Esc</span></td><td>Cancelar, pausa</td></tr>
       </tbody>
     </table>
-    <div class="callout" style="margin-top:16px;">Ya vienen definidas, pero se pueden crear otras en <code>Project → Project Settings → Input Map</code>. Lo vemos la semana que viene.</div>
+    <div class="callout" style="margin-top:16px;">Ya vienen definidas, pero se pueden crear otras en <code>Project → Project Settings → Input Map</code>. Se ve la semana que viene.</div>
   </section>
 
   <section class="slide" data-chapter="Input" data-topic="En vivo: 05_input">

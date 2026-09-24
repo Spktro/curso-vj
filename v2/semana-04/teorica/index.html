@@ -43,7 +43,7 @@
     <h2 class="slide-title">El slime de la semana 3 tiene una sola idea</h2>
     <div class="columns">
       <div class="card" style="border-top:3px solid var(--red);"><h3 style="color:var(--red);">Hoy</h3><p>Aparece → persigue al jugador → lo toca. <b>Siempre lo mismo.</b> A los 10 segundos ya se sabe exactamente qué va a hacer. Es <b>predecible</b>, y lo predecible aburre.</p></div>
-      <div class="card" style="border-top:3px solid var(--green);"><h3 style="color:var(--green);">Lo que queremos (para el jefe)</h3><p>Que <b>aceche</b> al jugador de lejos, despacio. Que al acercarse el jugador <b>lo vea</b> y salga a perseguirlo a toda velocidad. Que al alcanzarlo <b>ataque</b>. Que si el jugador se aleja mucho, <b>se calme</b> y vuelva a acechar. Y que cuando recibe un golpe, <b>lo sienta</b>.</p></div>
+      <div class="card" style="border-top:3px solid var(--green);"><h3 style="color:var(--green);">Lo que se busca (para el jefe)</h3><p>Que <b>aceche</b> al jugador de lejos, despacio. Que al acercarse el jugador <b>lo vea</b> y salga a perseguirlo a toda velocidad. Que al alcanzarlo <b>ataque</b>. Que si el jugador se aleja mucho, <b>se calme</b> y vuelva a acechar. Y que cuando recibe un golpe, <b>lo sienta</b>.</p></div>
     </div>
     <div class="callout" style="margin-top:22px;">🤔 <b>Para el grupo:</b> ¿cómo escribirían eso con lo que saben? Con <code>if</code>… muchos <code>if</code>. Y ahí está el problema que se resuelve hoy.</div>
   </section>
@@ -228,7 +228,7 @@ objetivo = pacman.position + pacman.direccion * <span class="n">4</span>
     <h2 class="slide-title">Los comportamientos básicos de un enemigo</h2>
     <div class="columns" style="grid-template-columns:1.15fr 0.85fr;">
       <div class="card" style="border-top:3px solid var(--green); padding:14px 16px;">
-        <h3 style="color:var(--green); margin-bottom:8px;">✅ Lo que va (nuestro jefe)</h3>
+        <h3 style="color:var(--green); margin-bottom:8px;">✅ Lo que va (el jefe del curso)</h3>
         <table class="tbl" style="font-size:14px;">
           <thead><tr><th>Comportamiento</th><th>Qué hace</th><th>En una línea</th></tr></thead>
           <tbody>
@@ -258,7 +258,7 @@ objetivo = pacman.position + pacman.direccion * <span class="n">4</span>
     <div class="columns">
       <div class="card">
         <h3>📏 Por distancia</h3>
-        <p>Un número: si está a menos de <b>X píxeles</b>, lo vio. Atención: <b>el slime de la semana 3 no detecta nada</b>, siempre sabe dónde está el jugador y va. El <code>distance_to</code> lo usó el <b>jugador</b> para elegir a quién disparar; ahora se lo damos al <b>enemigo</b>, para que <b>decida</b>.</p>
+        <p>Un número: si está a menos de <b>X píxeles</b>, lo vio. Atención: <b>el slime de la semana 3 no detecta nada</b>, siempre sabe dónde está el jugador y va. El <code>distance_to</code> lo usó el <b>jugador</b> para elegir a quién disparar; ahora lo recibe el <b>enemigo</b>, para que <b>decida</b>.</p>
         <pre class="code" style="margin:10px 0 0; font-size:12.5px;"><span class="k">var</span> d = position.distance_to(jugador.position)
 <span class="k">if</span> d < <span class="n">250</span>:
 	<span class="c"># ¡lo vi!</span></pre>
@@ -547,7 +547,7 @@ objetivo = pacman.position + pacman.direccion * <span class="n">4</span>
         <tr style="background:var(--panel-2);"><td><b>🟣 El jefe de hoy</b></td><td>acechar · perseguir · atacar · golpeado</td><td><b>distancia</b> + <b>evento</b> (bala) + <b>tiempo</b> (Timer)</td><td>la etiqueta encima y el rojo</td></tr>
       </tbody>
     </table>
-    <div class="callout" style="margin-top:18px;">Cuando decimos que un enemigo es “interesante”, casi siempre estamos diciendo que tiene <b>varios estados</b> y que <b>se nota cuándo cambia</b>. Los tres disparadores que existen ya se conocen: <b>distancia, evento y tiempo</b>.</div>
+    <div class="callout" style="margin-top:18px;">Cuando se dice que un enemigo es “interesante”, casi siempre significa que tiene <b>varios estados</b> y que <b>se nota cuándo cambia</b>. Los tres disparadores que existen ya se conocen: <b>distancia, evento y tiempo</b>.</div>
   </section>
 
   <!-- ============ CIERRE ============ -->
