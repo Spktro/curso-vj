@@ -90,6 +90,10 @@ Notas de Javier sobre la v1, para aplicar al construir cada clase de la v2. **No
 - [x] TP1 y TP2 se juntan en un solo TP, el de la clase práctica. *(hecho)*
 - [x] (24/9) Se quita la Parte A (piso, jugador, caja) del TP1: queda solo el juego de texto, con las partes renumeradas 0–7.
 
+### Semana 2 · revisión con el compañero (24/9/2026)
+- [x] C3: el hook se reemplaza por una demo del game loop en cámara lenta (fases Input/Lógica/Dibujar y un botón que hace de tecla); "60 FPS" explica qué es un frame y por qué 60; `_ready` y su regla de oro en una sola diapo; la tabla de las funciones suma `_physics_process` y hay una diapo propia que la explica; demo interactiva de dos máquinas (60 y 30 FPS) con y sin `delta`; demo de movimiento constante con dirección y velocidad; diapo nueva "El plano de Godot"; la captura del Input Map (docs de Godot) en "Por qué Input Map"; vector + mouse + práctica unificados en una diapo.
+- [x] C4: nota de los equivalentes 3D de los cuerpos; "Señales que ya usaste" pasa a "Señales más comunes", aclarando que `_ready`/`_process` no son señales.
+
 ### Todo el material (24/9/2026)
 - [x] Redacción impersonal en decks y TPs: instrucciones en infinitivo, explicaciones con "se". Pendiente de decidir: los textos que imprime el propio juego ("Tenés:", "Presioná:", "¡Ganaste!", "Movete con WASD", "Sobreviviste…").
 

@@ -5,6 +5,31 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Diplomatura de Videojuegos · Semana 2 · Clase 3 — El juego está vivo</title>
 <link rel="stylesheet" href="deck.css" />
+<style>
+  /* Demos interactivas (C3 v2) */
+  .demo { padding: 14px 16px; }
+  .demo .pista { position: relative; height: 34px; background: var(--panel-2); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .demo .bola { position: absolute; top: 5px; left: 0; width: 24px; height: 24px; border-radius: 50%; background: var(--accent); }
+  .demo .bola.b { background: var(--accent-2); }
+  .demo-datos { font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 14px; margin: 10px 0 8px; color: var(--text); }
+  .demo-botones { display: flex; flex-wrap: wrap; gap: 8px; }
+  .demo-btn { font: inherit; font-size: 14px; padding: 7px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--panel); color: var(--text); cursor: pointer; }
+  .demo-btn:hover { border-color: var(--accent); }
+  .demo-btn.activo { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .demo-input { width: 100%; margin-top: 10px; padding: 12px; font-weight: 700; user-select: none; }
+  .demo-check { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: 14.5px; }
+  .gl-fases { display: flex; gap: 8px; margin-top: 14px; }
+  .gl-fase { flex: 1; text-align: center; padding: 10px 6px; border-radius: 10px; border: 2px solid var(--border); font-weight: 700; font-size: 15px; transition: background .12s, border-color .12s; }
+  .gl-fase small { display: block; font-weight: 400; font-size: 12px; color: var(--muted); font-family: "SF Mono", Menlo, Consolas, monospace; margin-top: 3px; }
+  .gl-fase.on { border-color: var(--accent); background: rgba(124, 58, 237, 0.14); }
+  .carrera { display: flex; flex-direction: column; gap: 10px; }
+  .carril { display: grid; grid-template-columns: 86px 1fr 70px; align-items: center; gap: 8px; font-size: 13.5px; }
+  .carril-x { font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 13px; }
+  .caja-mv { position: relative; height: 180px; background: var(--panel-2); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .caja-mv .bola { top: 0; }
+  .mv-l { display: inline-block; opacity: 0.45; }
+  .mv-l.on { opacity: 1; background: rgba(124, 58, 237, 0.18); border-radius: 3px; }
+</style>
 </head>
 <body>
 
@@ -17,7 +42,7 @@
         <div class="slide-eyebrow">Semana 2 · Clase 3 · Teórica</div>
         <h1 class="title">El juego está <span class="accent">vivo</span></h1>
         <p class="subtitle">Game loop, <code>_ready()</code>, <code>_process(delta)</code>, movimiento con <code>delta</code>, <b>vectores</b> e Input Map.</p>
-        <p class="small-note">“El juego no es una foto. Es un <b>bucle</b> que se repite millones de veces — nosotros escribimos qué pasa en cada repetición.”</p>
+        <p class="small-note">“El juego no es una foto. Es un <b>bucle</b> que se repite millones de veces ; el programador escribe qué pasa en cada repetición.”</p>
       </div>
       <div class="title-photo" style="border:none; box-shadow:none; background:transparent;">
         <img src="assets/godot-logo.png" alt="Godot Engine" style="max-height:420px; width:auto; margin:0 auto; display:block;" />
@@ -39,14 +64,31 @@
   </section>
 
   <!-- ============ HOOK ============ -->
-  <section class="slide" data-chapter="Hook" data-topic="Hook inicial">
+  <section class="slide" data-chapter="Game Loop" data-topic="El game loop en cámara lenta">
     <div class="slide-eyebrow">Arranque</div>
-    <h2 class="slide-title">¿Cómo hacemos que algo no pare nunca?</h2>
-    <div class="columns">
-      <div class="card" style="text-align:center;"><h3>🧊 Escena A</h3><p>Un objeto <b>completamente quieto</b> en pantalla.</p></div>
-      <div class="card" style="text-align:center;"><h3>🏃 Escena B</h3><p>El mismo objeto <b>moviéndose solo</b>, sin parar.</p></div>
+    <h2 class="slide-title">Un juego es un bucle que no para</h2>
+    <div class="columns" style="grid-template-columns:0.9fr 1.1fr; align-items:start;">
+      <div>
+        <p class="subtitle" style="font-size:18px;">Cada vuelta del bucle es un <b>frame</b>: leer el input, actualizar la lógica y dibujar. A 60 vueltas por segundo, el ojo ve movimiento continuo. En cámara lenta se ven los pasos.</p>
+        <div class="gl-fases">
+          <div class="gl-fase" id="gl-f0">1 · Input<small>¿está apretado →?</small></div>
+          <div class="gl-fase" id="gl-f1">2 · Lógica<small>position.x += 5</small></div>
+          <div class="gl-fase" id="gl-f2">3 · Dibujar<small>la bola en su lugar</small></div>
+        </div>
+        <div class="callout" style="margin-top:14px;">Una película muestra fotos ya hechas. Un juego <b>calcula cada foto en el momento</b>, según lo que hace el jugador.</div>
+      </div>
+      <div class="card demo">
+        <div class="pista"><div class="bola" id="gl-bola"></div></div>
+        <div class="demo-datos" id="gl-datos">frame 0 · position.x = 0</div>
+        <div class="demo-botones">
+          <button class="demo-btn" id="gl-lento">🐢 1 frame por segundo</button>
+          <button class="demo-btn" id="gl-rapido">⚡ 60 FPS</button>
+          <button class="demo-btn" id="gl-pausa">⏸ Pausa</button>
+        </div>
+        <button class="demo-btn demo-input" id="gl-input">Mantener apretado: tecla →</button>
+        <p class="small-note" style="margin-top:8px;">Sin input, el bucle sigue girando igual: los frames pasan aunque la bola no se mueva.</p>
+      </div>
     </div>
-    <div class="callout" style="margin-top:22px;">💡 La revelación: <b>“Un juego es como una película infinita</b> que se actualiza muchas veces por segundo. Cada cuadro de esa película es un <b>frame</b>.”</div>
   </section>
 
   <!-- ============ GAME LOOP ============ -->
@@ -66,15 +108,36 @@
 
   <section class="slide" data-chapter="Game Loop" data-topic="60 FPS">
     <div class="slide-eyebrow">Frames por segundo</div>
-    <h2 class="slide-title">60 FPS = 60 veces por segundo</h2>
-    <div class="columns">
+    <h2 class="slide-title">Qué es un frame, y por qué 60</h2>
+    <div class="columns" style="grid-template-columns:1.1fr 0.9fr;">
       <div>
-        <p class="subtitle" style="font-size:19px;">Godot corre por defecto a <b>60 FPS</b>. Todo el código dentro del game loop se ejecuta <b>60 veces por segundo</b>.</p>
+        <div class="card">
+          <h3>🖼️ Un frame</h3>
+          <p>Una <b>imagen completa</b> de la pantalla, calculada en una vuelta del bucle. <b>FPS</b> (<i>frames per second</i>) es cuántas de esas imágenes se producen por segundo.</p>
+        </div>
+        <div class="card" style="margin-top:12px;">
+          <h3>⏱️ Por qué 60</h3>
+          <ul>
+            <li>La mayoría de los monitores se refresca <b>60 veces por segundo</b> (60 Hz): más frames no se llegarían a ver</li>
+            <li>El cine usa 24, pero no responde a nadie. En un juego, más frames = el control <b>responde antes</b></li>
+            <li>A 60 FPS, cada frame tiene <b>16,6 ms</b> para leer, calcular y dibujar. Si el código tarda más, los FPS bajan</li>
+          </ul>
+        </div>
       </div>
-      <div class="card" style="align-self:center;">
-        <h3>🤔 Para el grupo</h3>
-        <p>Si escribimos <code>print("hola")</code> dentro del game loop… ¿cuántas veces se imprime por segundo?</p>
-        <p style="margin-top:10px;"><span class="pill">respuesta: 60</span></p>
+      <div style="align-self:center;">
+        <table class="tbl" style="font-size:15px;">
+          <thead><tr><th>FPS</th><th>Tiempo por frame</th><th>Dónde se ve</th></tr></thead>
+          <tbody>
+            <tr><td>24</td><td>41,6 ms</td><td>cine</td></tr>
+            <tr><td>30</td><td>33,3 ms</td><td>consolas viejas, celulares</td></tr>
+            <tr><td><b>60</b></td><td><b>16,6 ms</b></td><td><b>Godot por defecto</b></td></tr>
+            <tr><td>144</td><td>6,9 ms</td><td>monitores gamer</td></tr>
+          </tbody>
+        </table>
+        <div class="card" style="margin-top:14px;">
+          <h3>🤔 Para el grupo</h3>
+          <p>Un <code>print("hola")</code> dentro del game loop, ¿cuántas veces se imprime por segundo? <span class="pill">respuesta: 60</span></p>
+        </div>
       </div>
     </div>
   </section>
@@ -85,9 +148,10 @@
     <h2 class="slide-title"><code>_ready()</code>: el momento de preparación</h2>
     <div class="columns">
       <div>
-        <p class="subtitle" style="font-size:18px;">Godot la llama <b>una sola vez</b>, justo cuando el nodo entra a la escena. Sirve para configurar todo <b>antes</b> de que empiece la acción.</p>
+        <p class="subtitle" style="font-size:18px;">Godot la llama <b>una sola vez</b>, justo cuando el nodo entra a la escena. Sirve para configurar todo <b>antes</b> de que empiece la acción: define el <b>estado inicial</b> del mundo.</p>
+        <div class="callout" style="margin-top:14px;">🎤 Es como el <b>discurso de apertura</b>: se dice una vez, al principio, y después el juego toma su curso.</div>
       </div>
-      <div class="code-wrap" style="align-self:center;">
+      <div style="align-self:center;">
         <pre class="code" style="font-size:14px;"><span class="k">extends</span> <span class="t">Node2D</span>
 
 <span class="k">var</span> vida = <span class="n">100</span>
@@ -97,17 +161,8 @@
 	position = <span class="t">Vector2</span>(<span class="n">100</span>, <span class="n">300</span>)
 	<span class="t">print</span>(<span class="s">"=== Juego iniciado ==="</span>)
 	<span class="t">print</span>(<span class="s">"Vida: "</span> + <span class="t">str</span>(vida))</pre>
+        <p class="small-note" style="margin-top:8px;">👐 <b>Mini práctica:</b> cambiar la posición y los valores, ejecutar y ver cómo cambia el punto de partida.</p>
       </div>
-    </div>
-  </section>
-
-  <section class="slide" data-chapter="_ready()" data-topic="Regla de oro">
-    <div class="slide-eyebrow">_ready()</div>
-    <h2 class="slide-title">Regla de oro</h2>
-    <div class="callout" style="font-size:20px;">🎤 <code>_ready()</code> es como el <b>discurso de apertura</b>: se dice una vez, al principio, y después el juego toma su curso.</div>
-    <div class="card" style="margin-top:22px;">
-      <h3>👐 Mini práctica</h3>
-      <p>Cambiar la posición inicial y los valores de las variables, ejecutar el proyecto y observar cómo cambia el punto de partida. La idea: entender que <code>_ready()</code> define el <b>estado inicial</b> del mundo.</p>
     </div>
   </section>
 
@@ -127,51 +182,75 @@
     </div>
   </section>
 
-  <section class="slide" data-chapter="_process()" data-topic="_ready vs _process">
+  <section class="slide" data-chapter="_process()" data-topic="Las tres funciones">
     <div class="slide-eyebrow">La diferencia clave</div>
-    <h2 class="slide-title"><code>_ready()</code> vs <code>_process()</code></h2>
+    <h2 class="slide-title"><code>_ready()</code>, <code>_process()</code> y <code>_physics_process()</code></h2>
     <table class="tbl">
       <thead><tr><th>Función</th><th>Cuándo</th><th>Para qué</th></tr></thead>
       <tbody>
-        <tr><td><code>_ready()</code></td><td><b>Una vez</b>, al entrar a la escena</td><td>Inicialización, posición y valores de partida</td></tr>
-        <tr><td><code>_process(delta)</code></td><td><b>Cada frame</b> (~60/seg)</td><td>Lógica continua: movimiento, input en tiempo real</td></tr>
+        <tr><td><code>_ready()</code></td><td><b>Una vez</b>, al entrar a la escena</td><td>Inicialización: posición y valores de partida</td></tr>
+        <tr><td><code>_process(delta)</code></td><td><b>Cada frame dibujado</b> (~60 por segundo, variable)</td><td>Lógica general: input, UI, mover un <code>Node2D</code></td></tr>
+        <tr><td><code>_physics_process(delta)</code></td><td><b>A ritmo fijo</b>: 60 veces por segundo, siempre</td><td>Física y colisiones (la semana que viene)</td></tr>
       </tbody>
     </table>
-    <div class="callout" style="margin-top:16px;">Acá muchos hacen “click” con el game loop: uno se imprime <b>una vez</b>, el otro <b>sin parar</b>.</div>
+    <div class="callout" style="margin-top:16px;">Acá suele hacer “clic” el game loop: <code>_ready()</code> imprime <b>una vez</b>; las otras dos, <b>sin parar</b>.</div>
   </section>
 
   <!-- ============ DELTA ============ -->
-  <section class="slide" data-chapter="_process()" data-topic="_process vs _physics_process">
-    <div class="slide-eyebrow">Hay un tercer hermano</div>
-    <h2 class="slide-title"><code>_process</code> vs <code>_physics_process</code></h2>
-    <table class="tbl">
-      <thead><tr><th>Función</th><th>Cuándo se llama</th><th>Para qué</th></tr></thead>
-      <tbody>
-        <tr><td><code>_process(delta)</code></td><td>En cada frame dibujado. Si la compu va lenta, <b>menos veces</b></td><td>Lógica general: input, UI, animaciones, mover un <code>Node2D</code></td></tr>
-        <tr><td><code>_physics_process(delta)</code></td><td>A <b>frecuencia fija</b>: 60 veces por segundo, siempre</td><td>Todo lo que usa <b>física y colisiones</b></td></tr>
-      </tbody>
-    </table>
-    <div class="callout" style="margin-top:18px;">📏 <b>Regla:</b> si el nodo choca con algo (la semana que viene: <code>move_and_slide()</code>), va en <code>_physics_process()</code>. Todo lo demás puede ir en <code>_process()</code>. Las dos reciben <code>delta</code> y se usan igual.</div>
+  <section class="slide" data-chapter="_process()" data-topic="Qué es _physics_process">
+    <div class="slide-eyebrow">El tercer hermano</div>
+    <h2 class="slide-title"><code>_physics_process(delta)</code>: el reloj fijo</h2>
+    <div class="columns" style="grid-template-columns:1.05fr 0.95fr;">
+      <div>
+        <p class="subtitle" style="font-size:17px;">El motor corre <b>dos relojes</b>. El de dibujo va tan rápido como puede la computadora: si se traba, da menos vueltas. El de física da <b>siempre 60 vueltas por segundo</b>, pase lo que pase con el dibujo.</p>
+        <ul class="bullets" style="font-size:16px;">
+          <li><b>Por qué fijo:</b> una colisión calculada con pasos parejos da el mismo resultado en cualquier máquina. Con pasos irregulares, un objeto rápido puede <b>atravesar</b> una pared</li>
+          <li><b>Su <code>delta</code></b> es casi siempre el mismo: <code>0.0166</code></li>
+          <li>El ritmo se configura en <i>Project Settings → Physics → Common → Physics Ticks per Second</i></li>
+        </ul>
+      </div>
+      <div style="align-self:center;">
+        <pre class="code" style="font-size:13.5px;"><span class="k">func</span> <span class="t">_process</span>(delta):
+	<span class="c"># ~60 por segundo, puede variar</span>
+	<span class="t">print</span>(<span class="s">"dibujo: "</span> + <span class="t">str</span>(delta))
+
+<span class="k">func</span> <span class="t">_physics_process</span>(delta):
+	<span class="c"># 60 por segundo, siempre</span>
+	<span class="t">print</span>(<span class="s">"física: "</span> + <span class="t">str</span>(delta))</pre>
+        <div class="callout" style="margin-top:12px;">📏 <b>Regla:</b> si el nodo <b>choca</b> con algo (<code>move_and_slide()</code>, la semana que viene), va en <code>_physics_process()</code>. Todo lo demás, en <code>_process()</code>. Las dos reciben <code>delta</code> y se escriben igual.</div>
+      </div>
+    </div>
   </section>
 
   <section class="slide" data-chapter="delta" data-topic="El problema sin delta">
     <div class="slide-eyebrow">El concepto clave</div>
     <h2 class="slide-title">El problema de mover sin <code>delta</code></h2>
-    <div class="columns">
-      <div class="code-wrap">
-        <pre class="code" style="font-size:14px;"><span class="k">func</span> <span class="t">_process</span>(delta):
-	position.x += <span class="n">5</span></pre>
-        <p class="small-note">Suma 5 píxeles… ¿por frame?</p>
-      </div>
+    <div class="columns" style="grid-template-columns:0.8fr 1.2fr;">
       <div>
-        <table class="tbl" style="font-size:16px;">
-          <thead><tr><th>Máquina</th><th>Resultado</th></tr></thead>
+        <pre class="code" style="font-size:14px;"><span class="k">func</span> <span class="t">_process</span>(delta):
+	position.x += <span class="n">5</span>   <span class="c"># 5 px por frame</span></pre>
+        <table class="tbl" style="font-size:15px; margin-top:12px;">
+          <thead><tr><th>Máquina</th><th>En 1 segundo</th></tr></thead>
           <tbody>
-            <tr><td>60 FPS</td><td>5 × 60 = <b>300 px/seg</b></td></tr>
-            <tr><td>30 FPS</td><td>5 × 30 = <b>150 px/seg</b></td></tr>
+            <tr><td>60 FPS</td><td>5 × 60 = <b>300 px</b></td></tr>
+            <tr><td>30 FPS</td><td>5 × 30 = <b>150 px</b></td></tr>
           </tbody>
         </table>
-        <div class="callout" style="margin-top:14px;">⚠️ El <b>mismo juego</b>, en distintas máquinas, se comporta <b>distinto</b>. Problema serio.</div>
+        <div class="callout" style="margin-top:12px;">⚠️ El <b>mismo juego</b>, en dos máquinas, se comporta <b>distinto</b>.</div>
+      </div>
+      <div class="card demo">
+        <div class="carrera">
+          <div class="carril"><span class="carril-lbl">A · 60 FPS</span><div class="pista"><div class="bola" id="dl-a"></div></div><span class="carril-x" id="dl-ax">x = 0</span></div>
+          <div class="carril"><span class="carril-lbl">B · 30 FPS</span><div class="pista"><div class="bola b" id="dl-b"></div></div><span class="carril-x" id="dl-bx">x = 0</span></div>
+        </div>
+        <div class="demo-datos" id="dl-datos">tiempo 0.00 s · frames A 0 · frames B 0</div>
+        <div class="demo-botones">
+          <button class="demo-btn" id="dl-paso">+1 frame (1/60 s)</button>
+          <button class="demo-btn" id="dl-seg">▶ Correr 1 segundo</button>
+          <button class="demo-btn" id="dl-reset">↺ Reiniciar</button>
+        </div>
+        <label class="demo-check"><input type="checkbox" id="dl-delta"> Usar <code>position.x += 300 * delta</code></label>
+        <p class="small-note" style="margin-top:6px;">Con cada “+1 frame”, A suma una vez; B suma cada dos (dibuja la mitad de frames). Con <code>delta</code>, B da pasos el doble de largos y llegan juntos.</p>
       </div>
     </div>
   </section>
@@ -181,18 +260,19 @@
     <h2 class="slide-title">La solución: multiplicar por <code>delta</code></h2>
     <div class="columns">
       <div>
-        <p class="subtitle" style="font-size:18px;"><code>delta</code> es el tiempo (en segundos) desde el frame anterior. A 60 FPS ≈ <code>0.016</code>.</p>
+        <p class="subtitle" style="font-size:18px;"><code>delta</code> es el tiempo (en segundos) desde el frame anterior. A 60 FPS ≈ <code>0.016</code>; a 30 FPS ≈ <code>0.033</code>.</p>
         <table class="tbl" style="font-size:15px;">
+          <thead><tr><th>Máquina</th><th>Paso por frame</th><th>En 1 segundo</th></tr></thead>
           <tbody>
-            <tr><td>60 FPS</td><td>200 × 0.016 ≈ 200 px/seg</td></tr>
-            <tr><td>30 FPS</td><td>200 × 0.033 ≈ 200 px/seg</td></tr>
+            <tr><td>60 FPS</td><td>300 × 0.016 ≈ 5 px</td><td>5 × 60 = <b>300 px</b></td></tr>
+            <tr><td>30 FPS</td><td>300 × 0.033 ≈ 10 px</td><td>10 × 30 = <b>300 px</b></td></tr>
           </tbody>
         </table>
       </div>
-      <div class="code-wrap" style="align-self:center;">
+      <div style="align-self:center;">
         <pre class="code" style="font-size:14px;"><span class="k">func</span> <span class="t">_process</span>(delta):
-	position.x += <span class="n">200</span> * delta</pre>
-        <p class="small-note">El movimiento queda atado al <b>tiempo real</b>, no a la velocidad de la máquina.</p>
+	position.x += <span class="n">300</span> * delta   <span class="c"># 300 px por SEGUNDO</span></pre>
+        <p class="small-note">La máquina lenta da menos pasos, pero más largos. El movimiento queda atado al <b>tiempo real</b>, no a la velocidad de la máquina.</p>
       </div>
     </div>
   </section>
@@ -200,7 +280,7 @@
   <section class="slide" data-chapter="delta" data-topic="Regla de delta">
     <div class="slide-eyebrow">delta · regla</div>
     <h2 class="slide-title">La regla, sin excepción</h2>
-    <div class="callout" style="font-size:21px;">📏 Cada vez que escriban <b>movimiento</b> dentro de <code>_process()</code>, <b>multiplican por <code>delta</code></b>. Siempre.</div>
+    <div class="callout" style="font-size:21px;">📏 Todo <b>movimiento</b> escrito dentro de <code>_process()</code> se <b>multiplica por <code>delta</code></b>. Siempre.</div>
     <div class="card" style="margin-top:22px;">
       <h3>🏠 Analogía</h3>
       <p>Es como pagar el alquiler <b>por día</b> en vez de una cuota fija. Tenga el mes 28 o 31 días, siempre se termina pagando lo mismo al final.</p>
@@ -211,25 +291,69 @@
   <section class="slide" data-chapter="Movimiento" data-topic="Movimiento constante">
     <div class="slide-eyebrow">Primera app real</div>
     <h2 class="slide-title">Un objeto que se mueve solo</h2>
-    <div class="columns">
-      <div class="code-wrap">
-        <pre class="code" style="font-size:13px;"><span class="k">extends</span> <span class="t">Node2D</span>
-<span class="k">var</span> velocidad = <span class="n">150</span>
+    <div class="columns" style="grid-template-columns:0.95fr 1.05fr;">
+      <div>
+        <pre class="code" style="font-size:13px;" id="mv-code"><span class="k">extends</span> <span class="t">Node2D</span>
+<span class="k">var</span> velocidad = <span class="n" id="mv-vel">150</span>
 
 <span class="k">func</span> <span class="t">_process</span>(delta):
-	position.x += velocidad * delta   <span class="c"># → Derecha</span>
-	<span class="c"># position.x -= velocidad * delta  # ← Izquierda</span>
-	<span class="c"># position.y += velocidad * delta  # ↓ Abajo</span>
-	<span class="c"># position.y -= velocidad * delta  # ↑ Arriba</span></pre>
+<span class="mv-l" data-dir="der">	position.x += velocidad * delta   <span class="c"># →</span></span>
+<span class="mv-l" data-dir="izq">	position.x -= velocidad * delta   <span class="c"># ←</span></span>
+<span class="mv-l" data-dir="aba">	position.y += velocidad * delta   <span class="c"># ↓</span></span>
+<span class="mv-l" data-dir="arr">	position.y -= velocidad * delta   <span class="c"># ↑</span></span></pre>
+        <p class="small-note" style="margin-top:10px;">En Godot: ejecutar hacia la derecha, cambiar <code>velocidad</code> de 100 a 300, probar hacia abajo y combinar dos líneas para la diagonal.</p>
       </div>
-      <div style="align-self:center;">
-        <ol class="steps" style="font-size:15px;">
-          <li>Ejecutar con movimiento a la derecha</li>
-          <li>Cambiar <code>velocidad</code> 100 → 300</li>
-          <li>Probar hacia abajo</li>
-          <li>Combinar dos direcciones (diagonal)</li>
-        </ol>
+      <div class="card demo">
+        <div class="caja-mv"><div class="bola" id="mv-bola"></div></div>
+        <div class="demo-datos" id="mv-datos">position = (150, 90)</div>
+        <div class="demo-botones">
+          <button class="demo-btn mv-dir" data-dir="der">→</button>
+          <button class="demo-btn mv-dir" data-dir="izq">←</button>
+          <button class="demo-btn mv-dir" data-dir="aba">↓</button>
+          <button class="demo-btn mv-dir" data-dir="arr">↑</button>
+          <button class="demo-btn mv-dir" data-dir="der,aba">↘ diagonal</button>
+        </div>
+        <label class="demo-check">velocidad <input type="range" id="mv-rango" min="50" max="400" step="50" value="150"> <b id="mv-valor">150</b> px/s</label>
+        <p class="small-note" style="margin-top:6px;">Las líneas activas se marcan en el código. Al salir por un borde, vuelve a entrar por el otro.</p>
       </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Vectores" data-topic="El plano de Godot">
+    <div class="slide-eyebrow">Antes de los vectores</div>
+    <h2 class="slide-title">El plano de Godot no es el de la escuela</h2>
+    <div class="columns" style="align-items:start;">
+      <div class="card" style="padding:12px 14px;">
+        <h3>📐 En matemática</h3>
+        <svg class="axes" viewBox="0 0 300 190" width="100%" height="190">
+          <defs><marker id="pl-a" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="currentColor" style="color:var(--muted)"/></marker></defs>
+          <path class="ln" d="M20 100 H285" marker-end="url(#pl-a)" /><path class="ln" d="M150 180 V12" marker-end="url(#pl-a)" />
+          <text class="lbl" x="276" y="118">X</text><text class="lbl" x="158" y="20">Y ↑</text>
+          <circle cx="150" cy="100" r="4" style="fill:var(--text)"/><text class="lbl" x="112" y="118">(0, 0)</text>
+          <circle cx="210" cy="60" r="5" class="hot"/><text class="lbl hot" x="218" y="56">(3, 2)</text>
+          <path class="hotln" d="M150 60 H210 V100" />
+        </svg>
+        <p class="small-note">El origen está en el <b>centro</b> y la Y <b>sube</b>.</p>
+      </div>
+      <div class="card" style="padding:12px 14px;">
+        <h3>🖥️ En la pantalla de Godot</h3>
+        <svg class="axes" viewBox="0 0 300 190" width="100%" height="190">
+          <defs><marker id="pl-b" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="currentColor" style="color:var(--muted)"/></marker></defs>
+          <rect x="30" y="24" width="240" height="135" style="fill:var(--panel-2); stroke:var(--muted); stroke-width:2"/>
+          <path class="ln" d="M30 24 H292" marker-end="url(#pl-b)" /><path class="ln" d="M30 24 V184" marker-end="url(#pl-b)" />
+          <text class="lbl" x="280" y="16">X</text><text class="lbl" x="8" y="182">Y ↓</text>
+          <circle cx="30" cy="24" r="4" style="fill:var(--text)"/><text class="lbl" x="36" y="16">(0, 0)</text>
+          <circle cx="72" cy="45" r="5" class="hot"/><text class="lbl hot" x="80" y="50">(200, 100)</text>
+          <circle cx="150" cy="91" r="4" style="fill:var(--accent-2)"/><text class="lbl" x="120" y="112" style="fill:var(--accent-2)">centro (576, 324)</text>
+          <text class="lbl" x="188" y="152">(1152, 648)</text>
+        </svg>
+        <p class="small-note">El origen es la esquina <b>de arriba a la izquierda</b> de la ventana y la Y <b>baja</b>.</p>
+      </div>
+    </div>
+    <div class="columns three" style="margin-top:12px;">
+      <div class="callout">📏 Las unidades son <b>píxeles</b>. La ventana por defecto mide <b>1152 × 648</b>.</div>
+      <div class="callout">⬆️ Para <b>subir</b>, se <b>resta</b> a Y. Un salto es una velocidad Y <b>negativa</b>.</div>
+      <div class="callout">👪 La <code>position</code> de un nodo hijo se mide desde su <b>padre</b>, no desde la ventana.</div>
     </div>
   </section>
 
@@ -350,7 +474,6 @@ diagonal = diagonal.normalized()
     </div>
   </section>
 
-
   <!-- ============ INPUT ============ -->
   <section class="slide" data-chapter="Input" data-topic="Control en tiempo real">
     <div class="slide-eyebrow">Segunda capa</div>
@@ -386,17 +509,23 @@ diagonal = diagonal.normalized()
   <section class="slide" data-chapter="Input Map" data-topic="Por qué Input Map">
     <div class="slide-eyebrow">Profesionalizar</div>
     <h2 class="slide-title">Input Map: acciones con nombre</h2>
-    <div class="columns">
-      <div class="card" style="border-top:3px solid var(--red);">
-        <h3 style="color:var(--red);">❌ Sin Input Map</h3>
-        <p><code>if Input.is_key_pressed(KEY_D)</code> repetido en <b>50 lugares</b>. Cambiar la tecla = cambiar 50 líneas.</p>
+    <div class="columns" style="grid-template-columns:0.85fr 1.15fr; align-items:start;">
+      <div>
+        <div class="card" style="border-top:3px solid var(--red);">
+          <h3 style="color:var(--red);">❌ Sin Input Map</h3>
+          <p><code>if Input.is_key_pressed(KEY_D)</code> repetido en <b>50 lugares</b>. Cambiar la tecla = cambiar 50 líneas.</p>
+        </div>
+        <div class="card" style="border-top:3px solid var(--green); margin-top:12px;">
+          <h3 style="color:var(--green);">✅ Con Input Map</h3>
+          <p>Se detectan <b>acciones con nombre</b> (<code>mover_derecha</code>). La tecla se cambia en <b>un solo lugar</b> y todo sigue funcionando.</p>
+        </div>
+        <div class="callout" style="margin-top:12px;">Está en <code>Project → Project Settings → Input Map</code>.</div>
       </div>
-      <div class="card" style="border-top:3px solid var(--green);">
-        <h3 style="color:var(--green);">✅ Con Input Map</h3>
-        <p>Se detectan <b>acciones con nombre</b> (<code>mover_derecha</code>). La tecla se cambia en <b>un solo lugar</b> y todo sigue funcionando.</p>
+      <div class="card" style="padding:10px;">
+        <img src="https://docs.godotengine.org/es/4.x/_images/input-mapping-completed.webp" alt="Pestaña Input Map de Project Settings con cuatro acciones de movimiento, cada una con su tecla asignada" style="width:100%; max-height:360px; object-fit:contain; display:block; border-radius:6px;">
+        <div class="imgcaption">La pestaña <b>Input Map</b>: cada acción y sus teclas. Captura de la documentación de Godot (CC BY 4.0); ahí las acciones se llaman <code>move_*</code>, en el curso <code>mover_*</code>.</div>
       </div>
     </div>
-    <div class="callout" style="margin-top:18px;">Se accede en <code>Project → Project Settings → Input Map</code>.</div>
   </section>
 
   <section class="slide" data-chapter="Input Map" data-topic="Crear una acción">
@@ -442,85 +571,47 @@ diagonal = diagonal.normalized()
     </div>
   </section>
 
-  <section class="slide" data-chapter="Teclado y mouse" data-topic="Lo mismo, con un vector">
-    <div class="slide-eyebrow">Teclado · con vectores</div>
-    <h2 class="slide-title">Los cuatro <code>if</code>, en una línea</h2>
-    <div class="columns">
-      <div class="code-wrap">
-        <pre class="code" style="font-size:13px;"><span class="k">func</span> <span class="t">_process</span>(delta):
+  <section class="slide" data-chapter="Teclado y mouse" data-topic="Todo junto: teclado, vector y mouse">
+    <div class="slide-eyebrow">Integradora</div>
+    <h2 class="slide-title">Todo junto: teclado con un vector, y el mouse</h2>
+    <div class="columns" style="grid-template-columns:1.1fr 0.9fr;">
+      <div>
+        <pre class="code" style="font-size:12.8px;"><span class="k">extends</span> <span class="t">Node2D</span>
+<span class="k">var</span> velocidad = <span class="n">200</span>
+
+<span class="k">func</span> <span class="t">_process</span>(delta):
+	<span class="c"># Teclado: los cuatro if, en una línea</span>
 	<span class="k">var</span> direccion = <span class="t">Input</span>.get_vector(
 		<span class="s">"mover_izquierda"</span>, <span class="s">"mover_derecha"</span>,
 		<span class="s">"mover_arriba"</span>, <span class="s">"mover_abajo"</span>)
-	position += direccion * velocidad * delta</pre>
+	position += direccion * velocidad * delta
+
+	<span class="c"># Mouse: con clic izquierdo, ir hacia el puntero</span>
+	<span class="k">if</span> <span class="t">Input</span>.is_mouse_button_pressed(<span class="t">MOUSE_BUTTON_LEFT</span>):
+		<span class="k">var</span> objetivo = get_viewport().get_mouse_position()
+		position = position.move_toward(objetivo, velocidad * delta)</pre>
       </div>
-      <div style="align-self:center;">
+      <div>
         <div class="card">
           <h3><code>Input.get_vector()</code></h3>
-          <ul>
-            <li>Lee las <b>cuatro acciones</b> y devuelve un <code>Vector2</code></li>
-            <li>Nada apretado: <code>(0, 0)</code>. Derecha: <code>(1, 0)</code>. Arriba: <code>(0, -1)</code></li>
-            <li>Dos teclas: <code>(0.7, 0.7)</code>, <b>ya normalizado</b>. La diagonal no corre más</li>
+          <ul style="font-size:15px;">
+            <li>Lee las <b>cuatro acciones</b> y devuelve un <code>Vector2</code>: nada apretado <code>(0, 0)</code>, derecha <code>(1, 0)</code>, arriba <code>(0, -1)</code></li>
+            <li>Con dos teclas da <code>(0.7, 0.7)</code>, <b>ya normalizado</b>: la diagonal no corre más</li>
           </ul>
         </div>
-        <p class="small-note" style="margin-top:10px;">El TP arranca con los cuatro <code>if</code> para que se entienda qué pasa; después se pasa a esta versión.</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="slide" data-chapter="Teclado y mouse" data-topic="Input de mouse">
-    <div class="slide-eyebrow">Mouse</div>
-    <h2 class="slide-title">El mouse como fuente de input</h2>
-    <div class="columns">
-      <div class="code-wrap">
-        <pre class="code" style="font-size:12.5px;"><span class="k">func</span> <span class="t">_process</span>(delta):
-	<span class="k">if</span> <span class="t">Input</span>.is_mouse_button_pressed(<span class="t">MOUSE_BUTTON_LEFT</span>):
-		<span class="t">print</span>(<span class="s">"¡Click izquierdo!"</span>)
-
-	<span class="k">var</span> pos = get_viewport().get_mouse_position()
-	<span class="t">print</span>(<span class="s">"Mouse en: "</span> + <span class="t">str</span>(pos))</pre>
-      </div>
-      <div class="code-wrap" style="align-self:center;">
-        <h4 style="color:var(--accent); font-size:14px; text-transform:uppercase; margin:0 0 8px;">Bonus — ir hacia el mouse</h4>
-        <pre class="code" style="font-size:12.5px; margin:0;"><span class="k">if</span> <span class="t">Input</span>.is_mouse_button_pressed(<span class="t">MOUSE_BUTTON_LEFT</span>):
-	<span class="k">var</span> objetivo = get_viewport() \
-		.get_mouse_position()
-	position = position.move_toward(
-		objetivo, velocidad * delta)</pre>
+        <div class="card" style="margin-top:10px;">
+          <h3>🖱️ El mouse</h3>
+          <ul style="font-size:15px;">
+            <li><code>get_mouse_position()</code>: dónde está el puntero, en píxeles</li>
+            <li><code>move_toward(objetivo, paso)</code>: avanza hacia un punto sin pasarse</li>
+          </ul>
+        </div>
+        <p class="small-note" style="margin-top:10px;">👐 <b>Práctica:</b> un personaje con estas líneas, las acciones en el Input Map y <code>velocidad</code> ajustable. El TP arranca con los cuatro <code>if</code> para que se entienda qué pasa.</p>
       </div>
     </div>
   </section>
 
   <!-- ============ PRÁCTICA ============ -->
-  <section class="slide" data-chapter="Práctica" data-topic="Práctica: código base">
-    <div class="slide-eyebrow">Integradora</div>
-    <h2 class="slide-title">Personaje que se mueve con el teclado</h2>
-    <div class="columns">
-      <div class="code-wrap">
-        <pre class="code" style="font-size:12.5px;"><span class="k">extends</span> <span class="t">Node2D</span>
-<span class="k">var</span> velocidad = <span class="n">200</span>
-
-<span class="k">func</span> <span class="t">_ready</span>():
-	<span class="t">print</span>(<span class="s">"=== Juego iniciado ==="</span>)
-	<span class="t">print</span>(<span class="s">"Usá las flechas o WASD"</span>)
-
-<span class="k">func</span> <span class="t">_process</span>(delta):
-	<span class="k">if</span> <span class="t">Input</span>.is_action_pressed(<span class="s">"mover_derecha"</span>):
-		position.x += velocidad * delta
-	<span class="k">if</span> <span class="t">Input</span>.is_action_pressed(<span class="s">"mover_izquierda"</span>):
-		position.x -= velocidad * delta</pre>
-      </div>
-      <div style="align-self:center;">
-        <div class="card">
-          <h3>Requisitos mínimos</h3>
-          <ul>
-            <li>Movimiento con <code>_process()</code> y <code>delta</code></li>
-            <li>Acciones en el <b>Input Map</b></li>
-            <li>Variable <code>velocidad</code> ajustable</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
 
   <!-- ============ CIERRE ============ -->
   <section class="slide title-slide" data-chapter="Cierre" data-topic="Cierre y tarea">
@@ -547,5 +638,107 @@ diagonal = diagonal.normalized()
 </div>
 
 <script src="deck.js"></script>
+<script>
+/* Demos interactivas de la Clase 3 (v2). Sin dependencias externas. */
+(function () {
+  const $ = (id) => document.getElementById(id);
+
+  /* 1 · Game loop en cámara lenta */
+  if ($('gl-bola')) {
+    let frame = 0, x = 0, fase = 0, timer = null, apretado = false, lento = true;
+    const pista = $('gl-bola').parentElement;
+    const fases = [$('gl-f0'), $('gl-f1'), $('gl-f2')];
+    const pintar = () => {
+      const ancho = pista.clientWidth - 24;
+      $('gl-bola').style.left = (x % 300) / 300 * ancho + 'px';
+      $('gl-datos').textContent = 'frame ' + frame + ' · position.x = ' + x;
+    };
+    const paso = () => {                       // una fase por tic
+      fases.forEach((f, i) => f.classList.toggle('on', i === fase));
+      if (fase === 1 && apretado) x += 5;
+      if (fase === 2) { frame++; pintar(); }
+      fase = (fase + 1) % 3;
+    };
+    const vueltaRapida = () => {               // un frame entero por tic
+      fases.forEach((f) => f.classList.add('on'));
+      if (apretado) x += 5;
+      frame++; pintar();
+    };
+    const arrancar = (modoLento) => {
+      clearInterval(timer); lento = modoLento;
+      $('gl-lento').classList.toggle('activo', lento);
+      $('gl-rapido').classList.toggle('activo', !lento);
+      timer = lento ? setInterval(paso, 333) : setInterval(vueltaRapida, 1000 / 60);
+    };
+    $('gl-lento').onclick = () => arrancar(true);
+    $('gl-rapido').onclick = () => arrancar(false);
+    $('gl-pausa').onclick = () => { clearInterval(timer); timer = null; $('gl-lento').classList.remove('activo'); $('gl-rapido').classList.remove('activo'); };
+    const btn = $('gl-input');
+    const on = (e) => { e.preventDefault(); apretado = true; btn.classList.add('activo'); };
+    const off = () => { apretado = false; btn.classList.remove('activo'); };
+    btn.addEventListener('pointerdown', on);
+    ['pointerup', 'pointerleave', 'pointercancel'].forEach((ev) => btn.addEventListener(ev, off));
+    pintar();
+  }
+
+  /* 2 · Sin delta / con delta: dos máquinas */
+  if ($('dl-a')) {
+    let t = 0, fa = 0, fb = 0, xa = 0, xb = 0, timer = null;
+    const usarDelta = () => $('dl-delta').checked;
+    const pintar = () => {
+      const ancho = $('dl-a').parentElement.clientWidth - 24;
+      $('dl-a').style.left = Math.min(xa, 300) / 300 * ancho + 'px';
+      $('dl-b').style.left = Math.min(xb, 300) / 300 * ancho + 'px';
+      $('dl-ax').textContent = 'x = ' + Math.round(xa);
+      $('dl-bx').textContent = 'x = ' + Math.round(xb);
+      $('dl-datos').textContent = 'tiempo ' + (t / 60).toFixed(2) + ' s · frames A ' + fa + ' · frames B ' + fb;
+    };
+    const tic = () => {                        // avanza 1/60 de segundo
+      t++;
+      fa++; xa += usarDelta() ? 300 * (1 / 60) : 5;
+      if (t % 2 === 0) { fb++; xb += usarDelta() ? 300 * (1 / 30) : 5; }
+      pintar();
+    };
+    const reiniciar = () => { clearInterval(timer); timer = null; t = fa = fb = xa = xb = 0; pintar(); };
+    $('dl-paso').onclick = () => { clearInterval(timer); timer = null; tic(); };
+    $('dl-seg').onclick = () => {
+      reiniciar();
+      timer = setInterval(() => { tic(); if (t >= 60) { clearInterval(timer); timer = null; } }, 1000 / 60);
+    };
+    $('dl-reset').onclick = reiniciar;
+    $('dl-delta').onchange = reiniciar;
+    pintar();
+  }
+
+  /* 3 · Movimiento constante */
+  if ($('mv-bola')) {
+    let x = 150, y = 90, vel = 150, dirs = ['der'];
+    const caja = $('mv-bola').parentElement;
+    const marcar = () => {
+      document.querySelectorAll('.mv-l').forEach((l) => l.classList.toggle('on', dirs.includes(l.dataset.dir)));
+      document.querySelectorAll('.mv-dir').forEach((b) => b.classList.toggle('activo', b.dataset.dir === dirs.join(',')));
+    };
+    document.querySelectorAll('.mv-dir').forEach((b) => b.onclick = () => { dirs = b.dataset.dir.split(','); marcar(); });
+    $('mv-rango').oninput = (e) => { vel = +e.target.value; $('mv-valor').textContent = vel; $('mv-vel').textContent = vel; };
+    let antes = performance.now();
+    const loop = (ahora) => {
+      const delta = Math.min((ahora - antes) / 1000, 0.1); antes = ahora;
+      const w = caja.clientWidth, h = caja.clientHeight;
+      if (w > 0) {
+        if (dirs.includes('der')) x += vel * delta;
+        if (dirs.includes('izq')) x -= vel * delta;
+        if (dirs.includes('aba')) y += vel * delta;
+        if (dirs.includes('arr')) y -= vel * delta;
+        x = (x + w) % w; y = (y + h) % h;
+        $('mv-bola').style.left = (x - 12) + 'px';
+        $('mv-bola').style.top = (y - 12) + 'px';
+        $('mv-datos').textContent = 'position = (' + Math.round(x) + ', ' + Math.round(y) + ')';
+      }
+      requestAnimationFrame(loop);
+    };
+    marcar(); requestAnimationFrame(loop);
+  }
+})();
+</script>
 </body>
 </html>

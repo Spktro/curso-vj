@@ -137,6 +137,7 @@
       </tbody>
     </table>
     <div class="callout" style="margin-top:16px;">🎭 <b>Analogía:</b> <code>CharacterBody2D</code> es un <b>actor</b> dirigido por el programador. <code>RigidBody2D</code> es un <b>extra</b> que, si lo empujan, se cae solo. <code>StaticBody2D</code> es la <b>escenografía</b>.</div>
+    <p class="small-note" style="margin-top:10px;">🧊 Los tres tienen su <b>equivalente en 3D</b>: <code>StaticBody3D</code>, <code>CharacterBody3D</code> y <code>RigidBody3D</code>, igual que <code>Area3D</code> y <code>CollisionShape3D</code>. Se usan de la misma forma; lo que se aprende en 2D sirve para 3D.</p>
   </section>
 
   <section class="slide" data-chapter="Cuerpos físicos" data-topic="Regla práctica">
@@ -350,20 +351,20 @@ Salta con Espacio, una vez por toque</div>
     <div class="callout" style="margin-top:20px;">🎮 Así funcionan los <b>logros</b> de Steam, el <b>puntaje</b> que sube al juntar un anillo en <i>Sonic</i>, o el “¡Nivel completado!” al cruzar la meta.</div>
   </section>
 
-  <section class="slide" data-chapter="Señales" data-topic="Señales que ya usaste">
+  <section class="slide" data-chapter="Señales" data-topic="Señales más comunes">
     <div class="slide-eyebrow">Señales</div>
-    <h2 class="slide-title">Las señales ya se venían usando sin saberlo</h2>
+    <h2 class="slide-title">Las señales más comunes</h2>
     <table class="tbl" style="font-size:16px;">
-      <thead><tr><th>Nodo</th><th>Señal</th><th>Se emite cuando…</th></tr></thead>
+      <thead><tr><th>Nodo</th><th>Señal</th><th>Se emite cuando…</th><th>Cuándo se usa</th></tr></thead>
       <tbody>
-        <tr><td><code>Area2D</code></td><td><code>body_entered(body)</code></td><td>un cuerpo entra en la zona. <b>La de hoy.</b></td></tr>
-        <tr><td><code>Button</code></td><td><code>pressed</code></td><td>el jugador hace clic. Todo menú es esto.</td></tr>
-        <tr><td><code>Timer</code></td><td><code>timeout</code></td><td>se acaba el tiempo. Así se spawnean enemigos cada X segundos.</td></tr>
-        <tr><td><code>AnimatedSprite2D</code></td><td><code>animation_finished</code></td><td>termina una animación. Para volver a “idle” después de atacar.</td></tr>
-        <tr><td><code>RigidBody2D</code></td><td><code>body_entered(body)</code></td><td>chocó contra algo (con <i>Contact Monitor</i> activado).</td></tr>
+        <tr><td><code>Area2D</code></td><td><code>body_entered(body)</code></td><td>un cuerpo entra en la zona</td><td><b>Hoy</b>: la moneda</td></tr>
+        <tr><td><code>Area2D</code></td><td><code>area_entered(area)</code></td><td>otra área entra en la zona</td><td>Semana 3: balas contra slimes</td></tr>
+        <tr><td><code>Timer</code></td><td><code>timeout</code></td><td>se acaba el tiempo</td><td>Semana 3: spawnear enemigos</td></tr>
+        <tr><td><code>Button</code></td><td><code>pressed</code></td><td>el jugador hace clic</td><td>Semana 5: menús</td></tr>
+        <tr><td><code>AnimatedSprite2D</code></td><td><code>animation_finished</code></td><td>termina una animación</td><td>Volver a “idle” después de atacar</td></tr>
       </tbody>
     </table>
-    <div class="callout" style="margin-top:16px;">Y las funciones <code>_ready()</code> y <code>_process()</code> son <b>casi lo mismo</b>: Godot avisa que pasó algo (“el nodo entró”, “pasó un frame”) y el programador escribe qué hacer. Con las señales se elige <b>qué avisos escuchar</b>.</div>
+    <div class="callout" style="margin-top:16px;">Lo único conocido hasta ahora son <code>_ready()</code> y <code>_process()</code>: <b>no son señales</b>, son funciones que Godot llama solo. La idea es parecida (Godot avisa que pasó algo y el programador escribe qué hacer), pero con las señales se elige <b>qué avisos escuchar</b> y <b>quién responde</b>.</div>
   </section>
 
   <!-- ============ Area2D ============ -->
