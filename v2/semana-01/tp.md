@@ -5,7 +5,7 @@
 
 ---
 
-## 🎯 Al finalizar este TP
+## Al finalizar este TP
 
 Seis escenas chicas, una por concepto, cada una con su script y su salida en el panel **Output**. Y una séptima que las junta:
 
@@ -22,11 +22,11 @@ Aria: 100 HP  |  Golem de piedra: 120 HP  |  Pociones: 2
 ---
 ```
 
-> 💡 **Tiempo estimado:** **60–90 min**. Leer cada paso completo antes de hacerlo, y **escribir el código a mano**: se aprende tecleando y rompiendo.
+> **Tiempo estimado:** **60–90 min**. Leer cada paso completo antes de hacerlo, y **escribir el código a mano**: se aprende tecleando y rompiendo.
 
 ---
 
-## 🗂️ Cómo va a quedar el proyecto
+## Cómo va a quedar el proyecto
 
 Todo vive en **un solo proyecto**, `tp1`: siete escenas, cada una con su script.
 
@@ -41,11 +41,11 @@ res://
 └── 07_cripta.tscn         07_cripta.gd          ← Parte 7 (el juego)
 ```
 
-> 🔗 **Quien haya hecho el proyecto `clase-02` en la teórico-práctica** ya conoce el ritual de crear una escena con un script. Acá se repite en un proyecto nuevo, con los nombres de arriba.
+> **Quien haya hecho el proyecto `clase-02` en la teórico-práctica** ya conoce el ritual de crear una escena con un script. Acá se repite en un proyecto nuevo, con los nombres de arriba.
 
 ---
 
-## 🧠 Antes de arrancar: ¿por qué “en la consola”?
+## Antes de arrancar: ¿por qué “en la consola”?
 
 En la clase se vio que **`print()` es la mejor herramienta para depurar**. Acá se usa como *pantalla*: en vez de mover un personaje, se **imprime** lo que pasa. Así la atención queda en la **lógica** (variables, decisiones, repeticiones), sin pelear con gráficos.
 
@@ -53,7 +53,7 @@ Lo único “gráfico” es el **input**: las teclas se leen con el sistema `Inp
 
 ---
 
-## 🔁 Parte 0 — El ritual: una escena, un nodo, un script
+## Parte 0 — El ritual: una escena, un nodo, un script
 
 Cada parte de acá en adelante arranca **igual**, con estos pasos. La primera vez se hacen completos; después el TP solo indica *“el ritual, con tal nombre”*.
 
@@ -73,7 +73,7 @@ Cada parte de acá en adelante arranca **igual**, con estos pasos. La primera ve
    ![Buscador de nodos](https://docs.godotengine.org/es/4.x/_images/nodes_and_scenes_03_create_node_window.webp)
 
 5. Renombrarlo (doble clic sobre el nombre). En esta primera escena: **`Variables`**.
-6. **Adjuntar un script:** clic derecho sobre el nodo → **Attach Script** (*Adjuntar Script*), o el botón con el ícono 📜 arriba del panel Escena.
+6. **Adjuntar un script:** clic derecho sobre el nodo → **Attach Script** (*Adjuntar Script*), o el botón con el ícono del pergamino arriba del panel Escena.
 
    ![Menú contextual con Attach Script](https://docs.godotengine.org/es/4.x/_images/scripting_first_script_attach_script.webp)
 
@@ -95,11 +95,11 @@ Cada parte de acá en adelante arranca **igual**, con estos pasos. La primera ve
 
     ![Panel Output mostrando texto impreso](https://docs.godotengine.org/es/4.x/_images/scripting_first_script_print_hello_world.webp)
 
-    > 🧠 **`extends Node`** dice qué tipo de nodo controla el script. **`func _ready():`** se ejecuta **una sola vez** al aparecer el nodo. Todo lo que se imprima ahí aparece en **Output**. Y si al correr se abre una ventana gris y vacía, **está bien**: el juego “es” lo que sale en la consola.
+    > **`extends Node`** dice qué tipo de nodo controla el script. **`func _ready():`** se ejecuta **una sola vez** al aparecer el nodo. Todo lo que se imprima ahí aparece en **Output**. Y si al correr se abre una ventana gris y vacía, **está bien**: el juego “es” lo que sale en la consola.
 
-✅ **Punto de control 0:** “¡La escena arrancó!” aparece en el panel Output al apretar F6, y en el FileSystem están `01_variables.tscn` y `01_variables.gd`.
+**Punto de control 0:** “¡La escena arrancó!” aparece en el panel Output al apretar F6, y en el FileSystem están `01_variables.tscn` y `01_variables.gd`.
 
-🛟 **No aparece nada / da error**
+**No aparece nada / da error**
 
 <details>
 <summary>Ver soluciones</summary>
@@ -112,7 +112,7 @@ Cada parte de acá en adelante arranca **igual**, con estos pasos. La primera ve
 
 ---
 
-## 📦 Parte 1 — Variables: la ficha de la heroína
+## Parte 1 — Variables: la ficha de la heroína
 
 > **Escena:** `01_variables` (la creada en la Parte 0).
 > **Concepto:** asignación de variables (`var`) y tipos (`int`, `float`, `String`, `bool`), imprimir con `str()`.
@@ -143,15 +143,15 @@ Precisión: 85.5%
 ¿Es heroína?: true
 ```
 
-> 🧠 Una variable es una **caja con etiqueta**: `vida` guarda un `100`. Para **pegar** un número con texto hay que convertirlo con **`str()`**: `"Vida: " + str(vida)`. Sin el `str()`, Godot marca un error en rojo: no sabe sumar texto con número.
+> Una variable es una **caja con etiqueta**: `vida` guarda un `100`. Para **pegar** un número con texto hay que convertirlo con **`str()`**: `"Vida: " + str(vida)`. Sin el `str()`, Godot marca un error en rojo: no sabe sumar texto con número.
 
-🎯 **Para probar:** cambiar los valores. Poner un nombre propio y una vida distinta. Quitarle el `str()` a `vida`, correr y leer el error: es uno de los que más aparecen.
+**Para probar:** cambiar los valores. Poner un nombre propio y una vida distinta. Quitarle el `str()` a `vida`, correr y leer el error: es uno de los que más aparecen.
 
-✅ **Punto de control 1:** se imprime una ficha con los 4 tipos de datos.
+**Punto de control 1:** se imprime una ficha con los 4 tipos de datos.
 
 ---
 
-## 🎒 Parte 2 — Arreglos: el arsenal
+## Parte 2 — Arreglos: el arsenal
 
 > **Escena:** el ritual, con nodo **`Arreglos`**, script **`02_arreglos.gd`** y escena **`02_arreglos.tscn`**.
 > **Concepto:** arreglos (arrays): crear, acceder por **índice**, tamaño con `.size()`, agregar con `.append()`.
@@ -183,20 +183,20 @@ Nueva arma agregada: Daga
 Armas ahora: 4
 ```
 
-> 🧠 **El índice empieza en 0.** En un arreglo de 3 elementos, las posiciones son `0`, `1` y `2`. Pedir `armas[3]` **antes** de agregar la Daga daría error (“índice fuera de rango”): esa posición todavía no existe.
+> **El índice empieza en 0.** En un arreglo de 3 elementos, las posiciones son `0`, `1` y `2`. Pedir `armas[3]` **antes** de agregar la Daga daría error (“índice fuera de rango”): esa posición todavía no existe.
 
-> 💡 **Truco de diseño: arreglos en paralelo.** El **daño** de cada arma se guarda en **otro** arreglo, en el mismo orden. `armas[2]` es `"Hacha"` y `danos[2]` es su daño. Así se usan en el juego final. Agregarlo al final del `_ready()`:
+> **Truco de diseño: arreglos en paralelo.** El **daño** de cada arma se guarda en **otro** arreglo, en el mismo orden. `armas[2]` es `"Hacha"` y `danos[2]` es su daño. Así se usan en el juego final. Agregarlo al final del `_ready()`:
 >
 > ```gdscript
 > 	var danos = [25, 15, 40, 10]
 > 	print(armas[2] + " hace " + str(danos[2]) + " de daño")   # Hacha hace 40 de daño
 > ```
 
-✅ **Punto de control 2:** se accede a elementos por índice y se usan `.size()` y `.append()`.
+**Punto de control 2:** se accede a elementos por índice y se usan `.size()` y `.append()`.
 
 ---
 
-## 🔀 Parte 3 — Condicionales: decidir el resultado
+## Parte 3 — Condicionales: decidir el resultado
 
 > **Escena:** el ritual, con nodo **`Condicionales`**, script **`03_condicionales.gd`** y escena **`03_condicionales.tscn`**.
 > **Concepto:** `if` / `elif` / `else` y operadores de comparación (`==`, `!=`, `<`, `>`, `<=`, `>=`).
@@ -212,29 +212,29 @@ func _ready():
 	print("Vida del enemigo: " + str(vida_enemigo))
 
 	if vida_enemigo <= 0:
-		print("💀 El enemigo cayó")
+		print("El enemigo cayó")
 	elif vida_enemigo <= 20:
-		print("🔴 El enemigo está por morir")
+		print("El enemigo está por morir")
 	else:
-		print("🟢 El enemigo sigue fuerte")
+		print("El enemigo sigue fuerte")
 ```
 
 **Output** (con estos valores):
 
 ```
 Vida del enemigo: 15
-🔴 El enemigo está por morir
+El enemigo está por morir
 ```
 
-> 🧠 Godot revisa las condiciones **de arriba hacia abajo** y ejecuta **la primera que sea verdadera**. Con `vida_enemigo = 15`: no es `<= 0`, **sí** es `<= 20` → imprime la de vida crítica y **saltea el resto**.
+> Godot revisa las condiciones **de arriba hacia abajo** y ejecuta **la primera que sea verdadera**. Con `vida_enemigo = 15`: no es `<= 0`, **sí** es `<= 20` → imprime la de vida crítica y **saltea el resto**.
 
-🎯 **Para probar:** cambiar `dano` a `50` (¿qué rama sale?) y a `10` (¿y ahora?). Predecir el resultado **antes** de apretar F6.
+**Para probar:** cambiar `dano` a `50` (¿qué rama sale?) y a `10` (¿y ahora?). Predecir el resultado **antes** de apretar F6.
 
-✅ **Punto de control 3:** según el daño, cae en una rama distinta.
+**Punto de control 3:** según el daño, cae en una rama distinta.
 
 ---
 
-## 🔁 Parte 4 — `for`: repetir sin copiar y pegar
+## Parte 4 — `for`: repetir sin copiar y pegar
 
 > **Escena:** el ritual, con nodo **`For`**, script **`04_for.gd`** y escena **`04_for.tscn`**.
 > **Concepto:** el loop `for`, con `range()` y recorriendo un arreglo.
@@ -276,17 +276,17 @@ Arma: Hacha
 [2] Hacha → daño 40
 ```
 
-> 🧠 Hay dos formas de recorrer: **`for arma in armas`** da directo cada valor (`"Espada"`, `"Arco"`…). **`for i in range(armas.size())`** da el **número de posición** (`0`, `1`, `2`), útil cuando hace falta el índice para leer **dos arreglos en paralelo** al mismo tiempo.
+> Hay dos formas de recorrer: **`for arma in armas`** da directo cada valor (`"Espada"`, `"Arco"`…). **`for i in range(armas.size())`** da el **número de posición** (`0`, `1`, `2`), útil cuando hace falta el índice para leer **dos arreglos en paralelo** al mismo tiempo.
 
-> ⚠️ **Importante (de la clase):** en Godot los `for` **no** se usan para la lógica en tiempo real (para eso está `_process()`). Sirven para **inicializar**, generar contenido y recorrer datos, justo lo que se hizo acá.
+> **Importante (de la clase):** en Godot los `for` **no** se usan para la lógica en tiempo real (para eso está `_process()`). Sirven para **inicializar**, generar contenido y recorrer datos, justo lo que se hizo acá.
 
-🎯 **Para probar:** `range(10)`. Agregar `"Arco largo"` a `armas`: ¿hace falta tocar el `for`? ¿Y el tercer `for` sigue andando? (Pista: `danos` quedó más corto.)
+**Para probar:** `range(10)`. Agregar `"Arco largo"` a `armas`: ¿hace falta tocar el `for`? ¿Y el tercer `for` sigue andando? (Pista: `danos` quedó más corto.)
 
-✅ **Punto de control 4:** se imprimen listas con `for`, con y sin índice.
+**Punto de control 4:** se imprimen listas con `for`, con y sin índice.
 
 ---
 
-## 🧰 Parte 5 — Funciones: escribir una vez, usar mil
+## Parte 5 — Funciones: escribir una vez, usar mil
 
 > **Escena:** el ritual, con nodo **`Funciones`**, script **`05_funciones.gd`** y escena **`05_funciones.tscn`**.
 > **Concepto:** crear funciones, pasarles **parámetros** y devolver un valor con **`return`**.
@@ -327,20 +327,20 @@ Daño recibido: 50. Vida: 20
 Aria sigue en pie
 ```
 
-> 🧠 **Anatomía:**
+> **Anatomía:**
 > - `func recibir_dano(cantidad):` → **definición**. `cantidad` es el **parámetro** (el dato que entra).
 > - `recibir_dano(30)` → **llamado**. Los `()` son **obligatorios**.
 > - `return vida > 0` → **devuelve** un resultado (acá `true` o `false`) que se puede usar en un `if`.
 >
 > Notar que `vida` está declarada **afuera** de las funciones (arriba de todo). Por eso **todas** la pueden leer y modificar. Es el “estado” del juego.
 
-🎯 **Para probar:** un tercer `recibir_dano(30)`: ¿qué imprime el `if`? Escribir `curar(cantidad)`, que sume vida, y llamarla.
+**Para probar:** un tercer `recibir_dano(30)`: ¿qué imprime el `if`? Escribir `curar(cantidad)`, que sume vida, y llamarla.
 
-✅ **Punto de control 5:** hay funciones definidas con parámetro y con `return`, y se las llama.
+**Punto de control 5:** hay funciones definidas con parámetro y con `return`, y se las llama.
 
 ---
 
-## 🎮 Parte 6 — Input: que reaccione a las teclas
+## Parte 6 — Input: que reaccione a las teclas
 
 > **Escena:** el ritual, con nodo **`Input`**, script **`06_input.gd`** y escena **`06_input.tscn`**.
 > **Concepto:** detectar input con `Input.is_action_just_pressed(...)` dentro de `_process()`.
@@ -366,13 +366,13 @@ func _process(delta):
 
 Apretar **F6**. **Importante:** hacer **clic sobre la ventana del juego** para que reciba las teclas; los mensajes aparecen en el panel **Output** del editor.
 
-> 🧠 **`is_action_just_pressed`** se dispara **una sola vez** por pulsación (ideal para menús y ataques). **`is_action_pressed`** es `true` **mientras** la tecla está apretada (ideal para movimiento continuo). Las acciones `ui_accept`, `ui_left`, `ui_right`, `ui_up`, `ui_down`, `ui_cancel` **ya vienen** definidas; se pueden crear otras en `Project → Project Settings → Input Map`.
+> **`is_action_just_pressed`** se dispara **una sola vez** por pulsación (ideal para menús y ataques). **`is_action_pressed`** es `true` **mientras** la tecla está apretada (ideal para movimiento continuo). Las acciones `ui_accept`, `ui_left`, `ui_right`, `ui_up`, `ui_down`, `ui_cancel` **ya vienen** definidas; se pueden crear otras en `Project → Project Settings → Input Map`.
 
-🎯 **Para probar:** cambiar el `just_pressed` del ataque por `pressed` y mantener apretado ENTER. Eso es `_process()`: 60 veces por segundo.
+**Para probar:** cambiar el `just_pressed` del ataque por `pressed` y mantener apretado ENTER. Eso es `_process()`: 60 veces por segundo.
 
-✅ **Punto de control 6:** cada tecla imprime su mensaje en Output.
+**Punto de control 6:** cada tecla imprime su mensaje en Output.
 
-🛟 **Las teclas no hacen nada**
+**Las teclas no hacen nada**
 
 <details>
 <summary>Ver soluciones</summary>
@@ -384,7 +384,7 @@ Apretar **F6**. **Importante:** hacer **clic sobre la ventana del juego** para q
 
 ---
 
-## 🏆 Parte 7 — Todo junto: *La Cripta del Golem*
+## Parte 7 — Todo junto: *La Cripta del Golem*
 
 > **Escena:** el ritual, con nodo **`Cripta`**, script **`07_cripta.gd`** y escena **`07_cripta.tscn`**.
 
@@ -459,7 +459,7 @@ func atacar():
 	vida_enemigo = vida_enemigo - dano
 
 	if vida_enemigo <= 0:                           # CONDICIONAL (Parte 3)
-		print("🏆 ¡" + enemigo + " derrotado! VICTORIA.")
+		print("¡" + enemigo + " derrotado! VICTORIA.")
 		terminado = true
 		return
 
@@ -471,7 +471,7 @@ func enemigo_contraataca():
 	print("El " + enemigo + " contraataca: -" + str(golpe) + " HP")
 	vida = vida - golpe
 	if vida <= 0:
-		print("💀 " + nombre + " cayó. GAME OVER.")
+		print(nombre + " cayó. GAME OVER.")
 		terminado = true
 
 func curar():
@@ -486,11 +486,11 @@ func curar():
 
 **Cómo se juega:** apretar **F6**, hacer **clic en la ventana del juego**, y usar **← →** para elegir arma, **ENTER** para atacar y **↑** para curarse. El combate se desarrolla en el panel **Output**.
 
-> 🧠 **`return` solo, sin valor,** corta la función ahí mismo. En `_process()` se usa para que, cuando el juego terminó, no siga leyendo teclas. En `curar()`, para no restar pociones que ya no quedan.
+> **`return` solo, sin valor,** corta la función ahí mismo. En `_process()` se usa para que, cuando el juego terminó, no siga leyendo teclas. En `curar()`, para no restar pociones que ya no quedan.
 
-✅ **Punto de control 7 (final):** se le puede ganar al Golem eligiendo el Hacha y atacando, o perder por descuido. Todo se ve en Output.
+**Punto de control 7 (final):** se le puede ganar al Golem eligiendo el Hacha y atacando, o perder por descuido. Todo se ve en Output.
 
-🛟 **Errores comunes al armar el juego final**
+**Errores comunes al armar el juego final**
 
 <details>
 <summary>Ver soluciones</summary>
@@ -504,7 +504,7 @@ func curar():
 
 ---
 
-## 📤 Entrega
+## Entrega
 
 Entregar **una** de estas opciones (según indique el/la docente):
 
@@ -513,7 +513,7 @@ Entregar **una** de estas opciones (según indique el/la docente):
 
 **Nombre del archivo:** `tp1-ApellidoNombre.zip`
 
-### ✔️ Checklist de autoevaluación
+### Checklist de autoevaluación
 
 - [ ] Hay **siete escenas** (`01_variables` a `07_cripta`), cada una con un `Node` y su script adjunto, y todas imprimen en **Output**.
 - [ ] Se usan **variables** de al menos 3 tipos distintos (`int`, `String`, `bool`…).
@@ -526,7 +526,7 @@ Entregar **una** de estas opciones (según indique el/la docente):
 
 ---
 
-## 🌟 Extra (opcional, para quien quiera más)
+## Extra (opcional, para quien quiera más)
 
 - **Daño variable (azar):** hacer que cada golpe varíe un poco. `randi_range(min, max)` devuelve un entero al azar:
   ```gdscript
@@ -539,7 +539,7 @@ Entregar **una** de estas opciones (según indique el/la docente):
 
 ---
 
-## 📚 Recursos
+## Recursos
 
 - Crear el primer script (capturas de este TP): **[Creating your first script](https://docs.godotengine.org/es/4.x/getting_started/step_by_step/scripting_first_script.html)**
 - Fundamentos de GDScript: **[GDScript basics](https://docs.godotengine.org/es/4.x/tutorials/scripting/gdscript/gdscript_basics.html)**
