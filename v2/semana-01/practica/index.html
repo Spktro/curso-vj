@@ -194,10 +194,10 @@ position.y -= <span class="n">50</span>  <span class="c"># ✓ salta de verdad</
     <div class="callout" style="margin-top:18px;">Notar la <b>sangría</b>: la línea del <code>print</code> está desplazada con una <b>tabulación</b>. Así Godot determina que pertenece al bloque de <code>_ready()</code>. En GDScript la sangría no es estética: es parte del lenguaje.</div>
   </section>
 
-  <!-- ============ EL RITUAL ============ -->
-  <section class="slide" data-chapter="GDScript" data-topic="El ritual: escena + script">
-    <div class="slide-eyebrow">Procedimiento de cada bloque</div>
-    <h2 class="slide-title">El ritual: una escena, un nodo, un script</h2>
+  <!-- ============ EL PROCEDIMIENTO ============ -->
+  <section class="slide" data-chapter="GDScript" data-topic="El procedimiento: escena + script">
+    <div class="slide-eyebrow">Se repite en cada bloque</div>
+    <h2 class="slide-title">El procedimiento: una escena, un nodo, un script</h2>
     <div class="columns">
       <div>
         <ol class="steps" style="font-size:16px;">
@@ -332,7 +332,7 @@ res://
       </div>
       <div>
         <ol class="steps compact">
-          <li>El ritual: nodo <code>Variables</code>, script <code>01_variables.gd</code></li>
+          <li>El procedimiento: nodo <code>Variables</code>, script <code>01_variables.gd</code></li>
           <li>Cuatro variables, una de cada tipo</li>
           <li>En <code>_ready()</code>, un <code>print</code> por variable</li>
           <li><span class="kbd">F6</span> y mirar el Output</li>
@@ -422,7 +422,7 @@ Tiene espada: false</div>
       </div>
       <div>
         <ol class="steps compact">
-          <li>El ritual: nodo <code>Condicionales</code>, script <code>02_condicionales.gd</code></li>
+          <li>El procedimiento: nodo <code>Condicionales</code>, script <code>02_condicionales.gd</code></li>
           <li>Dos variables y la resta en <code>_ready()</code></li>
           <li>Primero solo el <code>if</code> / <code>else</code>. Correr. Después sumar el <code>elif</code></li>
           <li><span class="kbd">F6</span> y mirar el Output</li>
@@ -534,7 +534,7 @@ Todavía en pie</div>
       </div>
       <div>
         <ol class="steps compact">
-          <li>El ritual: nodo <code>For</code>, script <code>03_for.gd</code></li>
+          <li>El procedimiento: nodo <code>For</code>, script <code>03_for.gd</code></li>
           <li>Primero el <code>for</code> con <code>range(3)</code>. Correr. ¿Por qué el <code>i + 1</code>?</li>
           <li>Después el arreglo y el segundo <code>for</code></li>
           <li><span class="kbd">F6</span> y mirar el Output</li>
@@ -651,7 +651,7 @@ recibir_dano(<span class="n">25</span>)
       </div>
       <div>
         <ol class="steps compact">
-          <li>El ritual: nodo <code>Funciones</code>, script <code>04_funciones.gd</code></li>
+          <li>El procedimiento: nodo <code>Funciones</code>, script <code>04_funciones.gd</code></li>
           <li>Primero <code>recibir_dano()</code> y dos llamados en <code>_ready()</code>. Correr</li>
           <li>Después <code>esta_vivo()</code> con su <code>return</code>, y el <code>if</code></li>
           <li><span class="kbd">F6</span> y mirar el Output</li>
@@ -730,7 +730,7 @@ Sigo en pie</div>
       </div>
       <div>
         <ol class="steps compact">
-          <li>El ritual: nodo <code>Input</code>, script <code>05_input.gd</code></li>
+          <li>El procedimiento: nodo <code>Input</code>, script <code>05_input.gd</code></li>
           <li>Primero <code>_process()</code> con el <code>if</code> del espacio y <code>saltar()</code>. Correr</li>
           <li>Después las flechas y <code>mover()</code></li>
           <li><span class="kbd">F6</span>, <b>clic en la ventana del juego</b>, y presionar teclas</li>
@@ -806,7 +806,7 @@ Héroe → derecha   <span class="err">← muchas por segundo</span></div>
         <ul>
           <li>Docs de GDScript: <code>docs.godotengine.org</code></li>
           <li>Sección <i>Scripting → GDScript basics</i></li>
-          <li>El TP repite el mismo ritual en un proyecto nuevo, <code>tp1</code>: conviene tener el proyecto de hoy como referencia</li>
+          <li>El TP repite el mismo procedimiento en un proyecto nuevo, <code>tp1</code>: conviene tener el proyecto de hoy como referencia</li>
         </ul>
       </div>
     </div>

@@ -41,7 +41,7 @@ res://
 └── 07_cripta.tscn         07_cripta.gd          ← Parte 7 (el juego)
 ```
 
-> **Quien haya hecho el proyecto `clase-02` en la teórico-práctica** ya conoce el ritual de crear una escena con un script. Acá se repite en un proyecto nuevo, con los nombres de arriba.
+> **Quien haya hecho el proyecto `clase-02` en la teórico-práctica** ya conoce el procedimiento de crear una escena con un script. Acá se repite en un proyecto nuevo, con los nombres de arriba.
 
 ---
 
@@ -53,16 +53,16 @@ Lo único “gráfico” es el **input**: las teclas se leen con el sistema `Inp
 
 ---
 
-## Parte 0 — El ritual: una escena, un nodo, un script
+## Parte 0 — El procedimiento: una escena, un nodo, un script
 
-Cada parte de acá en adelante arranca **igual**, con estos pasos. La primera vez se hacen completos; después el TP solo indica *“el ritual, con tal nombre”*.
+Cada parte de acá en adelante arranca **igual**, con estos pasos. La primera vez se hacen completos; después el TP solo indica *“el procedimiento, con tal nombre”*.
 
 ### Crear el proyecto (solo la primera vez)
 
 1. Abrir Godot. En el **Project Manager**, clic en **New Project** (Nuevo proyecto).
 2. Nombre: `tp1`. Elegir una carpeta **vacía**. Dejar el renderizador que viene por defecto → **Create & Edit**.
 
-### El ritual (en cada parte)
+### El procedimiento (en cada parte)
 
 3. Con el editor abierto, en el panel **Escena** (arriba a la izquierda), clic en **Otro Nodo** (*Other Node*). Para las escenas siguientes, primero crear una escena nueva con el menú **Scene → New Scene** (**Ctrl + N**).
 
@@ -153,7 +153,7 @@ Precisión: 85.5%
 
 ## Parte 2 — Arreglos: el arsenal
 
-> **Escena:** el ritual, con nodo **`Arreglos`**, script **`02_arreglos.gd`** y escena **`02_arreglos.tscn`**.
+> **Escena:** el procedimiento, con nodo **`Arreglos`**, script **`02_arreglos.gd`** y escena **`02_arreglos.tscn`**.
 > **Concepto:** arreglos (arrays): crear, acceder por **índice**, tamaño con `.size()`, agregar con `.append()`.
 
 Un **arreglo** es una variable que guarda **varias cosas en orden**. Cada elemento tiene un **número de posición** (índice) que **empieza en 0**.
@@ -198,7 +198,7 @@ Armas ahora: 4
 
 ## Parte 3 — Condicionales: decidir el resultado
 
-> **Escena:** el ritual, con nodo **`Condicionales`**, script **`03_condicionales.gd`** y escena **`03_condicionales.tscn`**.
+> **Escena:** el procedimiento, con nodo **`Condicionales`**, script **`03_condicionales.gd`** y escena **`03_condicionales.tscn`**.
 > **Concepto:** `if` / `elif` / `else` y operadores de comparación (`==`, `!=`, `<`, `>`, `<=`, `>=`).
 
 ```gdscript
@@ -236,7 +236,7 @@ El enemigo está por morir
 
 ## Parte 4 — `for`: repetir sin copiar y pegar
 
-> **Escena:** el ritual, con nodo **`For`**, script **`04_for.gd`** y escena **`04_for.tscn`**.
+> **Escena:** el procedimiento, con nodo **`For`**, script **`04_for.gd`** y escena **`04_for.tscn`**.
 > **Concepto:** el loop `for`, con `range()` y recorriendo un arreglo.
 
 ```gdscript
@@ -288,7 +288,7 @@ Arma: Hacha
 
 ## Parte 5 — Funciones: escribir una vez, usar mil
 
-> **Escena:** el ritual, con nodo **`Funciones`**, script **`05_funciones.gd`** y escena **`05_funciones.tscn`**.
+> **Escena:** el procedimiento, con nodo **`Funciones`**, script **`05_funciones.gd`** y escena **`05_funciones.tscn`**.
 > **Concepto:** crear funciones, pasarles **parámetros** y devolver un valor con **`return`**.
 
 ```gdscript
@@ -342,7 +342,7 @@ Aria sigue en pie
 
 ## Parte 6 — Input: que reaccione a las teclas
 
-> **Escena:** el ritual, con nodo **`Input`**, script **`06_input.gd`** y escena **`06_input.tscn`**.
+> **Escena:** el procedimiento, con nodo **`Input`**, script **`06_input.gd`** y escena **`06_input.tscn`**.
 > **Concepto:** detectar input con `Input.is_action_just_pressed(...)` dentro de `_process()`.
 
 Hasta ahora todo corría solo en `_ready()`. Para **reaccionar al jugador** hace falta `_process()`, que corre en **cada frame** (~60 por segundo).
@@ -386,7 +386,7 @@ Apretar **F6**. **Importante:** hacer **clic sobre la ventana del juego** para q
 
 ## Parte 7 — Todo junto: *La Cripta del Golem*
 
-> **Escena:** el ritual, con nodo **`Cripta`**, script **`07_cripta.gd`** y escena **`07_cripta.tscn`**.
+> **Escena:** el procedimiento, con nodo **`Cripta`**, script **`07_cripta.gd`** y escena **`07_cripta.tscn`**.
 
 Ahora se combinan **las seis piezas** en un solo juego. Escribirlo leyéndolo: cada bloque indica **qué parte del TP usa** (están marcados con comentarios).
 
