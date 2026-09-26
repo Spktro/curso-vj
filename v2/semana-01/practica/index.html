@@ -90,12 +90,12 @@
     <h2 class="slide-title">¿Qué es el código?</h2>
     <div class="columns">
       <div>
-        <p class="subtitle" style="font-size:19px;"><b>Código</b> son <b>instrucciones</b> que se le dan a una computadora para que haga algo.</p>
-        <p class="subtitle" style="font-size:19px;">El problema es que las personas y la máquina no hablan el mismo idioma: las personas piensan en ideas («que salte»), la máquina solo ejecuta operaciones exactas. Para salvar esa distancia existen los <b>lenguajes de programación</b>.</p>
-        <div class="callout" style="margin-top:14px;">Un lenguaje de programación es un <b>idioma intermedio</b>: lo suficientemente humano para que una persona pueda escribirlo, lo suficientemente preciso para que la máquina lo ejecute.</div>
+        <p class="subtitle" style="font-size:19px;">Un <b>programa</b> es la expresión de un <b>algoritmo</b>, es decir, una secuencia finita y ordenada de instrucciones, escrita en un lenguaje que una computadora puede ejecutar. El <b>código fuente</b> es el texto de esas instrucciones.</p>
+        <p class="subtitle" style="font-size:19px;">Entre el pensamiento humano y la máquina hay una <b>brecha de abstracción</b>. Las personas razonan con intenciones de alto nivel («el personaje salta»). El procesador solo ejecuta operaciones elementales sobre datos binarios. Los <b>lenguajes de programación</b> son <b>lenguajes formales</b>, con reglas de forma y de significado definidas sin ambigüedad, que permiten cruzar esa brecha.</p>
+        <div class="callout" style="margin-top:14px;">Un lenguaje de programación funciona como una <b>capa de abstracción</b>. Se acerca lo suficiente al lenguaje humano para que una persona lo lea y lo escriba, y es lo bastante riguroso para que un <b>compilador</b> o un <b>intérprete</b> lo traduzca, sin ambigüedad, a instrucciones de máquina.</div>
       </div>
       <div class="card" style="align-self:start;">
-        <h3>Hay muchos, y se parecen bastante</h3>
+        <h3>Muchos lenguajes, los mismos fundamentos</h3>
         <table class="tbl" style="font-size:16px;">
           <tbody>
             <tr><td><code>Python</code></td><td>Datos, ciencia, automatización</td></tr>
@@ -105,7 +105,7 @@
             <tr><td><code>GDScript</code></td><td>Godot — el del curso</td></tr>
           </tbody>
         </table>
-        <p class="small-note" style="margin-top:12px;">Cambia cómo se escribe, no cómo se piensa. Aprender a programar es aprender <b>a resolver problemas</b>; el idioma después se cambia sin tanto drama.</p>
+        <p class="small-note" style="margin-top:12px;">Cambia la <b>notación</b>, no el <b>razonamiento</b>. Programar consiste, ante todo, en <b>descomponer un problema</b> y <b>formalizar su solución</b>. Los conceptos (variables, condiciones, repeticiones, funciones) se transfieren de un lenguaje a otro.</p>
       </div>
     </div>
   </section>
@@ -229,21 +229,23 @@ res://
   <section class="slide" data-chapter="Consola" data-topic="¿Qué es y dónde está?">
     <div class="slide-eyebrow">Depurar y observar</div>
     <h2 class="slide-title">La consola: la ventana a lo que pasa "adentro"</h2>
-    <div class="columns">
+    <p class="subtitle" style="font-size:18px;">La <b>consola</b> (panel <b>Output</b>, abajo del editor) es el canal por el que el programa <b>informa su estado</b> mientras se ejecuta: muestra lo que se pide con <code>print()</code> y los mensajes que genera el propio motor.</p>
+    <div class="columns" style="margin-top:8px; grid-template-columns:1.4fr 1fr; align-items:start;">
       <div>
-        <p class="subtitle" style="font-size:19px;">La <b>consola</b> (panel <i>Output</i>) es donde Godot muestra todo lo que se le pide con <code>print()</code>, además de errores y advertencias.</p>
-        <ul class="bullets" style="font-size:18px;">
-          <li>Se abre sola al ejecutar la escena con <span class="kbd">F6</span></li>
-          <li>Vive en la parte <b>inferior</b> del editor, pestaña <b>“Output”</b></li>
-          <li>Ahí aparecen los <code>print()</code>, en el orden en que se ejecutan</li>
-          <li>Los errores salen en <span style="color:var(--red); font-weight:700;">rojo</span>, y casi siempre dicen <b>en qué línea</b></li>
+        <img src="assets/godot-output.png" alt="Panel Output de Godot con un error en rojo, una advertencia en amarillo, un mensaje de print() y uno de print_rich(); a la derecha, los contadores de cada tipo de mensaje" style="width:100%; height:auto; border-radius:10px; display:block;" />
+        <p class="small-note" style="margin-top:8px;">Panel Output de Godot. Fuente: documentación oficial de Godot (<i>Output panel</i>), CC BY 3.0.</p>
+      </div>
+      <div>
+        <ul class="bullets" style="font-size:17px;">
+          <li><span style="color:var(--red); font-weight:700;">Rojo</span>: <b>error</b>. Indica el archivo y la <b>línea</b> donde ocurrió.</li>
+          <li><span style="color:#b45309; font-weight:700;">Amarillo</span>: <b>advertencia</b>. El programa sigue, pero algo merece revisión.</li>
+          <li><b>Texto común</b>: salida de <code>print()</code>, en el orden en que se ejecuta.</li>
+          <li>Columna derecha: <b>contadores y filtros</b> por tipo de mensaje; el primer botón limpia el panel.</li>
+          <li><b>Filter Messages</b>: busca texto dentro de la salida.</li>
         </ul>
       </div>
-      <div class="title-photo" style="border:none; box-shadow:none; background:transparent;">
-          <img src="assets/godot-console.png" alt="Panel Output de Godot" style="max-height:420px; width:auto; margin:0 auto; display:block;" />
-      </div>
     </div>
-    <div class="callout" style="margin-top:18px;">Regla de oro: si algo <b>“no funciona”</b>, lo primero es mirar la consola. Godot casi siempre dice ahí qué salió mal.</div>
+    <div class="callout" style="margin-top:14px;">Regla de oro: si algo <b>“no funciona”</b>, lo primero es mirar la consola. Godot casi siempre dice ahí qué salió mal y en qué línea.</div>
   </section>
 
   <!-- ============ VARIABLES ============ -->

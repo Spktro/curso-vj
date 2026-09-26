@@ -54,7 +54,7 @@ Imágenes del material que hoy son **genéricas** (de la documentación de Godot
 | 🔴 | C1 · “Crear un proyecto” | `nuevo-projecto.png` genérica | Project Manager creando el proyecto del curso | `v2/semana-01/teorica/assets/nuevo-proyecto.png` |
 | 🔴 | C1 · “Los cuatro paneles” | `editor.png` genérica | Editor con un proyecto del curso abierto (las cuatro zonas visibles) | `v2/semana-01/teorica/assets/editor.png` |
 | ✅ | C1 · “Panorama de motores” | Capturas OK; los alt ya se corrigieron | — | — |
-| 🔴 | C2 · “¿Qué es y dónde está?” | `godot-console.png` genérica | Output con la salida de `01_variables` | `v2/semana-01/practica/assets/godot-console.png` |
+| 🟡 | C2 · “¿Qué es y dónde está?” | `godot-output.png` de la documentación oficial (error, advertencia, `print()`) | Opcional: Output con la salida de `01_variables` | `v2/semana-01/practica/assets/godot-output.png` |
 | 🟡 | C2 · “if / else” | `diagrama-if.png` genérico | Diagrama con el ejemplo del curso (vida y daño); lo puedo dibujar en SVG | — |
 | 🟡 | C2 · “Ejemplo: Tower Defense” | `tw-defense.png`, alt pobre | Captura de un Tower Defense a elección | `v2/semana-01/practica/assets/tw-defense.png` |
 | 🟡 | C3 · “Por qué Input Map” | Captura de docs con `move_*` | La misma de `tp2-input-map.png` | — |
