@@ -57,12 +57,12 @@
         <div class="card">
           <h3>Las reglas</h3>
           <ul>
-            <li><b>El código se escribe, no se pega.</b> Los dedos también aprenden.</li>
+            <li><b>El código se escribe, no se copia.</b> La escritura manual favorece la incorporación de la sintaxis.</li>
             <li>Cada bloque termina con un <b>punto de control</b>: la consola tiene que mostrar algo concreto.</li>
-            <li>Ante un error, primero la consola; después, la mano levantada.</li>
+            <li>Ante un error, se consulta primero la consola y, en segunda instancia, al docente.</li>
           </ul>
         </div>
-        <div class="callout" style="margin-top:14px;">El TP de esta semana sigue exactamente el mismo formato: una escena por ejemplo. Lo que se arma hoy sirve de base.</div>
+        <div class="callout" style="margin-top:14px;">El TP de esta semana sigue exactamente el mismo formato: una escena por ejemplo. Lo desarrollado hoy sirve de base.</div>
       </div>
     </div>
   </section>
@@ -74,7 +74,7 @@
     <div class="columns">
       <div>
         <p class="subtitle" style="font-size:19px;">Un programador le dice a la computadora <b>qué</b> hacer, <b>cuándo</b> y <b>por qué</b>. Para verlo, esto se ejecuta en vivo:</p>
-        <div class="callout">Antes de explicar nada: <b>¿qué creen que está pasando acá?</b></div>
+        <div class="callout">Antes de explicar nada: <b>¿qué hace este fragmento de código?</b></div>
       </div>
       <div class="code-wrap">
         <pre class="code" style="font-size:15px;"><span class="k">func</span> <span class="t">_process</span>(delta):
@@ -113,7 +113,7 @@
   <section class="slide" data-chapter="Programar" data-topic="¿Qué es programar?">
     <div class="slide-eyebrow">Concepto</div>
     <h2 class="slide-title">¿Qué es programar?</h2>
-    <p class="subtitle">No es magia: es <b>comunicación</b>. Se le habla a una máquina que hace exactamente lo que se le dice, ni más ni menos.</p>
+    <p class="subtitle">Programar es, ante todo, un acto de <b>comunicación</b>: consiste en dar instrucciones a una máquina que ejecuta exactamente lo indicado, ni más ni menos.</p>
     <div class="columns">
       <div class="card" style="border-top:3px solid var(--red);">
         <h3 style="color:var(--red);">Mito</h3>
@@ -134,22 +134,22 @@
     <div class="columns" style="margin-top:8px;">
       <div class="card">
         <h3>Sintaxis — cómo se escribe</h3>
-        <p style="font-size:16px;">Los dos puntos, los paréntesis, la indentación. Si están mal, el programa <b>ni siquiera arranca</b>.</p>
+        <p style="font-size:16px;">Las reglas de escritura: los dos puntos, los paréntesis, la indentación. Si no se respetan, el programa <b>no llega a ejecutarse</b>.</p>
         <pre class="code" style="font-size:14.5px; margin-top:8px;"><span class="c"># ✗ falta el ":" del final</span>
 <span class="k">func</span> <span class="t">_ready</span>()
 
 <span class="c"># ✓ ahora sí</span>
 <span class="k">func</span> <span class="t">_ready</span>():</pre>
-        <p class="small-note" style="margin-top:8px;">El error <b>fácil</b>: Godot lo marca en rojo antes de correr.</p>
+        <p class="small-note" style="margin-top:8px;"><b>Error de sintaxis</b>: el editor lo detecta y lo señala en rojo antes de la ejecución.</p>
       </div>
       <div class="card">
         <h3>Semántica — qué significa</h3>
-        <p style="font-size:16px;">Lo que la instrucción <b>hace</b>. Puede estar bien escrita y no ser lo que querías.</p>
+        <p style="font-size:16px;">El efecto que la instrucción <b>produce</b>. Una instrucción puede ser sintácticamente correcta y, aun así, no hacer lo que se buscaba.</p>
         <pre class="code" style="font-size:14.5px; margin-top:8px;"><span class="c"># Las dos son válidas. Pero la Y</span>
 <span class="c"># crece hacia ABAJO…</span>
 position.y += <span class="n">50</span>  <span class="c"># ✗ "salta" al piso</span>
 position.y -= <span class="n">50</span>  <span class="c"># ✓ salta de verdad</span></pre>
-        <p class="small-note" style="margin-top:8px;">El error <b>difícil</b>: nadie avisa. Solo se ve al jugar.</p>
+        <p class="small-note" style="margin-top:8px;"><b>Error de lógica</b>: ninguna herramienta lo advierte; solo se detecta al observar la ejecución.</p>
       </div>
     </div>
   </section>
@@ -191,12 +191,12 @@ position.y -= <span class="n">50</span>  <span class="c"># ✓ salta de verdad</
         <tr><td><code>print(...)</code></td><td>Imprime texto en la consola: la <b>herramienta principal</b> para depurar.</td></tr>
       </tbody>
     </table>
-    <div class="callout" style="margin-top:18px;">Notar la <b>sangría</b>: la línea del <code>print</code> está corrida con <b>Tab</b>. Así Godot sabe que está <i>adentro</i> de <code>_ready()</code>. En GDScript la sangría no es estética: es parte del lenguaje.</div>
+    <div class="callout" style="margin-top:18px;">Notar la <b>sangría</b>: la línea del <code>print</code> está desplazada con una <b>tabulación</b>. Así Godot determina que pertenece al bloque de <code>_ready()</code>. En GDScript la sangría no es estética: es parte del lenguaje.</div>
   </section>
 
   <!-- ============ EL RITUAL ============ -->
   <section class="slide" data-chapter="GDScript" data-topic="El ritual: escena + script">
-    <div class="slide-eyebrow">Se hace cinco veces hoy</div>
+    <div class="slide-eyebrow">Procedimiento de cada bloque</div>
     <h2 class="slide-title">El ritual: una escena, un nodo, un script</h2>
     <div class="columns">
       <div>
@@ -210,10 +210,10 @@ position.y -= <span class="n">50</span>  <span class="c"># ✓ salta de verdad</
       </div>
       <div style="align-self:start;">
         <div class="card">
-          <h3>Por qué un <code>Node</code> pelado</h3>
-          <p>Hoy no se dibuja nada: solo hace falta <b>un lugar donde vive el script</b>. <code>Node</code> es el nodo más simple que existe; no muestra ni mueve nada, y con eso alcanza.</p>
+          <h3>Por qué un nodo de tipo <code>Node</code></h3>
+          <p>En esta clase no se representa nada en pantalla: el script solo necesita <b>un nodo que lo contenga</b>. <code>Node</code> es la clase base de todos los nodos de Godot; no tiene representación visual ni posición en el espacio, y resulta suficiente para este propósito.</p>
         </div>
-        <div class="callout" style="margin-top:14px;">Si al apretar <span class="kbd">F6</span> se abre una ventana gris y vacía, <b>está bien</b>: el juego “es” lo que sale en la consola.</div>
+        <div class="callout" style="margin-top:14px;">Al presionar <span class="kbd">F6</span> se abre una ventana gris y vacía: es el <b>comportamiento esperado</b>. En estos ejercicios, el resultado se observa en la consola.</div>
         <pre class="code" style="margin-top:14px; font-size:13px;"><span class="c"># Así queda el FileSystem al final de la clase</span>
 res://
 ├── 01_variables.tscn      01_variables.gd
@@ -228,7 +228,7 @@ res://
   <!-- ============ CONSOLA ============ -->
   <section class="slide" data-chapter="Consola" data-topic="¿Qué es y dónde está?">
     <div class="slide-eyebrow">Depurar y observar</div>
-    <h2 class="slide-title">La consola: la ventana a lo que pasa "adentro"</h2>
+    <h2 class="slide-title">La consola: observar la ejecución del programa</h2>
     <p class="subtitle" style="font-size:18px;">La <b>consola</b> (panel <b>Output</b>, abajo del editor) es el canal por el que el programa <b>informa su estado</b> mientras se ejecuta: muestra lo que se pide con <code>print()</code> y los mensajes que genera el propio motor.</p>
     <div class="columns" style="margin-top:8px; grid-template-columns:1.4fr 1fr; align-items:start;">
       <div>
@@ -245,7 +245,7 @@ res://
         </ul>
       </div>
     </div>
-    <div class="callout" style="margin-top:14px;">Regla de oro: si algo <b>“no funciona”</b>, lo primero es mirar la consola. Godot casi siempre dice ahí qué salió mal y en qué línea.</div>
+    <div class="callout" style="margin-top:14px;">Ante un <b>comportamiento inesperado</b>, el primer paso es revisar la consola: allí Godot suele informar la causa del error y la línea en que se produjo.</div>
   </section>
 
   <!-- ============ VARIABLES ============ -->
@@ -254,8 +254,8 @@ res://
     <h2 class="slide-title">Variables: cajas con etiqueta</h2>
     <div class="columns">
       <div>
-        <p class="subtitle" style="font-size:19px;">Una variable es como una <b>caja con una etiqueta</b>. Adentro se guarda la información que el programa necesita; la etiqueta es su nombre.</p>
-        <div class="callout">Un cajón etiquetado <b>“velocidad”</b> con un <code>200</code> adentro. Cuando el juego necesita saber qué tan rápido va el personaje, abre ese cajón.</div>
+        <p class="subtitle" style="font-size:19px;">Una variable es un <b>espacio de memoria identificado por un nombre</b>, que almacena un valor que el programa necesita. Puede pensarse como una caja con una etiqueta: el contenido es el valor; la etiqueta, su nombre.</p>
+        <div class="callout">Una caja etiquetada <b>“velocidad”</b> contiene el valor <code>200</code>. Cuando el juego necesita conocer la rapidez del personaje, consulta esa variable.</div>
       </div>
       <div class="code-wrap" style="align-self:center;">
         <pre class="code" style="font-size:14px;"><span class="c"># "var" crea una variable</span>
@@ -281,12 +281,12 @@ res://
         <tr><td><code>bool</code></td><td>Verdadero / falso</td><td><code>true</code> · <code>false</code></td></tr>
       </tbody>
     </table>
-    <div class="callout" style="margin-top:18px;"><b>Nota sobre <code>str()</code>:</b> para pegar un número con texto hay que convertirlo: <code>str(100)</code> → <code>"100"</code>. Lo van a ver mucho.</div>
+    <div class="callout" style="margin-top:18px;"><b>Nota sobre <code>str()</code>:</b> para concatenar un número con texto es necesario convertirlo: <code>str(100)</code> → <code>"100"</code>. Es una operación muy frecuente.</div>
   </section>
 
   <section class="slide" data-chapter="Variables" data-topic="Tipado estático">
     <div class="slide-eyebrow">Buena práctica</div>
-    <h2 class="slide-title">Se le puede decir el tipo: <code>: int</code>, <code>: float</code>…</h2>
+    <h2 class="slide-title">Declaración de tipo: <code>: int</code>, <code>: float</code>…</h2>
     <div class="columns">
       <div class="code-wrap">
         <pre class="code" style="font-size:13px;"><span class="c"># Sin tipo (válido):</span>
@@ -304,10 +304,10 @@ res://
           <ul>
             <li>El editor <b>avisa errores</b> antes de ejecutar (por ejemplo, si se guarda texto en <code>vida</code>)</li>
             <li>Mejor <b>autocompletado</b></li>
-            <li>El juego corre un poco <b>más rápido</b></li>
+            <li>Mejor <b>rendimiento</b> en la ejecución</li>
           </ul>
         </div>
-        <p class="small-note" style="margin-top:12px;">Hoy se escribe sin tipo para que se vea más corto. Con más práctica, conviene sumarle el tipo.</p>
+        <p class="small-note" style="margin-top:12px;">En esta clase se omite el tipo por brevedad; a medida que se gane práctica, se recomienda declararlo.</p>
       </div>
     </div>
   </section>
@@ -341,7 +341,7 @@ res://
 Vida: 100
 Velocidad: 200.5
 Tiene espada: false</div>
-        <div class="callout proba"><b>Probar:</b> sacarle el <code>str()</code> a <code>vida</code>. ¿Qué dice la consola? Ese error en rojo va a aparecer mil veces: <b>texto + número no se suman</b>.</div>
+        <div class="callout proba"><b>Probar:</b> quitar el <code>str()</code> de <code>vida</code>. ¿Qué informa la consola? Es un error muy frecuente: <b>no es posible sumar texto y números directamente</b>.</div>
       </div>
     </div>
   </section>
@@ -437,11 +437,11 @@ Todavía en pie</div>
   <!-- ============ LOOPS ============ -->
   <section class="slide" data-chapter="Loops" data-topic="El loop for">
     <div class="slide-eyebrow">Repetir</div>
-    <h2 class="slide-title">Loops: repetir sin copiar y pegar</h2>
+    <h2 class="slide-title">Loops: repetición de instrucciones</h2>
     <div class="columns">
       <div>
-        <p class="subtitle" style="font-size:18px;">En vez de escribir lo mismo 100 veces, un loop lo repite automáticamente.</p>
-        <div class="callout"><code>range(5)</code> genera <code>0, 1, 2, 3, 4</code>. Arranca en <b>0</b> y termina <b>uno antes</b>.</div>
+        <p class="subtitle" style="font-size:18px;">Un loop ejecuta un mismo bloque de instrucciones una cantidad determinada de veces, sin necesidad de duplicar código.</p>
+        <div class="callout"><code>range(5)</code> genera <code>0, 1, 2, 3, 4</code>. Comienza en <b>0</b> y <b>excluye</b> el valor indicado.</div>
       </div>
       <div class="code-wrap" style="align-self:center;">
         <pre class="code" style="font-size:14px;"><span class="k">for</span> i <span class="k">in</span> <span class="t">range</span>(<span class="n">5</span>):
@@ -455,7 +455,7 @@ Todavía en pie</div>
 
   <section class="slide" data-chapter="Loops" data-topic="Arreglos y loops en juegos">
     <div class="slide-eyebrow">Loops</div>
-    <h2 class="slide-title">Arreglos: una caja con varias cosas adentro</h2>
+    <h2 class="slide-title">Arreglos: colecciones ordenadas de valores</h2>
     <div class="columns">
       <div class="code-wrap">
         <pre class="code" style="font-size:13px;"><span class="c"># Un arreglo: varios valores, en orden</span>
@@ -510,7 +510,7 @@ Todavía en pie</div>
           <div class="title-photo" style="border:none; box-shadow:none; background:transparent;">
               <img src="assets/tw-defense.png" alt="Tower Defense" style="max-height:340px; width:auto; margin:0 auto; display:block;" />
           </div>
-        <div class="callout" style="margin-top:14px;">En un Tower Defense los loops están en todos lados: generar una <b>oleada</b> de enemigos, ubicar <b>torres</b> en una grilla, y recorrer la lista de torres para ver cuál dispara.</div>
+        <div class="callout" style="margin-top:14px;">En un Tower Defense los loops son omnipresentes: generar una <b>oleada</b> de enemigos, ubicar <b>torres</b> en una grilla, y recorrer la lista de torres para ver cuál dispara.</div>
       </div>
     </div>
   </section>
@@ -546,7 +546,7 @@ Inventario: 3 cosas:
   - Espada
   - Escudo
   - Poción</div>
-        <div class="callout proba"><b>Probar:</b> <code>range(10)</code>. Agregar <code>"Arco"</code> al arreglo: ¿hace falta tocar el <code>for</code>? Sacarle el <code>str()</code> al <code>i + 1</code> y leer el error.</div>
+        <div class="callout proba"><b>Probar:</b> <code>range(10)</code>. Agregar <code>"Arco"</code> al arreglo: ¿hace falta tocar el <code>for</code>? Quitar el <code>str()</code> de <code>i + 1</code> y leer el error.</div>
       </div>
     </div>
   </section>
@@ -554,7 +554,7 @@ Inventario: 3 cosas:
   <!-- ============ FUNCIONES ============ -->
   <section class="slide" data-chapter="Funciones" data-topic="Sin vs con funciones">
     <div class="slide-eyebrow">Reutilizar</div>
-    <h2 class="slide-title">Funciones: escribir una vez, usar mil</h2>
+    <h2 class="slide-title">Funciones: definir una vez, reutilizar</h2>
     <div class="columns">
       <div>
         <h4 style="color:var(--red); font-size:14px; text-transform:uppercase; margin:0 0 8px;">Sin funciones — repetido</h4>
@@ -671,7 +671,7 @@ Sigo en pie</div>
     <div class="columns">
       <div>
         <p class="subtitle" style="font-size:18px;">Godot tiene un sistema <code>Input</code> que detecta teclas y botones. Se consulta dentro de <code>_process()</code>, cada frame.</p>
-        <div class="callout" style="margin-top:10px;"><code>is_action_pressed</code> es <b>true mientras</b> la tecla está apretada. <code>is_action_just_pressed</code> es true <b>un solo frame</b>: el del toque.</div>
+        <div class="callout" style="margin-top:10px;"><code>is_action_pressed</code> es <b>true mientras</b> la tecla está presionada. <code>is_action_just_pressed</code> es true <b>un solo frame</b>: el de la pulsación.</div>
       </div>
       <div class="code-wrap" style="align-self:center;">
         <pre class="code" style="font-size:13px;"><span class="k">func</span> <span class="t">_process</span>(delta):
@@ -733,7 +733,7 @@ Sigo en pie</div>
           <li>El ritual: nodo <code>Input</code>, script <code>05_input.gd</code></li>
           <li>Primero <code>_process()</code> con el <code>if</code> del espacio y <code>saltar()</code>. Correr</li>
           <li>Después las flechas y <code>mover()</code></li>
-          <li><span class="kbd">F6</span>, <b>clic en la ventana del juego</b>, y apretar teclas</li>
+          <li><span class="kbd">F6</span>, <b>clic en la ventana del juego</b>, y presionar teclas</li>
         </ol>
         <div class="consola"><span class="lbl">Punto de control · Output</span>ESPACIO para saltar, ← → para moverse
 Héroe saltó (1)
@@ -741,28 +741,28 @@ Héroe saltó (2)
 Héroe → derecha
 Héroe → derecha
 Héroe → derecha   <span class="err">← muchas por segundo</span></div>
-        <div class="callout proba"><b>Probar:</b> cambiar <code>just_pressed</code> por <code>pressed</code> en el salto y mantener apretado. Eso es <code>_process()</code>: 60 veces por segundo.</div>
+        <div class="callout proba"><b>Probar:</b> cambiar <code>just_pressed</code> por <code>pressed</code> en el salto y mantener la tecla presionada. Eso es <code>_process()</code>: 60 veces por segundo.</div>
       </div>
     </div>
   </section>
 
   <!-- ============ DESAFÍO ============ -->
   <section class="slide" data-chapter="Práctica" data-topic="Desafío en clase">
-    <div class="slide-eyebrow">Ahora sin mí</div>
+    <div class="slide-eyebrow">Trabajo autónomo</div>
     <h2 class="slide-title">Desafío: seguir la escena <code>05_input</code></h2>
     <div class="columns">
       <div>
         <ol class="steps" style="font-size:16px;">
-          <li>Una variable <code>monedas</code> que suba al apretar <span class="kbd">↑</span> (<code>ui_up</code>)</li>
-          <li>Una función <code>mostrar_estado()</code> que imprima nombre, saltos y monedas de una</li>
-          <li>Llamarla al apretar <span class="kbd">Esc</span> (<code>ui_cancel</code>)</li>
+          <li>Una variable <code>monedas</code> que aumente al presionar <span class="kbd">↑</span> (<code>ui_up</code>)</li>
+          <li>Una función <code>mostrar_estado()</code> que imprima nombre, saltos y monedas en un único mensaje</li>
+          <li>Llamarla al presionar <span class="kbd">Esc</span> (<code>ui_cancel</code>)</li>
           <li><b>Extra:</b> una variable <code>golpes</code> que suba con <span class="kbd">↓</span>. A los 3, imprimir <code>Game Over</code> una sola vez</li>
         </ol>
       </div>
       <div style="align-self:center;">
         <div class="callout"><b>Objetivo:</b> usar <b>todo</b> lo de hoy sin mirar las diapos anteriores: variables, <code>if</code>, funciones e input.</div>
         <div class="card" style="margin-top:14px;">
-          <h3>Si algo se traba</h3>
+          <h3>Si algo falla</h3>
           <ul>
             <li>¿La consola dice algo en rojo? Leer el número de línea.</li>
             <li>¿Sangría con Tab, no con espacios?</li>
@@ -776,7 +776,7 @@ Héroe → derecha   <span class="err">← muchas por segundo</span></div>
   <!-- ============ CIERRE ============ -->
   <section class="slide" data-chapter="Cierre" data-topic="Resumen">
     <div class="slide-eyebrow">Cierre</div>
-    <h2 class="slide-title">Todo lo que escribieron hoy</h2>
+    <h2 class="slide-title">Síntesis de la clase</h2>
     <table class="tbl">
       <thead><tr><th>Concepto</th><th>Para qué sirve</th><th>Escena</th></tr></thead>
       <tbody>
@@ -806,7 +806,7 @@ Héroe → derecha   <span class="err">← muchas por segundo</span></div>
         <ul>
           <li>Docs de GDScript: <code>docs.godotengine.org</code></li>
           <li>Sección <i>Scripting → GDScript basics</i></li>
-          <li>El TP repite el mismo ritual en un proyecto nuevo, <code>tp1</code>: traer el de hoy para copiar los nombres</li>
+          <li>El TP repite el mismo ritual en un proyecto nuevo, <code>tp1</code>: conviene tener el proyecto de hoy como referencia</li>
         </ul>
       </div>
     </div>
