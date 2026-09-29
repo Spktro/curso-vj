@@ -3,7 +3,9 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Diplomatura de Videojuegos · Semana 2 · Clase 4 — El personaje cobra vida</title>
+<title>Diplomatura de Videojuegos · Semana 2 · Clase 4 — Cuerpos, colisiones y señales</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="deck.css" />
 <style>
   /* Diapos "en vivo": código a la izquierda, pasos + punto de control a la derecha */
@@ -25,14 +27,22 @@
   .hook .hero { fill: #7c3aed; }
   .hook .hero.ok { fill: #2563eb; }
   .hook .hlbl { fill: var(--muted); font-size: 11.5px; font-family: "SF Mono", Menlo, Consolas, monospace; }
-  .hook .fall-through { animation: caeAtraviesa 2.6s cubic-bezier(.4,0,1,1) infinite; }
-  .hook .land-jump { animation: caeYSalta 4s ease-in infinite; }
+  .hook { cursor: pointer; }
+  .hook .hero-a { transform: translateY(0); }
+  .hook .hero-b { transform: translateY(-72px); }
+  .hook.corriendo .hero-a { animation: caeAtraviesa 1.6s cubic-bezier(.4,0,1,1) 1; }
+  .hook.corriendo .hero-b { animation: caeYSalta 3.6s ease-in 1; }
+  .hook .pista-clic { transition: opacity .2s; animation: cabeceo 1.6s ease-in-out infinite; }
+  .hook.corriendo .pista-clic { opacity: 0; animation: none; }
+  .hook .nota { fill: var(--accent); font-family: "Caveat", "Segoe Print", "Bradley Hand", cursive; font-size: 21px; font-weight: 700; }
+  .hook .flecha { fill: none; stroke: var(--accent); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+  @keyframes cabeceo { 0%,100% { transform: translateX(0); } 50% { transform: translateX(5px); } }
   @keyframes caeAtraviesa {
     0%   { transform: translateY(0); }
-    100% { transform: translateY(250px); }
+    100% { transform: translateY(210px); }
   }
   @keyframes caeYSalta {
-    0%   { transform: translateY(-140px); animation-timing-function: ease-in; }
+    0%   { transform: translateY(-72px); animation-timing-function: ease-in; }
     30%  { transform: translateY(0);      animation-timing-function: ease-out; }
     45%  { transform: translateY(0);      animation-timing-function: ease-out; }
     55%  { transform: translateY(-60px);  animation-timing-function: ease-in; }
@@ -53,9 +63,8 @@
     <div class="title-grid">
       <div>
         <div class="slide-eyebrow">Semana 2 · Clase 4 · Teórico-práctica</div>
-        <h1 class="title">El personaje <span class="accent">cobra vida</span></h1>
-        <p class="subtitle"><code>CharacterBody2D</code>, colisiones y el sistema de <b>señales</b>: el personaje al fin choca con el mundo… y el mundo le responde. Todo escrito <b>en vivo</b>.</p>
-        <p class="small-note">“Hasta ahora las cosas se movían. Hoy, además, <b>interactúan</b>.”</p>
+        <h1 class="title">Cuerpos, colisiones <span class="accent">y señales</span></h1>
+        <p class="subtitle">Los tres tipos de cuerpo físico, <code>CharacterBody2D</code> con <code>move_and_slide()</code>, <code>Area2D</code>, <b>señales</b> y grupos. Todo se construye <b>en vivo y desde cero</b>.</p>
       </div>
       <div class="title-photo" style="border:none; box-shadow:none; background:transparent;">
         <img src="assets/godot-logo.png" alt="Godot Engine" style="max-height:420px; width:auto; margin:0 auto; display:block;" />
@@ -81,9 +90,9 @@
         <div class="card">
           <h3>Reglas de trabajo</h3>
           <ul>
-            <li><b>El código se escribe, no se pega.</b> Los nodos también: nada de abrir un proyecto ya armado.</li>
-            <li>Cada bloque termina con un <b>punto de control</b>: algo que tiene que pasar en pantalla o en la consola.</li>
-            <li>Si algo no choca o una señal no dispara, hay una diapositiva de errores típicos al final. Pero primero: <b>¿tiene <code>CollisionShape2D</code>?</b></li>
+            <li><b>Todo se construye desde cero.</b> El código se escribe y los nodos se crean durante la clase, sin partir de un proyecto ya armado: ahí está el aprendizaje.</li>
+            <li>Cada bloque termina en un <b>punto de control</b>: algo que pasa en pantalla o en la consola.</li>
+            <li>Si algo no choca o una señal no dispara, al final hay una diapositiva con los errores típicos. La primera verificación es siempre la misma: <b>que exista el <code>CollisionShape2D</code></b>.</li>
           </ul>
         </div>
         <div class="callout" style="margin-top:14px;">Lo de hoy es la <b>Parte B del TP</b>: el plataformero con monedas. En clase se arma con cuadrados; en el TP, con sprites y un mapa de tiles.</div>
@@ -98,25 +107,27 @@
     <div class="columns">
       <div class="card" style="text-align:center; border-top:3px solid var(--red); padding:14px 18px;">
         <h3 style="color:var(--red); margin-bottom:6px;">Escena A</h3>
-        <svg class="hook" viewBox="0 0 320 190" width="100%" height="236">
+        <svg class="hook" id="hook-a" viewBox="0 0 320 190" width="100%" height="236">
           <rect class="plat sprite" x="70" y="120" width="180" height="16" rx="3" />
           <text class="hlbl" x="160" y="152" text-anchor="middle">plataforma: Sprite2D</text>
-          <rect class="hero fall-through" x="146" y="-40" width="28" height="28" rx="4" />
           <text class="hlbl" x="160" y="180" text-anchor="middle">personaje: Sprite2D, nada más</text>
+          <g class="pista-clic"><text class="nota" x="6" y="30">clic en el cuadro</text><path class="flecha" d="M100 36 C118 44 128 44 141 40 M133 32 L142 40 L131 46" /></g>
+          <rect class="hero hero-a" x="146" y="22" width="28" height="28" rx="4" />
         </svg>
         <p style="margin-top:6px;">Un sprite <b>atraviesa el suelo</b> y cae al vacío, como si el piso no existiera.</p>
       </div>
       <div class="card" style="text-align:center; border-top:3px solid var(--green); padding:14px 18px;">
         <h3 style="color:var(--green); margin-bottom:6px;">Escena B</h3>
-        <svg class="hook" viewBox="0 0 320 190" width="100%" height="236">
+        <svg class="hook" id="hook-b" viewBox="0 0 320 190" width="100%" height="236">
           <rect class="plat body" x="70" y="120" width="180" height="16" rx="3" />
           <rect class="shape" x="70" y="120" width="180" height="16" rx="3" />
           <text class="hlbl" x="160" y="152" text-anchor="middle">plataforma: StaticBody2D + CollisionShape2D</text>
-          <g class="hero-g land-jump">
+          <text class="hlbl" x="160" y="180" text-anchor="middle">personaje: CharacterBody2D + CollisionShape2D</text>
+          <g class="pista-clic"><text class="nota" x="6" y="30">clic en el cuadro</text><path class="flecha" d="M100 36 C118 44 128 44 141 40 M133 32 L142 40 L131 46" /></g>
+          <g class="hero-g hero-b">
             <rect class="hero ok" x="146" y="92" width="28" height="28" rx="4" />
             <rect class="shape" x="146" y="92" width="28" height="28" rx="4" />
           </g>
-          <text class="hlbl" x="160" y="180" text-anchor="middle">personaje: CharacterBody2D + CollisionShape2D</text>
         </svg>
         <p style="margin-top:6px;">El mismo personaje <b>aterriza sobre la plataforma</b>, e incluso salta.</p>
       </div>
@@ -618,11 +629,27 @@ get_tree().call_group(<span class="s">"enemigos"</span>, <span class="s">"recibi
         </ul>
       </div>
     </div>
-    <p class="small-note" style="margin-top:24px; text-align:center;">“Hasta ahora las cosas se movían. Desde hoy, además, <b>interactúan</b>.” · Logo y mascota de Godot © Godot Foundation — CC BY 4.0.</p>
+    <p class="small-note" style="margin-top:24px; text-align:center;">Logo y mascota de Godot © Godot Foundation — CC BY 4.0.</p>
   </section>
 
 </div>
 
 <script src="deck.js"></script>
+<script>
+/* Hook: clic en el cuadro para lanzar la caída; al terminar vuelve a su lugar con la indicación */
+(function () {
+  ['hook-a', 'hook-b'].forEach(function (id) {
+    var svg = document.getElementById(id);
+    if (!svg) return;
+    var hero = svg.querySelector('.hero-a, .hero-b');
+    svg.addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (svg.classList.contains('corriendo')) return;
+      svg.classList.add('corriendo');
+    });
+    hero.addEventListener('animationend', function () { svg.classList.remove('corriendo'); });
+  });
+})();
+</script>
 </body>
 </html>
