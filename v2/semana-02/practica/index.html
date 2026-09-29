@@ -141,15 +141,15 @@
     <h2 class="slide-title">Tres tipos de cuerpos físicos</h2>
     <div class="columns" style="grid-template-columns:1.05fr 0.95fr; align-items:start;">
       <div>
-        <table class="tbl" style="font-size:16px;">
-          <thead><tr><th>Nodo</th><th>¿Para qué sirve?</th></tr></thead>
+        <table class="tbl" style="font-size:15px;">
+          <thead><tr><th>Nodo</th><th>¿Para qué sirve?</th><th>Uso típico</th></tr></thead>
           <tbody>
-            <tr><td><code>StaticBody2D</code></td><td><b>No se mueve.</b> Suelo, paredes, plataformas fijas. El motor lo respeta pero nunca lo mueve.</td></tr>
-            <tr><td><code>CharacterBody2D</code></td><td><b>Lo controla el programador</b>, por código. El personaje jugable, enemigos con IA. Sin gravedad automática.</td></tr>
-            <tr><td><code>RigidBody2D</code></td><td><b>Lo mueve el motor</b> con física realista: gravedad, rebote, impulsos. Objetos que se tiran o explotan.</td></tr>
+            <tr><td><code>StaticBody2D</code></td><td><b>No se mueve.</b> El motor lo respeta pero nunca lo mueve.</td><td>El suelo, las paredes y las plataformas fijas</td></tr>
+            <tr><td><code>CharacterBody2D</code></td><td><b>Lo controla el programador</b>, por código. Sin gravedad automática.</td><td>El jugador y los enemigos con IA</td></tr>
+            <tr><td><code>RigidBody2D</code></td><td><b>Lo mueve el motor</b> con física realista: gravedad, rebote, impulsos.</td><td>Cajas, barriles y proyectiles físicos</td></tr>
           </tbody>
         </table>
-        <p class="small-note" style="margin-top:12px;">Los tres tienen su <b>equivalente en 3D</b>: <code>StaticBody3D</code>, <code>CharacterBody3D</code> y <code>RigidBody3D</code>, igual que <code>Area3D</code> y <code>CollisionShape3D</code>. Se usan de la misma forma; lo que se aprende en 2D sirve para 3D.</p>
+        <p class="small-note" style="margin-top:12px;">Los tres tienen su <b>equivalente en 3D</b>; lo que se aprende en 2D sirve también en 3D.</p>
       </div>
       <figure class="shot" style="align-self:center;">
         <div style="position:relative; width:100%; max-width:400px; margin:0 auto;">
@@ -169,20 +169,9 @@
             </g>
           </svg>
         </div>
-        <figcaption style="text-align:center;"><i>Super Mario Bros.</i>: suelo y tubería son <b>estáticos</b>; a Mario lo controla el jugador. El <code>RigidBody2D</code> se ve en <i>Angry Birds</i>, dos diapositivas más adelante.</figcaption>
+        <figcaption style="text-align:center;"><i>Super Mario Bros.</i>: suelo y tubería son <b>estáticos</b>; a Mario lo controla el jugador. El <code>RigidBody2D</code> se ve en <i>Angry Birds</i>, en la diapositiva siguiente.</figcaption>
       </figure>
     </div>
-  </section>
-
-  <section class="slide" data-chapter="Cuerpos físicos" data-topic="Regla práctica">
-    <div class="slide-eyebrow">Cuerpos físicos</div>
-    <h2 class="slide-title">La regla práctica</h2>
-    <div class="columns three">
-      <div class="card" style="border-top:3px solid var(--accent-2);"><h3>El jugador</h3><p>Siempre <code>CharacterBody2D</code>. Control preciso, sin rebotes inesperados.</p></div>
-      <div class="card" style="border-top:3px solid var(--green);"><h3>El suelo</h3><p>Siempre <code>StaticBody2D</code>. Fijo, sólido, no se mueve nunca.</p></div>
-      <div class="card" style="border-top:3px solid var(--yellow);"><h3>Lo que se tira</h3><p>Siempre <code>RigidBody2D</code>. Cajas, barriles, proyectiles físicos.</p></div>
-    </div>
-    <div class="callout" style="margin-top:20px;">Elegir el nodo correcto es la <b>mitad del trabajo</b>. El tipo define cómo interactúa con el mundo. En el TP1, el piso era un <code>RigidBody2D</code> congelado: hoy se resuelve correctamente.</div>
   </section>
 
   <section class="slide" data-chapter="Cuerpos físicos" data-topic="En juegos reales">
