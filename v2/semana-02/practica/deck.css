@@ -95,7 +95,7 @@
   .sizer button:hover { color: var(--accent); }
   .sizer button.on { background: var(--accent); color: #fff; }
   .theme-toggle {
-    font-size: 14px; line-height: 1;
+    font-size: 12px; font-weight: 700; line-height: 1; color: inherit;
     border: 0; background: transparent; cursor: pointer;
     padding: 4px 8px; border-radius: 999px;
   }

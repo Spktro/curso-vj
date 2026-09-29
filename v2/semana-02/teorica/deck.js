@@ -153,7 +153,7 @@
     let theme = localStorage.getItem("deckTheme") || "light";
     const apply = () => {
       document.documentElement.setAttribute("data-theme", theme);
-      themeBtn.textContent = theme === "dark" ? "☀️" : "🌙";
+      themeBtn.textContent = theme === "dark" ? "Claro" : "Oscuro";
     };
     themeBtn.addEventListener("click", (e) => {
       e.stopPropagation();
