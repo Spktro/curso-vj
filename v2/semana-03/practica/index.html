@@ -31,7 +31,6 @@
         <div class="slide-eyebrow">Semana 3 · Clase 5+ · Teórico-práctica</div>
         <h1 class="title">La <span class="accent">horda</span></h1>
         <p class="subtitle">La POO de la clase anterior, escrita en vivo: una clase <code>Enemigo</code>, slimes que persiguen, un spawner que los crea por los bordes y un élite que hereda. Línea por línea.</p>
-        <p class="small-note">“Se programa un slime. Se juega contra cien.”</p>
       </div>
       <div class="title-photo" style="border:none; box-shadow:none; background:transparent;">
         <img src="assets/godot-logo.png" alt="Godot Engine" style="max-height:420px; width:auto; margin:0 auto; display:block;" />
@@ -39,23 +38,23 @@
     </div>
   </section>
 
-  <section class="slide" data-chapter="Inicio" data-topic="Cómo va a ser hoy">
+  <section class="slide" data-chapter="Inicio" data-topic="Desarrollo de la clase">
     <div class="slide-eyebrow">Antes de empezar</div>
-    <h2 class="slide-title">Cómo va a ser la clase de hoy</h2>
+    <h2 class="slide-title">Desarrollo de la clase</h2>
     <div class="columns">
       <div class="card">
-        <h3>🔴 Cuatro bloques en vivo</h3>
+        <h3>Cuatro bloques en vivo</h3>
         <p>En un proyecto nuevo, <code>clase-05</code>, sobre una arena con el jugador:</p>
         <ol class="steps compact" style="margin-top:8px;">
           <li><b>El slime:</b> la clase <code>Enemigo</code> y la IA de perseguir</li>
           <li><b>Instanciar:</b> crear slimes por código, con una tecla</li>
-          <li><b>El spawner:</b> un <code>Timer</code> que los crea solo, por los bordes</li>
+          <li><b>El spawner:</b> un <code>Timer</code> que los crea automáticamente, por los bordes</li>
           <li><b>El élite:</b> una clase hija que hereda de <code>Enemigo</code></li>
         </ol>
       </div>
       <div>
         <div class="card">
-          <h3>👐 Las reglas de siempre</h3>
+          <h3>Reglas de trabajo</h3>
           <ul>
             <li><b>El código se escribe, no se pega.</b></li>
             <li>Cada bloque termina con un <b>punto de control</b> en pantalla o en la consola.</li>
@@ -69,13 +68,13 @@
 
   <section class="slide" data-chapter="Inicio" data-topic="El mapa de objetos">
     <div class="slide-eyebrow">Del papel al código</div>
-    <h2 class="slide-title">El diseño de la clase pasada, ahora de verdad</h2>
+    <h2 class="slide-title">El diseño de la clase pasada, llevado a código</h2>
     <div class="columns" style="grid-template-columns:1fr 1fr; align-items:center;">
       <pre class="code" style="font-size:13.5px;"><span class="c"># Escenas que se van a crear hoy</span>
 arena.tscn          <span class="c"># el nivel</span>
 ├── Jugador         <span class="c"># CharacterBody2D, grupo "jugador"</span>
 ├── Spawner         <span class="c"># Node2D + Timer   (bloque 3)</span>
-└── Enemigos        <span class="c"># Node2D vacío: acá caen los slimes</span>
+└── Enemigos        <span class="c"># Node2D vacío: aquí se agregan los slimes</span>
 
 slime.tscn          <span class="c"># Area2D + enemigo.gd       (bloque 1)</span>
 slime_elite.tscn    <span class="c"># hereda de slime.tscn      (bloque 4)</span></pre>
@@ -124,7 +123,7 @@ slime_elite.tscn    <span class="c"># hereda de slime.tscn      (bloque 4)</span
           <li><code>Jugador</code>: <code>CharacterBody2D</code> + <code>Sprite2D</code> (icon.svg, escala 0.5) + <code>CollisionShape2D</code>, en el centro</li>
           <li>Un <code>Node2D</code> vacío llamado <code>Enemigos</code></li>
         </ol>
-        <div class="callout proba">🧠 Todo esto ya se hizo en la semana 2. Lo único nuevo: <code>get_vector()</code> (Clase 3) y el método <code>recibir_dano()</code>, que es el <b>botón</b> que los slimes van a apretar.</div>
+        <div class="callout proba">Todo esto ya se hizo en la semana 2. Lo único nuevo: <code>get_vector()</code> (Clase 3) y el método <code>recibir_dano()</code>, que es el <b>botón</b> que los slimes van a apretar.</div>
       </div>
     </div>
   </section>
@@ -185,11 +184,11 @@ slime_elite.tscn    <span class="c"># hereda de slime.tscn      (bloque 4)</span
         <ol class="steps compact">
           <li>Escena nueva <code>slime.tscn</code>: <code>Area2D</code> + <code>Sprite2D</code> (icon.svg, 0.3, verde) + <code>CollisionShape2D</code> círculo</li>
           <li>Script <code>enemigo.gd</code> con las variables y <code>_process</code></li>
-          <li>Instanciar <b>uno a mano</b> en la arena (🔗) y correr</li>
+          <li>Instanciar <b>uno a mano</b> en la arena (ícono de cadena) y correr</li>
         </ol>
-        <div class="consola"><span class="lbl">✅ Punto de control · en pantalla</span>El slime persigue al jugador
+        <div class="consola"><span class="lbl">Punto de control · en pantalla</span>El slime persigue al jugador
 por toda la arena</div>
-        <div class="callout proba">🧪 <b>Probar:</b> <code>velocidad = 300</code>. Sacar el <code>.normalized()</code>: ¿por qué ahora frena al acercarse? (Pista: el largo de la flecha.)</div>
+        <div class="callout proba"><b>Probar:</b> <code>velocidad = 300</code>. Sacar el <code>.normalized()</code>: ¿por qué ahora frena al acercarse? (Pista: el largo de la flecha.)</div>
       </div>
     </div>
   </section>
@@ -223,9 +222,9 @@ por toda la arena</div>
           <li><code>recibir_dano()</code> y <code>morir()</code>: los <b>botones</b> que otros van a apretar</li>
           <li><code>_on_body_entered</code>: le pide daño al jugador y se sacrifica</li>
         </ol>
-        <div class="consola"><span class="lbl">✅ Punto de control · Output</span>Jugador: 90 de vida
+        <div class="consola"><span class="lbl">Punto de control · Output</span>Jugador: 90 de vida
 (y el slime desaparece al tocarlo)</div>
-        <div class="callout proba">🧠 Nadie llama todavía a <code>recibir_dano()</code> del slime. Queda listo para las balas del TP y para la bomba del bloque 4.</div>
+        <div class="callout proba">Nadie llama todavía a <code>recibir_dano()</code> del slime. Queda listo para las balas del TP y para la bomba del bloque 4.</div>
       </div>
     </div>
   </section>
@@ -256,10 +255,10 @@ por toda la arena</div>
       <div class="arrow">→</div>
       <div class="card" style="text-align:center;"><h3>2 · Sacar una copia</h3><p><code>molde.instantiate()</code><br>Un objeto nuevo, todavía <b>fuera</b> del juego</p></div>
       <div class="arrow">→</div>
-      <div class="card" style="text-align:center;"><h3>3 · Meterlo en el árbol</h3><p><code>add_child(copia)</code><br>Recién ahí aparece y corre su <code>_ready()</code></p></div>
+      <div class="card" style="text-align:center;"><h3>3 · Meterlo en el árbol</h3><p><code>add_child(copia)</code><br>Solo entonces aparece y corre su <code>_ready()</code></p></div>
     </div>
     <div class="columns" style="margin-top:18px;">
-      <div class="callout">🍪 Es el molde de galletas de la clase pasada: <code>preload</code> agarra el molde, <code>instantiate</code> corta una galleta, <code>add_child</code> la pone en la bandeja.</div>
+      <div class="callout">Es el molde de galletas de la clase pasada: <code>preload</code> agarra el molde, <code>instantiate</code> corta una galleta, <code>add_child</code> la pone en la bandeja.</div>
       <div class="callout">Entre el paso 2 y el 3 se pueden <b>cambiar sus datos</b>: <code>copia.position = …</code>, <code>copia.velocidad = …</code>. Cada copia, con sus propios valores.</div>
     </div>
   </section>
@@ -270,11 +269,11 @@ por toda la arena</div>
     <table class="tbl">
       <thead><tr><th>Función</th><th>Cuándo carga el archivo</th><th>Cuándo usarla</th></tr></thead>
       <tbody>
-        <tr><td><code>preload("res://…")</code></td><td>Al <b>abrir</b> el script, antes de que arranque el juego</td><td>✅ Casi siempre: enemigos, balas, efectos. No hay tirón al crear</td></tr>
+        <tr><td><code>preload("res://…")</code></td><td>Al <b>abrir</b> el script, antes de que arranque el juego</td><td>Casi siempre: enemigos, balas, efectos. Sin demora al crear</td></tr>
         <tr><td><code>load("res://…")</code></td><td>En el <b>momento</b> en que se ejecuta esa línea</td><td>Cuando la ruta se decide mientras el juego corre (“cargar el nivel 3”)</td></tr>
       </tbody>
     </table>
-    <div class="callout" style="margin-top:18px;">💡 Para no escribir la ruta a mano: arrastrar <code>slime.tscn</code> desde el FileSystem hasta el script. Godot pega la ruta exacta, con comillas.</div>
+    <div class="callout" style="margin-top:18px;">Para no escribir la ruta a mano: arrastrar <code>slime.tscn</code> desde el FileSystem hasta el script. Godot pega la ruta exacta, con comillas.</div>
   </section>
 
   <section class="slide" data-chapter="Instanciar" data-topic="En vivo: instanciar con una tecla">
@@ -306,10 +305,10 @@ por toda la arena</div>
           <li><code>crear_slime()</code> con los pasos 2 y 3. Correr y apretar Espacio varias veces</li>
           <li>Sumar el <code>print</code> con el total del grupo</li>
         </ol>
-        <div class="consola"><span class="lbl">✅ Punto de control · Output</span>Slimes en pantalla: 1
+        <div class="consola"><span class="lbl">Punto de control · Output</span>Slimes en pantalla: 1
 Slimes en pantalla: 2
 Slimes en pantalla: 3</div>
-        <div class="callout proba">🧪 <b>Probar:</b> comentar el <code>add_child</code>: el <code>print</code> dice 0 y no aparece nada. Antes del <code>add_child</code>, poner <code>slime.velocidad = 200</code>: solo ese sale corriendo.</div>
+        <div class="callout proba"><b>Probar:</b> comentar el <code>add_child</code>: el <code>print</code> dice 0 y no aparece nada. Antes del <code>add_child</code>, poner <code>slime.velocidad = 200</code>: solo ese sale corriendo.</div>
       </div>
     </div>
   </section>
@@ -317,7 +316,7 @@ Slimes en pantalla: 3</div>
   <!-- ============ BLOQUE 3: SPAWNER ============ -->
   <section class="slide" data-chapter="Spawner" data-topic="El nodo Timer">
     <div class="slide-eyebrow">Bloque 3 · la idea</div>
-    <h2 class="slide-title">Que aparezcan solos: el nodo <code>Timer</code></h2>
+    <h2 class="slide-title">Aparición automática: el nodo <code>Timer</code></h2>
     <div class="columns">
       <div>
         <div class="card" style="border-top:3px solid var(--red);">
@@ -329,27 +328,27 @@ Slimes en pantalla: 3</div>
 		tiempo = <span class="n">0.0</span>
 		spawnear()</pre>
         </div>
-        <p class="small-note" style="margin-top:8px;">Funciona, pero ensucia <code>_process</code> y hay que acordarse de reiniciar.</p>
+        <p class="small-note" style="margin-top:8px;">Funciona, pero recarga <code>_process</code> y obliga a reiniciar el contador a mano.</p>
       </div>
       <div>
         <div class="card" style="border-top:3px solid var(--green);">
           <h3 style="color:var(--green);">Con un nodo: <code>Timer</code></h3>
           <ul>
             <li><b>Wait Time</b>: cada cuántos segundos (<code>1.0</code>)</li>
-            <li><b>Autostart</b>: tildado, arranca solo</li>
+            <li><b>Autostart</b>: tildado, arranca automáticamente</li>
             <li><b>One Shot</b>: destildado, se repite siempre</li>
             <li>Cada vez que se cumple, emite la señal <code>timeout</code></li>
           </ul>
           <pre class="code" style="font-size:12.5px; margin:8px 0 0;">$Timer.timeout.connect(spawnear)</pre>
         </div>
-        <div class="callout" style="margin-top:12px;">Composición: el spawner <b>tiene un</b> reloj. Es la señal de la semana pasada, ahora con un nodo que la emite solo.</div>
+        <div class="callout" style="margin-top:12px;">Composición: el spawner <b>tiene un</b> reloj. Es la señal de la semana pasada, ahora con un nodo que la emite automáticamente.</div>
       </div>
     </div>
   </section>
 
   <section class="slide" data-chapter="Spawner" data-topic="Aparecer por los bordes">
     <div class="slide-eyebrow">Bloque 3 · la idea</div>
-    <h2 class="slide-title">Aparecer por los bordes, no en la cara del jugador</h2>
+    <h2 class="slide-title">Aparecer por los bordes, no encima del jugador</h2>
     <div class="columns" style="align-items:center;">
       <div class="card" style="padding:14px 16px;">
         <svg class="axes" viewBox="0 0 360 230" width="100%" height="250">
@@ -373,7 +372,7 @@ Slimes en pantalla: 3</div>
           <li>En ese lado, un punto <b>al azar</b> a lo largo: <code>randf_range(0, ancho)</code></li>
           <li>Correrlo <b>40 píxeles afuera</b> de la pantalla, así entra caminando</li>
         </ol>
-        <div class="callout" style="margin-top:12px;">🎮 Así aparecen en <i>Vampire Survivors</i> y <i>Brotato</i>: desde fuera de cámara, para que el jugador vea venir la ola y no pierda vida de golpe.</div>
+        <div class="callout" style="margin-top:12px;">Así aparecen en <i>Vampire Survivors</i> y <i>Brotato</i>: desde fuera de cámara, para que el jugador vea venir la ola y no pierda vida de golpe.</div>
       </div>
     </div>
   </section>
@@ -407,15 +406,15 @@ Slimes en pantalla: 3</div>
       </div>
       <div>
         <ol class="steps compact">
-          <li>En la arena: <code>Node2D</code> <b>Spawner</b> con un <b>Timer</b> hijo (Wait Time 1, Autostart ✓)</li>
+          <li>En la arena: <code>Node2D</code> <b>Spawner</b> con un <b>Timer</b> hijo (Wait Time 1, Autostart activado)</li>
           <li>Primero <code>spawnear()</code> con posición fija. Correr</li>
           <li>Después <code>posicion_en_el_borde()</code>. Correr y sobrevivir</li>
-          <li>Borrar lo de Espacio en <code>arena.gd</code>: ya no hace falta</li>
+          <li>Borrar el código de la tecla Espacio en <code>arena.gd</code>: ya no hace falta</li>
         </ol>
-        <div class="consola"><span class="lbl">✅ Punto de control · en pantalla</span>Un slime por segundo,
+        <div class="consola"><span class="lbl">Punto de control · en pantalla</span>Un slime por segundo,
 entrando desde un borde al azar,
 todos persiguiendo al jugador</div>
-        <div class="callout proba">🧪 <b>Probar:</b> Wait Time en <code>0.2</code>. ¿Por qué hace falta <code>"../Enemigos"</code> y no <code>add_child</code> directo? (Pista: ¿qué pasa si el Spawner se mueve?)</div>
+        <div class="callout proba"><b>Probar:</b> Wait Time en <code>0.2</code>. ¿Por qué hace falta <code>"../Enemigos"</code> y no <code>add_child</code> directo? (Pista: ¿qué pasa si el Spawner se mueve?)</div>
       </div>
     </div>
   </section>
@@ -464,7 +463,7 @@ todos persiguiendo al jugador</div>
 	dano = <span class="n">25</span>
 
 <span class="k">func</span> <span class="t">morir</span>():
-	<span class="t">print</span>(<span class="s">"💜 ¡Cayó un élite!"</span>)
+	<span class="t">print</span>(<span class="s">"¡Cayó un élite!"</span>)
 	<span class="k">super</span>()            <span class="c"># y se borra, como la madre</span></pre>
         </div>
       </div>
@@ -474,7 +473,7 @@ todos persiguiendo al jugador</div>
           <li>Clic derecho en la raíz → <b>Extend Script</b> → <code>slime_elite.gd</code></li>
           <li>Probarlo a mano en la arena. Después, el contador en el spawner</li>
         </ol>
-        <div class="consola"><span class="lbl">✅ Punto de control</span>Cada 8 slimes, uno violeta y lento
+        <div class="consola"><span class="lbl">Punto de control</span>Cada 8 slimes, uno violeta y lento
 Al tocar al jugador: Jugador: 75 de vida</div>
         <div class="code-wrap" style="margin-top:10px;">
           <pre class="code" style="font-size:11.8px;"><span class="c"># spawner.gd: cada 8, un élite (dentro de spawnear)</span>
@@ -501,47 +500,47 @@ Al tocar al jugador: Jugador: 75 de vida</div>
 	<span class="k">if</span> <span class="t">Input</span>.is_action_just_pressed(<span class="s">"ui_accept"</span>):
 		<span class="k">for</span> enemigo <span class="k">in</span> get_tree().get_nodes_in_group(<span class="s">"enemigo"</span>):
 			enemigo.recibir_dano(<span class="n">1</span>)</pre>
-        <div class="consola"><span class="lbl">✅ Punto de control</span>Enter: los verdes desaparecen,
+        <div class="consola"><span class="lbl">Punto de control</span>Enter: los verdes desaparecen,
 los violetas siguen (les queda 4)
-Al quinto Enter:  💜 ¡Cayó un élite!</div>
+Al quinto Enter:  ¡Cayó un élite!</div>
       </div>
       <div>
         <p class="subtitle" style="font-size:17.5px;">La bomba no pregunta <b>qué tipo</b> de enemigo es cada uno. Les pide a todos lo mismo, <code>recibir_dano(1)</code>, y cada uno responde según su clase.</p>
-        <div class="callout">Los cuatro pilares de la clase pasada, en un proyecto que anda: <b>encapsulamiento</b> (se pide daño), <b>herencia</b> (el élite), <b>polimorfismo</b> (la bomba), <b>abstracción</b> (la bomba no sabe cómo muere nadie).</div>
+        <div class="callout">Los cuatro pilares de la clase pasada, en un proyecto que funciona: <b>encapsulamiento</b> (se pide daño), <b>herencia</b> (el élite), <b>polimorfismo</b> (la bomba), <b>abstracción</b> (la bomba no sabe cómo muere nadie).</div>
       </div>
     </div>
   </section>
 
   <!-- ============ CIERRE ============ -->
-  <section class="slide" data-chapter="Cierre" data-topic="Cuando no anda">
-    <div class="slide-eyebrow">🛟 Antes de levantar la mano</div>
-    <h2 class="slide-title">Cuando “no anda”: los sospechosos de hoy</h2>
+  <section class="slide" data-chapter="Cierre" data-topic="Cuando no funciona">
+    <div class="slide-eyebrow">Antes de consultar</div>
+    <h2 class="slide-title">Cuando no funciona: seis causas frecuentes</h2>
     <table class="tbl" style="font-size:15px;">
-      <thead><tr><th>Síntoma</th><th>Casi siempre es…</th></tr></thead>
+      <thead><tr><th>Síntoma</th><th>Causa habitual</th></tr></thead>
       <tbody>
         <tr><td>Se instancia pero <b>no aparece</b></td><td>Falta el <code>add_child()</code>, o la posición quedó fuera de pantalla.</td></tr>
-        <tr><td><code>Could not preload resource</code></td><td>La ruta está mal escrita. Arrastrar el <code>.tscn</code> al script en vez de tipearla.</td></tr>
+        <tr><td><code>Could not preload resource</code></td><td>La ruta está mal escrita. Arrastrar el <code>.tscn</code> al script en vez de escribirla a mano.</td></tr>
         <tr><td>Los slimes <b>no persiguen</b></td><td>El jugador no está en el grupo <code>"jugador"</code>, o el nombre del grupo tiene una letra distinta.</td></tr>
         <tr><td><code>Could not find type "Enemigo"</code></td><td>Falta <code>class_name Enemigo</code> en <code>enemigo.gd</code>, o el archivo no se guardó.</td></tr>
         <tr><td>El Timer <b>no dispara</b></td><td>Autostart destildado, o la señal no se conectó en <code>_ready()</code>.</td></tr>
-        <tr><td>El élite hace cosas raras</td><td>Se <b>reemplazó</b> el script en vez de extenderlo, o falta un <code>super()</code>.</td></tr>
+        <tr><td>El élite se comporta de forma inesperada</td><td>Se <b>reemplazó</b> el script en vez de extenderlo, o falta un <code>super()</code>.</td></tr>
       </tbody>
     </table>
   </section>
 
   <section class="slide" data-chapter="Cierre" data-topic="Desafío en clase">
-    <div class="slide-eyebrow">Ahora sin ayuda</div>
+    <div class="slide-eyebrow">Trabajo autónomo</div>
     <h2 class="slide-title">Desafío: un tercer tipo de enemigo</h2>
     <div class="columns">
       <div>
         <ol class="steps" style="font-size:16px;">
-          <li><b>El veloz:</b> escena heredada de <code>slime.tscn</code>, amarillo y chico. Script que <code>extends Enemigo</code> con <code>velocidad = 150</code></li>
+          <li><b>El veloz:</b> escena heredada de <code>slime.tscn</code>, amarillo y pequeño. Script que <code>extends Enemigo</code> con <code>velocidad = 150</code></li>
           <li>Que el spawner lo cree <b>cada 5</b> slimes</li>
           <li><b>Extra:</b> que el spawner vaya <b>más rápido</b> con el tiempo: cada vez que spawnea, <code>$Timer.wait_time *= 0.98</code> (con un mínimo de 0.2)</li>
         </ol>
       </div>
       <div style="align-self:center;">
-        <div class="callout">🎯 <b>Objetivo:</b> repetir el ciclo completo solo: escena heredada → script heredado → cambiar valores → sumarlo al spawner. Sin tocar <code>enemigo.gd</code>.</div>
+        <div class="callout"><b>Objetivo:</b> repetir el ciclo completo solo: escena heredada → script heredado → cambiar valores → sumarlo al spawner. Sin tocar <code>enemigo.gd</code>.</div>
         <p class="small-note" style="margin-top:12px;">Si la bomba sigue funcionando con el veloz sin cambiarle una línea: eso es polimorfismo.</p>
       </div>
     </div>
@@ -549,18 +548,18 @@ Al quinto Enter:  💜 ¡Cayó un élite!</div>
 
   <section class="slide" data-chapter="Cierre" data-topic="Resumen">
     <div class="slide-eyebrow">Cierre</div>
-    <h2 class="slide-title">Todo lo que se escribió hoy</h2>
+    <h2 class="slide-title">Resumen de la clase</h2>
     <table class="tbl">
       <thead><tr><th>Pieza</th><th>Para qué sirve</th><th>Bloque</th></tr></thead>
       <tbody>
         <tr><td><b><code>class_name</code></b> + grupo</td><td>Una clase con nombre, y una etiqueta para encontrar todas sus instancias</td><td>1</td></tr>
         <tr><td><b>Perseguir</b></td><td>Restar posiciones, normalizar, avanzar con <code>delta</code></td><td>1</td></tr>
         <tr><td><b><code>preload</code> → <code>instantiate</code> → <code>add_child</code></b></td><td>Crear objetos mientras el juego corre</td><td>2</td></tr>
-        <tr><td><b><code>Timer</code></b> + <code>timeout</code></td><td>Repetir algo cada X segundos, sin ensuciar <code>_process</code></td><td>3</td></tr>
+        <tr><td><b><code>Timer</code></b> + <code>timeout</code></td><td>Repetir algo cada X segundos, sin recargar <code>_process</code></td><td>3</td></tr>
         <tr><td><b><code>extends Enemigo</code></b> + <code>super()</code></td><td>Una variante que hereda todo y cambia solo lo suyo</td><td>4</td></tr>
       </tbody>
     </table>
-    <div class="callout" style="margin-top:16px;">🧭 <b>Para pensar:</b> falta algo para que sea un juego: el jugador no puede <b>defenderse</b>. ¿Cómo sabría un arma cuál es el slime más cercano? (Pista: un <code>for</code> sobre el grupo y <code>distance_to()</code>.)</div>
+    <div class="callout" style="margin-top:16px;"><b>Para pensar:</b> falta algo para que sea un juego: el jugador no puede <b>defenderse</b>. ¿Cómo sabría un arma cuál es el slime más cercano? (Pista: un <code>for</code> sobre el grupo y <code>distance_to()</code>.)</div>
   </section>
 
   <section class="slide title-slide" data-chapter="Cierre" data-topic="TP y recursos">
@@ -568,7 +567,7 @@ Al quinto Enter:  💜 ¡Cayó un élite!</div>
     <h2 class="slide-title">El TP de la semana: sobrevivir a los slimes</h2>
     <div class="columns">
       <div class="card">
-        <h3>📝 TP 3: la base del survivors</h3>
+        <h3>TP 3: la base del survivors</h3>
         <ul>
           <li>Lo de hoy, con el caballero y los slimes de Brackeys animados</li>
           <li>Un <b>HUD</b> con barra de vida y contador de slimes</li>
@@ -577,7 +576,7 @@ Al quinto Enter:  💜 ¡Cayó un élite!</div>
         </ul>
       </div>
       <div class="card">
-        <h3>📚 Recursos</h3>
+        <h3>Recursos</h3>
         <ul>
           <li>Docs: <i>Instancing</i> y <i>Nodes and scene instances</i> en <code>docs.godotengine.org</code></li>
           <li>La referencia de <code>Timer</code> y de <code>PackedScene</code></li>

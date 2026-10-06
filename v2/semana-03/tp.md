@@ -1,11 +1,11 @@
 # Trabajo Práctico 3 — Sobrevivir a los slimes
 
 > **Diplomatura de Videojuegos · Semana 3** (clases 5 y 5+)
-> Objetivo: armar la **base del juego del curso**, un *survivors*: un caballero en una arena, **hordas de slimes** que aparecen por los bordes y lo persiguen, un arma que **dispara sola** al enemigo más cercano, y cada tanto un **slime élite** que hereda del común y muestra su **barra de vida sobre la cabeza**. Es lo de la Clase 5+, con sprites, HUD y balas.
+> Objetivo: armar la **base del juego del curso**, un *survivors*: un caballero en una arena, **hordas de slimes** que aparecen por los bordes y lo persiguen, un arma que **dispara automáticamente** al enemigo más cercano, y cada tanto un **slime élite** que hereda del común y muestra su **barra de vida sobre la cabeza**. Es lo de la Clase 5+, con sprites, HUD y balas.
 
 ---
 
-## 🎯 Al finalizar este TP
+## Al finalizar este TP
 
 - Un **jugador** que se mueve en 4 direcciones, animado, con un **HUD** de vida y slimes eliminados.
 - Una clase **`Enemigo`**: slimes que **persiguen** al jugador y le pegan al tocarlo.
@@ -13,17 +13,17 @@
 - **Balas automáticas**: cada 0.4 s sale una hacia el enemigo **más cercano**, sin apretar nada.
 - Un **slime élite** cada 8 enemigos, que **hereda** de `Enemigo`: más lento, aguanta 5 balas y tiene barra de vida.
 
-> 🎮 **¿Qué es un *survivors*?** Un género que explotó en 2022 con *Vampire Survivors*: el personaje **ataca solo**, el jugador solo se mueve, y la meta es **sobrevivir** al enjambre el mayor tiempo posible. *Brotato* (hecho en Godot) pertenece al mismo género.
+> **¿Qué es un *survivors*?** Un género que se popularizó en 2022 con *Vampire Survivors*: el personaje **ataca automáticamente**, el jugador solo se mueve, y la meta es **sobrevivir** al enjambre el mayor tiempo posible. *Brotato* (hecho en Godot) pertenece al mismo género.
 
-> 💡 **Tiempo estimado:** 90–120 min. Cada parte se prueba sola. **Escribir el código a mano**, y leer el “por qué” de cada bloque: es el proyecto que se sigue hasta el final del curso.
+> **Tiempo estimado:** 90–120 min. Cada parte se prueba sola. **Escribir el código a mano**, y leer el “por qué” de cada bloque: es el proyecto que se sigue hasta el final del curso.
 
-> 🔗 **Viene de:** la Clase 5 (clases, objetos, herencia), la Clase 5+ (clase `Enemigo`, `preload` + `instantiate`, `Timer`, élite heredado), y la semana 2 (movimiento, `Area2D`, señales, grupos).
+> **Viene de:** la Clase 5 (clases, objetos, herencia), la Clase 5+ (clase `Enemigo`, `preload` + `instantiate`, `Timer`, élite heredado), y la semana 2 (movimiento, `Area2D`, señales, grupos).
 
 ---
 
-## 🎨 Los assets (Brackeys · CC0)
+## Los assets (Brackeys · CC0)
 
-Están en la carpeta [`assets/`](assets/) de esta semana. Licencia **CC0** (uso libre, [créditos acá](assets/LICENSE-brackeys.txt)).
+Están en la carpeta [`assets/`](assets/) de esta semana. Licencia **CC0** (uso libre, [créditos aquí](assets/LICENSE-brackeys.txt)).
 
 - **`knight.png`**: el jugador, el mismo caballero de la semana 2 (hoja 8×8, frames de 32×32, con texto incrustado que se ignora).
 - **`slime_green.png`**: el slime común. Hoja de **4×3**, frames de **24×24**, sin texto. La **fila del medio** es la animación de caminar.
@@ -34,7 +34,7 @@ Están en la carpeta [`assets/`](assets/) de esta semana. Licencia **CC0** (uso 
 
 ---
 
-## 🧩 Cómo va a quedar el proyecto
+## Estructura del proyecto
 
 Una escena principal y tres **moldes** que se instancian mientras el juego corre:
 
@@ -47,8 +47,8 @@ arena.tscn
   │   └── TimerDisparo  (Timer)    ← dispara cada 0.4 s
   ├── Spawner  (Node2D)                                    spawner.gd
   │   └── Timer                    ← un slime por segundo
-  ├── Enemigos  (Node2D)           ← contenedor: acá caen los slimes
-  ├── Balas     (Node2D)           ← contenedor: acá caen las balas
+  ├── Enemigos  (Node2D)           ← contenedor: aquí se agregan los slimes
+  ├── Balas     (Node2D)           ← contenedor: aquí se agregan las balas
   └── HUD  (CanvasLayer)
       ├── BarraVida  (ProgressBar)
       └── LabelKills (Label)
@@ -58,16 +58,16 @@ slime_elite.tscn  HEREDA de slime.tscn + barra de vida       slime_elite.gd → 
 bala.tscn         Bala (Area2D) + Sprite2D + shape + Timer   bala.gd
 ```
 
-> 🧠 **Quién le pide qué a quién** (el diseño de la Clase 5): el **spawner** crea slimes; el **slime** busca al jugador por su **grupo** y, al tocarlo, le pide `recibir_dano()`; el **jugador** dispara **balas**; la **bala** le pide `recibir_dano()` al slime. Nadie toca la vida de otro: **encapsulamiento**.
+> **Quién le pide qué a quién** (el diseño de la Clase 5): el **spawner** crea slimes; el **slime** busca al jugador por su **grupo** y, al tocarlo, le pide `recibir_dano()`; el **jugador** dispara **balas**; la **bala** le pide `recibir_dano()` al slime. Nadie toca la vida de otro: **encapsulamiento**.
 
 ---
 
-## 🛠️ Parte 0 — Proyecto, assets y controles
+## Parte 0 — Proyecto, assets y controles
 
 1. Godot → **New Project** → `tp3` → carpeta vacía → **Create & Edit**.
 2. Arrastrar al **FileSystem** los cuatro archivos: `knight.png`, `slime_green.png`, `slime_purple.png`, `bala.png`.
 3. **Píxeles nítidos:** **Project → Project Settings → Rendering → Textures → Default Texture Filter = Nearest**.
-4. **Input Map** (**Project → Project Settings → Input Map**): las cuatro acciones de siempre.
+4. **Input Map** (**Project → Project Settings → Input Map**): las cuatro acciones de movimiento.
 
    | Acción | Tecla |
    | :---- | :---- |
@@ -77,13 +77,13 @@ bala.tscn         Bala (Area2D) + Sprite2D + shape + Timer   bala.gd
    | `mover_abajo` | **S** o **↓** |
 
 5. Escena principal: **Otro Nodo → `Node2D`** → renombrarlo **`Arena`** → guardar como **`arena.tscn`**.
-6. Hijos de `Arena`, dos **`Node2D`** vacíos: **`Enemigos`** y **`Balas`**. Son **contenedores**: ahí van a caer las instancias, para tener el árbol ordenado.
+6. Hijos de `Arena`, dos **`Node2D`** vacíos: **`Enemigos`** y **`Balas`**. Son **contenedores**: allí se agregan las instancias, para mantener el árbol ordenado.
 
-✅ **Punto de control 0:** `arena.tscn` tiene `Enemigos` y `Balas` vacíos, los 4 sprites están en el FileSystem y las 4 acciones en el Input Map.
+**Punto de control 0:** `arena.tscn` tiene `Enemigos` y `Balas` vacíos, los 4 sprites están en el FileSystem y las 4 acciones en el Input Map.
 
 ---
 
-## 🧍 Parte 1 — El jugador y su HUD
+## Parte 1 — El jugador y su HUD
 
 ### 1.1 · El caballero
 
@@ -92,11 +92,11 @@ bala.tscn         Bala (Area2D) + Sprite2D + shape + Timer   bala.gd
 
    - **`idle`**: *Añadir Frames desde un Sprite Sheet* → `knight.png`, **8 × 8** → los 4 primeros frames de la fila de arriba.
    - **`run`**: animación nueva → misma hoja → los 8 frames de la fila del **RUN**. FPS ≈ **10**.
-   - En las dos: **🔁 Loop**. En `idle`: **Autoplay on Load**.
+   - En las dos: **Loop**. En `idle`: **Autoplay on Load**.
 
    ![Seleccionar frames](https://docs.godotengine.org/es/4.x/_images/2d_animation_spritesheet_selectframes.webp)
 
-   Poner el **Scale** del `AnimatedSprite2D` en `2, 2` (el caballero es chiquito).
+   Poner el **Scale** del `AnimatedSprite2D` en `2, 2` (el sprite del caballero es pequeño).
 
 3. Hijo de `Jugador` → **`CollisionShape2D`** → **`CapsuleShape2D`** que envuelva al caballero.
 
@@ -106,7 +106,7 @@ bala.tscn         Bala (Area2D) + Sprite2D + shape + Timer   bala.gd
 5. Hijo de `HUD` → **`ProgressBar`** → renombrarlo **`BarraVida`**. En el Inspector: **Min Value** `0`, **Max Value** `100`, **Value** `100`, **Show Percentage** apagado. Tamaño de unos `220 × 22`, arriba a la izquierda.
 6. Hijo de `HUD` → **`Label`** → renombrarlo **`LabelKills`**. **Text** = `Slimes: 0`. Debajo de la barra.
 
-   > 🧠 **`CanvasLayer`** es una capa que se dibuja **pegada a la pantalla**, encima del mundo (la UI no diegética de la Clase 1). La UI se ve a fondo en la semana 5; por ahora alcanza con saber que lo que cuelga de acá **no se mueve con el juego**.
+   > **`CanvasLayer`** es una capa que se dibuja **pegada a la pantalla**, encima del mundo (la UI no diegética de la Clase 1). La UI se ve a fondo en la semana 5; por ahora alcanza con saber que lo que cuelga de aquí **no se mueve con el juego**.
 
 ### 1.3 · El script del jugador
 
@@ -149,7 +149,7 @@ func recibir_dano(cantidad):
 	vida -= cantidad
 	actualizar_hud()
 	if vida <= 0:
-		get_tree().reload_current_scene()   # se acabó: de vuelta a empezar
+		get_tree().reload_current_scene()   # sin vida: la partida se reinicia
 
 func sumar_kill():
 	kills += 1
@@ -160,15 +160,15 @@ func actualizar_hud():
 	get_node("../HUD/BarraVida").value = vida
 ```
 
-> 🧠 **`recibir_dano()` y `sumar_kill()` son la cara pública del jugador.** Los slimes no tocan `vida` ni `kills`: le piden al jugador que lo haga. Así, si mañana el jugador tiene escudo, se cambia **acá** y nadie más se entera (encapsulamiento y abstracción, Clase 5).
+> **`recibir_dano()` y `sumar_kill()` son la cara pública del jugador.** Los slimes no tocan `vida` ni `kills`: le piden al jugador que lo haga. Así, si mañana el jugador tiene escudo, se cambia **aquí** y ningún otro objeto se entera (encapsulamiento y abstracción, Clase 5).
 
-> 🧠 **`get_node("../HUD/LabelKills")`**: `..` es “subir al padre” (la `Arena`), y de ahí bajar a `HUD` y después a `LabelKills`. Es una ruta, como las carpetas.
+> **`get_node("../HUD/LabelKills")`**: `..` es “subir al padre” (la `Arena`), y de allí bajar a `HUD` y después a `LabelKills`. Es una ruta, como las carpetas.
 
-✅ **Punto de control 1:** con **F6** el caballero camina animado, no sale de la pantalla, y arriba a la izquierda se ven la barra llena y `Slimes: 0`.
+**Punto de control 1:** con **F6** el caballero camina animado, no sale de la pantalla, y arriba a la izquierda se ven la barra llena y `Slimes: 0`.
 
 ---
 
-## 🟢 Parte 2 — La clase `Enemigo`: el slime que persigue
+## Parte 2 — La clase `Enemigo`: el slime que persigue
 
 ### 2.1 · La escena del slime
 
@@ -223,18 +223,18 @@ func _on_body_entered(body):
 		queue_free()              # …y se sacrifica (no cuenta como kill)
 ```
 
-> 🧠 **`class_name Enemigo`** le pone nombre a la clase. Sin esa línea, el élite de la Parte 5 no podría escribir `extends Enemigo`.
+> **`class_name Enemigo`** le pone nombre a la clase. Sin esa línea, el élite de la Parte 5 no podría escribir `extends Enemigo`.
 
-> 🧠 **Perseguir es una resta de vectores** (Clase 5+): `jugador.position - position` es la flecha del slime al jugador; `.normalized()` la deja de largo 1, solo la dirección. Como el slime es un `Area2D`, se mueve con `position` y **lleva `delta`**.
+> **Perseguir es una resta de vectores** (Clase 5+): `jugador.position - position` es la flecha del slime al jugador; `.normalized()` la deja de largo 1, solo la dirección. Como el slime es un `Area2D`, se mueve con `position` y **lleva `delta`**.
 
 ### 2.3 · Probarlo a mano
 
-5. Volver a `arena.tscn`. Seleccionar **`Enemigos`** → botón de cadena 🔗 (**Instantiate Child Scene**) → `slime.tscn`. Ubicar el slime **lejos** del jugador.
+5. Volver a `arena.tscn`. Seleccionar **`Enemigos`** → ícono de **cadena** (**Instantiate Child Scene**) → `slime.tscn`. Ubicar el slime **lejos** del jugador.
 6. **F6**.
 
-✅ **Punto de control 2:** el slime persigue al caballero. Al tocarlo, la barra de vida baja un poco y el slime desaparece.
+**Punto de control 2:** el slime persigue al caballero. Al tocarlo, la barra de vida baja un poco y el slime desaparece.
 
-🛟 **El slime no se mueve / no hace daño**
+**El slime no se mueve / no hace daño**
 
 <details>
 <summary>Ver soluciones</summary>
@@ -248,7 +248,7 @@ func _on_body_entered(body):
 
 ---
 
-## 🌊 Parte 3 — El Spawner: hordas por los bordes
+## Parte 3 — El Spawner: hordas por los bordes
 
 > **Conceptos:** instanciar (`preload` → `instantiate` → `add_child`) y el nodo `Timer` (Clase 5+).
 
@@ -281,13 +281,13 @@ func posicion_en_el_borde():
 	return Vector2(tam.x + 40, randf_range(0, tam.y))
 ```
 
-> 🧠 **Los tres pasos de instanciar:** `preload` carga el molde **una vez**, al abrir el script. `instantiate()` saca una copia **todavía fuera del juego**: es el momento de cambiarle datos (la posición). `add_child()` la mete en el árbol, y recién ahí aparece y corre su `_ready()`.
+> **Los tres pasos de instanciar:** `preload` carga el molde **una vez**, al abrir el script. `instantiate()` saca una copia **todavía fuera del juego**: es el momento de cambiarle datos (la posición). `add_child()` la mete en el árbol, y solo entonces aparece y corre su `_ready()`.
 
-> 💡 La ruta del `preload` no hace falta tipearla: basta con arrastrar `slime.tscn` desde el FileSystem hasta el script.
+> La ruta del `preload` no hace falta escribirla a mano: basta con arrastrar `slime.tscn` desde el FileSystem hasta el script.
 
-✅ **Punto de control 3:** cada segundo entra un slime desde un borde distinto, y todos persiguen al caballero. Si varios tocan al caballero, la partida se reinicia.
+**Punto de control 3:** cada segundo entra un slime desde un borde distinto, y todos persiguen al caballero. Si varios tocan al caballero, la partida se reinicia.
 
-🛟 **No aparece ningún slime**
+**No aparece ningún slime**
 
 <details>
 <summary>Ver soluciones</summary>
@@ -300,7 +300,7 @@ func posicion_en_el_borde():
 
 ---
 
-## 🔫 Parte 4 — Balas que apuntan solas
+## Parte 4 — Balas con puntería automática
 
 > **Concepto:** la bala es otro `Area2D`, otro molde. El jugador, con un `Timer`, dispara cada 0.4 s **hacia el enemigo más cercano**. En un *survivors* el arma es automática: el jugador solo se mueve.
 
@@ -321,7 +321,7 @@ var dano = 1
 
 func _ready():
 	area_entered.connect(_on_area_entered)
-	$TimerVida.timeout.connect(queue_free)   # a los 2 s se borra sola
+	$TimerVida.timeout.connect(queue_free)   # a los 2 s se elimina automáticamente
 
 func _process(delta):
 	position += direccion * velocidad * delta
@@ -332,9 +332,9 @@ func _on_area_entered(area):
 		queue_free()
 ```
 
-> 🧠 **`area_entered`** es la hermana de `body_entered`: se emite cuando entra **otra `Area2D`**. Como el slime es un `Area2D`, la bala lo detecta con esta.
+> **`area_entered`** es la equivalente de `body_entered`: se emite cuando entra **otra `Area2D`**. Como el slime es un `Area2D`, la bala lo detecta con esta.
 
-> 🧠 **`area is Enemigo`** pregunta por la **clase**, no por el grupo. Da `true` para el slime común **y para cualquier clase hija**, como el élite de la Parte 5. Eso es herencia: un élite **es un** Enemigo.
+> **`area is Enemigo`** pregunta por la **clase**, no por el grupo. Da `true` para el slime común **y para cualquier clase hija**, como el élite de la Parte 5. Eso es herencia: un élite **es un** Enemigo.
 
 ### 4.2 · Disparar desde el jugador
 
@@ -370,13 +370,13 @@ func enemigo_mas_cercano():
 	return mas_cercano
 ```
 
-> 🧠 **Buscar el más cercano** es el `for` de la semana 1 con un `if` adentro: se recorre el grupo `"enemigo"`, y cada vez que aparece uno más cerca que el récord, pasa a ser el nuevo récord. Al terminar el recorrido, el récord es el más cercano.
+> **Buscar el más cercano** es el `for` de la semana 1 con un `if` adentro: se recorre el grupo `"enemigo"`, y cada vez que aparece uno más cerca que el récord, pasa a ser el nuevo récord. Al terminar el recorrido, el récord es el más cercano.
 
-> 🧠 **La dirección de la bala** es la misma resta de vectores del slime, al revés: del jugador al objetivo.
+> **La dirección de la bala** es la misma resta de vectores del slime, al revés: del jugador al objetivo.
 
-✅ **Punto de control 4:** el caballero dispara solo hacia el slime más cercano; cada bala mata un slime y el contador `Slimes:` sube.
+**Punto de control 4:** el caballero dispara automáticamente hacia el slime más cercano; cada bala mata un slime y el contador `Slimes:` sube.
 
-🛟 **Las balas no salen o no matan**
+**Las balas no salen o no matan**
 
 <details>
 <summary>Ver soluciones</summary>
@@ -384,12 +384,12 @@ func enemigo_mas_cercano():
 - **No salen:** `TimerDisparo` sin **Autostart**, o la señal no se conectó. ¿Hay algún slime en pantalla? Sin objetivo, no dispara.
 - **Salen pero atraviesan a los slimes:** falta el `CollisionShape2D` de la bala o del slime.
 - **`Could not find type "Enemigo"`:** falta el `class_name Enemigo` en `enemigo.gd`, o no se guardó.
-- **Las balas quedan dando vueltas:** falta el `TimerVida` o su señal.
+- **Las balas no desaparecen nunca:** falta el `TimerVida` o su señal.
 </details>
 
 ---
 
-## 💜 Parte 5 — El slime élite: herencia + barra de vida
+## Parte 5 — El slime élite: herencia + barra de vida
 
 > **Concepto:** un enemigo más duro que aparece cada tanto. **No se escribe de cero**: la escena **hereda** de `slime.tscn` (los mismos nodos) y el script **hereda** de `Enemigo` (el mismo código). Solo se cambia lo distinto.
 
@@ -400,7 +400,7 @@ func enemigo_mas_cercano():
 3. Seleccionar el **`CollisionShape2D`** → radio ≈ `26`.
 4. Hijo de `SlimeElite` → **`ProgressBar`** → renombrarlo **`BarraVida`**. **Show Percentage** apagado; **Size** ≈ `48 × 6`; **Position** ≈ `-24, -40` (centrada arriba de la cabeza).
 
-   > 🧠 Un `ProgressBar` es un nodo de UI, pero **puede colgar de un nodo 2D**: se dibuja en la posición del padre y **se mueve con él**. Es una barra **en el mundo**, como la de *Dead Space* de la Clase 1.
+   > Un `ProgressBar` es un nodo de UI, pero **puede colgar de un nodo 2D**: se dibuja en la posición del padre y **se mueve con él**. Es una barra **en el mundo**, como la de *Dead Space* de la Clase 1.
 
 ### 5.2 · El script heredado
 
@@ -422,13 +422,13 @@ func recibir_dano(cantidad):
 	$BarraVida.value = vida       # y además actualiza la barra
 
 func morir():
-	print("💜 ¡Cayó un élite!")
+	print("¡Cayó un élite!")
 	super()                       # suma el kill y se borra, como la madre
 ```
 
-> 🧠 **`super()`** es “hacer también lo que hacía la madre”. Sin el `super()` del `_ready()`, el élite **no se conecta** a la señal y nunca le pegaría al jugador. Sin el de `recibir_dano()`, no perdería vida. La hija **agrega**; no borra lo heredado.
+> **`super()`** es “hacer también lo que hacía la madre”. Sin el `super()` del `_ready()`, el élite **no se conecta** a la señal y nunca le pegaría al jugador. Sin el de `recibir_dano()`, no perdería vida. La hija **agrega**; no borra lo heredado.
 
-> 🧠 **Polimorfismo:** la bala hace `area.recibir_dano(dano)` sin saber si le pegó a un slime o a un élite. Cada uno responde a su manera: el común muere, el élite baja su barra.
+> **Polimorfismo:** la bala hace `area.recibir_dano(dano)` sin saber si le pegó a un slime o a un élite. Cada uno responde a su manera: el común muere, el élite baja su barra.
 
 ### 5.3 · Que aparezca cada tanto
 
@@ -450,11 +450,11 @@ func spawnear():
 	get_node("../Enemigos").add_child(slime)
 ```
 
-> 🧠 **`contador % 8`** es el **resto** de dividir por 8: vale `0` en el 8, el 16, el 24… Es la forma clásica de hacer algo “cada N veces”.
+> **`contador % 8`** es el **resto** de dividir por 8: vale `0` en el 8, el 16, el 24… Es la forma clásica de hacer algo “cada N veces”.
 
-✅ **Punto de control 5 (final):** cada 8 slimes aparece uno violeta, más grande y lento, con su barra arriba. Hay que pegarle 5 balas, la barra baja con cada una, y al caer la consola dice `💜 ¡Cayó un élite!` y el contador sube. TP terminado. 🎉
+**Punto de control 5 (final):** cada 8 slimes aparece uno violeta, más grande y lento, con su barra arriba. Hay que pegarle 5 balas, la barra baja con cada una, y al caer la consola dice `¡Cayó un élite!` y el contador sube. TP terminado.
 
-🛟 **Errores comunes con el élite**
+**Errores comunes con el élite**
 
 <details>
 <summary>Ver soluciones</summary>
@@ -468,7 +468,7 @@ func spawnear():
 
 ---
 
-## 📤 Entrega
+## Entrega
 
 Entregar **una** de estas opciones (según indique el/la docente):
 
@@ -477,31 +477,31 @@ Entregar **una** de estas opciones (según indique el/la docente):
 
 **Nombre del archivo:** `tp3-ApellidoNombre.zip`
 
-### ✔️ Checklist de autoevaluación
+### Checklist de autoevaluación
 
 - [ ] El `Jugador` se mueve en 4 direcciones, animado, sin salir de la pantalla, y está en el grupo `"jugador"`.
 - [ ] El **HUD** muestra la vida (barra) y los slimes eliminados (label), y se actualiza.
 - [ ] `enemigo.gd` empieza con **`class_name Enemigo`** y el slime **persigue** al jugador.
 - [ ] El slime le **pide** daño al jugador con `recibir_dano()`; no le toca la vida directamente.
 - [ ] El **spawner** usa `preload`, `instantiate()` y `add_child()`, con un **`Timer`**, desde los **bordes**.
-- [ ] Las **balas** salen solas hacia el enemigo **más cercano** y usan `area_entered`.
+- [ ] Las **balas** salen automáticamente hacia el enemigo **más cercano** y usan `area_entered`.
 - [ ] `slime_elite.tscn` es una **escena heredada** y `slime_elite.gd` hace **`extends Enemigo`** con `super()`.
 - [ ] El élite tiene **barra de vida** sobre la cabeza y aparece **cada 8** enemigos.
 - [ ] Si la vida del jugador llega a 0, la partida **se reinicia**.
 
 ---
 
-## 🌟 Extra (opcional, para los que quieran más)
+## Extra (opcional, para quien quiera más)
 
 - **Un tercer enemigo:** el **veloz**, escena heredada de `slime.tscn` con el slime verde en escala `1.5` y `Modulate` amarillo, script `extends Enemigo` con `velocidad = 150`. Que el spawner lo cree cada 5.
 - **Dificultad creciente:** en `spawnear()`, `$Timer.wait_time = max($Timer.wait_time * 0.98, 0.2)`. Cada slime nuevo sale un poco antes que el anterior.
 - **Parpadeo al recibir daño:** en `recibir_dano()` de `Enemigo`, `modulate = Color.RED` y, con un `Timer` corto o `await get_tree().create_timer(0.1).timeout`, volver a `Color.WHITE`. Como está en la madre, **lo heredan todos**.
-- **Bomba:** con una tecla, `for enemigo in get_tree().get_nodes_in_group("enemigo"): enemigo.recibir_dano(1)`. Los comunes mueren, los élites pierden una barrita: polimorfismo a la vista.
+- **Bomba:** con una tecla, `for enemigo in get_tree().get_nodes_in_group("enemigo"): enemigo.recibir_dano(1)`. Los comunes mueren, los élites pierden una parte de la barra: polimorfismo a la vista.
 - **Más de una bala:** en `disparar()`, tres balas en abanico: la dirección, y la misma rotada con `.rotated(0.2)` y `.rotated(-0.2)`.
 
 ---
 
-## 📚 Recursos
+## Recursos
 
 - Instanciar escenas: **[docs.godotengine.org/es/4.x — Nodes and scene instances](https://docs.godotengine.org/es/4.x/getting_started/step_by_step/nodes_and_scene_instances.html)**
 - Escenas heredadas y POO en Godot: **[Scene organization](https://docs.godotengine.org/es/4.x/tutorials/best_practices/scene_organization.html)**
