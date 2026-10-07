@@ -13,11 +13,28 @@
   .arbol .base { border-color: var(--accent-2); }
   .arbol .linea { width: 2px; height: 18px; background: var(--border); }
   .arbol .hijos { display: flex; gap: 14px; border-top: 2px solid var(--border); padding-top: 18px; position: relative; }
-  .molde { display: grid; grid-template-columns: 0.9fr 40px 1.6fr; gap: 10px; align-items: center; }
-  .molde .flecha { font-size: 30px; color: var(--muted); text-align: center; }
-  .objs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-  .objs .card { padding: 12px 14px; }
-  .objs .card p { font-size: 14px; margin: 2px 0; font-family: "SF Mono", Menlo, Consolas, monospace; }
+  /* Aparición por pasos (ver script al final) */
+  .deck > .slide .paso:not(.visto) { visibility: hidden; }
+  .deck > .slide .paso.visto { animation: pasoIn .35s ease-out; }
+  @keyframes pasoIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  /* Hueco de imagen pendiente */
+  .ph { display: flex; align-items: center; justify-content: center; text-align: center; border: 2px dashed var(--border); border-radius: 10px; color: var(--muted); font-size: 15px; line-height: 1.6; }
+  /* Ficha de objeto: propiedades · silueta · métodos */
+  .ficha { display: grid; grid-template-columns: 1fr 0.8fr 1fr; gap: 16px; align-items: center; }
+  /* Clase y objeto: demo de spawn */
+  .spawn { display: grid; grid-template-columns: 0.72fr 1.6fr; gap: 16px; align-items: stretch; }
+  .spawn-panel { padding: 12px 16px; display: flex; flex-direction: column; }
+  .spawn-barra { display: flex; align-items: center; gap: 14px; }
+  .spawn-btn { font: inherit; font-size: 15px; font-weight: 700; padding: 8px 18px; border-radius: 8px; border: 2px solid var(--accent); background: var(--accent); color: #fff; cursor: pointer; }
+  .spawn-btn:hover { filter: brightness(1.1); }
+  .spawn-escena { flex: 1; min-height: 236px; display: flex; align-items: flex-end; justify-content: space-around; gap: 8px; padding-top: 10px; }
+  .spawn-obj { display: flex; flex-direction: column; align-items: center; animation: pasoIn .35s ease-out; }
+  .spawn-tip { position: relative; background: var(--panel-2); border: 2px solid var(--accent); border-radius: 6px; padding: 6px 10px; margin-bottom: 14px; font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 12.5px; line-height: 1.45; white-space: nowrap; }
+  .spawn-tip b { display: block; color: var(--accent); }
+  .spawn-tip::after { content: ""; position: absolute; left: 50%; top: 100%; transform: translateX(-50%); border: 9px solid transparent; border-top-color: var(--accent); border-bottom-width: 0; }
+  .spawn-slime { width: 24px; height: 24px; margin: 14px 38px 40px; transform: scale(4); image-rendering: pixelated; background: url("../assets/slime_green.png") 0 -24px no-repeat; animation: slimeCamina .6s steps(4) infinite; }
+  .spawn-slime.violeta { background-image: url("../assets/slime_purple.png"); }
+  @keyframes slimeCamina { to { background-position: -96px -24px; } }
 </style>
 </head>
 <body>
@@ -39,36 +56,46 @@
     </div>
   </section>
 
-  <section class="slide" data-chapter="Inicio" data-topic="Objetivos">
-    <div class="slide-eyebrow">Objetivos</div>
-    <h2 class="slide-title">Al finalizar la clase…</h2>
-    <ul class="bullets">
-      <li>Explicar qué es un <b>objeto</b> y en qué se diferencia de una <b>clase</b></li>
-      <li>Describir los <b>cuatro pilares</b> de la POO con ejemplos de juegos</li>
-      <li>Diseñar en papel una <b>clase base</b> y sus <b>clases hijas</b></li>
-      <li>Reconocer la POO que Godot ya viene usando: <code>extends</code>, nodos, escenas</li>
-    </ul>
-    <div class="callout" style="margin-top:22px;">Hoy casi no hay Godot abierto: es una clase para <b>pensar</b>. En la próxima, todo esto se escribe en vivo para crear una horda de slimes.</div>
-  </section>
-
-  <!-- ============ HOOK ============ -->
-  <section class="slide" data-chapter="Hook" data-topic="Hook inicial">
-    <div class="slide-eyebrow">Para empezar</div>
-    <h2 class="slide-title">¿Y si el juego tiene 50 enemigos?</h2>
-    <div class="columns">
-      <div class="card" style="border-top:3px solid var(--red);"><h3 style="color:var(--red);">Copiar y pegar</h3><p>Tres enemigos duplicados a mano, cada uno con su script. Para cambiarles la velocidad hay que <b>tocar tres scripts</b>. Con 50, es imposible.</p></div>
-      <div class="card" style="border-top:3px solid var(--green);"><h3 style="color:var(--green);">Un molde</h3><p>Un solo <b>molde</b> de enemigo, y de allí salen los 50. Se cambia el molde y <b>cambian todos</b>.</p></div>
-    </div>
-    <div class="callout" style="margin-top:22px;">Esa idea de “molde” y “cosas que salen del molde” tiene nombre: <b>Programación Orientada a Objetos</b>. Es cómo está hecho Godot por dentro, y cómo se organizan casi todos los juegos.</div>
-  </section>
-
-  <!-- ============ OBJETOS ============ -->
-  <section class="slide" data-chapter="Objetos" data-topic="El problema que resuelve">
+  <!-- ============ EL PROBLEMA ============ -->
+  <section class="slide" data-chapter="El problema" data-topic="Muchos enemigos">
     <div class="slide-eyebrow">El problema</div>
-    <h2 class="slide-title">Sin objetos: un mar de variables sueltas</h2>
+    <h2 class="slide-title">Una pantalla con cien enemigos</h2>
+    <div class="columns" style="grid-template-columns:1.15fr 0.85fr; align-items:center;">
+      <div class="ph" style="height:330px;">IMAGEN PENDIENTE<br>Un <i>tower defense</i> o un <i>shooter</i><br>con muchos enemigos en pantalla</div>
+      <div>
+        <ul class="bullets" style="font-size:18px;">
+          <li>Cada enemigo tiene <b>su propia</b> vida, su posición y su velocidad</li>
+          <li>Todos <b>se mueven</b> y todos pueden <b>recibir daño</b></li>
+        </ul>
+        <div class="callout" style="margin-top:16px;">¿Cómo se programa esto <b>sin duplicar código</b>, es decir, sin escribir muchas veces las mismas líneas con pequeños ajustes?</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="El problema" data-topic="El caso">
+    <div class="slide-eyebrow">Un caso concreto</div>
+    <h2 class="slide-title">El caso: un RPG con tres tipos de enemigo</h2>
+    <div class="columns" style="align-items:center;">
+      <div>
+        <p class="subtitle" style="font-size:18px;">El diseño del juego pide un <b>goblin</b>, un <b>orco</b> y un <b>dragón</b>. Cada uno tiene vida y velocidad, se mueve y recibe daño.</p>
+        <div class="callout" style="margin-top:14px;"><b>Primer intento:</b> una variable para cada dato de cada enemigo, y una función de daño para cada uno.</div>
+      </div>
+      <table class="tbl" style="font-size:17px;">
+        <thead><tr><th>Enemigo</th><th>Vida</th><th>Velocidad</th></tr></thead>
+        <tbody>
+          <tr><td><b>Goblin</b></td><td>30</td><td>80</td></tr>
+          <tr><td><b>Orco</b></td><td>120</td><td>50</td></tr>
+          <tr><td><b>Dragón</b></td><td>500</td><td>40</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="El problema" data-topic="Variables sueltas">
+    <div class="slide-eyebrow">Sin objetos</div>
+    <h2 class="slide-title">Primer intento: variables sueltas</h2>
     <div class="columns">
       <div>
-        <p class="subtitle" style="font-size:18px;">Un RPG con tres tipos de enemigo, escrito sin organizar:</p>
         <pre class="code" style="font-size:13px;"><span class="k">var</span> vida_goblin = <span class="n">30</span>
 <span class="k">var</span> velocidad_goblin = <span class="n">80</span>
 <span class="k">var</span> vida_orco = <span class="n">120</span>
@@ -78,89 +105,152 @@
 
 <span class="k">func</span> <span class="t">danar_goblin</span>(cantidad): ...
 <span class="k">func</span> <span class="t">danar_orco</span>(cantidad): ...
-<span class="k">func</span> <span class="t">danar_dragon</span>(cantidad): ...
-<span class="c"># ¿y si hay DOS goblins?</span></pre>
+<span class="k">func</span> <span class="t">danar_dragon</span>(cantidad): ...</pre>
       </div>
       <div style="align-self:center;">
         <div class="card">
-          <h3>Tres problemas</h3>
+          <h3>Los problemas aparecen enseguida</h3>
           <ul>
-            <li><b>Se repite</b>: la misma lógica de daño, tres veces</li>
-            <li><b>No escala</b>: un segundo goblin necesita variables nuevas</li>
-            <li><b>Se mezcla</b>: los datos del dragón están al lado de los del goblin, y nada impide confundirlos</li>
+            <li class="paso"><b>No escala:</b> el diseño pide un segundo goblin y hacen falta <code>vida_goblin_2</code>, <code>velocidad_goblin_2</code> y otra función</li>
+            <li class="paso"><b>Se duplica:</b> la misma lógica de daño queda escrita tres veces. Un arreglo hay que repetirlo tres veces</li>
+            <li class="paso"><b>Se mezcla:</b> nada indica qué variable pertenece a qué enemigo. Con cien enemigos son doscientas variables</li>
           </ul>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="slide" data-chapter="Objetos" data-topic="Qué es un objeto">
-    <div class="slide-eyebrow">La idea central</div>
-    <h2 class="slide-title">Un objeto: datos + comportamiento, juntos</h2>
-    <div class="columns">
+  <section class="slide" data-chapter="El problema" data-topic="La solución: un plano">
+    <div class="slide-eyebrow">La solución</div>
+    <h2 class="slide-title">Escribir un plano, no cien enemigos</h2>
+    <div class="columns" style="align-items:center;">
       <div>
-        <p class="subtitle" style="font-size:18px;">Un <b>objeto</b> es una “cosa” del juego que guarda <b>lo que sabe</b> y <b>lo que puede hacer</b>, en un mismo lugar.</p>
-        <table class="tbl" style="font-size:16px;">
-          <thead><tr><th>Parte</th><th>Nombre técnico</th><th>Ejemplo: un goblin</th></tr></thead>
-          <tbody>
-            <tr><td>Lo que <b>sabe</b></td><td>Propiedades (atributos)</td><td><code>vida = 30</code>, <code>velocidad = 80</code></td></tr>
-            <tr><td>Lo que <b>puede hacer</b></td><td>Métodos</td><td><code>moverse()</code>, <code>atacar()</code>, <code>recibir_dano()</code></td></tr>
-          </tbody>
-        </table>
+        <p class="subtitle" style="font-size:18px;">Un arquitecto no dibuja cada casa de un barrio: dibuja <b>un plano</b>, y con ese plano se construyen todas. El plano dice <b>qué tiene</b> una casa; cada casa construida es distinta de las demás.</p>
       </div>
-      <div class="card" style="align-self:center;">
-        <h3>Ya existen en el curso</h3>
-        <p>El jugador de la semana pasada <b>es un objeto</b>: tiene <code>puntos</code> y <code>velocity</code> (datos), y sabe <code>sumar_punto()</code> y <code>move_and_slide()</code> (métodos).</p>
-        <p style="margin-top:8px;">La moneda también: le preguntaba al jugador <code>is_in_group()</code> y le pedía <code>sumar_punto()</code>. <b>Objetos hablando entre sí.</b></p>
-      </div>
+      <table class="tbl" style="font-size:16px;">
+        <thead><tr><th>En la construcción</th><th>En el juego</th></tr></thead>
+        <tbody>
+          <tr><td>El <b>plano</b> de la casa</td><td>La <b>clase</b> <code>Goomba</code></td></tr>
+          <tr><td>Cada <b>casa</b> construida</td><td>Cada <b>objeto</b>: un Goomba del nivel</td></tr>
+          <tr><td>Otro color, otros dueños</td><td>Otra posición, otra vida</td></tr>
+        </tbody>
+      </table>
     </div>
+    <div class="callout" style="margin-top:18px;">En programación, el plano se llama <b>clase</b> y cada cosa construida con él, <b>objeto</b>. Se escribe <b>un</b> plano de Goomba; en el nivel hay cuarenta Goombas. Esta forma de organizar el código es la <b>Programación Orientada a Objetos</b>.</div>
   </section>
 
-  <section class="slide" data-chapter="Objetos" data-topic="Clase vs objeto">
-    <div class="slide-eyebrow">Molde y copias</div>
-    <h2 class="slide-title">Clase = el molde · Objeto = lo que sale del molde</h2>
-    <div class="molde">
+  <!-- ============ OBJETOS ============ -->
+  <section class="slide" data-chapter="Objetos" data-topic="Qué es un objeto">
+    <div class="slide-eyebrow">La idea central</div>
+    <h2 class="slide-title">Un objeto: una abstracción de un elemento del juego</h2>
+    <p class="subtitle" style="font-size:18px; margin-bottom:12px;">Un <b>objeto</b> es la representación, dentro del programa, de un elemento del juego. Reúne en un solo lugar su <b>estado</b> (lo que sabe) y su <b>comportamiento</b> (lo que puede hacer).</p>
+    <div class="ficha">
       <div class="card" style="border-top:3px solid var(--accent-2);">
-        <h3>Clase <code>Slime</code></h3>
-        <p style="font-size:15px;">Dice <b>qué</b> tiene todo slime, pero no es ningún slime en particular.</p>
-        <pre class="code" style="font-size:12.5px; margin:8px 0 0;">vida
-velocidad
-color
-perseguir()
+        <h3>Lo que sabe · propiedades</h3>
+        <ul>
+          <li><code>posicion</code></li>
+          <li><code>vidas</code></li>
+          <li><code>monedas</code></li>
+          <li><code>tamano</code></li>
+        </ul>
+      </div>
+      <div class="ph" style="height:250px;">IMAGEN PENDIENTE<br>Mario de frente,<br>en silueta</div>
+      <div class="card" style="border-top:3px solid var(--green);">
+        <h3>Lo que puede hacer · métodos</h3>
+        <ul>
+          <li><code>caminar()</code></li>
+          <li><code>saltar()</code></li>
+          <li><code>agacharse()</code></li>
+          <li><code>recibir_dano()</code></li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:14px;">Con esos datos y esas acciones, el juego crea un Mario concreto: una <b>instancia</b>.</div>
+  </section>
+
+  <section class="slide" data-chapter="Objetos" data-topic="Objetos que ya existen">
+    <div class="slide-eyebrow">Para discutir</div>
+    <h2 class="slide-title">¿Qué objetos ya existen en el curso?</h2>
+    <p class="subtitle" style="font-size:18px;">De lo construido en las semanas 1 y 2: ¿qué elementos son <b>objetos</b>? ¿Qué <b>propiedades</b> y qué <b>comportamientos</b> tiene cada uno?</p>
+    <div class="columns" style="margin-top:8px;">
+      <div class="card paso" style="border-top:3px solid var(--accent-2);">
+        <h3>El jugador</h3>
+        <p><b>Sabe:</b> <code>puntos</code>, <code>velocity</code></p>
+        <p style="margin-top:6px;"><b>Puede:</b> <code>sumar_punto()</code>, <code>move_and_slide()</code></p>
+      </div>
+      <div class="card paso" style="border-top:3px solid var(--green);">
+        <h3>La moneda</h3>
+        <p><b>Sabe:</b> su posición y su forma de colisión</p>
+        <p style="margin-top:6px;"><b>Puede:</b> preguntar <code>is_in_group()</code>, pedir <code>sumar_punto()</code> y eliminarse</p>
+      </div>
+    </div>
+    <div class="callout paso" style="margin-top:18px;">La moneda le <b>preguntaba</b> algo al jugador y después le <b>pedía</b> que sumara un punto. Eso ya era Programación Orientada a Objetos: <b>objetos que se piden cosas entre sí</b>.</div>
+  </section>
+
+  <section class="slide" data-chapter="Objetos" data-topic="Clase y objeto">
+    <div class="slide-eyebrow">Plano e instancias</div>
+    <h2 class="slide-title">Clase: el plano · Objeto: lo que se construye con él</h2>
+    <div class="spawn">
+      <div>
+        <div class="card" style="border-top:3px solid var(--accent-2); padding:12px 16px;">
+          <h3>Clase <code>Slime</code> · propiedades</h3>
+          <pre class="code" style="font-size:13px; margin:6px 0 0;">vida: <span class="t">int</span>
+velocidad: <span class="t">float</span>
+color: <span class="t">Color</span></pre>
+        </div>
+        <div class="card" style="border-top:3px solid var(--green); padding:12px 16px; margin-top:10px;">
+          <h3>Métodos · lo que sabe hacer</h3>
+          <pre class="code" style="font-size:13px; margin:6px 0 0;">perseguir()
 recibir_dano()</pre>
+        </div>
       </div>
-      <div class="flecha">→</div>
-      <div class="objs">
-        <div class="card"><h3 style="font-size:15px;">slime 1</h3><p>vida = 3</p><p>velocidad = 60</p><p>color = verde</p></div>
-        <div class="card"><h3 style="font-size:15px;">slime 2</h3><p>vida = 1</p><p>velocidad = 60</p><p>color = verde</p></div>
-        <div class="card"><h3 style="font-size:15px;">slime 3</h3><p>vida = 10</p><p>velocidad = 35</p><p>color = violeta</p></div>
+      <div class="card spawn-panel">
+        <div class="spawn-barra">
+          <button type="button" class="spawn-btn" id="spawn-btn">Spawnear</button>
+          <span class="small-note" id="spawn-cuenta">0 objetos creados con el mismo plano</span>
+        </div>
+        <div class="spawn-escena" id="spawn-escena"></div>
       </div>
     </div>
-    <div class="columns" style="margin-top:16px;">
-      <div class="callout">Como un <b>molde de galletas</b>: el molde es uno solo; cada galleta es otra, y a una se le puede poner chips y a otra no.</div>
-      <div class="callout">Cada objeto tiene <b>sus propios valores</b>: pegarle al slime 2 le baja la vida <b>solo a él</b>. A un objeto también se le dice <b>instancia</b>.</div>
-    </div>
+    <div class="callout" style="margin-top:12px;">Cada objeto tiene <b>sus propios valores</b>: pegarle al slime 2 le baja la vida <b>solo a él</b>. A un objeto también se le dice <b>instancia</b>.</div>
+  </section>
+
+  <section class="slide" data-chapter="Objetos" data-topic="Clase, escena, instancia">
+    <div class="slide-eyebrow">Lo mismo, en Godot</div>
+    <h2 class="slide-title">En Godot: ¿qué es la clase y qué es el objeto?</h2>
+    <table class="tbl">
+      <thead><tr><th>En POO</th><th>En Godot</th><th>Ejemplo</th></tr></thead>
+      <tbody>
+        <tr><td><b>Clase</b> (el plano)</td><td>Un script <code>.gd</code></td><td><code>enemigo.gd</code>: vida, <code>recibir_dano()</code></td></tr>
+        <tr><td><b>Molde completo</b></td><td>Una escena <code>.tscn</code>: nodos + script</td><td><code>slime.tscn</code>: sprite, colisión y <code>enemigo.gd</code></td></tr>
+        <tr><td><b>Objeto</b> (instancia)</td><td>Cada copia de la escena dentro del juego</td><td>los 50 slimes que persiguen al jugador</td></tr>
+      </tbody>
+    </table>
+    <div class="callout" style="margin-top:18px;">La semana pasada se hizo a mano: <code>moneda.tscn</code> era el molde, y cada <span class="kbd">Ctrl</span>+<span class="kbd">D</span> creaba un objeto nuevo. En la próxima clase los objetos se crean <b>por código</b>, mientras el juego corre: eso es <b>instanciar</b>.</div>
   </section>
 
   <section class="slide" data-chapter="Objetos" data-topic="Clases en un juego real">
     <div class="slide-eyebrow">Para discutir</div>
     <h2 class="slide-title">¿Qué clases tiene este juego?</h2>
-    <div class="columns" style="grid-template-columns:1fr 1.1fr;">
+    <div class="columns" style="grid-template-columns:1.1fr 0.9fr; align-items:start;">
+      <figure style="margin:0;">
+        <img src="assets/vampire-survivors.webp" alt="Captura de Vampire Survivors: el personaje en el centro, rodeado de cientos de enemigos, proyectiles y gemas" style="display:block; width:100%; height:auto; border-radius:8px; image-rendering:pixelated;" />
+        <figcaption class="imgcaption"><i>Vampire Survivors</i> (poncle, 2022). Un <i>survivors</i>: el personaje ataca automáticamente y la meta es resistir a la horda.</figcaption>
+      </figure>
       <div>
-        <div class="ph" style="height:260px; display:flex; align-items:center; justify-content:center; text-align:center; border:2px dashed var(--border); border-radius:10px; color:var(--muted);">IMAGEN PENDIENTE<br>Captura de un <i>survivors</i> (Vampire Survivors o Brotato)<br>con muchos enemigos, balas y gemas en pantalla</div>
+        <table class="tbl paso" style="font-size:15px;">
+          <thead><tr><th>Clase</th><th>Sabe…</th><th>Puede…</th></tr></thead>
+          <tbody>
+            <tr><td><b>Jugador</b></td><td>vida, velocidad</td><td>moverse, recibir daño</td></tr>
+            <tr><td><b>Enemigo</b></td><td>vida, velocidad, daño</td><td>perseguir, morir</td></tr>
+            <tr><td><b>Proyectil</b></td><td>dirección, velocidad</td><td>avanzar, golpear</td></tr>
+            <tr><td><b>Gema</b></td><td>experiencia</td><td>ser recogida</td></tr>
+            <tr><td><b>Spawner</b></td><td>cada cuánto, qué crea</td><td>crear enemigos</td></tr>
+          </tbody>
+        </table>
+        <div class="callout paso" style="margin-top:12px;">Hay <b>cinco clases</b> y, en pantalla, <b>cientos de objetos</b>. Esa es la ventaja: se programa cinco veces, se juega con cientos.</div>
       </div>
-      <table class="tbl" style="font-size:15px; align-self:start;">
-        <thead><tr><th>Clase</th><th>Sabe…</th><th>Puede…</th></tr></thead>
-        <tbody>
-          <tr><td><b>Jugador</b></td><td>vida, velocidad</td><td>moverse, recibir daño</td></tr>
-          <tr><td><b>Enemigo</b></td><td>vida, velocidad, daño</td><td>perseguir, morir</td></tr>
-          <tr><td><b>Bala</b></td><td>dirección, velocidad</td><td>avanzar, golpear</td></tr>
-          <tr><td><b>Gema</b></td><td>experiencia</td><td>ser recogida</td></tr>
-          <tr><td><b>Spawner</b></td><td>cada cuánto, qué crea</td><td>crear enemigos</td></tr>
-        </tbody>
-      </table>
     </div>
-    <div class="callout" style="margin-top:14px;">Hay <b>cinco clases</b> y, en pantalla, <b>cientos de objetos</b>. Esa es la ventaja: se programa cinco veces, se juega con cientos.</div>
   </section>
 
   <!-- ============ PILARES ============ -->
@@ -168,16 +258,54 @@ recibir_dano()</pre>
     <div class="slide-eyebrow">El mapa de la clase</div>
     <h2 class="slide-title">Los cuatro pilares de la POO</h2>
     <div class="columns four" style="margin-top:6px;">
-      <div class="card" style="border-top:3px solid var(--accent);"><h3>Encapsulamiento</h3><p>Cada objeto cuida <b>sus propios datos</b>. Los demás le piden cosas; no se los modifican desde afuera.</p></div>
-      <div class="card" style="border-top:3px solid var(--accent-2);"><h3>Herencia</h3><p>Una clase <b>arranca con todo</b> lo de otra y le suma lo suyo. Slime <b>es un</b> Enemigo.</p></div>
-      <div class="card" style="border-top:3px solid var(--green);"><h3>Polimorfismo</h3><p>El <b>mismo pedido</b> a objetos distintos da <b>respuestas distintas</b>. Cada enemigo muere a su manera.</p></div>
-      <div class="card" style="border-top:3px solid var(--yellow);"><h3>Abstracción</h3><p>Se usa un objeto <b>sin saber cómo funciona</b> por dentro. Como un control remoto.</p></div>
+      <div class="card paso" style="border-top:3px solid var(--yellow);"><h3>1 · Abstracción</h3><p>De cada elemento del juego se conserva <b>solo lo que el juego necesita</b>. El resto queda afuera.</p></div>
+      <div class="card paso" style="border-top:3px solid var(--accent);"><h3>2 · Encapsulamiento</h3><p>Cada objeto cuida <b>sus propios datos</b>. Los demás le piden cosas, sin saber cómo funciona por dentro.</p></div>
+      <div class="card paso" style="border-top:3px solid var(--accent-2);"><h3>3 · Herencia</h3><p>Una clase <b>arranca con todo</b> lo de otra y le suma lo suyo. Slime <b>es un</b> Enemigo.</p></div>
+      <div class="card paso" style="border-top:3px solid var(--green);"><h3>4 · Polimorfismo</h3><p>El <b>mismo pedido</b> a objetos distintos da <b>respuestas distintas</b>. Cada enemigo responde a su manera.</p></div>
     </div>
-    <div class="callout" style="margin-top:20px;">Los dos primeros son los que más se van a <b>escribir</b> en el curso. Los otros dos aparecen naturalmente cuando los primeros están bien hechos.</div>
+    <div class="callout paso" style="margin-top:20px;">La abstracción es el punto de partida: decidir <b>qué clases hay</b> y qué tiene cada una. Encapsulamiento y herencia son los que más se van a <b>escribir</b> en el curso. El polimorfismo aparece cuando los otros tres están bien hechos.</div>
   </section>
 
-  <section class="slide" data-chapter="Pilares" data-topic="Encapsulamiento">
-    <div class="slide-eyebrow">Pilar 1 · Encapsulamiento</div>
+  <section class="slide" data-chapter="Pilares" data-topic="Abstracción">
+    <div class="slide-eyebrow">Pilar 1 · Abstracción</div>
+    <h2 class="slide-title">Abstraer: quedarse con lo que el juego necesita</h2>
+    <p class="subtitle" style="font-size:18px;">Un fontanero real tiene edad, peso, familia y comida preferida. Al juego no le importa nada de eso. De todo lo que Mario <b>podría</b> ser, el juego conserva <b>lo que usa</b>.</p>
+    <div class="columns" style="margin-top:6px;">
+      <div class="card" style="border-top:3px solid var(--green);">
+        <h3 style="color:var(--green);">Se conserva</h3>
+        <p>Posición, vidas, tamaño.</p>
+        <p style="margin-top:6px;">Caminar, saltar, agacharse, recibir daño.</p>
+      </div>
+      <div class="card" style="border-top:3px solid var(--red);">
+        <h3 style="color:var(--red);">Se descarta</h3>
+        <p>Edad, peso, familia.</p>
+        <p style="margin-top:6px;">Qué desayunó, dónde vive, cuánto gana.</p>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:16px;">Diseñar una clase es <b>decidir qué entra y qué queda afuera</b>. El mismo personaje se abstrae distinto en otro juego: en <i>Mario Kart</i> importan la velocidad y el peso, y no importa saltar.</div>
+  </section>
+
+  <section class="slide" data-chapter="Pilares" data-topic="Encapsulamiento: el caso">
+    <div class="slide-eyebrow">Pilar 2 · Encapsulamiento</div>
+    <h2 class="slide-title">Tres armas, un solo pedido</h2>
+    <div class="columns" style="grid-template-columns:1.1fr 0.9fr; align-items:start;">
+      <figure style="margin:0;">
+        <img src="assets/zelda-links-awakening.webp" alt="Captura de The Legend of Zelda: Link's Awakening: Link arroja una bomba hacia un enemigo en el desierto" style="display:block; width:100%; height:auto; border-radius:8px;" />
+        <figcaption class="imgcaption"><i>The Legend of Zelda: Link's Awakening</i> (Nintendo, 2019). Arriba a la derecha, las flechas y las bombas disponibles.</figcaption>
+      </figure>
+      <div>
+        <p class="subtitle" style="font-size:17px;">Link tiene tres formas de atacar: <b>espada</b>, <b>flecha</b> y <b>bomba</b>. Las tres hacen lo mismo: le piden al enemigo <code>recibir_dano(cantidad)</code>.</p>
+        <ul class="bullets" style="font-size:16px;">
+          <li class="paso">Ninguna conoce la vida del enemigo ni decide si muere</li>
+          <li class="paso">El enemigo resta, revisa si llegó a cero y resuelve qué pasa: parpadea, suelta un objeto, desaparece</li>
+        </ul>
+        <div class="callout paso" style="margin-top:12px;">Si mañana ese enemigo tiene <b>escudo</b>, se cambia <b>una sola función</b> y las tres armas quedan iguales.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Pilares" data-topic="Encapsulamiento: el código">
+    <div class="slide-eyebrow">Encapsulamiento · en código</div>
     <h2 class="slide-title">Cada objeto cuida sus datos</h2>
     <div class="columns">
       <div>
@@ -196,15 +324,22 @@ enemigo.recibir_dano(<span class="n">10</span>)
         </div>
       </div>
       <div style="align-self:center;">
-        <p class="subtitle" style="font-size:18px;">La vida es <b>asunto del enemigo</b>. Si todos le piden <code>recibir_dano()</code>, las reglas (escudo, muerte, sonido, parpadeo) viven <b>en un solo lugar</b>.</p>
-        <div class="callout">En <i>Zelda</i>, la espada, una flecha y una bomba “le piden” daño al mismo Bokoblin. Solo el Bokoblin sabe cuánta vida le queda.</div>
-        <p class="small-note" style="margin-top:10px;">En GDScript, por convención, lo que empieza con <code>_</code> (<code>_vida</code>) significa “esto es interno, no se toca desde afuera”.</p>
+        <p class="subtitle" style="font-size:17px;">La vida es <b>asunto del enemigo</b>. Si todos le piden <code>recibir_dano()</code>, las reglas (escudo, muerte, sonido, parpadeo) viven <b>en un solo lugar</b>.</p>
+        <div class="callout">La otra cara: un objeto se <b>usa sin saber cómo funciona por dentro</b>, como un control remoto. Ofrece <b>botones claros</b> (sus métodos) y esconde el resto.</div>
+        <table class="tbl" style="font-size:14.5px; margin-top:12px;">
+          <thead><tr><th>Se usó así…</th><th>…sin saber que por dentro</th></tr></thead>
+          <tbody>
+            <tr><td><code>move_and_slide()</code></td><td>calcula choques, pendientes y deslizamientos</td></tr>
+            <tr><td><code>queue_free()</code></td><td>espera al final del frame y libera la memoria</td></tr>
+            <tr><td><code>jugador.sumar_punto()</code></td><td>la moneda no sabe si suma, suena o festeja</td></tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </section>
 
   <section class="slide" data-chapter="Pilares" data-topic="Herencia">
-    <div class="slide-eyebrow">Pilar 2 · Herencia</div>
+    <div class="slide-eyebrow">Pilar 3 · Herencia</div>
     <h2 class="slide-title">“Es un”: la clase hija arranca con todo lo de la madre</h2>
     <div class="columns" style="grid-template-columns:1fr 1fr; align-items:center;">
       <div class="arbol">
@@ -292,8 +427,28 @@ enemigo.recibir_dano(<span class="n">10</span>)
     </div>
   </section>
 
-  <section class="slide" data-chapter="Pilares" data-topic="Polimorfismo">
-    <div class="slide-eyebrow">Pilar 3 · Polimorfismo</div>
+  <section class="slide" data-chapter="Pilares" data-topic="Polimorfismo: el caso">
+    <div class="slide-eyebrow">Pilar 4 · Polimorfismo</div>
+    <h2 class="slide-title">La misma acción, resultados distintos</h2>
+    <div class="columns" style="grid-template-columns:1fr 1fr; align-items:center;">
+      <div class="ph" style="height:300px;">IMAGEN PENDIENTE<br><i>Super Mario Bros.</i>: Mario cerca de<br>un Goomba, un Koopa y un bloque</div>
+      <div>
+        <p class="subtitle" style="font-size:18px;">Mario hace siempre lo mismo: <b>pisar</b>. Lo que cambia es <b>quién recibe</b> el pisotón.</p>
+        <table class="tbl" style="font-size:16px;">
+          <thead><tr><th>Recibe el pisotón</th><th>Responde</th></tr></thead>
+          <tbody>
+            <tr class="paso"><td><b>Goomba</b></td><td>se aplasta y desaparece</td></tr>
+            <tr class="paso"><td><b>Koopa</b></td><td>se mete en el caparazón</td></tr>
+            <tr class="paso"><td><b>Bloque</b> (golpeado desde abajo)</td><td>se rompe o suelta una moneda</td></tr>
+          </tbody>
+        </table>
+        <div class="callout paso" style="margin-top:12px;">Mario <b>no pregunta</b> qué tiene delante. Cada objeto sabe cómo responder.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Pilares" data-topic="Polimorfismo: el código">
+    <div class="slide-eyebrow">Polimorfismo · en código</div>
     <h2 class="slide-title">El mismo pedido, respuestas distintas</h2>
     <div class="columns">
       <div class="code-wrap">
@@ -309,37 +464,13 @@ enemigo.recibir_dano(<span class="n">10</span>)
 <span class="c">#   Jefe       → se enoja y acelera</span></pre>
       </div>
       <div style="align-self:center;">
-        <p class="subtitle" style="font-size:18px;">Quien pide <b>no necesita saber</b> con qué tipo exacto habla. Pide <code>recibir_dano()</code> y cada objeto hace lo suyo.</p>
-        <div class="callout">En <i>Mario</i>, “saltarle encima” aplasta a un Goomba, mete en el caparazón a un Koopa y lastima a Mario si es un Spiny. Un solo pedido, tres respuestas.</div>
-        <p class="small-note" style="margin-top:10px;">Sin polimorfismo, la bala tendría un <code>if</code> por cada tipo de enemigo, y habría que tocarla cada vez que se agrega uno nuevo.</p>
+        <p class="subtitle" style="font-size:18px;">Es el pisotón de Mario, en código: la bala pide siempre <code>recibir_dano()</code> y cada objeto hace lo suyo. Quien pide <b>no necesita saber</b> con qué tipo exacto habla.</p>
+        <div class="callout">Sin polimorfismo, la bala tendría un <code>if</code> por cada tipo de enemigo, y habría que modificarla cada vez que se agrega uno nuevo.</div>
+        <p class="small-note" style="margin-top:10px;">Funciona gracias a la herencia: todas las clases hijas de <code>Enemigo</code> tienen <code>recibir_dano()</code>.</p>
       </div>
     </div>
   </section>
 
-  <section class="slide" data-chapter="Pilares" data-topic="Abstracción">
-    <div class="slide-eyebrow">Pilar 4 · Abstracción</div>
-    <h2 class="slide-title">Usar sin saber cómo funciona por dentro</h2>
-    <div class="columns">
-      <div>
-        <p class="subtitle" style="font-size:18px;">Un control remoto tiene “subir volumen”. Nadie necesita saber de circuitos para usarlo. Un buen objeto ofrece <b>botones claros</b> y esconde el resto.</p>
-        <table class="tbl" style="font-size:15.5px;">
-          <thead><tr><th>Se usó así…</th><th>…sin saber que por dentro</th></tr></thead>
-          <tbody>
-            <tr><td><code>move_and_slide()</code></td><td>calcula choques, pendientes y deslizamientos</td></tr>
-            <tr><td><code>queue_free()</code></td><td>espera al final del frame y libera la memoria</td></tr>
-            <tr><td><code>jugador.sumar_punto()</code></td><td>la moneda no sabe si suma, suena o festeja</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="card" style="align-self:center;">
-        <h3>Para diseñar clases</h3>
-        <p>Pensar primero en los <b>botones</b>: ¿qué le van a pedir los demás a este objeto?</p>
-        <p style="margin-top:8px;">Un enemigo: <code>recibir_dano()</code>, <code>morir()</code>. Lo de adentro (cómo persigue, cómo parpadea) puede cambiar mil veces sin que la bala se entere.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ POO EN GODOT ============ -->
   <section class="slide" data-chapter="POO en Godot" data-topic="Es un / tiene un">
     <div class="slide-eyebrow">POO al estilo Godot</div>
     <h2 class="slide-title">“Es un” se hereda · “tiene un” se agrega como nodo</h2>
@@ -363,27 +494,32 @@ Enemigo    <span class="k">extends</span> Area2D</pre>
     <div class="callout" style="margin-top:16px;">Es la analogía de <b>Lego</b> de la Clase 1, con nombre técnico. Regla práctica: si se puede sacar y poner como una pieza (una barra de vida, un sonido), va como <b>nodo</b>. Si define qué es la cosa, va con <b><code>extends</code></b>.</div>
   </section>
 
-  <section class="slide" data-chapter="POO en Godot" data-topic="Clase, escena, instancia">
-    <div class="slide-eyebrow">POO al estilo Godot</div>
-    <h2 class="slide-title">En Godot: ¿qué es la clase y qué es el objeto?</h2>
-    <table class="tbl">
-      <thead><tr><th>En POO</th><th>En Godot</th><th>Ejemplo</th></tr></thead>
-      <tbody>
-        <tr><td><b>Clase</b> (el comportamiento)</td><td>Un script <code>.gd</code></td><td><code>enemigo.gd</code>: vida, <code>recibir_dano()</code></td></tr>
-        <tr><td><b>Molde completo</b></td><td>Una escena <code>.tscn</code>: nodos + script</td><td><code>slime.tscn</code>: sprite, colisión y <code>enemigo.gd</code></td></tr>
-        <tr><td><b>Objeto</b> (instancia)</td><td>Cada copia de la escena dentro del juego</td><td>los 50 slimes que persiguen al jugador</td></tr>
-      </tbody>
-    </table>
-    <div class="callout" style="margin-top:18px;">La semana pasada se hizo a mano: <code>moneda.tscn</code> era el molde, y cada <span class="kbd">Ctrl</span>+<span class="kbd">D</span> creaba un objeto nuevo. En la próxima clase los objetos se crean <b>por código</b>, mientras el juego corre: eso es <b>instanciar</b>.</div>
+  <!-- ============ EJERCICIO ============ -->
+  <section class="slide" data-chapter="Ejercicio" data-topic="El juego del curso">
+    <div class="slide-eyebrow">El juego del curso</div>
+    <h2 class="slide-title">Un <i>survivors</i>: qué hay en el juego</h2>
+    <div class="columns" style="grid-template-columns:1.1fr 0.9fr; align-items:center;">
+      <ul class="bullets" style="font-size:17px;">
+        <li class="paso">Un <b>caballero</b> que se mueve por una arena</li>
+        <li class="paso"><b>Slimes</b> que aparecen por los bordes y lo persiguen</li>
+        <li class="paso">Un <b>arma</b> que dispara automáticamente al slime más cercano</li>
+        <li class="paso"><b>Balas</b> que avanzan y golpean</li>
+        <li class="paso">Cada tanto, un <b>slime élite</b>: más lento, más resistente, con barra de vida</li>
+        <li class="paso"><b>Algo</b> que crea los slimes cada cierto tiempo</li>
+      </ul>
+      <figure style="margin:0;">
+        <img src="assets/vampire-survivors.webp" alt="Captura de Vampire Survivors como referencia del género" style="display:block; width:100%; height:auto; border-radius:8px; image-rendering:pixelated;" />
+        <figcaption class="imgcaption">La referencia del género. El juego del curso es una versión reducida, que se construye desde la próxima clase.</figcaption>
+      </figure>
+    </div>
   </section>
 
-  <!-- ============ EJERCICIO ============ -->
   <section class="slide" data-chapter="Ejercicio" data-topic="Diseño en papel">
-    <div class="slide-eyebrow">Ejercicio en grupos · 15 min</div>
+    <div class="slide-eyebrow">Ejercicio en grupos · lápiz y papel · 15 min</div>
     <h2 class="slide-title">Diseñar las clases del juego del curso</h2>
     <div class="columns" style="grid-template-columns:1.1fr 0.9fr;">
       <div>
-        <p class="subtitle" style="font-size:17px;">El juego que se arma desde la semana que viene: un caballero en una arena, <b>slimes</b> que aparecen por los bordes y lo persiguen, un arma que <b>dispara automáticamente</b>, y cada tanto un <b>slime élite</b> más duro, con barra de vida.</p>
+        <p class="subtitle" style="font-size:17px;">Con los elementos del juego recién presentados (caballero, slimes, arma, balas, élite y lo que crea los slimes), diseñar en papel:</p>
         <ol class="steps" style="font-size:15px;">
           <li>¿Qué <b>clases</b> hacen falta?</li>
           <li>Para cada una: ¿qué <b>sabe</b>? ¿qué <b>puede hacer</b>?</li>
@@ -432,15 +568,15 @@ Enemigo    <span class="k">extends</span> Area2D</pre>
   <section class="slide" data-chapter="Cierre" data-topic="Resumen">
     <div class="slide-eyebrow">Cierre</div>
     <h2 class="slide-title">Resumen de la clase</h2>
-    <table class="tbl">
+    <table class="tbl" style="font-size:16px;">
       <thead><tr><th>Concepto</th><th>En una frase</th></tr></thead>
       <tbody>
-        <tr><td><b>Objeto</b></td><td>Datos + comportamiento, juntos, en una “cosa” del juego</td></tr>
-        <tr><td><b>Clase</b></td><td>El molde; cada objeto es una instancia con sus propios valores</td></tr>
-        <tr><td><b>Encapsulamiento</b></td><td>A un objeto se le pide; sus datos no se modifican desde afuera</td></tr>
+        <tr><td><b>Objeto</b></td><td>La representación de un elemento del juego: estado + comportamiento</td></tr>
+        <tr><td><b>Clase</b></td><td>El plano; cada objeto es una instancia con sus propios valores</td></tr>
+        <tr><td><b>Abstracción</b></td><td>Conservar de cada elemento solo lo que el juego necesita</td></tr>
+        <tr><td><b>Encapsulamiento</b></td><td>A un objeto se le pide; se usa sin saber cómo funciona por dentro</td></tr>
         <tr><td><b>Herencia</b></td><td>“Es un”: la hija arranca con todo lo de la madre (<code>extends</code>)</td></tr>
         <tr><td><b>Polimorfismo</b></td><td>El mismo pedido, respuestas distintas</td></tr>
-        <tr><td><b>Abstracción</b></td><td>Botones claros, lo de adentro escondido</td></tr>
       </tbody>
     </table>
     <div class="callout" style="margin-top:16px;">En Godot: script = clase, escena = molde completo, cada copia en el juego = objeto. “Es un” con <code>extends</code>, “tiene un” con nodos hijos.</div>
@@ -473,5 +609,57 @@ Enemigo    <span class="k">extends</span> Area2D</pre>
 </div>
 
 <script src="deck.js"></script>
+<script>
+// Aparición por pasos: los elementos .paso de la diapositiva activa se muestran
+// de a uno con → / Espacio / clic en la mitad derecha, antes de avanzar.
+(function () {
+  const pendiente = () => document.querySelector(".deck > .slide.active .paso:not(.visto)");
+  window.addEventListener("keydown", (e) => {
+    if (!["ArrowRight", "PageDown", " ", "Enter"].includes(e.key)) return;
+    const p = pendiente();
+    if (!p) return;
+    p.classList.add("visto");
+    e.preventDefault();
+    e.stopImmediatePropagation();
+  }, true);
+  window.addEventListener("click", (e) => {
+    if (!e.target.matches("html, body, .deck, .slide")) return;
+    if (e.clientX / window.innerWidth <= 0.5) return;
+    const p = pendiente();
+    if (!p) return;
+    p.classList.add("visto");
+    e.stopImmediatePropagation();
+  }, true);
+})();
+
+// Clase y objeto: cada clic en "Spawnear" crea una instancia con sus valores.
+(function () {
+  const datos = [
+    { vida: 3, velocidad: "60.0", color: "verde" },
+    { vida: 1, velocidad: "60.0", color: "verde" },
+    { vida: 10, velocidad: "35.0", color: "violeta" },
+    { vida: 3, velocidad: "80.0", color: "verde" },
+    { vida: 2, velocidad: "60.0", color: "verde" },
+  ];
+  const btn = document.getElementById("spawn-btn");
+  const escena = document.getElementById("spawn-escena");
+  const cuenta = document.getElementById("spawn-cuenta");
+  let n = 0;
+  btn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    if (n >= datos.length) { escena.innerHTML = ""; n = 0; }
+    else {
+      const d = datos[n++];
+      const obj = document.createElement("div");
+      obj.className = "spawn-obj";
+      obj.innerHTML = '<div class="spawn-tip"><b>slime ' + n + "</b>vida: " + d.vida + "<br>velocidad: " + d.velocidad +
+        "<br>color: " + d.color + '</div><div class="spawn-slime ' + (d.color === "violeta" ? "violeta" : "") + '"></div>';
+      escena.appendChild(obj);
+    }
+    btn.textContent = n >= datos.length ? "Reiniciar" : "Spawnear";
+    cuenta.textContent = n + (n === 1 ? " objeto creado" : " objetos creados") + " con el mismo plano";
+  });
+})();
+</script>
 </body>
 </html>

@@ -160,7 +160,7 @@ func actualizar_hud():
 	get_node("../HUD/BarraVida").value = vida
 ```
 
-> **`recibir_dano()` y `sumar_kill()` son la cara pública del jugador.** Los slimes no tocan `vida` ni `kills`: le piden al jugador que lo haga. Así, si mañana el jugador tiene escudo, se cambia **aquí** y ningún otro objeto se entera (encapsulamiento y abstracción, Clase 5).
+> **`recibir_dano()` y `sumar_kill()` son la cara pública del jugador.** Los slimes no tocan `vida` ni `kills`: le piden al jugador que lo haga. Así, si mañana el jugador tiene escudo, se cambia **aquí** y ningún otro objeto se entera (encapsulamiento, Clase 5).
 
 > **`get_node("../HUD/LabelKills")`**: `..` es “subir al padre” (la `Arena`), y de allí bajar a `HUD` y después a `LabelKills`. Es una ruta, como las carpetas.
 

@@ -258,7 +258,7 @@ por toda la arena</div>
       <div class="card" style="text-align:center;"><h3>3 · Meterlo en el árbol</h3><p><code>add_child(copia)</code><br>Solo entonces aparece y corre su <code>_ready()</code></p></div>
     </div>
     <div class="columns" style="margin-top:18px;">
-      <div class="callout">Es el molde de galletas de la clase pasada: <code>preload</code> agarra el molde, <code>instantiate</code> corta una galleta, <code>add_child</code> la pone en la bandeja.</div>
+      <div class="callout">Es el plano de la clase pasada, en Godot: <code>preload</code> carga el molde (la escena), <code>instantiate</code> construye un objeto nuevo, <code>add_child</code> lo coloca en el juego.</div>
       <div class="callout">Entre el paso 2 y el 3 se pueden <b>cambiar sus datos</b>: <code>copia.position = …</code>, <code>copia.velocidad = …</code>. Cada copia, con sus propios valores.</div>
     </div>
   </section>
@@ -506,7 +506,7 @@ Al quinto Enter:  ¡Cayó un élite!</div>
       </div>
       <div>
         <p class="subtitle" style="font-size:17.5px;">La bomba no pregunta <b>qué tipo</b> de enemigo es cada uno. Les pide a todos lo mismo, <code>recibir_dano(1)</code>, y cada uno responde según su clase.</p>
-        <div class="callout">Los cuatro pilares de la clase pasada, en un proyecto que funciona: <b>encapsulamiento</b> (se pide daño), <b>herencia</b> (el élite), <b>polimorfismo</b> (la bomba), <b>abstracción</b> (la bomba no sabe cómo muere nadie).</div>
+        <div class="callout">Los cuatro pilares de la clase pasada, en un proyecto que funciona: <b>abstracción</b> (un <code>Enemigo</code> con solo lo que el juego necesita), <b>encapsulamiento</b> (se pide daño; la bomba no sabe cómo muere nadie), <b>herencia</b> (el élite), <b>polimorfismo</b> (la bomba).</div>
       </div>
     </div>
   </section>
