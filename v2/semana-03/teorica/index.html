@@ -21,6 +21,18 @@
   .ph { display: flex; align-items: center; justify-content: center; text-align: center; border: 2px dashed var(--border); border-radius: 10px; color: var(--muted); font-size: 15px; line-height: 1.6; }
   /* Ficha de objeto: propiedades · silueta · métodos */
   .ficha { display: grid; grid-template-columns: 1fr 0.8fr 1fr; gap: 16px; align-items: center; }
+  /* Silueta (la abstracción) y sus instancias */
+  .sil { margin: 0; text-align: center; }
+  .sil img { height: 230px; width: auto; display: block; margin: 0 auto; background: #fff; border-radius: 10px; padding: 8px 14px; border: 1px solid var(--border); }
+  .sil figcaption { margin-top: 8px; font-weight: 700; font-size: 16px; color: var(--accent-2); }
+  .sil figcaption small { display: block; font-weight: 400; font-size: 12.5px; color: var(--muted); font-family: "SF Mono", Menlo, Consolas, monospace; }
+  .inst { display: grid; grid-template-columns: 1fr 40px 1fr 1fr; gap: 12px; align-items: end; }
+  .inst .flecha { font-size: 30px; color: var(--muted); text-align: center; align-self: center; }
+  .inst-obj { display: flex; flex-direction: column; align-items: center; }
+  .inst-obj img { height: 200px; width: auto; display: block; }
+  .inst-obj .spawn-tip { font-size: 13px; }
+  .salto { text-align: center; }
+  .salto img { width: 210px; height: 210px; object-fit: contain; display: block; margin: 0 auto; background: #fff; border-radius: 10px; border: 1px solid var(--border); }
   /* Clase y objeto: demo de spawn */
   .spawn { display: grid; grid-template-columns: 0.72fr 1.6fr; gap: 16px; align-items: stretch; }
   .spawn-panel { padding: 12px 16px; display: flex; flex-direction: column; }
@@ -148,13 +160,13 @@
       <div class="card" style="border-top:3px solid var(--accent-2);">
         <h3>Lo que sabe · propiedades</h3>
         <ul>
-          <li><code>posicion</code></li>
+          <li><code>nombre</code></li>
+          <li><code>color</code></li>
           <li><code>vidas</code></li>
-          <li><code>monedas</code></li>
-          <li><code>tamano</code></li>
+          <li><code>altura_salto</code></li>
         </ul>
       </div>
-      <div class="ph" style="height:250px;">IMAGEN PENDIENTE<br>Mario de frente,<br>en silueta</div>
+      <figure class="sil"><img src="assets/mario-silueta.png" alt="Silueta de un personaje de frente" /><figcaption>Jugador</figcaption></figure>
       <div class="card" style="border-top:3px solid var(--green);">
         <h3>Lo que puede hacer · métodos</h3>
         <ul>
@@ -165,7 +177,52 @@
         </ul>
       </div>
     </div>
-    <div class="callout" style="margin-top:14px;">Con esos datos y esas acciones, el juego crea un Mario concreto: una <b>instancia</b>.</div>
+    <div class="callout" style="margin-top:14px;">La silueta es la <b>abstracción</b>: un jugador, sin ser todavía ninguno en particular. Con esos datos y esas acciones, el juego crea personajes concretos: <b>instancias</b>.</div>
+  </section>
+
+  <section class="slide" data-chapter="Objetos" data-topic="Una abstracción, dos instancias">
+    <div class="slide-eyebrow">De la abstracción a la instancia</div>
+    <h2 class="slide-title">La misma silueta, dos personajes</h2>
+    <div class="inst">
+      <figure class="sil"><img src="assets/mario-silueta.png" alt="Silueta de un personaje de frente" /><figcaption>Jugador<small>nombre · color · vidas · altura_salto</small></figcaption></figure>
+      <div class="flecha">→</div>
+      <div class="inst-obj paso">
+        <div class="spawn-tip"><b>instancia 1</b>nombre: "Mario"<br>color: rojo<br>vidas: 3<br>altura_salto: 4</div>
+        <img src="assets/mario.png" alt="Mario de frente" />
+      </div>
+      <div class="inst-obj paso">
+        <div class="spawn-tip"><b>instancia 2</b>nombre: "Luigi"<br>color: verde<br>vidas: 3<br>altura_salto: 5</div>
+        <img src="assets/luigi.png" alt="Luigi de frente" />
+      </div>
+    </div>
+    <div class="callout paso" style="margin-top:12px;">Mario y Luigi salen de la <b>misma abstracción</b>. Tienen las mismas propiedades y saben hacer lo mismo; lo único que cambia son <b>los valores</b> de cada uno.</div>
+    <p class="small-note" style="margin-top:8px; text-align:center;">Mario y Luigi © Nintendo.</p>
+  </section>
+
+  <section class="slide" data-chapter="Objetos" data-topic="El mismo método">
+    <div class="slide-eyebrow">De la abstracción a la instancia</div>
+    <h2 class="slide-title">El mismo método, cada uno con sus valores</h2>
+    <div class="columns" style="grid-template-columns:1fr 1fr 1.1fr; align-items:center;">
+      <div class="salto">
+        <img src="assets/mario-salta.png" alt="Mario saltando" style="object-fit:cover;" />
+        <pre class="code" style="font-size:13.5px; margin:8px 0 0;">mario.saltar()
+<span class="c"># altura_salto = 4</span></pre>
+      </div>
+      <div class="salto">
+        <img src="assets/luigi-salta.png" alt="Luigi saltando" />
+        <pre class="code" style="font-size:13.5px; margin:8px 0 0;">luigi.saltar()
+<span class="c"># altura_salto = 5</span></pre>
+      </div>
+      <div>
+        <ul class="bullets" style="font-size:16.5px;">
+          <li><code>saltar()</code> se escribe <b>una sola vez</b>, en la clase</li>
+          <li>Los dos personajes lo usan <b>de la misma forma</b></li>
+          <li class="paso">Luigi llega más alto porque <b>su</b> <code>altura_salto</code> vale más</li>
+        </ul>
+        <div class="callout paso" style="margin-top:12px;">El <b>comportamiento</b> es de la clase; los <b>datos</b> son de cada instancia. Sin duplicar código.</div>
+      </div>
+    </div>
+    <p class="small-note" style="margin-top:10px; text-align:center;">Mario y Luigi © Nintendo.</p>
   </section>
 
   <section class="slide" data-chapter="Objetos" data-topic="Objetos que ya existen">
