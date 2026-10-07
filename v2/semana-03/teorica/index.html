@@ -612,8 +612,8 @@ Enemigo    <span class="k">extends</span> Area2D</pre>
   <section class="slide" data-chapter="Ejercicio" data-topic="El juego del curso">
     <div class="slide-eyebrow">El juego del curso</div>
     <h2 class="slide-title">Un <i>survivors</i>: qué hay en el juego</h2>
-    <div class="columns" style="grid-template-columns:1.1fr 0.9fr; align-items:center;">
-      <ul class="bullets" style="font-size:17px;">
+    <div>
+      <ul class="bullets" style="font-size:20px;">
         <li class="paso">Un <b>caballero</b> que se mueve por una arena</li>
         <li class="paso"><b>Slimes</b> que aparecen por los bordes y lo persiguen</li>
         <li class="paso">Un <b>arma</b> que dispara automáticamente al slime más cercano</li>
@@ -621,10 +621,6 @@ Enemigo    <span class="k">extends</span> Area2D</pre>
         <li class="paso">Cada tanto, un <b>slime élite</b>: más lento, más resistente, con barra de vida</li>
         <li class="paso"><b>Algo</b> que crea los slimes cada cierto tiempo</li>
       </ul>
-      <figure style="margin:0;">
-        <img src="assets/vampire-survivors.webp" alt="Captura de Vampire Survivors como referencia del género" style="display:block; width:100%; height:auto; border-radius:8px; image-rendering:pixelated;" />
-        <figcaption class="imgcaption">La referencia del género. El juego del curso es una versión reducida, que se construye desde la próxima clase.</figcaption>
-      </figure>
     </div>
   </section>
 
@@ -792,6 +788,15 @@ Enemigo    <span class="k">extends</span> Area2D</pre>
     btn.textContent = n >= datos.length ? "Reiniciar" : "Spawnear";
     cuenta.textContent = n + (n === 1 ? " objeto creado" : " objetos creados") + " con el mismo plano";
   });
+  // Al salir de la diapositiva, la escena vuelve a quedar vacía.
+  const slide = btn.closest(".slide");
+  new MutationObserver(() => {
+    if (slide.classList.contains("active")) return;
+    escena.innerHTML = "";
+    n = 0;
+    btn.textContent = "Spawnear";
+    cuenta.textContent = "0 objetos creados con el mismo plano";
+  }).observe(slide, { attributes: true, attributeFilter: ["class"] });
 })();
 </script>
 </body>
