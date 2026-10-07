@@ -344,7 +344,7 @@ recibir_dano()</pre>
   </section>
 
   <section class="slide" data-chapter="Objetos" data-topic="Clases en un juego real">
-    <div class="slide-eyebrow">Para discutir</div>
+    <div class="slide-eyebrow">Para discutir <span class="actividad">Actividad en clase</span></div>
     <h2 class="slide-title">¿Qué clases tiene este juego?</h2>
     <div class="columns" style="grid-template-columns:1.1fr 0.9fr; align-items:start;">
       <figure style="margin:0;">
@@ -629,7 +629,7 @@ Enemigo    <span class="k">extends</span> Area2D</pre>
   </section>
 
   <section class="slide" data-chapter="Ejercicio" data-topic="Diseño en papel">
-    <div class="slide-eyebrow">Ejercicio en grupos · lápiz y papel · 15 min</div>
+    <div class="slide-eyebrow">Ejercicio en grupos · lápiz y papel · 15 min <span class="actividad">Actividad en clase</span></div>
     <h2 class="slide-title">Diseñar las clases del juego del curso</h2>
     <div class="columns" style="grid-template-columns:1.1fr 0.9fr;">
       <div>
@@ -736,6 +736,14 @@ Enemigo    <span class="k">extends</span> Area2D</pre>
     e.preventDefault();
     e.stopImmediatePropagation();
   }, true);
+  // Al salir de una diapositiva, sus pasos se reinician: al volver hay que
+  // revelarlos de nuevo.
+  document.querySelectorAll(".deck > .slide").forEach((sl) => {
+    if (!sl.querySelector(".paso")) return;
+    new MutationObserver(() => {
+      if (!sl.classList.contains("active")) sl.querySelectorAll(".paso.visto").forEach((p) => p.classList.remove("visto"));
+    }).observe(sl, { attributes: true, attributeFilter: ["class"] });
+  });
   window.addEventListener("click", (e) => {
     if (!e.target.matches("html, body, .deck, .slide")) return;
     if (e.clientX / window.innerWidth <= 0.5) return;
