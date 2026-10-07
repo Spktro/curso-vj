@@ -21,6 +21,21 @@
   .ph { display: flex; align-items: center; justify-content: center; text-align: center; border: 2px dashed var(--border); border-radius: 10px; color: var(--muted); font-size: 15px; line-height: 1.6; }
   /* Ficha de objeto: propiedades · silueta · métodos */
   .ficha { display: grid; grid-template-columns: 1fr 0.8fr 1fr; gap: 16px; align-items: center; }
+  /* Etiqueta de actividad junto al eyebrow */
+  .actividad { display: inline-block; margin-left: 10px; padding: 2px 10px; border-radius: 999px; background: var(--red); color: #fff; font-size: 11.5px; font-weight: 700; letter-spacing: .06em; vertical-align: middle; }
+  /* Un plano, cien casas */
+  .plano-demo { display: grid; grid-template-columns: 0.62fr 30px 1.5fr; gap: 12px; align-items: center; }
+  .plano { background-color: #1e4fae; background-image: linear-gradient(rgba(255,255,255,.13) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.13) 1px, transparent 1px); background-size: 14px 14px; border-radius: 8px; padding: 12px 10px 8px; text-align: center; color: #fff; font-size: 13px; font-family: "SF Mono", Menlo, Consolas, monospace; }
+  .plano svg { width: 100%; height: auto; display: block; }
+  .plano-demo .flecha { font-size: 26px; color: var(--muted); text-align: center; }
+  .casas { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px 12px; }
+  .casa { width: 100%; height: auto; display: block; }
+  .deck > .slide.active .plano-demo.anim .plano { animation: casaIn .4s ease-out both; }
+  .deck > .slide.active .plano-demo.anim .flecha { animation: casaIn .3s ease-out .45s both; }
+  .deck > .slide.active .plano-demo.anim .casa { animation: casaIn .28s cubic-bezier(.3,1.6,.6,1) both; animation-delay: calc(.8s + var(--i) * .2s); }
+  @keyframes casaIn { from { opacity: 0; transform: scale(.4); } to { opacity: 1; transform: none; } }
+  .repetir { font: inherit; font-size: 13px; padding: 4px 12px; border-radius: 999px; border: 1px solid var(--border); background: var(--panel-2); color: var(--text); cursor: pointer; }
+  .repetir:hover { border-color: var(--accent); }
   /* Silueta (la abstracción) y sus instancias */
   .sil { margin: 0; text-align: center; }
   .sil img { height: 230px; width: auto; display: block; margin: 0 auto; background: #fff; border-radius: 10px; padding: 8px 14px; border: 1px solid var(--border); }
@@ -132,23 +147,65 @@
     </div>
   </section>
 
-  <section class="slide" data-chapter="El problema" data-topic="La solución: un plano">
-    <div class="slide-eyebrow">La solución</div>
-    <h2 class="slide-title">Escribir un plano, no cien enemigos</h2>
-    <div class="columns" style="align-items:center;">
+  <section class="slide" data-chapter="El problema" data-topic="Un plano, cien casas">
+    <div class="slide-eyebrow">Una idea de otra profesión</div>
+    <h2 class="slide-title">Dibujar un plano, construir cien casas</h2>
+    <div class="columns" style="grid-template-columns:0.85fr 1.15fr; align-items:center;">
       <div>
-        <p class="subtitle" style="font-size:18px;">Un arquitecto no dibuja cada casa de un barrio: dibuja <b>un plano</b>, y con ese plano se construyen todas. El plano dice <b>qué tiene</b> una casa; cada casa construida es distinta de las demás.</p>
+        <p class="subtitle" style="font-size:18px;">Un arquitecto no dibuja cada casa de un barrio: dibuja <b>un plano</b>, y con ese plano se construyen todas.</p>
+        <ul class="bullets" style="font-size:16.5px;">
+          <li>El plano dice <b>qué tiene</b> una casa: paredes, techo, puerta, ventanas</li>
+          <li>El plano <b>no es una casa</b>: nadie puede vivir en él</li>
+          <li>Cada casa construida es <b>distinta de las demás</b>: otro color, otros dueños</li>
+        </ul>
       </div>
-      <table class="tbl" style="font-size:16px;">
-        <thead><tr><th>En la construcción</th><th>En el juego</th></tr></thead>
-        <tbody>
-          <tr><td>El <b>plano</b> de la casa</td><td>La <b>clase</b> <code>Goomba</code></td></tr>
-          <tr><td>Cada <b>casa</b> construida</td><td>Cada <b>objeto</b>: un Goomba del nivel</td></tr>
-          <tr><td>Otro color, otros dueños</td><td>Otra posición, otra vida</td></tr>
-        </tbody>
-      </table>
+      <div class="card" style="padding:14px 16px;">
+        <div class="plano-demo anim" id="plano-demo">
+          <div class="plano">
+            <svg viewBox="0 0 60 56" aria-hidden="true"><g fill="none" stroke="#fff" stroke-width="1.6"><path d="M4 28 L30 6 L56 28 Z"/><rect x="10" y="28" width="40" height="24"/><rect x="26" y="36" width="9" height="16"/><rect x="14" y="33" width="8" height="8"/><rect x="39" y="33" width="8" height="8"/></g></svg>
+            <span>el plano</span>
+          </div>
+          <div class="flecha">→</div>
+          <div class="casas">
+          <svg class="casa" style="--i:0;" viewBox="0 0 60 56" aria-hidden="true"><path d="M4 28 L30 6 L56 28 Z" fill="#5b4636"/><rect x="10" y="28" width="40" height="24" fill="#e2574c"/><rect x="26" y="36" width="9" height="16" fill="#fff" opacity=".9"/><rect x="14" y="33" width="8" height="8" fill="#fff" opacity=".9"/><rect x="39" y="33" width="8" height="8" fill="#fff" opacity=".9"/></svg>
+          <svg class="casa" style="--i:1;" viewBox="0 0 60 56" aria-hidden="true"><path d="M4 28 L30 6 L56 28 Z" fill="#5b4636"/><rect x="10" y="28" width="40" height="24" fill="#f2a93b"/><rect x="26" y="36" width="9" height="16" fill="#fff" opacity=".9"/><rect x="14" y="33" width="8" height="8" fill="#fff" opacity=".9"/><rect x="39" y="33" width="8" height="8" fill="#fff" opacity=".9"/></svg>
+          <svg class="casa" style="--i:2;" viewBox="0 0 60 56" aria-hidden="true"><path d="M4 28 L30 6 L56 28 Z" fill="#5b4636"/><rect x="10" y="28" width="40" height="24" fill="#4caf50"/><rect x="26" y="36" width="9" height="16" fill="#fff" opacity=".9"/><rect x="14" y="33" width="8" height="8" fill="#fff" opacity=".9"/><rect x="39" y="33" width="8" height="8" fill="#fff" opacity=".9"/></svg>
+          <svg class="casa" style="--i:3;" viewBox="0 0 60 56" aria-hidden="true"><path d="M4 28 L30 6 L56 28 Z" fill="#5b4636"/><rect x="10" y="28" width="40" height="24" fill="#2f80ed"/><rect x="26" y="36" width="9" height="16" fill="#fff" opacity=".9"/><rect x="14" y="33" width="8" height="8" fill="#fff" opacity=".9"/><rect x="39" y="33" width="8" height="8" fill="#fff" opacity=".9"/></svg>
+          <svg class="casa" style="--i:4;" viewBox="0 0 60 56" aria-hidden="true"><path d="M4 28 L30 6 L56 28 Z" fill="#5b4636"/><rect x="10" y="28" width="40" height="24" fill="#9b51e0"/><rect x="26" y="36" width="9" height="16" fill="#fff" opacity=".9"/><rect x="14" y="33" width="8" height="8" fill="#fff" opacity=".9"/><rect x="39" y="33" width="8" height="8" fill="#fff" opacity=".9"/></svg>
+          <svg class="casa" style="--i:5;" viewBox="0 0 60 56" aria-hidden="true"><path d="M4 28 L30 6 L56 28 Z" fill="#5b4636"/><rect x="10" y="28" width="40" height="24" fill="#e86aa6"/><rect x="26" y="36" width="9" height="16" fill="#fff" opacity=".9"/><rect x="14" y="33" width="8" height="8" fill="#fff" opacity=".9"/><rect x="39" y="33" width="8" height="8" fill="#fff" opacity=".9"/></svg>
+          <svg class="casa" style="--i:6;" viewBox="0 0 60 56" aria-hidden="true"><path d="M4 28 L30 6 L56 28 Z" fill="#5b4636"/><rect x="10" y="28" width="40" height="24" fill="#20a39e"/><rect x="26" y="36" width="9" height="16" fill="#fff" opacity=".9"/><rect x="14" y="33" width="8" height="8" fill="#fff" opacity=".9"/><rect x="39" y="33" width="8" height="8" fill="#fff" opacity=".9"/></svg>
+          <svg class="casa" style="--i:7;" viewBox="0 0 60 56" aria-hidden="true"><path d="M4 28 L30 6 L56 28 Z" fill="#5b4636"/><rect x="10" y="28" width="40" height="24" fill="#8d6e63"/><rect x="26" y="36" width="9" height="16" fill="#fff" opacity=".9"/><rect x="14" y="33" width="8" height="8" fill="#fff" opacity=".9"/><rect x="39" y="33" width="8" height="8" fill="#fff" opacity=".9"/></svg>
+          </div>
+        </div>
+        <div style="text-align:right; margin-top:8px;"><button type="button" class="repetir" id="plano-repetir" title="Repetir la animación">↻ Repetir</button></div>
+      </div>
     </div>
-    <div class="callout" style="margin-top:18px;">En programación, el plano se llama <b>clase</b> y cada cosa construida con él, <b>objeto</b>. Se escribe <b>un</b> plano de Goomba; en el nivel hay cuarenta Goombas. Esta forma de organizar el código es la <b>Programación Orientada a Objetos</b>.</div>
+  </section>
+
+  <section class="slide" data-chapter="El problema" data-topic="El plano en un videojuego">
+    <div class="slide-eyebrow">La misma idea</div>
+    <h2 class="slide-title">Lo mismo, en un videojuego</h2>
+    <table class="tbl" style="font-size:17px;">
+      <thead><tr><th>En la construcción</th><th>En el juego</th></tr></thead>
+      <tbody>
+        <tr><td>El <b>plano</b> de la casa</td><td>El <b>plano</b> de un Goomba</td></tr>
+        <tr><td>Dice qué tiene: paredes, techo, puerta</td><td>Dice qué tiene: vida, velocidad, caminar, ser pisado</td></tr>
+        <tr><td>Cada <b>casa</b> construida</td><td>Cada <b>Goomba</b> del nivel</td></tr>
+        <tr><td>Otro color, otros dueños</td><td>Otra posición, otro estado</td></tr>
+      </tbody>
+    </table>
+    <div class="callout" style="margin-top:18px;">En un nivel de <i>Super Mario Bros.</i> puede haber cuarenta Goombas. Nadie los escribió cuarenta veces: se escribió <b>un plano</b>, y con él se crearon todos.</div>
+  </section>
+
+  <section class="slide" data-chapter="El problema" data-topic="Clases y objetos">
+    <div class="slide-eyebrow">La solución</div>
+    <h2 class="slide-title">En programación: clases y objetos</h2>
+    <div class="columns">
+      <div class="card" style="border-top:3px solid var(--accent-2);"><h3>Clase</h3><p>Es <b>el plano</b>. Se escribe <b>una sola vez</b> y dice qué datos y qué comportamientos tiene todo lo que se construya con él.</p></div>
+      <div class="card" style="border-top:3px solid var(--green);"><h3>Objeto</h3><p>Es <b>cada cosa construida</b> con ese plano. Puede haber uno, cuarenta o mil, cada uno con sus propios valores.</p></div>
+    </div>
+    <p class="subtitle" style="font-size:17.5px; margin-top:16px;">Siguiendo con el ejemplo: se escribe la clase <code>Goomba</code>, y el nivel tiene cuarenta objetos <code>Goomba</code> <b>sin reescribir el código</b>.</p>
+    <div class="callout" style="margin-top:6px;">Esta forma de organizar el código se llama <b>Programación Orientada a Objetos</b> (POO). Es un <b>paradigma de programación</b>: una manera de pensar y estructurar los programas, que estudian las ciencias de la computación y que usan Godot y casi todos los motores de videojuegos.</div>
   </section>
 
   <!-- ============ OBJETOS ============ -->
@@ -226,7 +283,7 @@
   </section>
 
   <section class="slide" data-chapter="Objetos" data-topic="Objetos que ya existen">
-    <div class="slide-eyebrow">Para discutir</div>
+    <div class="slide-eyebrow">Para discutir <span class="actividad">Actividad en clase</span></div>
     <h2 class="slide-title">¿Qué objetos ya existen en el curso?</h2>
     <p class="subtitle" style="font-size:18px;">De lo construido en las semanas 1 y 2: ¿qué elementos son <b>objetos</b>? ¿Qué <b>propiedades</b> y qué <b>comportamientos</b> tiene cada uno?</p>
     <div class="columns" style="margin-top:8px;">
@@ -687,6 +744,17 @@ Enemigo    <span class="k">extends</span> Area2D</pre>
     p.classList.add("visto");
     e.stopImmediatePropagation();
   }, true);
+})();
+
+// Un plano, cien casas: el botón reinicia la animación de entrada.
+(function () {
+  const demo = document.getElementById("plano-demo");
+  document.getElementById("plano-repetir").addEventListener("click", (e) => {
+    e.stopPropagation();
+    demo.classList.remove("anim");
+    void demo.offsetWidth;
+    demo.classList.add("anim");
+  });
 })();
 
 // Clase y objeto: cada clic en "Spawnear" crea una instancia con sus valores.
