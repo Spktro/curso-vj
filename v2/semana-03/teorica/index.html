@@ -86,9 +86,12 @@
   <!-- ============ EL PROBLEMA ============ -->
   <section class="slide" data-chapter="El problema" data-topic="Muchos enemigos">
     <div class="slide-eyebrow">El problema</div>
-    <h2 class="slide-title">Una pantalla con cien enemigos</h2>
+    <h2 class="slide-title">Una pantalla llena de enemigos</h2>
     <div class="columns" style="grid-template-columns:1.15fr 0.85fr; align-items:center;">
-      <div class="ph" style="height:330px;">IMAGEN PENDIENTE<br>Un <i>tower defense</i> o un <i>shooter</i><br>con muchos enemigos en pantalla</div>
+      <figure style="margin:0;">
+        <img src="assets/doom.webp" alt="Captura de Doom: varios demonios distintos atacando al jugador al mismo tiempo" style="display:block; width:100%; height:360px; object-fit:cover; border-radius:8px;" />
+        <figcaption class="imgcaption"><i>Doom</i> (id Software). Varios tipos de enemigo en pantalla, todos activos a la vez.</figcaption>
+      </figure>
       <div>
         <ul class="bullets" style="font-size:18px;">
           <li>Cada enemigo tiene <b>su propia</b> vida, su posición y su velocidad</li>
@@ -303,7 +306,7 @@
 
   <section class="slide" data-chapter="Objetos" data-topic="Clase y objeto">
     <div class="slide-eyebrow">Plano e instancias</div>
-    <h2 class="slide-title">Clase: el plano · Objeto: lo que se construye con él</h2>
+    <h2 class="slide-title">Una clase, muchos objetos</h2>
     <div class="spawn">
       <div>
         <div class="card" style="border-top:3px solid var(--accent-2); padding:12px 16px;">
@@ -634,7 +637,7 @@ Enemigo    <span class="k">extends</span> Area2D</pre>
           <li>¿Qué <b>clases</b> hacen falta?</li>
           <li>Para cada una: ¿qué <b>sabe</b>? ¿qué <b>puede hacer</b>?</li>
           <li>¿Hay alguna que <b>sea un</b> tipo de otra? Dibujar el árbol</li>
-          <li>¿Qué le <b>pide</b> la bala al enemigo? ¿Y el enemigo al jugador?</li>
+          <li>¿Cómo se <b>relacionan</b> los objetos entre sí? ¿Qué <b>mensajes</b> se envían?</li>
         </ol>
       </div>
       <div class="card" style="align-self:center;">
@@ -671,7 +674,7 @@ Enemigo    <span class="k">extends</span> Area2D</pre>
         </tbody>
       </table>
     </div>
-    <div class="callout" style="margin-top:16px;">Las flechas de “quién le pide qué a quién”: la <b>bala</b> le pide <code>recibir_dano()</code> al <b>enemigo</b>; el <b>enemigo</b> le pide <code>recibir_dano()</code> al <b>jugador</b>. Nadie toca la vida de otro.</div>
+    <div class="callout" style="margin-top:16px;">Los mensajes entre objetos: la <b>bala</b> llama a <code>recibir_dano()</code> del <b>enemigo</b>; el <b>enemigo</b> llama a <code>recibir_dano()</code> del <b>jugador</b>. Llamar a un método de otro objeto es <b>enviarle un mensaje</b>; nadie modifica la vida de otro.</div>
   </section>
 
   <!-- ============ CIERRE ============ -->
