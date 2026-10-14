@@ -62,3 +62,4 @@ Imágenes del material que hoy son **genéricas** (de la documentación de Godot
 | ✅ | C8 · “Resident Evil: el Tyrant (Mr. X) y Nemesis” | Captura provista (14/10) | — | `v2/semana-04/teorica/assets/re3-nemesis.jpg` |
 | ✅ | C8 · “Alien: Isolation” | Captura provista (14/10) | — | `v2/semana-04/teorica/assets/alien-isolation.jpg` |
 | 🔴 | C8 · “Left 4 Dead: una máquina de estados sobre el spawner” | Hueco 🖼️ | Una horda de infectados llegando por un pasillo | `v2/semana-04/teorica/assets/left4dead-horda.jpg` |
+| 🔴 | C8 · “Boo (Super Mario): solo avanza si no lo miran” | Cuadro fijo `boo-quieto.png` (el botón dice “GIF pendiente”) | El GIF animado de Big Boo (el chat lo convirtió en imagen fija) | `v2/semana-04/teorica/assets/boo.gif` |

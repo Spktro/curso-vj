@@ -41,6 +41,9 @@
   .mario { display: block; transition: transform .3s, opacity .3s; }
   .mario.muerto { opacity: .35; transform: rotate(180deg); }
   .tbl tr.on td { background: rgba(124, 58, 237, 0.16); }
+  /* GIF con control de reproducción */
+  .gif-fila { display: flex; gap: 14px; align-items: center; margin-top: 10px; }
+  .gif-fila img { height: 150px; width: auto; border-radius: 8px; image-rendering: pixelated; display: block; }
   /* Huecos de imagen */
   .ph { display: flex; align-items: center; justify-content: center; text-align: center; border: 2px dashed var(--border); border-radius: 10px; background: var(--panel-2); color: var(--muted); font-size: 13.5px; line-height: 1.5; padding: 12px; }
 </style>
@@ -697,7 +700,8 @@ objetivo = pacman.position + pacman.direccion * <span class="n">4</span>
     <div class="slide-eyebrow">🎮 Bloque 4 · Máquinas de estado en juegos conocidos · 4 de 4 <span class="godot">Godot · demo 10</span></div>
     <h2 class="slide-title">Boo (Super Mario): solo avanza si no lo miran</h2>
     <div class="columns" style="grid-template-columns:1.1fr 0.9fr; align-items:center;">
-      <div class="card" style="padding:10px 12px 6px;"><svg viewBox="0 0 560 190" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Estados de Boo: flotar, avanzar, taparse" style="width:100%;height:auto;display:block;">
+      <div>
+        <div class="card" style="padding:10px 12px 6px;"><svg viewBox="0 0 560 190" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Estados de Boo: flotar, avanzar, taparse" style="width:100%;height:auto;display:block;">
   <defs><marker id="bo-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--accent)"/></marker></defs>
   <circle cx="80" cy="14" r="5" style="fill:var(--accent)"/><line x1="80" y1="19" x2="80" y2="46" style="stroke:var(--accent);stroke-width:2" marker-end="url(#bo-a)"/>
   <rect x="20" y="50" width="120" height="36" rx="18" style="fill:var(--panel);stroke:var(--accent);stroke-width:2.5"/><text x="80" y="73" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="13" font-weight="800" style="fill:var(--text)">FLOTAR</text>
@@ -710,6 +714,14 @@ objetivo = pacman.position + pacman.direccion * <span class="n">4</span>
   <text x="280" y="150" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="12" style="fill:var(--muted)">en cada frame, Boo consulta dos datos de Mario:</text>
   <text x="280" y="170" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="12" font-weight="700" style="fill:var(--accent)">la distancia y hacia dónde mira (izquierda o derecha)</text>
 </svg></div>
+        <div class="gif-fila">
+          <img id="boo-gif" src="assets/boo-quieto.png" data-gif="assets/boo.gif" data-quieto="assets/boo-quieto.png" alt="Super Mario World: Mario frente a un Boo gigante que se tapa la cara. © Nintendo. Uso educativo.">
+          <div>
+            <button class="demo-btn" id="boo-play">▶ Reproducir</button>
+            <div class="imgcaption" style="margin-top:8px;"><i>Super Mario World</i> (1990): Big Boo se tapa cuando Mario lo mira. © Nintendo.</div>
+          </div>
+        </div>
+      </div>
       <div>
         <p style="font-size:15.5px; line-height:1.5; margin:0 0 10px;">El fantasma <b>Boo</b> tiene una regla famosa: si Mario <b>lo mira</b>, se tapa la cara y se queda quieto. Si Mario le da <b>la espalda</b>, avanza. Si está lejos, flota en el lugar.</p>
         <pre class="code" style="font-size:12.5px;"><span class="t">Estado</span>.AVANZAR:
@@ -1162,6 +1174,37 @@ objetivo = pacman.position + pacman.direccion * <span class="n">4</span>
     $("sm-reset").onclick = reiniciar;
     alSalir($("sm-registro"), reiniciar);
     pintar();
+  }
+
+  /* GIF de Boo: reproducir y pausar. Al pausar se congela el cuadro actual
+     (si el navegador no lo permite, vuelve a la imagen quieta). */
+  if ($("boo-gif")) {
+    const img = $("boo-gif"), btn = $("boo-play");
+    let andando = false;
+    const pausar = () => {
+      if (andando) {
+        try {
+          const c = document.createElement("canvas");
+          c.width = img.naturalWidth; c.height = img.naturalHeight;
+          c.getContext("2d").drawImage(img, 0, 0);
+          img.src = c.toDataURL();
+        } catch (e) { img.src = img.dataset.quieto; }
+      }
+      andando = false;
+      btn.textContent = "▶ Reproducir";
+    };
+    btn.onclick = () => {
+      if (andando) { pausar(); return; }
+      img.src = img.dataset.gif;
+      andando = true;
+      btn.textContent = "⏸ Pausar";
+    };
+    img.onerror = () => {   // el GIF todavía no está en assets/
+      andando = false;
+      img.src = img.dataset.quieto;
+      btn.textContent = "GIF pendiente";
+    };
+    alSalir(img, () => { pausar(); img.src = img.dataset.quieto; });
   }
 
   /* 2 · Mario */
