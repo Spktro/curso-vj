@@ -158,7 +158,7 @@ Nombres, umbrales y estados del jefe quedan iguales (`slime_elite.gd`, `Estado {
 ## Orden de trabajo
 
 1. ~~Proyecto de demos (G01–G11) y verificación headless.~~ Hecho: `proyecto-clase/` con `LEEME.md` (qué mostrar en cada demo). Verificado con Godot 4.6.2 headless: las 12 escenas corren sin errores ni advertencias y cada conducta da lo esperado (histéresis: ~40 cambios/s con 40/40 y 3 con 40/60; separación con 600 enemigos: ~140 FPS con vecinos y ~5 FPS todos contra todos).
-2. Deck: bloques 2 y 5 (lo nuevo), después el reordenamiento del resto.
-3. J1 y J2.
-4. Verificación de alturas (≤ 584 px a 1280×720) y anchos de `<pre>` y tablas.
-5. Huecos en `capturas-pendientes.md`, mapa, commit y push.
+2. ~~Deck: bloques 2 y 5 (lo nuevo), después el reordenamiento del resto.~~ Hecho: 38 diapos (se sumó "El recorrido de hoy" después de Objetivos; Commandos quedó como diapo propia en el bloque 3).
+3. ~~J1 y J2.~~ Hecho: semáforo y Mario (con la tabla de transiciones que se resalta).
+4. ~~Verificación de alturas (≤ 584 px a 1280×720) y anchos de `<pre>` y tablas.~~ Hecho.
+5. ~~Huecos en `capturas-pendientes.md`, mapa, commit y push.~~ Hecho.

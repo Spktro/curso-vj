@@ -58,3 +58,7 @@ Imágenes del material que hoy son **genéricas** (de la documentación de Godot
 | 🟡 | C2 · “if / else” | `diagrama-if.png` genérico | Diagrama con el ejemplo del curso (vida y daño); lo puedo dibujar en SVG | — |
 | 🟡 | C2 · “Ejemplo: Tower Defense” | `tw-defense.png`, alt pobre | Captura de un Tower Defense a elección | `v2/semana-01/practica/assets/tw-defense.png` |
 | 🟡 | C3 · “Por qué Input Map” | Captura de docs con `move_*` | La misma de `tp2-input-map.png` | — |
+| 🔴 | C8 · “Resident Evil: Mr. X y Nemesis” | Hueco 🖼️ | Mr. X (*Resident Evil 2*, 2019) avanzando por un pasillo de la comisaría | `v2/semana-04/teorica/assets/re2-mr-x.jpg` |
+| 🔴 | C8 · “Resident Evil: Mr. X y Nemesis” | Hueco 🖼️ | Nemesis (*Resident Evil 3*) en una de sus apariciones | `v2/semana-04/teorica/assets/re3-nemesis.jpg` |
+| 🔴 | C8 · “Alien: Isolation” | Hueco 🖼️ | El alien recorriendo un pasillo, o la protagonista escondida en un armario | `v2/semana-04/teorica/assets/alien-isolation.jpg` |
+| 🔴 | C8 · “Left 4 Dead: una máquina de estados sobre el spawner” | Hueco 🖼️ | Una horda de infectados llegando por un pasillo | `v2/semana-04/teorica/assets/left4dead-horda.jpg` |

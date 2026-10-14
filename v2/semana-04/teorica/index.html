@@ -5,18 +5,60 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Diplomatura de Videojuegos · Semana 4 · Clase 8 — Enemigos con cerebro</title>
 <link rel="stylesheet" href="deck.css" />
+<style>
+  /* Etiquetas junto al eyebrow */
+  .actividad { display: inline-block; margin-left: 10px; padding: 2px 10px; border-radius: 999px; background: var(--red); color: #fff; font-size: 11.5px; font-weight: 700; letter-spacing: .06em; vertical-align: middle; }
+  .godot { display: inline-block; margin-left: 10px; padding: 2px 10px; border-radius: 999px; background: var(--accent); color: #fff; font-size: 11.5px; font-weight: 700; letter-spacing: .04em; vertical-align: middle; }
+  /* Recorrido de la clase */
+  .recorrido { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 8px; }
+  .recorrido .card { padding: 12px 12px 10px; }
+  .recorrido h3 { font-size: 15.5px; margin: 0 0 6px; }
+  .recorrido .num { font-size: 12px; font-weight: 700; color: var(--accent); letter-spacing: .05em; }
+  .recorrido p { font-size: 13.5px; line-height: 1.42; margin: 0; }
+  .recorrido .min { margin-top: 8px; font-size: 12px; color: var(--muted); font-family: "SF Mono", Menlo, Consolas, monospace; }
+  /* Demos interactivas (mismo estilo que la C3) */
+  .demo { padding: 14px 16px; }
+  .demo-datos { font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 15px; margin: 0 0 10px; color: var(--text); }
+  .demo-botones { display: flex; flex-wrap: wrap; gap: 8px; }
+  .demo-btn { font: inherit; font-size: 14px; padding: 7px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--panel); color: var(--text); cursor: pointer; }
+  .demo-btn:hover { border-color: var(--accent); }
+  .demo-btn.secundario { color: var(--muted); }
+  .registro { list-style: none; margin: 12px 0 0; padding: 0; font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 13px; line-height: 1.55; min-height: 140px; }
+  .registro li { border-left: 3px solid var(--accent); padding-left: 8px; margin-bottom: 3px; }
+  .registro li.ignorado { border-left-color: var(--border); color: var(--muted); }
+  .registro li:first-child { font-weight: 700; }
+  /* Semáforo */
+  .sem-demo { display: grid; grid-template-columns: 120px 1fr; gap: 22px; align-items: start; }
+  .sem { width: 104px; padding: 14px 0; background: #2a3245; border-radius: 16px; display: flex; flex-direction: column; gap: 12px; align-items: center; }
+  .sem .luz { width: 66px; height: 66px; border-radius: 50%; background: #3a4256; transition: background .15s, box-shadow .15s; }
+  .sem .luz.rojo.on { background: #ff4d4d; box-shadow: 0 0 22px #ff4d4d; }
+  .sem .luz.amarillo.on { background: #ffd54a; box-shadow: 0 0 22px #ffd54a; }
+  .sem .luz.verde.on { background: #4ade80; box-shadow: 0 0 22px #4ade80; }
+  .sem .luz.amarillo.titila { animation: titila .8s steps(1) infinite; }
+  @keyframes titila { 0% { background: #ffd54a; box-shadow: 0 0 22px #ffd54a; } 50% { background: #3a4256; box-shadow: none; } }
+  /* Mario */
+  .mario-escena { height: 132px; display: flex; align-items: flex-end; justify-content: center; gap: 30px; background: var(--panel-2); border: 1px solid var(--border); border-radius: 8px; padding-bottom: 10px; margin-bottom: 10px; }
+  .mario { width: 36px; height: 36px; border-radius: 8px 8px 4px 4px; background: #e53935; position: relative; transition: height .25s, background .25s, transform .3s, opacity .3s; }
+  .mario::before { content: ""; position: absolute; left: 6px; right: 6px; top: 6px; height: 8px; border-radius: 4px; background: #ffcc99; }
+  .mario.grande { height: 76px; }
+  .mario.fuego { height: 76px; background: linear-gradient(#f5f5f5 0 55%, #e53935 55%); }
+  .mario.muerto { opacity: .3; transform: rotate(180deg); }
+  .tbl tr.on td { background: rgba(124, 58, 237, 0.16); }
+  /* Huecos de imagen */
+  .ph { display: flex; align-items: center; justify-content: center; text-align: center; border: 2px dashed var(--border); border-radius: 10px; background: var(--panel-2); color: var(--muted); font-size: 13.5px; line-height: 1.5; padding: 12px; }
+</style>
 </head>
 <body>
 
 <div class="deck" id="deck" data-click-nav="off" data-brand="Diplomatura de Videojuegos · Semana 4 · Clase 8" data-home="../../index.html">
 
-  <!-- ============ INICIO ============ -->
+  <!-- ============ APERTURA ============ -->
   <section class="slide title-slide active" data-chapter="Inicio" data-topic="Portada">
     <div class="title-grid">
       <div>
         <div class="slide-eyebrow">Semana 4 · Clase 8 · Teórica</div>
         <h1 class="title">Enemigos con <span class="accent">cerebro</span></h1>
-        <p class="subtitle">Cómo un enemigo <b>decide</b> qué hacer: comportamientos, detección y <b>máquinas de estado</b>. Y al final, tres juegos famosos vistos con esos ojos.</p>
+        <p class="subtitle">Cómo un enemigo <b>decide</b> qué hacer. De una regla suelta a una <b>máquina de estados</b>, y de un enemigo a la partida entera.</p>
         <p class="small-note">“El slime de la semana pasada tiene una sola idea. Hoy recibe <b>varias</b>, y la capacidad de cambiar de idea.”</p>
       </div>
       <div class="title-photo" style="border:none; box-shadow:none; background:transparent;">
@@ -30,16 +72,29 @@
     <h2 class="slide-title">Al finalizar la clase…</h2>
     <ul class="bullets">
       <li>Entender qué es la <b>IA de un videojuego</b> (y qué no es), con ejemplos de juegos famosos</li>
-      <li>Reconocer los <b>comportamientos básicos</b> de un enemigo: acechar, perseguir, atacar, reaccionar al golpe</li>
-      <li>Modelar un enemigo como una <b>máquina de estados</b>: estados + transiciones</li>
-      <li>Implementarla en GDScript con <code>enum</code> y <code>match</code></li>
+      <li>Entender qué es una <b>máquina de estados</b>, primero sin juegos: estados, eventos y transiciones</li>
+      <li>Reconocer los <b>comportamientos básicos</b> de un enemigo y cómo “ve” al jugador</li>
+      <li>Leer el diagrama y el código de un enemigo con <code>enum</code> y <code>match</code></li>
+      <li>Distinguir la IA de <b>un enemigo</b>, la de <b>un grupo</b> y la que maneja <b>la partida</b></li>
     </ul>
-    <div class="callout" style="margin-top:18px;">Puente con la semana 3: el slime que <b>persigue</b> es el punto de partida. Hoy el élite se convierte en un jefe que <b>decide</b>.</div>
+    <div class="callout" style="margin-top:18px;">Puente con la semana 3: una máquina de estados es una <b>clase</b> cuyos métodos cambian una variable. Y el slime que <b>persigue</b> es el punto de partida del jefe que <b>decide</b>.</div>
   </section>
 
-  <!-- ============ HOOK ============ -->
+  <section class="slide" data-chapter="Inicio" data-topic="El recorrido de hoy">
+    <div class="slide-eyebrow">Mapa de la clase</div>
+    <h2 class="slide-title">El recorrido de hoy: de una regla a la partida entera</h2>
+    <div class="recorrido">
+      <div class="card"><div class="num">BLOQUE 1</div><h3>Qué es la IA de un juego</h3><p>Reglas simples que <b>parecen</b> inteligencia. Pac-Man y Space Invaders.</p><div class="min">≈ 15 min</div></div>
+      <div class="card"><div class="num">BLOQUE 2</div><h3>Máquina de estados, sin juegos</h3><p>Un semáforo con botones. La máquina como <b>clase</b>. Mario chico, grande y fuego.</p><div class="min">≈ 25 min</div></div>
+      <div class="card"><div class="num">BLOQUE 3</div><h3>Del semáforo al enemigo</h3><p>Cómo ve, el spaghetti de <code>if</code>, la máquina del jefe y la histéresis.</p><div class="min">≈ 25 min</div></div>
+      <div class="card"><div class="num">BLOQUE 4</div><h3>Máquinas en juegos conocidos</h3><p>Pac-Man, Metal Gear, Hollow Knight. Ejercicio: la máquina de Boo.</p><div class="min">≈ 20 min</div></div>
+      <div class="card"><div class="num">BLOQUE 5</div><h3>La IA no siempre es un enemigo</h3><p>El grupo, el perseguidor, los dos cerebros y el director.</p><div class="min">≈ 25 min</div></div>
+    </div>
+    <div class="callout" style="margin-top:16px;">▶ Las etiquetas <span class="godot" style="margin-left:0;">Godot · demo NN</span> indican que esa idea se muestra funcionando en el proyecto <code>proyecto-clase</code>. Las demos se <b>miran</b>: el jefe se programa en la Clase 8+.</div>
+  </section>
+
   <section class="slide" data-chapter="Hook" data-topic="Hook inicial">
-    <div class="slide-eyebrow">Arranque</div>
+    <div class="slide-eyebrow">Arranque <span class="godot">Godot · demo 01</span></div>
     <h2 class="slide-title">El slime de la semana 3 tiene una sola idea</h2>
     <div class="columns">
       <div class="card" style="border-top:3px solid var(--red);"><h3 style="color:var(--red);">Hoy</h3><p>Aparece → persigue al jugador → lo toca. <b>Siempre lo mismo.</b> A los 10 segundos ya se sabe exactamente qué va a hacer. Es <b>predecible</b>, y lo predecible aburre.</p></div>
@@ -48,9 +103,9 @@
     <div class="callout" style="margin-top:22px;">🤔 <b>Para el grupo:</b> ¿cómo escribirían eso con lo que saben? Con <code>if</code>… muchos <code>if</code>. Y ahí está el problema que se resuelve hoy.</div>
   </section>
 
-  <!-- ============ QUÉ ES IA ============ -->
+  <!-- ============ BLOQUE 1 · QUÉ ES LA IA ============ -->
   <section class="slide" data-chapter="IA" data-topic="Qué es la IA de un juego">
-    <div class="slide-eyebrow">Concepto</div>
+    <div class="slide-eyebrow">Bloque 1 · Concepto</div>
     <h2 class="slide-title">“IA” en un juego no es lo que parece</h2>
     <div class="columns">
       <div class="card" style="border-top:3px solid var(--red);">
@@ -63,11 +118,11 @@
       </div>
     </div>
     <div class="callout" style="margin-top:20px;">📏 <b>La regla de oro:</b> la IA de un juego no tiene que ser <b>inteligente</b>, tiene que ser <b>divertida</b>. Un enemigo perfecto que nunca falla es injugable. El arte está en que <b>parezca</b> listo y que igual se lo pueda vencer.</div>
-    <p class="small-note" style="margin-top:14px;">🎮 Cuatro ejemplos famosos, en las próximas diapositivas: <i>Pac-Man</i>, <i>Space Invaders</i>, <i>Commandos</i> y <i>Doom</i>. Ninguno tiene más de tres líneas de “inteligencia”.</p>
+    <p class="small-note" style="margin-top:14px;">🎮 Dos ejemplos famosos para empezar: <i>Pac-Man</i> y <i>Space Invaders</i>. Ninguno tiene más de tres líneas de “inteligencia”.</p>
   </section>
 
   <section class="slide" data-chapter="IA" data-topic="IA famosa: Pac-Man">
-    <div class="slide-eyebrow">🎮 IA famosa · 1 de 4</div>
+    <div class="slide-eyebrow">🎮 IA famosa · 1 de 2 <span class="godot">Godot · demo 02</span></div>
     <h2 class="slide-title">Pac-Man (1980): cuatro fantasmas, cuatro reglas</h2>
     <div class="columns" style="grid-template-columns:0.95fr 1.05fr; align-items:center;">
       <div class="card" style="padding:12px;">
@@ -112,7 +167,7 @@ objetivo = pacman.position + pacman.direccion * <span class="n">4</span>
   </section>
 
   <section class="slide" data-chapter="IA" data-topic="IA famosa: Space Invaders">
-    <div class="slide-eyebrow">🎮 IA famosa · 2 de 4</div>
+    <div class="slide-eyebrow">🎮 IA famosa · 2 de 2 <span class="godot">Godot · demo 03</span></div>
     <h2 class="slide-title">Space Invaders (1978): la IA que fue un accidente</h2>
     <div class="columns" style="grid-template-columns:0.95fr 1.05fr; align-items:center;">
       <div class="card" style="padding:12px;">
@@ -142,8 +197,284 @@ objetivo = pacman.position + pacman.direccion * <span class="n">4</span>
     </div>
   </section>
 
+  <section class="slide" data-chapter="IA" data-topic="Una regla no alcanza">
+    <div class="slide-eyebrow">El límite de una regla</div>
+    <h2 class="slide-title">Una regla da un comportamiento. ¿Y si tiene que cambiar?</h2>
+    <div class="columns">
+      <div class="card" style="border-top:3px solid var(--muted);">
+        <h3>Lo visto hasta ahora</h3>
+        <ul style="font-size:15.5px; line-height:1.55; margin:0; padding-left:20px;">
+          <li><b>Blinky</b>: siempre va hacia el jugador.</li>
+          <li><b>Pinky</b>: siempre apunta cuatro casillas adelante.</li>
+          <li><b>Los invaders</b>: siempre bajan, cada vez más rápido.</li>
+          <li><b>El slime</b>: siempre va derecho.</li>
+        </ul>
+        <p class="small-note" style="margin-top:10px;">Una regla cada uno. Hacen <b>siempre lo mismo</b>.</p>
+      </div>
+      <div class="card" style="border-top:3px solid var(--accent);">
+        <h3 style="color:var(--accent);">Lo que pide el jefe</h3>
+        <ul style="font-size:15.5px; line-height:1.55; margin:0; padding-left:20px;">
+          <li>De lejos, <b>acechar</b> despacio.</li>
+          <li>Al ver al jugador, <b>perseguirlo</b>.</li>
+          <li>Al alcanzarlo, <b>atacar</b>.</li>
+          <li>Si lo pierde, <b>calmarse</b>.</li>
+          <li>Si recibe un golpe, <b>sentirlo</b>.</li>
+        </ul>
+        <p class="small-note" style="margin-top:10px;">Varios comportamientos, y <b>reglas para pasar de uno a otro</b>.</p>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:16px;">La idea que ordena esto existe fuera de los videojuegos, y se usa todos los días en la calle: un <b>semáforo</b>. Antes del enemigo, se arma esa máquina.</div>
+  </section>
+
+  <!-- ============ BLOQUE 2 · MÁQUINA DE ESTADOS SIN JUEGOS ============ -->
+  <section class="slide" data-chapter="Máquina de estados" data-topic="Qué es una máquina de estados">
+    <div class="slide-eyebrow">Bloque 2 · El concepto</div>
+    <h2 class="slide-title">Máquina de estados: algo que está en un estado a la vez</h2>
+    <div class="columns" style="grid-template-columns:1.1fr 0.9fr;">
+      <div>
+        <ul class="bullets" style="font-size:17px;">
+          <li><b>Estado:</b> cómo está ahora. Un semáforo está en <b>verde</b>, en <b>amarillo</b> o en <b>rojo</b>.</li>
+          <li><b>Evento:</b> algo que pasa. Pasa el tiempo, se corta la luz.</li>
+          <li><b>Transición:</b> la regla que une las dos cosas: <i>“si está en verde y pasa el tiempo, pasa a amarillo”</i>.</li>
+          <li><b>Un estado a la vez.</b> Nunca dos luces prendidas.</li>
+        </ul>
+        <p class="small-note" style="margin-top:6px;">En inglés: <i>Finite State Machine</i> (FSM). “Finita” porque los estados son pocos y conocidos de antemano.</p>
+      </div>
+      <div class="card" style="align-self:center;">
+        <h3>🏠 Máquinas de estado de todos los días</h3>
+        <table class="tbl" style="font-size:14px;">
+          <thead><tr><th>Cosa</th><th>Estados</th></tr></thead>
+          <tbody>
+            <tr><td>🚦 Semáforo</td><td>verde · amarillo · rojo</td></tr>
+            <tr><td>🚪 Puerta</td><td>abierta · cerrada · con llave</td></tr>
+            <tr><td>🛗 Ascensor</td><td>quieto · subiendo · bajando</td></tr>
+            <tr><td>📱 Celular</td><td>apagado · bloqueado · desbloqueado</td></tr>
+          </tbody>
+        </table>
+        <p class="small-note" style="margin-top:8px;">Una puerta con llave no se abre empujando: el evento “empujar” no tiene flecha desde ese estado.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Máquina de estados" data-topic="El semáforo, con botones">
+    <div class="slide-eyebrow">Bloque 2 · Probarlo <span class="actividad">Actividad en clase</span><span class="godot">Godot · demo 04</span></div>
+    <h2 class="slide-title">El semáforo, con botones: cada botón es un evento</h2>
+    <div class="columns" style="grid-template-columns:1.1fr 0.9fr; align-items:start;">
+      <div class="card demo">
+        <div class="sem-demo">
+          <div class="sem"><div class="luz rojo" id="sm-rojo"></div><div class="luz amarillo" id="sm-amarillo"></div><div class="luz verde" id="sm-verde"></div></div>
+          <div>
+            <div class="demo-datos" id="sm-estado">estado = ROJO</div>
+            <div class="demo-botones">
+              <button class="demo-btn" id="sm-tiempo">⏱ Pasa el tiempo</button>
+              <button class="demo-btn" id="sm-falla">⚡ Falla la luz</button>
+              <button class="demo-btn" id="sm-arregla">🔧 Se arregla</button>
+              <button class="demo-btn secundario" id="sm-reset">Reiniciar</button>
+            </div>
+            <ol class="registro" id="sm-registro"></ol>
+          </div>
+        </div>
+      </div>
+      <div>
+        <ol class="steps" style="font-size:15.5px;">
+          <li>Apretar <b>Pasa el tiempo</b> varias veces: ¿en qué orden cambia?</li>
+          <li>Apretar <b>Se arregla</b> con el semáforo andando: ¿qué pasa?</li>
+          <li>Apretar <b>Falla la luz</b> y después <b>Pasa el tiempo</b>.</li>
+          <li>¿Cuántos estados tiene? ¿Cuántas flechas?</li>
+        </ol>
+        <div class="callout" style="margin-top:12px;">Un evento que <b>no tiene flecha</b> desde el estado actual <b>no hace nada</b>. Queda anotado en gris: “ignorado”.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Máquina de estados" data-topic="Las partes de una máquina">
+    <div class="slide-eyebrow">Bloque 2 · Dibujarla</div>
+    <h2 class="slide-title">Las partes de una máquina, en el diagrama del semáforo</h2>
+    <div class="columns" style="grid-template-columns:1.25fr 0.75fr; align-items:center;">
+      <div class="card" style="padding:10px 12px 6px;">
+        <svg viewBox="0 0 620 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Diagrama del semáforo: rojo, verde y amarillo en ciclo; desde cualquiera, falla la luz lleva a intermitente; se arregla vuelve a rojo" style="width:100%;height:auto;display:block;">
+          <defs>
+            <marker id="sf-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--accent)"/></marker>
+            <marker id="sf-r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--red)"/></marker>
+          </defs>
+          <g font-family="Segoe UI,Arial,sans-serif">
+          <!-- grupo "funcionando" -->
+          <rect x="14" y="40" width="370" height="200" rx="16" fill="none" style="stroke:var(--border);stroke-width:2" stroke-dasharray="6 5"/>
+          <text x="28" y="60" font-size="11.5" style="fill:var(--muted)">funcionando</text>
+          <!-- inicio -->
+          <circle cx="40" cy="105" r="6" style="fill:var(--accent)"/>
+          <line x1="47" y1="105" x2="66" y2="105" style="stroke:var(--accent);stroke-width:2" marker-end="url(#sf-a)"/>
+          <!-- estados -->
+          <rect x="70" y="86" width="110" height="38" rx="19" style="fill:var(--panel);stroke:#ff4d4d;stroke-width:3"/><text x="125" y="110" text-anchor="middle" font-size="14" font-weight="800" style="fill:var(--text)">ROJO</text>
+          <rect x="250" y="86" width="110" height="38" rx="19" style="fill:var(--panel);stroke:#16a34a;stroke-width:3"/><text x="305" y="110" text-anchor="middle" font-size="14" font-weight="800" style="fill:var(--text)">VERDE</text>
+          <rect x="155" y="180" width="120" height="38" rx="19" style="fill:var(--panel);stroke:#e0a800;stroke-width:3"/><text x="215" y="204" text-anchor="middle" font-size="14" font-weight="800" style="fill:var(--text)">AMARILLO</text>
+          <!-- ciclo por tiempo -->
+          <line x1="182" y1="105" x2="246" y2="105" style="stroke:var(--accent);stroke-width:2" marker-end="url(#sf-a)"/>
+          <text x="214" y="96" text-anchor="middle" font-size="11" style="fill:var(--muted)">pasa el tiempo</text>
+          <line x1="300" y1="126" x2="252" y2="177" style="stroke:var(--accent);stroke-width:2" marker-end="url(#sf-a)"/>
+          <text x="306" y="158" font-size="11" style="fill:var(--muted)">pasa el tiempo</text>
+          <line x1="178" y1="177" x2="130" y2="128" style="stroke:var(--accent);stroke-width:2" marker-end="url(#sf-a)"/>
+          <text x="124" y="158" text-anchor="end" font-size="11" style="fill:var(--muted)">pasa el tiempo</text>
+          <!-- falla -->
+          <rect x="470" y="120" width="136" height="40" rx="20" style="fill:var(--panel);stroke:var(--red);stroke-width:3"/><text x="538" y="145" text-anchor="middle" font-size="13.5" font-weight="800" style="fill:var(--red)">INTERMITENTE</text>
+          <line x1="386" y1="130" x2="466" y2="130" style="stroke:var(--red);stroke-width:2" stroke-dasharray="6 4" marker-end="url(#sf-r)"/>
+          <text x="426" y="120" text-anchor="middle" font-size="11" style="fill:var(--red)">falla la luz</text>
+          <path d="M538,162 L538,268 L125,268 L125,128" fill="none" style="stroke:var(--accent);stroke-width:2" marker-end="url(#sf-a)"/>
+          <text x="420" y="286" text-anchor="middle" font-size="11" style="fill:var(--muted)">se arregla: vuelve a ROJO</text>
+          <!-- rótulos de las partes -->
+          <text x="40" y="24" font-size="12" font-weight="700" style="fill:var(--accent)">① estado inicial</text>
+          <text x="250" y="24" font-size="12" font-weight="700" style="fill:var(--accent)">② estado</text>
+          <text x="425" y="100" text-anchor="middle" font-size="12" font-weight="700" style="fill:var(--accent)">③ flecha + ④ evento</text>
+          <line x1="70" y1="28" x2="44" y2="96" style="stroke:var(--accent);stroke-width:1" stroke-dasharray="2 3"/>
+          <line x1="280" y1="28" x2="300" y2="84" style="stroke:var(--accent);stroke-width:1" stroke-dasharray="2 3"/>
+          </g>
+        </svg>
+      </div>
+      <div>
+        <ol style="font-size:15.5px; line-height:1.55; margin:0; padding-left:22px;">
+          <li><b>Estado inicial:</b> el punto. Dónde arranca.</li>
+          <li><b>Estado:</b> cada óvalo. Uno solo activo.</li>
+          <li><b>Transición:</b> cada flecha.</li>
+          <li><b>Evento:</b> el texto de la flecha, lo que la dispara.</li>
+        </ol>
+        <div class="callout" style="margin-top:14px;">Una flecha se lee así: <i>“si está en <b>VERDE</b> y <b>pasa el tiempo</b>, pasa a <b>AMARILLO</b>”</i>. Si no hay flecha, no hay cambio.</div>
+        <p class="small-note" style="margin-top:10px;">El recuadro punteado agrupa: <b>falla la luz</b> sale de cualquiera de los tres.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Máquina de estados" data-topic="Una máquina es una clase">
+    <div class="slide-eyebrow">Bloque 2 · En código <span class="godot">Godot · demo 04</span></div>
+    <h2 class="slide-title">Una máquina de estados es una clase</h2>
+    <div class="columns" style="grid-template-columns:1.1fr 0.9fr;">
+      <div class="code-wrap">
+        <pre class="code" style="font-size:12px;"><span class="k">class_name</span> <span class="t">Semaforo</span>
+<span class="k">extends</span> <span class="t">Node2D</span>
+
+<span class="k">enum</span> <span class="t">Estado</span> { VERDE, AMARILLO, ROJO, INTERMITENTE }
+<span class="k">var</span> estado = <span class="t">Estado</span>.ROJO   <span class="c"># UNA variable</span>
+
+<span class="k">func</span> <span class="t">pasar_tiempo</span>():   <span class="c"># un evento = un método</span>
+	<span class="k">match</span> estado:   <span class="c"># según el estado actual…</span>
+		<span class="t">Estado</span>.VERDE: cambiar_estado(<span class="t">Estado</span>.AMARILLO)
+		<span class="t">Estado</span>.AMARILLO: cambiar_estado(<span class="t">Estado</span>.ROJO)
+		<span class="t">Estado</span>.ROJO: cambiar_estado(<span class="t">Estado</span>.VERDE)
+
+<span class="k">func</span> <span class="t">fallar</span>():
+	<span class="k">if</span> estado != <span class="t">Estado</span>.INTERMITENTE:
+		cambiar_estado(<span class="t">Estado</span>.INTERMITENTE)
+
+<span class="k">func</span> <span class="t">arreglar</span>():
+	<span class="k">if</span> estado == <span class="t">Estado</span>.INTERMITENTE:
+		cambiar_estado(<span class="t">Estado</span>.ROJO)
+
+<span class="k">func</span> <span class="t">cambiar_estado</span>(nuevo):   <span class="c"># la única puerta</span>
+	estado = nuevo
+	queue_redraw()</pre>
+      </div>
+      <div>
+        <div class="card">
+          <h3>Lo mismo que en la semana 3</h3>
+          <table class="tbl" style="font-size:14px;">
+            <tbody>
+              <tr><td><b>Propiedad</b></td><td><code>estado</code>: una sola variable</td></tr>
+              <tr><td><b>Métodos</b></td><td>los <b>eventos</b>: <code>pasar_tiempo()</code>, <code>fallar()</code>, <code>arreglar()</code></td></tr>
+              <tr><td><b>Una puerta</b></td><td><code>cambiar_estado()</code>: todo cambio pasa por ahí</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout" style="margin-top:12px;">Desde afuera se manda un <b>mensaje</b>: <code>$Semaforo.pasar_tiempo()</code>. Quien llama no elige el color: <b>decide el semáforo</b>, según su estado.</div>
+        <p class="small-note" style="margin-top:10px;"><code>enum</code> es la lista de estados, con nombre. <code>match</code> es un <code>if/elif</code> que compara una sola variable contra varios valores. Vuelve a aparecer con el jefe.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Máquina de estados" data-topic="Mario: chico, grande, fuego">
+    <div class="slide-eyebrow">Bloque 2 · Ya dentro de un juego <span class="actividad">Actividad en clase</span></div>
+    <h2 class="slide-title">Super Mario Bros.: chico, grande, fuego</h2>
+    <div class="columns" style="grid-template-columns:0.95fr 1.05fr; align-items:start;">
+      <div class="card demo">
+        <div class="mario-escena"><div class="mario" id="mr-mario"></div></div>
+        <div class="demo-datos" id="mr-estado">estado = CHICO</div>
+        <div class="demo-botones">
+          <button class="demo-btn" id="mr-hongo">🍄 Hongo</button>
+          <button class="demo-btn" id="mr-flor">🌼 Flor</button>
+          <button class="demo-btn" id="mr-golpe">💥 Golpe</button>
+          <button class="demo-btn secundario" id="mr-reset">Reiniciar</button>
+        </div>
+        <ol class="registro" id="mr-registro" data-max="3" style="min-height:66px;"></ol>
+      </div>
+      <div>
+        <table class="tbl" style="font-size:14px;" id="mr-tabla">
+          <thead><tr><th>Si está en…</th><th>y pasa…</th><th>pasa a…</th></tr></thead>
+          <tbody>
+            <tr data-r="CHICO-hongo"><td>CHICO</td><td>🍄 hongo</td><td>GRANDE</td></tr>
+            <tr data-r="CHICO-flor"><td>CHICO</td><td>🌼 flor</td><td>GRANDE</td></tr>
+            <tr data-r="GRANDE-flor"><td>GRANDE</td><td>🌼 flor</td><td>FUEGO</td></tr>
+            <tr data-r="GRANDE-golpe"><td>GRANDE</td><td>💥 golpe</td><td>CHICO</td></tr>
+            <tr data-r="FUEGO-golpe"><td>FUEGO</td><td>💥 golpe</td><td>CHICO</td></tr>
+            <tr data-r="CHICO-golpe"><td>CHICO</td><td>💥 golpe</td><td>MUERTO</td></tr>
+          </tbody>
+        </table>
+        <div class="callout" style="margin-top:12px;">La <b>tabla es la máquina</b>: cada fila es una flecha. ¿Qué pasa con un hongo estando GRANDE? No hay fila: <b>ignorado</b> (el juego solo suma puntos).</div>
+        <p class="small-note" style="margin-top:8px;">Para pensar: ¿qué fila se agregaría para la estrella, que vuelve invencible a Mario unos segundos?</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ BLOQUE 3 · DEL SEMÁFORO AL ENEMIGO ============ -->
+  <section class="slide" data-chapter="IA" data-topic="Comportamientos básicos">
+    <div class="slide-eyebrow">Bloque 3 · Los ladrillos</div>
+    <h2 class="slide-title">Los comportamientos básicos de un enemigo</h2>
+    <div class="columns" style="grid-template-columns:1.15fr 0.85fr;">
+      <div class="card" style="border-top:3px solid var(--green); padding:14px 16px;">
+        <h3 style="color:var(--green); margin-bottom:8px;">✅ Lo que va (el jefe del curso)</h3>
+        <table class="tbl" style="font-size:14px;">
+          <thead><tr><th>Comportamiento</th><th>Qué hace</th><th>En una línea</th></tr></thead>
+          <tbody>
+            <tr><td><b>🏃 Perseguir</b></td><td>Va hacia el jugador <i>(ya está: semana 3)</i></td><td><code>dir = (jugador.position - position).normalized()</code></td></tr>
+            <tr><td><b>🕵️ Acechar</b></td><td>Lo sigue de lejos, <b>despacio</b></td><td><code>position += dir * vel * 0.5 * delta</code></td></tr>
+            <tr><td><b>⚔️ Atacar</b></td><td>Se frena y pega cada tanto</td><td><code>if $Timer.is_stopped(): pegar()</code></td></tr>
+            <tr><td><b>💥 Golpeado</b></td><td><i>On hit</i>: knockback y <b>congelado 0.5 s</b></td><td><code>position += dir_atras * 20</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card" style="border-top:3px solid var(--muted); padding:14px 16px;">
+        <h3 style="color:var(--muted); margin-bottom:8px;">🧭 Otras opciones (hoy no)</h3>
+        <ul style="font-size:14px; line-height:1.45; margin:0; padding-left:18px;">
+          <li><b>Patrullar</b> (caminar al azar): en un <i>survivors</i> es un error. Los enemigos se van de pantalla y el jugador los evita para siempre.</li>
+          <li><b>Huir</b> con poca vida: un jefe que escapa es un jefe que <b>no se enfrenta</b>. Frustra.</li>
+          <li><b>Esquivar balas</b>: se puede con un <code>Area2D</code> que detecte la bala venir. Queda para proyectos propios.</li>
+          <li><b>Invocar</b> minions: <code>instantiate()</code> desde el jefe. Todo lo que hace falta ya se vio en la semana 3.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:14px;">Cada uno es <b>trivial</b> por separado: ya saben escribirlos. Lo difícil no es cada comportamiento, es <b>cuándo cambiar de uno a otro</b>.</div>
+  </section>
+
+  <section class="slide" data-chapter="IA" data-topic="Detectar al jugador">
+    <div class="slide-eyebrow">Sentidos <span class="godot">Godot · demo 05</span></div>
+    <h2 class="slide-title">¿Cómo “ve” al jugador?</h2>
+    <div class="columns">
+      <div class="card">
+        <h3>📏 Por distancia</h3>
+        <p>Un número: si está a menos de <b>X píxeles</b>, lo vio. Atención: <b>el slime de la semana 3 no detecta nada</b>, siempre sabe dónde está el jugador y va. El <code>distance_to</code> lo usó el <b>jugador</b> para elegir a quién disparar; ahora lo recibe el <b>enemigo</b>, para que <b>decida</b>.</p>
+        <pre class="code" style="margin:10px 0 0; font-size:12.5px;"><span class="k">var</span> d = position.distance_to(jugador.position)
+<span class="k">if</span> d < <span class="n">250</span>:
+	<span class="c"># ¡lo vi!</span></pre>
+        <p class="small-note" style="margin-top:8px;">Simple, barato, sirve para el 90 % de los casos. <b>Es lo que usa el jefe.</b></p>
+      </div>
+      <div class="card">
+        <h3>👁️ Con un Area2D de visión</h3>
+        <p>Un <code>Area2D</code> hijo del enemigo, con forma de círculo o cono. Cuando el jugador <b>entra</b>, se emite <code>body_entered</code>; cuando <b>sale</b>, <code>body_exited</code>.</p>
+        <p class="small-note" style="margin-top:8px;">Más flexible: conos de visión, sigilo. Es <b>exactamente</b> el cono de <i>Commandos</i>, y todo lo que necesitan ya lo vieron en la Clase 4.</p>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:14px;">🎮 <i>Commandos</i> y <i>Metal Gear Solid</i> hacen lo mismo con la segunda opción: el cono es un <b>área</b>. El jugador entra → “<b>!</b>” → cambia de estado. El jefe de hoy, para empezar, usa la primera: <b>un número</b>.</div>
+  </section>
+
   <section class="slide" data-chapter="IA" data-topic="IA famosa: Commandos">
-    <div class="slide-eyebrow">🎮 IA famosa · 3 de 4</div>
+    <div class="slide-eyebrow">🎮 Detección en un juego famoso <span class="godot">Godot · demo 05</span></div>
     <h2 class="slide-title">Commandos (1998): el cono de visión que se ve</h2>
     <div class="columns" style="grid-template-columns:0.95fr 1.05fr; align-items:center;">
       <div class="card" style="padding:12px;">
@@ -179,103 +510,13 @@ objetivo = pacman.position + pacman.direccion * <span class="n">4</span>
 	<span class="k">if</span> body.is_in_group(<span class="s">"comando"</span>):
 		<span class="k">if</span> zona == CERCA <span class="k">or</span> body.de_pie:
 			dar_alarma()</pre></div>
-        <p class="small-note" style="margin-top:10px;">Y esto <b>ya se sabe hacer</b>: un <code>Area2D</code> con forma de cono y la señal <code>body_entered</code>. Vuelve a aparecer en dos diapositivas.</p>
+        <p class="small-note" style="margin-top:10px;">Y esto <b>ya se sabe hacer</b>: un <code>Area2D</code> con forma de cono y la señal <code>body_entered</code>. Es el guardia de la derecha en la demo 05.</p>
       </div>
     </div>
   </section>
 
-  <section class="slide" data-chapter="IA" data-topic="IA famosa: Doom">
-    <div class="slide-eyebrow">🎮 IA famosa · 4 de 4</div>
-    <h2 class="slide-title">Doom (1993): un <code>if</code> y los monstruos se pelean</h2>
-    <div class="columns" style="grid-template-columns:0.95fr 1.05fr; align-items:center;">
-      <div class="card" style="padding:12px;">
-        <svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Doom: el monstruo A le tira una bola de fuego al jugador, le pega al monstruo B, y B ataca a A" style="width:100%;height:auto;max-height:330px;display:block;">
-  <defs><marker id="dm-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker></defs>
-  <rect width="400" height="260" rx="12" fill="#1b2230"/>
-  <!-- jugador -->
-  <circle cx="60" cy="205" r="11" fill="#5ac8ff"/><rect x="52" y="216" width="16" height="18" rx="3" fill="#5ac8ff"/>
-  <text x="60" y="250" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#5ac8ff">jugador</text>
-  <!-- A dispara hacia el jugador -->
-  <line x1="300" y1="82" x2="196" y2="143" stroke="#ff8a3b" stroke-width="2" stroke-dasharray="6 4"/>
-  <line x1="196" y1="143" x2="88" y2="196" stroke="#ff8a3b" stroke-width="1.5" stroke-dasharray="2 6" opacity="0.5"/>
-  <circle cx="196" cy="143" r="9" fill="#ff8a3b"/><circle cx="196" cy="143" r="4" fill="#ffe13a"/>
-  <text x="60" y="64" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#ff8a3b">1 · A le tira una bola de fuego…</text>
-  <rect x="286" y="50" width="28" height="26" rx="6" fill="#b45309"/><rect x="291" y="57" width="6" height="6" fill="#fff"/><rect x="303" y="57" width="6" height="6" fill="#fff"/><rect x="293" y="59" width="3" height="3" fill="#1b2230"/><rect x="305" y="59" width="3" height="3" fill="#1b2230"/><path d="M292,68 l4,4 l4,-4 l4,4 l4,-4" stroke="#fff" stroke-width="2" fill="none"/><text x="300" y="92" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#e5e7eb">monstruo A</text>
-  <rect x="166" y="138" width="28" height="26" rx="6" fill="#7c3aed"/><rect x="171" y="145" width="6" height="6" fill="#fff"/><rect x="183" y="145" width="6" height="6" fill="#fff"/><rect x="173" y="147" width="3" height="3" fill="#1b2230"/><rect x="185" y="147" width="3" height="3" fill="#1b2230"/><path d="M172,156 l4,4 l4,-4 l4,4 l4,-4" stroke="#fff" stroke-width="2" fill="none"/><text x="180" y="180" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#e5e7eb">monstruo B</text>
-  <text x="112" y="150" text-anchor="end" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#ffe13a">2 · …y le pega a B</text>
-  <!-- B contraataca a A -->
-  <path d="M200,132 C240,120 260,100 284,84" stroke="#dc2626" stroke-width="2.5" fill="none" marker-end="url(#dm-ah)"/>
-  <text x="330" y="132" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" font-weight="700" fill="#dc2626">3 · B ahora ataca a A</text>
-  <text x="200" y="235" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#9aa5b8">se olvidan del jugador y se pelean entre ellos: “infighting”</text>
-</svg>
-        <div class="imgcaption">Ilustración propia. El <i>infighting</i>: una regla, un comportamiento que nadie programó.</div>
-      </div>
-      <div>
-        <p style="font-size:16px; line-height:1.5; margin:0 0 12px;">Regla: cuando un monstruo <b>recibe daño</b>, pasa a atacar <b>a quien lo golpeó</b>. Si a un monstruo se le escapa una bola de fuego y le pega a otro, el otro <b>se da vuelta y lo ataca</b>. Los jugadores lo usan como táctica: ponerse en el medio y dejar que se maten entre ellos.</p>
-        <div class="code-wrap"><pre class="code" style="font-size:12px;"><span class="c"># Cuando un monstruo recibe daño, apunta a quien lo golpeó</span>
-<span class="k">func</span> <span class="t">recibir_dano</span>(cantidad, atacante):
-	vida -= cantidad
-	<span class="k">if</span> atacante != jugador:
-		objetivo = atacante        <span class="c"># ¡se pelean entre ellos!</span></pre></div>
-        <p class="small-note" style="margin-top:10px;"><b>Ninguno de los cuatro ejemplos tiene más de tres líneas de decisión.</b> Eso es la IA de un videojuego. Y atención a este: el jefe de hoy también va a <b>cambiar de comportamiento al recibir daño</b>.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ COMPORTAMIENTOS ============ -->
-  <section class="slide" data-chapter="IA" data-topic="Comportamientos básicos">
-    <div class="slide-eyebrow">Los ladrillos</div>
-    <h2 class="slide-title">Los comportamientos básicos de un enemigo</h2>
-    <div class="columns" style="grid-template-columns:1.15fr 0.85fr;">
-      <div class="card" style="border-top:3px solid var(--green); padding:14px 16px;">
-        <h3 style="color:var(--green); margin-bottom:8px;">✅ Lo que va (el jefe del curso)</h3>
-        <table class="tbl" style="font-size:14px;">
-          <thead><tr><th>Comportamiento</th><th>Qué hace</th><th>En una línea</th></tr></thead>
-          <tbody>
-            <tr><td><b>🏃 Perseguir</b></td><td>Va hacia el jugador <i>(ya está: semana 3)</i></td><td><code>dir = (jugador.position - position).normalized()</code></td></tr>
-            <tr><td><b>🕵️ Acechar</b></td><td>Lo sigue de lejos, <b>despacio</b></td><td><code>position += dir * vel * 0.5 * delta</code></td></tr>
-            <tr><td><b>⚔️ Atacar</b></td><td>Se frena y pega cada tanto</td><td><code>if $Timer.is_stopped(): pegar()</code></td></tr>
-            <tr><td><b>💥 Golpeado</b></td><td><i>On hit</i>: knockback y <b>congelado 0.5 s</b></td><td><code>position += dir_atras * 20</code></td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="card" style="border-top:3px solid var(--muted); padding:14px 16px;">
-        <h3 style="color:var(--muted); margin-bottom:8px;">🧭 Otras opciones (hoy no)</h3>
-        <ul style="font-size:14px; line-height:1.45; margin:0; padding-left:18px;">
-          <li><b>Patrullar</b> (caminar al azar): en un <i>survivors</i> es un error. Los enemigos se van de pantalla y el jugador los evita para siempre.</li>
-          <li><b>Huir</b> con poca vida: un jefe que escapa es un jefe que <b>no se enfrenta</b>. Frustra.</li>
-          <li><b>Esquivar balas</b>: se puede con un <code>Area2D</code> que detecte la bala venir. Queda para proyectos propios.</li>
-          <li><b>Invocar</b> minions: <code>instantiate()</code> desde el jefe. Todo lo que hace falta ya se vio en la semana 3.</li>
-        </ul>
-      </div>
-    </div>
-    <div class="callout" style="margin-top:14px;">Cada uno es <b>trivial</b> por separado: ya saben escribirlos. Lo difícil no es cada comportamiento, es <b>cuándo cambiar de uno a otro</b>.</div>
-  </section>
-
-  <section class="slide" data-chapter="IA" data-topic="Detectar al jugador">
-    <div class="slide-eyebrow">Sentidos</div>
-    <h2 class="slide-title">¿Cómo “ve” al jugador?</h2>
-    <div class="columns">
-      <div class="card">
-        <h3>📏 Por distancia</h3>
-        <p>Un número: si está a menos de <b>X píxeles</b>, lo vio. Atención: <b>el slime de la semana 3 no detecta nada</b>, siempre sabe dónde está el jugador y va. El <code>distance_to</code> lo usó el <b>jugador</b> para elegir a quién disparar; ahora lo recibe el <b>enemigo</b>, para que <b>decida</b>.</p>
-        <pre class="code" style="margin:10px 0 0; font-size:12.5px;"><span class="k">var</span> d = position.distance_to(jugador.position)
-<span class="k">if</span> d < <span class="n">250</span>:
-	<span class="c"># ¡lo vi!</span></pre>
-        <p class="small-note" style="margin-top:8px;">Simple, barato, sirve para el 90 % de los casos. <b>Es lo que usa el jefe.</b></p>
-      </div>
-      <div class="card">
-        <h3>👁️ Con un Area2D de visión</h3>
-        <p>Un <code>Area2D</code> hijo del enemigo, con forma de círculo o cono. Cuando el jugador <b>entra</b>, se emite <code>body_entered</code>; cuando <b>sale</b>, <code>body_exited</code>.</p>
-        <p class="small-note" style="margin-top:8px;">Más flexible: conos de visión, sigilo. Es <b>exactamente</b> el cono de <i>Commandos</i>, y todo lo que necesitan ya lo vieron en la Clase 4.</p>
-      </div>
-    </div>
-    <div class="callout" style="margin-top:14px;">🎮 <i>Commandos</i> y <i>Metal Gear Solid</i> hacen lo mismo con la segunda opción: el cono es un <b>área</b>. El jugador entra → “<b>!</b>” → cambia de estado. El jefe de hoy, para empezar, usa la primera: <b>un número</b>.</div>
-  </section>
-
-  <!-- ============ EL PROBLEMA ============ -->
   <section class="slide" data-chapter="Máquina de estados" data-topic="El problema del if">
-    <div class="slide-eyebrow">El problema</div>
+    <div class="slide-eyebrow">El problema <span class="godot">Godot · demo 06</span></div>
     <h2 class="slide-title">Con <code>if</code> se vuelve un spaghetti</h2>
     <div class="columns">
       <div class="code-wrap">
@@ -303,31 +544,27 @@ objetivo = pacman.position + pacman.direccion * <span class="n">4</span>
             <li>Tres booleanos que <b>pueden contradecirse</b></li>
             <li>Cada comportamiento nuevo <b>rompe los anteriores</b></li>
             <li>Imposible saber “¿qué está haciendo ahora?”</li>
+            <li>Falta una flecha (volver a acechar) y <b>nadie lo nota</b></li>
           </ul>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ============ FSM ============ -->
-  <section class="slide" data-chapter="Máquina de estados" data-topic="Qué es una máquina de estados">
+  <section class="slide" data-chapter="Máquina de estados" data-topic="Del semáforo al jefe">
     <div class="slide-eyebrow">La solución</div>
-    <h2 class="slide-title">Máquina de estados: una sola pregunta</h2>
-    <div class="columns">
-      <div>
-        <p class="subtitle" style="font-size:18px;">En vez de tres booleanos, <b>una variable</b>: <code>estado</code>. El enemigo está <b>en un estado a la vez</b>, y solo cambia por <b>transiciones</b> definidas.</p>
-        <ul class="bullets" style="font-size:17px;">
-          <li><b>Estado:</b> qué está haciendo (acechar, perseguir…)</li>
-          <li><b>Transición:</b> la condición para pasar a otro</li>
-          <li>Un estado <b>a la vez</b>. Nunca dos.</li>
-        </ul>
-      </div>
-      <div class="card" style="align-self:center;">
-        <h3>🚦 Analogía: el semáforo</h3>
-        <p>Tres estados: <b>verde</b>, <b>amarillo</b>, <b>rojo</b>. Nunca dos prendidos. Y las transiciones son fijas: verde → amarillo → rojo → verde. Nadie se confunde.</p>
-        <p class="small-note" style="margin-top:8px;">Se llama <i>Finite State Machine</i> (FSM). “Finita” porque los estados son pocos y conocidos.</p>
-      </div>
-    </div>
+    <h2 class="slide-title">La misma idea del semáforo, aplicada al jefe</h2>
+    <p class="subtitle" style="font-size:18px; margin-bottom:12px;">En vez de tres booleanos, <b>una variable</b>: <code>estado</code>. El jefe está en <b>un estado a la vez</b> y solo cambia por <b>transiciones</b> definidas.</p>
+    <table class="tbl" style="font-size:15px;">
+      <thead><tr><th></th><th>🚦 Semáforo</th><th>🟣 Jefe</th></tr></thead>
+      <tbody>
+        <tr><td><b>Estados</b></td><td>VERDE · AMARILLO · ROJO · INTERMITENTE</td><td>ACECHAR · PERSEGUIR · ATACAR · GOLPEADO</td></tr>
+        <tr><td><b>Qué dispara los cambios</b></td><td>pasa el tiempo · falla la luz · se arregla</td><td>la <b>distancia</b> al jugador · una <b>bala</b> · un <b>Timer</b></td></tr>
+        <tr><td><b>Dónde se decide</b></td><td>en cada método (evento)</td><td>en <code>_process</code>, cada frame, y en <code>recibir_dano()</code></td></tr>
+        <tr><td><b>Qué hace en cada estado</b></td><td>prende una luz</td><td>se mueve despacio, corre, pega o queda quieto</td></tr>
+      </tbody>
+    </table>
+    <div class="callout" style="margin-top:16px;">La diferencia: el semáforo <b>espera</b> a que lo llamen. El jefe se pregunta <b>en cada frame</b> “¿cambio?”, mirando la distancia al jugador.</div>
   </section>
 
   <section class="slide" data-chapter="Máquina de estados" data-topic="El diagrama del slime">
@@ -376,9 +613,8 @@ objetivo = pacman.position + pacman.direccion * <span class="n">4</span>
     <div class="callout" style="margin-top:8px;">💡 <b>Se dibuja antes de programar.</b> Si no se puede dibujar, no se puede programar. Y si está dibujado, el código sale casi solo.</div>
   </section>
 
-  <!-- ============ CÓDIGO ============ -->
   <section class="slide" data-chapter="Máquina de estados" data-topic="enum y match">
-    <div class="slide-eyebrow">Dos herramientas nuevas</div>
+    <div class="slide-eyebrow">Dos herramientas, ya vistas en el semáforo</div>
     <h2 class="slide-title"><code>enum</code> para nombrar, <code>match</code> para elegir</h2>
     <div class="columns">
       <div class="code-wrap">
@@ -408,7 +644,7 @@ objetivo = pacman.position + pacman.direccion * <span class="n">4</span>
   </section>
 
   <section class="slide" data-chapter="Máquina de estados" data-topic="El _process completo">
-    <div class="slide-eyebrow">El corazón</div>
+    <div class="slide-eyebrow">El corazón <span class="godot">Godot · demo 07</span></div>
     <h2 class="slide-title">El <code>_process</code>: hacer + decidir</h2>
     <div class="columns" style="grid-template-columns:1.15fr 0.85fr;">
       <div class="code-wrap">
@@ -443,8 +679,83 @@ objetivo = pacman.position + pacman.direccion * <span class="n">4</span>
     </div>
   </section>
 
+  <section class="slide" data-chapter="IA" data-topic="IA famosa: Doom">
+    <div class="slide-eyebrow">🎮 La flecha que llega de afuera</div>
+    <h2 class="slide-title">Doom (1993): un <code>if</code> y los monstruos se pelean</h2>
+    <div class="columns" style="grid-template-columns:0.95fr 1.05fr; align-items:center;">
+      <div class="card" style="padding:12px;">
+        <svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Doom: el monstruo A le tira una bola de fuego al jugador, le pega al monstruo B, y B ataca a A" style="width:100%;height:auto;max-height:330px;display:block;">
+  <defs><marker id="dm-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker></defs>
+  <rect width="400" height="260" rx="12" fill="#1b2230"/>
+  <!-- jugador -->
+  <circle cx="60" cy="205" r="11" fill="#5ac8ff"/><rect x="52" y="216" width="16" height="18" rx="3" fill="#5ac8ff"/>
+  <text x="60" y="250" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#5ac8ff">jugador</text>
+  <!-- A dispara hacia el jugador -->
+  <line x1="300" y1="82" x2="196" y2="143" stroke="#ff8a3b" stroke-width="2" stroke-dasharray="6 4"/>
+  <line x1="196" y1="143" x2="88" y2="196" stroke="#ff8a3b" stroke-width="1.5" stroke-dasharray="2 6" opacity="0.5"/>
+  <circle cx="196" cy="143" r="9" fill="#ff8a3b"/><circle cx="196" cy="143" r="4" fill="#ffe13a"/>
+  <text x="60" y="64" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#ff8a3b">1 · A le tira una bola de fuego…</text>
+  <rect x="286" y="50" width="28" height="26" rx="6" fill="#b45309"/><rect x="291" y="57" width="6" height="6" fill="#fff"/><rect x="303" y="57" width="6" height="6" fill="#fff"/><rect x="293" y="59" width="3" height="3" fill="#1b2230"/><rect x="305" y="59" width="3" height="3" fill="#1b2230"/><path d="M292,68 l4,4 l4,-4 l4,4 l4,-4" stroke="#fff" stroke-width="2" fill="none"/><text x="300" y="92" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#e5e7eb">monstruo A</text>
+  <rect x="166" y="138" width="28" height="26" rx="6" fill="#7c3aed"/><rect x="171" y="145" width="6" height="6" fill="#fff"/><rect x="183" y="145" width="6" height="6" fill="#fff"/><rect x="173" y="147" width="3" height="3" fill="#1b2230"/><rect x="185" y="147" width="3" height="3" fill="#1b2230"/><path d="M172,156 l4,4 l4,-4 l4,4 l4,-4" stroke="#fff" stroke-width="2" fill="none"/><text x="180" y="180" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#e5e7eb">monstruo B</text>
+  <text x="112" y="150" text-anchor="end" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#ffe13a">2 · …y le pega a B</text>
+  <!-- B contraataca a A -->
+  <path d="M200,132 C240,120 260,100 284,84" stroke="#dc2626" stroke-width="2.5" fill="none" marker-end="url(#dm-ah)"/>
+  <text x="330" y="132" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" font-weight="700" fill="#dc2626">3 · B ahora ataca a A</text>
+  <text x="200" y="235" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#9aa5b8">se olvidan del jugador y se pelean entre ellos: “infighting”</text>
+</svg>
+        <div class="imgcaption">Ilustración propia. El <i>infighting</i>: una regla, un comportamiento que nadie programó.</div>
+      </div>
+      <div>
+        <p style="font-size:16px; line-height:1.5; margin:0 0 12px;">Regla: cuando un monstruo <b>recibe daño</b>, pasa a atacar <b>a quien lo golpeó</b>. Si a un monstruo se le escapa una bola de fuego y le pega a otro, el otro <b>se da vuelta y lo ataca</b>. Los jugadores lo usan como táctica: ponerse en el medio y dejar que se maten entre ellos.</p>
+        <div class="code-wrap"><pre class="code" style="font-size:12px;"><span class="c"># Cuando un monstruo recibe daño, apunta a quien lo golpeó</span>
+<span class="k">func</span> <span class="t">recibir_dano</span>(cantidad, atacante):
+	vida -= cantidad
+	<span class="k">if</span> atacante != jugador:
+		objetivo = atacante        <span class="c"># ¡se pelean entre ellos!</span></pre></div>
+        <p class="small-note" style="margin-top:10px;">Es la flecha que faltaba en el <code>_process</code>: el jefe entra a <b>GOLPEADO</b> desde <code>recibir_dano()</code>, cuando le pega una bala. No depende de la distancia: <b>llega de afuera</b>.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Máquina de estados" data-topic="Histéresis">
+    <div class="slide-eyebrow">Un detalle que importa <span class="godot">Godot · demo 08</span></div>
+    <h2 class="slide-title">¿Por qué 40 para entrar a ATACAR y 60 para salir?</h2>
+    <div class="columns" style="grid-template-columns:1.15fr 0.85fr; align-items:center;">
+      <div class="card" style="padding:12px;">
+        <svg viewBox="0 0 560 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Con un solo umbral el estado parpadea; con dos umbrales hay una zona de margen" style="width:100%;height:auto;display:block;">
+          <g font-family="Segoe UI,Arial,sans-serif">
+          <text x="10" y="22" font-size="13" font-weight="800" style="fill:var(--red)">Con 40 / 40: un solo borde</text>
+          <line x1="40" y1="70" x2="540" y2="70" style="stroke:var(--muted);stroke-width:2"/>
+          <text x="40" y="92" font-size="11" style="fill:var(--muted)">0 px</text><text x="520" y="92" font-size="11" style="fill:var(--muted)">100 px</text>
+          <line x1="240" y1="44" x2="240" y2="96" style="stroke:var(--red);stroke-width:3"/>
+          <text x="240" y="110" text-anchor="middle" font-size="12" font-weight="700" style="fill:var(--red)">40</text>
+          <text x="140" y="58" text-anchor="middle" font-size="12" style="fill:var(--text)">ATACAR</text>
+          <text x="390" y="58" text-anchor="middle" font-size="12" style="fill:var(--text)">PERSEGUIR</text>
+          <circle cx="244" cy="70" r="7" fill="#5ac8ff"/>
+          <text x="550" y="36" text-anchor="end" font-size="11" style="fill:var(--red)">jugador en el borde: ATACAR, PERSEGUIR, ATACAR…</text>
+          <text x="10" y="148" font-size="13" font-weight="800" style="fill:var(--green)">Con 40 / 60: dos bordes y un margen</text>
+          <rect x="240" y="176" width="100" height="40" style="fill:var(--accent);opacity:.15"/>
+          <line x1="40" y1="196" x2="540" y2="196" style="stroke:var(--muted);stroke-width:2"/>
+          <line x1="240" y1="170" x2="240" y2="222" style="stroke:var(--accent);stroke-width:3"/>
+          <line x1="340" y1="170" x2="340" y2="222" style="stroke:var(--accent);stroke-width:3"/>
+          <text x="240" y="238" text-anchor="middle" font-size="12" font-weight="700" style="fill:var(--accent)">40: entra</text>
+          <text x="340" y="238" text-anchor="middle" font-size="12" font-weight="700" style="fill:var(--accent)">60: sale</text>
+          <text x="290" y="168" text-anchor="middle" font-size="11" style="fill:var(--accent)">margen: sigue en lo que estaba</text>
+          <circle cx="250" cy="196" r="7" fill="#5ac8ff"/>
+          </g>
+        </svg>
+      </div>
+      <div>
+        <p style="font-size:16px; line-height:1.5; margin:0 0 12px;">Con el mismo número para entrar y para salir, un jugador parado en el borde hace que el jefe <b>cambie de estado casi en cada frame</b>. Con dos números, entre 40 y 60 se queda en el estado que tenía.</p>
+        <div class="callout">Medido en la demo 08: con <b>40 / 40</b>, unos <b>40 cambios por segundo</b>. Con <b>40 / 60</b>, <b>2 o 3</b>.</div>
+        <p class="small-note" style="margin-top:10px;">Se llama <b>histéresis</b>. La usa cualquier termostato: prende la estufa a 19 °C y la apaga a 21 °C, no las dos cosas a 20.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ BLOQUE 4 · FSM EN JUEGOS CONOCIDOS ============ -->
   <section class="slide" data-chapter="Máquina de estados" data-topic="En juegos reales: Pac-Man">
-    <div class="slide-eyebrow">🎮 Máquinas de estado en juegos conocidos · 1 de 3</div>
+    <div class="slide-eyebrow">🎮 Bloque 4 · Máquinas de estado en juegos conocidos · 1 de 3 <span class="godot">Godot · demo 09</span></div>
     <h2 class="slide-title">Pac-Man: el fantasma tiene cuatro estados</h2>
     <div class="columns" style="grid-template-columns:0.9fr 1.1fr; align-items:start;">
       <div class="card" style="padding:12px; display:flex; flex-direction:column; align-items:center;">
@@ -550,9 +861,8 @@ objetivo = pacman.position + pacman.direccion * <span class="n">4</span>
     <div class="callout" style="margin-top:18px;">Cuando se dice que un enemigo es “interesante”, casi siempre significa que tiene <b>varios estados</b> y que <b>se nota cuándo cambia</b>. Los tres disparadores que existen ya se conocen: <b>distancia, evento y tiempo</b>.</div>
   </section>
 
-  <!-- ============ CIERRE ============ -->
   <section class="slide" data-chapter="Cierre" data-topic="Ejercicio: dibujar una máquina">
-    <div class="slide-eyebrow">✏️ Ejercicio en papel · 10 minutos</div>
+    <div class="slide-eyebrow">✏️ Ejercicio en papel · 7 minutos</div>
     <h2 class="slide-title">Dibujar la máquina de estados de Boo</h2>
     <div class="columns" style="grid-template-columns:1.05fr 0.95fr;">
       <div>
@@ -566,16 +876,16 @@ objetivo = pacman.position + pacman.direccion * <span class="n">4</span>
       </div>
       <div style="align-self:center;">
         <div class="card">
-          <h3>🧠 Y una pregunta sobre el jefe</h3>
-          <p>El jefe pasa a <code>ATACAR</code> a menos de <b>40 px</b>, pero vuelve a <code>PERSEGUIR</code> recién a más de <b>60 px</b>. ¿Por qué no usar 40 en las dos flechas?</p>
-          <p class="small-note" style="margin-top:8px;">Pista: pensar en un jugador parado justo a 40 px, moviéndose un píxel para cada lado.</p>
+          <h3>🧠 Y una pregunta más</h3>
+          <p>Boo empieza a avanzar cuando Mario está a menos de <b>300 px</b>. ¿A qué distancia conviene que vuelva a flotar? ¿Por qué no a 300?</p>
+          <p class="small-note" style="margin-top:8px;">Pista: la diapositiva de los 40 y 60 px.</p>
         </div>
       </div>
     </div>
   </section>
 
   <section class="slide" data-chapter="Cierre" data-topic="Una solución posible">
-    <div class="slide-eyebrow">✏️ Ejercicio · una solución posible</div>
+    <div class="slide-eyebrow">✏️ Ejercicio · una solución posible <span class="godot">Godot · demo 10</span></div>
     <h2 class="slide-title">Boo: tres estados, y el “evento” es hacia dónde se mira</h2>
     <div class="columns" style="grid-template-columns:1.1fr 0.9fr; align-items:center;">
       <div class="card" style="padding:10px 12px 6px;"><svg viewBox="0 0 560 190" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Estados de Boo: flotar, avanzar, taparse" style="width:100%;height:auto;display:block;">
@@ -600,24 +910,209 @@ objetivo = pacman.position + pacman.direccion * <span class="n">4</span>
 	<span class="c"># quieto: no hace nada</span>
 	<span class="k">if</span> <span class="k">not</span> mario_me_mira():
 		estado = <span class="t">Estado</span>.AVANZAR</pre>
-        <div class="callout" style="margin-top:12px;">Sobre los 40 y 60 px: con el mismo número, un jugador parado en el borde haría que el jefe <b>parpadee</b> entre dos estados cada frame. Dejar un margen entre entrar y salir se llama <b>histéresis</b>.</div>
+        <div class="callout" style="margin-top:12px;">Sobre la pregunta: volver a <b>FLOTAR</b> a más de <b>380 px</b>, no a 300. Es la <b>histéresis</b> otra vez. En la demo 10 se ven los dos círculos.</div>
       </div>
     </div>
   </section>
 
+  <!-- ============ BLOQUE 5 · LA IA NO SIEMPRE ES UN ENEMIGO ============ -->
+  <section class="slide" data-chapter="Más allá del enemigo" data-topic="Cuatro niveles de IA">
+    <div class="slide-eyebrow">Bloque 5 · Cambiar de escala</div>
+    <h2 class="slide-title">La IA no siempre es un enemigo: cuatro niveles</h2>
+    <div class="recorrido" style="grid-template-columns:repeat(4, 1fr);">
+      <div class="card" style="border-top:3px solid var(--accent);"><div class="num">NIVEL 1 · EL INDIVIDUO</div><h3>Un enemigo decide</h3><p>Qué hace él solo. La máquina de estados de toda la clase.</p><div class="min">el jefe</div></div>
+      <div class="card" style="border-top:3px solid var(--green);"><div class="num">NIVEL 2 · EL GRUPO</div><h3>Muchos se mueven juntos</h3><p>Reglas de movimiento entre vecinos: que no se choquen, que se repartan.</p><div class="min">bandadas, hordas</div></div>
+      <div class="card" style="border-top:3px solid var(--red);"><div class="num">NIVEL 3 · EL PERSEGUIDOR</div><h3>Uno que no para</h3><p>Una máquina simple, más alguien que decide <b>cuándo</b> aparece.</p><div class="min">Mr. X, Nemesis, el Alien</div></div>
+      <div class="card" style="border-top:3px solid var(--yellow);"><div class="num">NIVEL 4 · LA PARTIDA</div><h3>El ritmo y la dificultad</h3><p>Una IA que no maneja a nadie: maneja <b>cuándo y cuántos</b>.</p><div class="min">el director de Left 4 Dead</div></div>
+    </div>
+    <div class="callout" style="margin-top:16px;">Cada nivel suma una capa al anterior. La división tiene nombre en la bibliografía: Millington y Funge, <i>Artificial Intelligence for Games</i>, separan la IA en <b>movimiento</b>, <b>decisión</b> y <b>estrategia</b>.</div>
+  </section>
+
+  <section class="slide" data-chapter="Más allá del enemigo" data-topic="El grupo: separación">
+    <div class="slide-eyebrow">Nivel 2 · El grupo <span class="godot">Godot · demo 11</span></div>
+    <h2 class="slide-title">El grupo: que los slimes no se apilen</h2>
+    <div class="columns" style="grid-template-columns:0.9fr 1.1fr; align-items:center;">
+      <div class="card" style="padding:12px;">
+        <svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Sin separación los slimes se apilan en un punto; con separación forman un anillo alrededor del jugador" style="width:100%;height:auto;display:block;">
+          <g font-family="Segoe UI,Arial,sans-serif">
+          <rect x="0" y="0" width="190" height="190" rx="10" style="fill:var(--panel-2)"/>
+          <rect x="210" y="0" width="190" height="190" rx="10" style="fill:var(--panel-2)"/>
+          <circle cx="95" cy="95" r="9" fill="#5ac8ff"/>
+          <circle cx="110" cy="92" r="12" fill="#7ccf4a" opacity=".9"/><circle cx="113" cy="96" r="12" fill="#7ccf4a" opacity=".9"/><circle cx="108" cy="99" r="12" fill="#7ccf4a" opacity=".9"/><circle cx="112" cy="101" r="12" fill="#7ccf4a" opacity=".9"/>
+          <text x="128" y="78" font-size="12" font-weight="800" style="fill:var(--red)">×8</text>
+          <circle cx="305" cy="95" r="9" fill="#5ac8ff"/>
+          <circle cx="305" cy="62" r="12" fill="#7ccf4a"/><circle cx="328" cy="72" r="12" fill="#7ccf4a"/><circle cx="338" cy="95" r="12" fill="#7ccf4a"/><circle cx="328" cy="118" r="12" fill="#7ccf4a"/><circle cx="305" cy="128" r="12" fill="#7ccf4a"/><circle cx="282" cy="118" r="12" fill="#7ccf4a"/><circle cx="272" cy="95" r="12" fill="#7ccf4a"/><circle cx="282" cy="72" r="12" fill="#7ccf4a"/>
+          <text x="95" y="210" text-anchor="middle" font-size="12" style="fill:var(--muted)">sin separar: parecen uno</text>
+          <text x="305" y="210" text-anchor="middle" font-size="12" style="fill:var(--muted)">con separación: se reparten</text>
+          </g>
+        </svg>
+      </div>
+      <div>
+        <p style="font-size:16px; line-height:1.5; margin:0 0 10px;">Todos los slimes van al <b>mismo punto</b>, así que terminan uno encima del otro. Una regla más lo arregla: <b>alejarse un poco de cada vecino que se toca</b>.</p>
+        <div class="code-wrap"><pre class="code" style="font-size:12.5px;"><span class="c"># En el _process del slime, después de perseguir</span>
+<span class="k">for</span> otro <span class="k">in</span> get_overlapping_areas():
+	<span class="k">if</span> otro <span class="k">is</span> <span class="t">Enemigo</span>:
+		position += (position - otro.position).normalized() * <span class="n">90</span> * delta</pre></div>
+        <p class="small-note" style="margin-top:10px;">Es la primera de las tres reglas de los <b>boids</b> de Craig Reynolds (1987): <b>separación</b>, alineación y cohesión. Con las tres salen bandadas de pájaros y cardúmenes. Nadie dirige el grupo: cada uno mira a sus vecinos.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Más allá del enemigo" data-topic="¿Cuánto cuesta?">
+    <div class="slide-eyebrow">Nivel 2 · El costo <span class="godot">Godot · demo 11</span></div>
+    <h2 class="slide-title">¿Cuánto le cuesta a la computadora?</h2>
+    <div class="columns" style="grid-template-columns:1.1fr 0.9fr; align-items:start;">
+      <div>
+        <table class="tbl" style="font-size:14.5px;">
+          <thead><tr><th>Enemigos</th><th>Todos contra todos<br><small>cada uno mira a todos</small></th><th>Vecinos (<code>Area2D</code>)<br><small>cada uno mira a los que toca</small></th></tr></thead>
+          <tbody>
+            <tr><td><b>10</b></td><td>90 comparaciones</td><td>unas 30</td></tr>
+            <tr><td><b>100</b></td><td>9.900</td><td>unas 300</td></tr>
+            <tr><td><b>300</b></td><td>89.700 · <b style="color:var(--red);">≈ 30 FPS</b></td><td>unas 900 · <b style="color:var(--green);">más de 100 FPS</b></td></tr>
+            <tr><td><b>600</b></td><td>359.400 · <b style="color:var(--red);">≈ 5 FPS</b></td><td>unas 1.800 · <b style="color:var(--green);">más de 100 FPS</b></td></tr>
+          </tbody>
+        </table>
+        <p class="small-note" style="margin-top:8px;">FPS medidos con la demo 11 en una PC de escritorio. En otra computadora cambian los números, no la proporción.</p>
+      </div>
+      <div>
+        <div class="card">
+          <h3>Por qué tanta diferencia</h3>
+          <p style="font-size:15px; line-height:1.5;">Todos contra todos: con <b>n</b> enemigos, cada uno revisa a los otros <b>n − 1</b>. El doble de enemigos es <b>cuatro veces</b> más trabajo.</p>
+          <p style="font-size:15px; line-height:1.5; margin-top:8px;">Con el <code>Area2D</code>, el motor de física ya sabe quién toca a quién. Cada slime revisa solo a sus <b>2 o 3 vecinos</b>.</p>
+        </div>
+        <div class="callout" style="margin-top:12px;">En un <i>survivors</i> con cientos de enemigos, esa diferencia es la que separa un juego fluido de uno injugable.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Más allá del enemigo" data-topic="El perseguidor: Mr. X y Nemesis">
+    <div class="slide-eyebrow">Nivel 3 · El perseguidor</div>
+    <h2 class="slide-title">Resident Evil: Mr. X y Nemesis no dejan de buscar</h2>
+    <div class="columns" style="grid-template-columns:0.9fr 1.1fr; align-items:start;">
+      <div style="display:grid; gap:10px;">
+        <div class="ph" style="height:150px;">🖼️ IMAGEN PENDIENTE<br>Mr. X (<i>Resident Evil 2</i>, 2019) avanzando por un pasillo de la comisaría</div>
+        <div class="ph" style="height:150px;">🖼️ IMAGEN PENDIENTE<br>Nemesis (<i>Resident Evil 3</i>) en una de sus apariciones</div>
+      </div>
+      <div>
+        <p style="font-size:16px; line-height:1.5; margin:0 0 10px;">Un enemigo que <b>sigue al jugador por todo el mapa</b>. No es rápido ni inteligente: lo agobiante es que <b>no para</b>. Sus reglas son pocas:</p>
+        <ul style="font-size:15px; line-height:1.5; margin:0; padding-left:20px;">
+          <li><b>Busca por el ruido:</b> pasos y disparos le dicen hacia dónde ir. Es detección <b>por evento</b>.</li>
+          <li><b>Camina, no corre:</b> el miedo sale de que siempre está cerca.</li>
+          <li><b>Aparece cuando el juego decide:</b> su entrada está guionada. Rompe una pared, abre una puerta.</li>
+          <li><b>Tiene debilidades a propósito:</b> se lo puede voltear unos segundos (su GOLPEADO) y no entra a las salas de guardado.</li>
+        </ul>
+        <div class="callout" style="margin-top:12px;">Las debilidades son el <b>respiro</b> del diseño, como la recuperación de Hollow Knight. Y aparece algo nuevo: <b>alguien más decide cuándo entra</b>.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Más allá del enemigo" data-topic="Dos cerebros: Alien: Isolation">
+    <div class="slide-eyebrow">Nivel 3 · Dos cerebros</div>
+    <h2 class="slide-title">Alien: Isolation (2014): uno sabe, el otro busca</h2>
+    <div class="columns" style="grid-template-columns:0.8fr 1.2fr; align-items:center;">
+      <div class="ph" style="height:250px;">🖼️ IMAGEN PENDIENTE<br>Alien: Isolation: el alien recorriendo un pasillo, o la protagonista escondida en un armario</div>
+      <div>
+        <div class="card" style="padding:10px 12px 6px;">
+          <svg viewBox="0 0 560 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="El director sabe dónde está el jugador y le da pistas al alien; el alien busca con vista y oído" style="width:100%;height:auto;display:block;">
+            <defs><marker id="al-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--accent)"/></marker><marker id="al-r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--red)"/></marker></defs>
+            <g font-family="Segoe UI,Arial,sans-serif">
+            <rect x="10" y="20" width="200" height="74" rx="12" style="fill:var(--panel);stroke:var(--accent);stroke-width:2.5"/>
+            <text x="110" y="46" text-anchor="middle" font-size="14" font-weight="800" style="fill:var(--accent)">EL DIRECTOR</text>
+            <text x="110" y="66" text-anchor="middle" font-size="11.5" style="fill:var(--text)">sabe siempre dónde está</text>
+            <text x="110" y="82" text-anchor="middle" font-size="11.5" style="fill:var(--text)">el jugador · mide la tensión</text>
+            <rect x="350" y="20" width="200" height="74" rx="12" style="fill:var(--panel);stroke:var(--red);stroke-width:2.5"/>
+            <text x="450" y="46" text-anchor="middle" font-size="14" font-weight="800" style="fill:var(--red)">EL ALIEN</text>
+            <text x="450" y="66" text-anchor="middle" font-size="11.5" style="fill:var(--text)">no sabe nada: busca</text>
+            <text x="450" y="82" text-anchor="middle" font-size="11.5" style="fill:var(--text)">con la vista y el oído</text>
+            <line x1="212" y1="44" x2="346" y2="44" style="stroke:var(--accent);stroke-width:2" marker-end="url(#al-a)"/>
+            <text x="279" y="36" text-anchor="middle" font-size="11" style="fill:var(--muted)">“revisar esa zona”</text>
+            <line x1="346" y1="74" x2="212" y2="74" style="stroke:var(--accent);stroke-width:2" stroke-dasharray="5 4" marker-end="url(#al-a)"/>
+            <text x="279" y="90" text-anchor="middle" font-size="11" style="fill:var(--muted)">tensión muy alta: “alejarse”</text>
+            <circle cx="280" cy="160" r="12" fill="#5ac8ff"/>
+            <text x="280" y="190" text-anchor="middle" font-size="11.5" style="fill:var(--muted)">jugador</text>
+            <line x1="430" y1="96" x2="296" y2="150" style="stroke:var(--red);stroke-width:2" stroke-dasharray="6 4" marker-end="url(#al-r)"/>
+            <text x="404" y="140" font-size="11" style="fill:var(--red)">lo tiene que encontrar</text>
+            <line x1="130" y1="96" x2="266" y2="150" style="stroke:var(--accent);stroke-width:1.5" stroke-dasharray="2 4"/>
+            <text x="20" y="140" font-size="11" style="fill:var(--accent)">lo ve siempre, no lo dice</text>
+            </g>
+          </svg>
+        </div>
+        <p style="font-size:15px; line-height:1.5; margin:10px 0 0;">El <b>director</b> mantiene al alien <b>cerca</b>, pero nunca le dice dónde está el jugador. El <b>alien</b> tiene que encontrarlo de verdad. Resultado: siempre anda rondando, y esconderse funciona.</p>
+        <p class="small-note" style="margin-top:8px;">Es lo de Mr. X separado en dos: un cerebro decide <b>cuándo y dónde</b>, el otro <b>qué hacer</b>.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Más allá del enemigo" data-topic="La partida: el director de Left 4 Dead">
+    <div class="slide-eyebrow">Nivel 4 · La partida</div>
+    <h2 class="slide-title">Left 4 Dead (2008): una máquina de estados sobre el spawner</h2>
+    <div class="columns" style="grid-template-columns:0.75fr 1.25fr; align-items:start;">
+      <div>
+        <div class="ph" style="height:150px;">🖼️ IMAGEN PENDIENTE<br>Left 4 Dead: una horda de infectados llegando por un pasillo</div>
+        <p style="font-size:15px; line-height:1.5; margin:10px 0 0;">El <b>director</b> no maneja a ningún zombi. Mide la <b>intensidad</b>: cuánto daño recibe el grupo y cuántos enemigos tiene encima. Según eso, decide <b>cuándo y cuántos</b> aparecen.</p>
+      </div>
+      <div>
+        <div class="card" style="padding:10px 12px 6px;">
+          <svg viewBox="0 0 600 210" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Gráfico de intensidad que sube en acumular, llega al pico y baja en calma, y se repite" style="width:100%;height:auto;display:block;">
+            <g font-family="Segoe UI,Arial,sans-serif">
+            <line x1="40" y1="160" x2="590" y2="160" style="stroke:var(--muted);stroke-width:1.5"/>
+            <line x1="40" y1="20" x2="40" y2="160" style="stroke:var(--muted);stroke-width:1.5"/>
+            <text x="34" y="28" text-anchor="end" font-size="11" style="fill:var(--muted)">alta</text>
+            <text x="590" y="178" text-anchor="end" font-size="11" style="fill:var(--muted)">tiempo →</text>
+            <line x1="40" y1="50" x2="590" y2="50" style="stroke:var(--red);stroke-width:1" stroke-dasharray="4 4"/>
+            <text x="585" y="44" text-anchor="end" font-size="10.5" style="fill:var(--red)">umbral de pico</text>
+            <path d="M40,150 C90,140 130,110 170,50 C185,40 205,45 215,58 C240,110 260,150 300,150 C340,148 370,115 410,50 C425,40 445,45 455,58 C480,110 500,150 545,150 L590,148" fill="none" style="stroke:var(--accent);stroke-width:3"/>
+            <rect x="40" y="168" width="130" height="22" rx="6" style="fill:var(--accent);opacity:.18"/><text x="105" y="183" text-anchor="middle" font-size="11.5" font-weight="700" style="fill:var(--accent)">ACUMULAR</text>
+            <rect x="170" y="168" width="50" height="22" rx="6" style="fill:var(--red);opacity:.2"/><text x="195" y="183" text-anchor="middle" font-size="11.5" font-weight="700" style="fill:var(--red)">PICO</text>
+            <rect x="220" y="168" width="80" height="22" rx="6" style="fill:var(--green);opacity:.2"/><text x="260" y="183" text-anchor="middle" font-size="11.5" font-weight="700" style="fill:var(--green)">CALMA</text>
+            <text x="105" y="140" text-anchor="middle" font-size="10.5" style="fill:var(--muted)">spawnea cada vez más</text>
+            <text x="262" y="138" text-anchor="middle" font-size="10.5" style="fill:var(--muted)">no spawnea</text>
+            <text x="420" y="205" text-anchor="middle" font-size="11" style="fill:var(--muted)">… y vuelve a empezar</text>
+            </g>
+          </svg>
+        </div>
+        <div class="code-wrap" style="margin-top:10px;"><pre class="code" style="font-size:12px;"><span class="c"># En el survivors sería cambiarle el ritmo al Timer del spawner</span>
+<span class="k">match</span> estado_director:
+	<span class="t">Director</span>.ACUMULAR: $TimerSpawn.wait_time = max($TimerSpawn.wait_time - <span class="n">0.1</span>, <span class="n">0.3</span>)
+	<span class="t">Director</span>.PICO:     $TimerSpawn.wait_time = <span class="n">0.3</span>
+	<span class="t">Director</span>.CALMA:    $TimerSpawn.stop()</pre></div>
+        <p class="small-note" style="margin-top:8px;">Tres estados, como el semáforo. Lo que cambia es qué controla: no a un enemigo, sino a <b>la partida entera</b>.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Más allá del enemigo" data-topic="Ritmo no es dificultad">
+    <div class="slide-eyebrow">Nivel 4 · Para discutir <span class="actividad">Actividad en clase</span></div>
+    <h2 class="slide-title">Ritmo no es lo mismo que dificultad</h2>
+    <div class="columns">
+      <div class="card" style="border-top:3px solid var(--accent);">
+        <h3 style="color:var(--accent);">🎢 Ritmo (<i>pacing</i>)</h3>
+        <p><b>Left 4 Dead.</b> El director no hace el juego más fácil ni más difícil: lo hace <b>ondular</b>. Tensión, pico, respiro. Lo que busca es que nunca sea monótono.</p>
+      </div>
+      <div class="card" style="border-top:3px solid var(--yellow);">
+        <h3 style="color:var(--yellow);">⚖️ Dificultad dinámica</h3>
+        <p><b>Resident Evil 4.</b> Una escala oculta sube o baja la <b>agresividad y el daño</b> de los enemigos según cómo le va al jugador. Quien muere seguido, recibe enemigos más blandos, y no se entera.</p>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:18px;">🤔 <b>Para el grupo:</b> en el <i>survivors</i> del curso, ¿qué conviene más, un director de <b>ritmo</b> o uno de <b>dificultad</b>? ¿Qué mediría cada uno? ¿Es justo que el jugador <b>no sepa</b> que el juego se ajusta?</div>
+    <p class="small-note" style="margin-top:12px;">En la bibliografía: <i>pacing</i> y <i>dynamic difficulty adjustment</i> (DDA).</p>
+  </section>
+
+  <!-- ============ CIERRE ============ -->
   <section class="slide" data-chapter="Cierre" data-topic="Resumen">
     <div class="slide-eyebrow">Cierre</div>
     <h2 class="slide-title">Lo que hay que llevarse de hoy</h2>
-    <table class="tbl" style="font-size:15px;">
+    <table class="tbl" style="font-size:14px;">
       <thead><tr><th>Idea</th><th>En una línea</th></tr></thead>
       <tbody>
         <tr><td><b>IA de un juego</b></td><td>Reglas simples que hacen que un enemigo <b>parezca</b> pensar. Divertida, no perfecta</td></tr>
-        <tr><td><b>Comportamientos</b></td><td>Acechar, perseguir, atacar, reaccionar al golpe: cada uno es trivial por separado</td></tr>
+        <tr><td><b>Máquina de estados</b></td><td>Una variable <code>estado</code>, un estado a la vez, transiciones definidas por eventos</td></tr>
+        <tr><td><b>Es una clase</b></td><td>Los eventos son métodos, y todo cambio pasa por <code>cambiar_estado()</code></td></tr>
         <tr><td><b>Detectar</b></td><td>Por distancia (<code>distance_to</code>) o con un <code>Area2D</code> de visión</td></tr>
-        <tr><td><b>Máquina de estados</b></td><td>Una variable <code>estado</code>, un estado a la vez, transiciones definidas</td></tr>
-        <tr><td><b><code>enum</code> + <code>match</code></b></td><td>Nombrar los estados y elegir qué hacer en cada uno</td></tr>
-        <tr><td><b>Hacer + decidir</b></td><td>En cada estado: primero el comportamiento, después la pregunta “¿cambio?”</td></tr>
+        <tr><td><b><code>enum</code> + <code>match</code></b></td><td>Nombrar los estados y elegir qué hacer en cada uno. Hacer, y después decidir</td></tr>
         <tr><td><b>Tres disparadores</b></td><td><b>Distancia</b>, <b>evento</b> (un golpe) y <b>tiempo</b> (un <code>Timer</code>)</td></tr>
+        <tr><td><b>Histéresis</b></td><td>Un número para entrar y otro para salir, para que no parpadee</td></tr>
+        <tr><td><b>Niveles de IA</b></td><td>El individuo, el grupo (separación), el perseguidor y la partida (el director)</td></tr>
       </tbody>
     </table>
   </section>
@@ -640,6 +1135,7 @@ objetivo = pacman.position + pacman.direccion * <span class="n">4</span>
         <ul>
           <li>El proyecto de la Clase 5+ (o el TP3) con el élite funcionando</li>
           <li>El diagrama de Boo, en papel o foto</li>
+          <li>Opcional: abrir el proyecto de demos (<code>v2/semana-04/proyecto-clase</code>) y probarlas</li>
           <li>Pensar: ¿cómo se “anula” en la clase hija una función de la madre?</li>
         </ul>
       </div>
@@ -650,5 +1146,81 @@ objetivo = pacman.position + pacman.direccion * <span class="n">4</span>
 </div>
 
 <script src="deck.js"></script>
+<script>
+/* Demos interactivas de la Clase 8 (v2). Sin dependencias externas. */
+(function () {
+  const $ = (id) => document.getElementById(id);
+  // Al salir de la diapositiva, la demo vuelve a su estado inicial.
+  const alSalir = (el, fn) => {
+    const slide = el.closest(".slide");
+    new MutationObserver(() => { if (!slide.classList.contains("active")) fn(); })
+      .observe(slide, { attributes: true, attributeFilter: ["class"] });
+  };
+  const anotar = (lista, texto, ignorado) => {
+    const li = document.createElement("li");
+    li.textContent = texto;
+    if (ignorado) li.className = "ignorado";
+    lista.prepend(li);
+    while (lista.children.length > (+lista.dataset.max || 6)) lista.lastChild.remove();
+  };
+
+  /* 1 · Semáforo */
+  if ($("sm-registro")) {
+    let estado = "ROJO";
+    const pintar = () => {
+      $("sm-rojo").classList.toggle("on", estado === "ROJO");
+      $("sm-verde").classList.toggle("on", estado === "VERDE");
+      $("sm-amarillo").classList.toggle("on", estado === "AMARILLO");
+      $("sm-amarillo").classList.toggle("titila", estado === "INTERMITENTE");
+      $("sm-estado").textContent = "estado = " + estado;
+    };
+    const flechas = {
+      "pasar_tiempo()": { VERDE: "AMARILLO", AMARILLO: "ROJO", ROJO: "VERDE" },
+      "fallar()": { VERDE: "INTERMITENTE", AMARILLO: "INTERMITENTE", ROJO: "INTERMITENTE" },
+      "arreglar()": { INTERMITENTE: "ROJO" },
+    };
+    const evento = (nombre) => {
+      const nuevo = flechas[nombre][estado];
+      if (nuevo) { anotar($("sm-registro"), nombre + "  →  " + estado + " pasa a " + nuevo); estado = nuevo; }
+      else anotar($("sm-registro"), nombre + "  →  ignorado: en " + estado + " no hay flecha", true);
+      pintar();
+    };
+    const reiniciar = () => { estado = "ROJO"; $("sm-registro").innerHTML = ""; pintar(); };
+    $("sm-tiempo").onclick = () => evento("pasar_tiempo()");
+    $("sm-falla").onclick = () => evento("fallar()");
+    $("sm-arregla").onclick = () => evento("arreglar()");
+    $("sm-reset").onclick = reiniciar;
+    alSalir($("sm-registro"), reiniciar);
+    pintar();
+  }
+
+  /* 2 · Mario */
+  if ($("mr-registro")) {
+    let estado = "CHICO";
+    const flechas = {
+      "CHICO-hongo": "GRANDE", "CHICO-flor": "GRANDE", "GRANDE-flor": "FUEGO",
+      "GRANDE-golpe": "CHICO", "FUEGO-golpe": "CHICO", "CHICO-golpe": "MUERTO",
+    };
+    const pintar = (fila) => {
+      $("mr-mario").className = "mario " + estado.toLowerCase();
+      $("mr-estado").textContent = "estado = " + estado;
+      document.querySelectorAll("#mr-tabla tbody tr").forEach((tr) => tr.classList.toggle("on", tr.dataset.r === fila));
+    };
+    const evento = (nombre) => {
+      const clave = estado + "-" + nombre;
+      const nuevo = flechas[clave];
+      if (nuevo) { anotar($("mr-registro"), nombre + "  →  " + estado + " pasa a " + nuevo); estado = nuevo; pintar(clave); }
+      else { anotar($("mr-registro"), nombre + "  →  ignorado en " + estado, true); pintar(null); }
+    };
+    const reiniciar = () => { estado = "CHICO"; $("mr-registro").innerHTML = ""; pintar(null); };
+    $("mr-hongo").onclick = () => evento("hongo");
+    $("mr-flor").onclick = () => evento("flor");
+    $("mr-golpe").onclick = () => evento("golpe");
+    $("mr-reset").onclick = reiniciar;
+    alSalir($("mr-registro"), reiniciar);
+    pintar(null);
+  }
+})();
+</script>
 </body>
 </html>
