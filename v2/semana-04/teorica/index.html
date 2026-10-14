@@ -84,7 +84,7 @@
       <div class="card"><div class="num">BLOQUE 1</div><h3>Qué es la IA de un juego</h3><p>Reglas simples que <b>parecen</b> inteligencia. Pac-Man y Space Invaders.</p><div class="min">≈ 15 min</div></div>
       <div class="card"><div class="num">BLOQUE 2</div><h3>Máquina de estados, sin juegos</h3><p>Un semáforo con botones. La máquina como <b>clase</b>. Mario chico, grande y fuego.</p><div class="min">≈ 25 min</div></div>
       <div class="card"><div class="num">BLOQUE 3</div><h3>Del semáforo al enemigo</h3><p>Cómo ve, el spaghetti de <code>if</code>, la máquina del jefe y la histéresis.</p><div class="min">≈ 25 min</div></div>
-      <div class="card"><div class="num">BLOQUE 4</div><h3>Máquinas en juegos conocidos</h3><p>Pac-Man, Metal Gear, Hollow Knight. Ejercicio: la máquina de Boo.</p><div class="min">≈ 20 min</div></div>
+      <div class="card"><div class="num">BLOQUE 4</div><h3>Máquinas en juegos conocidos</h3><p>Pac-Man, Metal Gear, Hollow Knight y Boo. Ejercicio: encontrar una máquina.</p><div class="min">≈ 30 min</div></div>
       <div class="card"><div class="num">BLOQUE 5</div><h3>La IA no siempre es un enemigo</h3><p>El grupo, el perseguidor, los dos cerebros y el director.</p><div class="min">≈ 25 min</div></div>
     </div>
     <div class="callout" style="margin-top:16px;">▶ Las etiquetas <span class="godot" style="margin-left:0;">Godot · demo NN</span> indican que esa idea se muestra funcionando en el proyecto <code>proyecto-clase</code>. Las demos se <b>miran</b>: el jefe se programa en la Clase 8+.</div>
@@ -752,7 +752,7 @@ objetivo = pacman.position + pacman.direccion * <span class="n">4</span>
 
   <!-- ============ BLOQUE 4 · FSM EN JUEGOS CONOCIDOS ============ -->
   <section class="slide" data-chapter="Máquina de estados" data-topic="En juegos reales: Pac-Man">
-    <div class="slide-eyebrow">🎮 Bloque 4 · Máquinas de estado en juegos conocidos · 1 de 3 <span class="godot">Godot · demo 09</span></div>
+    <div class="slide-eyebrow">🎮 Bloque 4 · Máquinas de estado en juegos conocidos · 1 de 4 <span class="godot">Godot · demo 09</span></div>
     <h2 class="slide-title">Pac-Man: el fantasma tiene cuatro estados</h2>
     <div class="columns" style="grid-template-columns:0.9fr 1.1fr; align-items:start;">
       <div class="card" style="padding:12px; display:flex; flex-direction:column; align-items:center;">
@@ -783,7 +783,7 @@ objetivo = pacman.position + pacman.direccion * <span class="n">4</span>
   </section>
 
   <section class="slide" data-chapter="Máquina de estados" data-topic="En juegos reales: Metal Gear Solid">
-    <div class="slide-eyebrow">🎮 Máquinas de estado en juegos conocidos · 2 de 3</div>
+    <div class="slide-eyebrow">🎮 Máquinas de estado en juegos conocidos · 2 de 4</div>
     <h2 class="slide-title">Metal Gear Solid: el estado está en pantalla</h2>
     <div class="columns" style="grid-template-columns:0.9fr 1.1fr; align-items:start;">
       <div class="card" style="padding:12px; display:flex; flex-direction:column; align-items:center;">
@@ -812,7 +812,7 @@ objetivo = pacman.position + pacman.direccion * <span class="n">4</span>
   </section>
 
   <section class="slide" data-chapter="Máquina de estados" data-topic="En juegos reales: Hollow Knight">
-    <div class="slide-eyebrow">🎮 Máquinas de estado en juegos conocidos · 3 de 3</div>
+    <div class="slide-eyebrow">🎮 Máquinas de estado en juegos conocidos · 3 de 4</div>
     <h2 class="slide-title">Hollow Knight y los <i>souls</i>: leer el estado es el juego</h2>
     <div class="columns" style="grid-template-columns:0.9fr 1.1fr; align-items:start;">
       <div class="card" style="padding:12px; display:flex; flex-direction:column; align-items:center;">
@@ -843,47 +843,9 @@ objetivo = pacman.position + pacman.direccion * <span class="n">4</span>
     </div>
   </section>
 
-  <section class="slide" data-chapter="Máquina de estados" data-topic="En juegos reales: en común">
-    <div class="slide-eyebrow">🎮 Máquinas de estado en juegos conocidos</div>
-    <h2 class="slide-title">¿Qué tienen en común?</h2>
-    <table class="tbl" style="font-size:14.5px;">
-      <thead><tr><th>Juego</th><th>Estados</th><th>Qué dispara los cambios</th><th>Cómo lo muestra</th></tr></thead>
-      <tbody>
-        <tr><td><b>👻 Pac-Man</b></td><td>scatter · chase · frightened · eaten</td><td><b>tiempo</b> (reloj fijo) + <b>evento</b> (píldora)</td><td>el color azul y el parpadeo</td></tr>
-        <tr><td><b>❗ Metal Gear Solid</b></td><td>patrol · alert · evasion · caution</td><td><b>evento</b> (lo ve) + <b>tiempo</b> (contador)</td><td>el “!” y el contador en el radar</td></tr>
-        <tr><td><b>🗡️ Hollow Knight</b></td><td>idle · aggro · aviso · golpe · recuperación</td><td><b>distancia</b> + <b>tiempo</b> (animaciones)</td><td>la animación de aviso</td></tr>
-        <tr style="background:var(--panel-2);"><td><b>🟣 El jefe de hoy</b></td><td>acechar · perseguir · atacar · golpeado</td><td><b>distancia</b> + <b>evento</b> (bala) + <b>tiempo</b> (Timer)</td><td>la etiqueta encima y el rojo</td></tr>
-      </tbody>
-    </table>
-    <div class="callout" style="margin-top:18px;">Cuando se dice que un enemigo es “interesante”, casi siempre significa que tiene <b>varios estados</b> y que <b>se nota cuándo cambia</b>. Los tres disparadores que existen ya se conocen: <b>distancia, evento y tiempo</b>.</div>
-  </section>
-
-  <section class="slide" data-chapter="Cierre" data-topic="Ejercicio: dibujar una máquina">
-    <div class="slide-eyebrow">✏️ Ejercicio en papel · 7 minutos</div>
-    <h2 class="slide-title">Dibujar la máquina de estados de Boo</h2>
-    <div class="columns" style="grid-template-columns:1.05fr 0.95fr;">
-      <div>
-        <p class="subtitle" style="font-size:17px;">El fantasma <b>Boo</b> de <i>Super Mario</i> tiene una regla famosa: si Mario <b>lo mira</b>, se tapa la cara y se queda quieto; si Mario le da <b>la espalda</b>, avanza hacia él. Si está lejos, flota en el lugar.</p>
-        <ol class="steps" style="font-size:15.5px;">
-          <li>¿Cuántos <b>estados</b> tiene? Ponerles nombre en MAYÚSCULAS, como en el <code>enum</code></li>
-          <li>Dibujar las <b>flechas</b> y escribir la condición de cada una</li>
-          <li>Marcar cada flecha: ¿es por <b>distancia</b>, por <b>evento</b> o por <b>tiempo</b>?</li>
-          <li>¿Qué dato del jugador necesita <b>consultar</b> Boo para decidir?</li>
-        </ol>
-      </div>
-      <div style="align-self:center;">
-        <div class="card">
-          <h3>🧠 Y una pregunta más</h3>
-          <p>Boo empieza a avanzar cuando Mario está a menos de <b>300 px</b>. ¿A qué distancia conviene que vuelva a flotar? ¿Por qué no a 300?</p>
-          <p class="small-note" style="margin-top:8px;">Pista: la diapositiva de los 40 y 60 px.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="slide" data-chapter="Cierre" data-topic="Una solución posible">
-    <div class="slide-eyebrow">✏️ Ejercicio · una solución posible <span class="godot">Godot · demo 10</span></div>
-    <h2 class="slide-title">Boo: tres estados, y el “evento” es hacia dónde se mira</h2>
+  <section class="slide" data-chapter="Máquina de estados" data-topic="En juegos reales: Boo">
+    <div class="slide-eyebrow">🎮 Bloque 4 · Máquinas de estado en juegos conocidos · 4 de 4 <span class="godot">Godot · demo 10</span></div>
+    <h2 class="slide-title">Boo (Super Mario): solo avanza si no lo miran</h2>
     <div class="columns" style="grid-template-columns:1.1fr 0.9fr; align-items:center;">
       <div class="card" style="padding:10px 12px 6px;"><svg viewBox="0 0 560 190" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Estados de Boo: flotar, avanzar, taparse" style="width:100%;height:auto;display:block;">
   <defs><marker id="bo-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--accent)"/></marker></defs>
@@ -899,6 +861,7 @@ objetivo = pacman.position + pacman.direccion * <span class="n">4</span>
   <text x="280" y="170" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="12" font-weight="700" style="fill:var(--accent)">la distancia y hacia dónde mira (izquierda o derecha)</text>
 </svg></div>
       <div>
+        <p style="font-size:15.5px; line-height:1.5; margin:0 0 10px;">El fantasma <b>Boo</b> tiene una regla famosa: si Mario <b>lo mira</b>, se tapa la cara y se queda quieto. Si Mario le da <b>la espalda</b>, avanza. Si está lejos, flota en el lugar.</p>
         <pre class="code" style="font-size:12.5px;"><span class="t">Estado</span>.AVANZAR:
 	avanzar(delta)
 	<span class="k">if</span> mario_me_mira():
@@ -907,7 +870,55 @@ objetivo = pacman.position + pacman.direccion * <span class="n">4</span>
 	<span class="c"># quieto: no hace nada</span>
 	<span class="k">if</span> <span class="k">not</span> mario_me_mira():
 		estado = <span class="t">Estado</span>.AVANZAR</pre>
-        <div class="callout" style="margin-top:12px;">Sobre la pregunta: volver a <b>FLOTAR</b> a más de <b>380 px</b>, no a 300. Es la <b>histéresis</b> otra vez. En la demo 10 se ven los dos círculos.</div>
+        <p class="small-note" style="margin-top:10px;">Lo nuevo: el “evento” no es un golpe ni un <code>Timer</code>, es <b>hacia dónde mira el jugador</b>. Y para no temblar en el borde, la demo 10 usa histéresis: avanza a menos de <b>300 px</b> y vuelve a flotar a más de <b>380 px</b>.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Máquina de estados" data-topic="En juegos reales: en común">
+    <div class="slide-eyebrow">🎮 Máquinas de estado en juegos conocidos</div>
+    <h2 class="slide-title">¿Qué tienen en común?</h2>
+    <table class="tbl" style="font-size:14.5px;">
+      <thead><tr><th>Juego</th><th>Estados</th><th>Qué dispara los cambios</th><th>Cómo lo muestra</th></tr></thead>
+      <tbody>
+        <tr><td><b>👻 Pac-Man</b></td><td>scatter · chase · frightened · eaten</td><td><b>tiempo</b> (reloj fijo) + <b>evento</b> (píldora)</td><td>el color azul y el parpadeo</td></tr>
+        <tr><td><b>❗ Metal Gear Solid</b></td><td>patrol · alert · evasion · caution</td><td><b>evento</b> (lo ve) + <b>tiempo</b> (contador)</td><td>el “!” y el contador en el radar</td></tr>
+        <tr><td><b>🗡️ Hollow Knight</b></td><td>idle · aggro · aviso · golpe · recuperación</td><td><b>distancia</b> + <b>tiempo</b> (animaciones)</td><td>la animación de aviso</td></tr>
+        <tr><td><b>👻 Boo</b></td><td>flotar · avanzar · taparse</td><td><b>distancia</b> + hacia dónde <b>mira</b> el jugador</td><td>se tapa la cara</td></tr>
+        <tr style="background:var(--panel-2);"><td><b>🟣 El jefe de hoy</b></td><td>acechar · perseguir · atacar · golpeado</td><td><b>distancia</b> + <b>evento</b> (bala) + <b>tiempo</b> (Timer)</td><td>la etiqueta encima y el rojo</td></tr>
+      </tbody>
+    </table>
+    <div class="callout" style="margin-top:18px;">Cuando se dice que un enemigo es “interesante”, casi siempre significa que tiene <b>varios estados</b> y que <b>se nota cuándo cambia</b>. Los tres disparadores que existen ya se conocen: <b>distancia, evento y tiempo</b>.</div>
+  </section>
+
+  <section class="slide" data-chapter="Máquina de estados" data-topic="Ejercicio: encontrar una máquina de estados">
+    <div class="slide-eyebrow">✏️ Ejercicio en papel · 15 minutos <span class="actividad">Actividad en clase</span></div>
+    <h2 class="slide-title">Encontrar una máquina de estados</h2>
+    <div class="columns" style="grid-template-columns:1.1fr 0.9fr;">
+      <div>
+        <p class="subtitle" style="font-size:17px;">Así como se analizaron Pac-Man, Metal Gear, Hollow Knight y Boo: elegir un caso propio y desarmarlo en papel.</p>
+        <ol class="steps" style="font-size:15.5px;">
+          <li><b>Elegir un caso.</b> Un enemigo, un jefe, un personaje o un objeto de un juego que haya gustado. También vale algo de la vida real: un microondas, una app, un cajero.</li>
+          <li><b>Identificar los estados.</b> Listarlos en MAYÚSCULAS, como en el <code>enum</code>. ¿Cuál es el inicial?</li>
+          <li><b>Identificar qué lo hace cambiar.</b> Para cada estado: ¿qué pasa para que salga de ahí, y a cuál va?</li>
+          <li><b>Dibujar el diagrama</b>, con una flecha por transición y su condición escrita encima.</li>
+          <li>Marcar cada flecha: ¿es por <b>distancia</b>, por <b>evento</b> o por <b>tiempo</b>?</li>
+        </ol>
+      </div>
+      <div style="align-self:center;">
+        <div class="card">
+          <h3>⏱️ Tiempos</h3>
+          <p style="font-size:15px;">Unos <b>5 minutos</b> para elegir el caso y <b>10</b> para desarrollarlo. Al final, dos o tres diagramas se comparten con el grupo.</p>
+        </div>
+        <div class="card" style="margin-top:12px;">
+          <h3>✔️ Para revisar el propio diagrama</h3>
+          <ul style="font-size:14.5px; line-height:1.5; margin:0; padding-left:18px;">
+            <li>¿Hay un solo estado activo a la vez?</li>
+            <li>¿Cada estado tiene al menos una flecha de salida, o es un final (como MUERTO)?</li>
+            <li>¿Hay algún evento que en algún estado no haga nada?</li>
+            <li>¿Alguna flecha necesita histéresis?</li>
+          </ul>
+        </div>
       </div>
     </div>
   </section>
@@ -984,11 +995,11 @@ objetivo = pacman.position + pacman.direccion * <span class="n">4</span>
 
   <section class="slide" data-chapter="Más allá del enemigo" data-topic="El perseguidor: Mr. X y Nemesis">
     <div class="slide-eyebrow">Nivel 3 · El perseguidor</div>
-    <h2 class="slide-title">Resident Evil: Mr. X y Nemesis no dejan de buscar</h2>
+    <h2 class="slide-title">Resident Evil: el Tyrant (Mr. X) y Nemesis no dejan de buscar</h2>
     <div class="columns" style="grid-template-columns:0.9fr 1.1fr; align-items:start;">
       <div style="display:grid; gap:10px;">
-        <div class="ph" style="height:150px;">🖼️ IMAGEN PENDIENTE<br>Mr. X (<i>Resident Evil 2</i>, 2019) avanzando por un pasillo de la comisaría</div>
-        <div class="ph" style="height:150px;">🖼️ IMAGEN PENDIENTE<br>Nemesis (<i>Resident Evil 3</i>) en una de sus apariciones</div>
+        <figure style="margin:0;"><img src="assets/re2-mr-x.jpg" alt="Resident Evil 2 (2019): Mr. X avanza hacia Leon por un pasillo. © Capcom. Uso educativo." style="width:100%; height:150px; object-fit:cover; border-radius:8px; display:block;"><div class="imgcaption"><i>Resident Evil 2</i> (2019): Mr. X, el Tyrant. © Capcom.</div></figure>
+        <figure style="margin:0;"><img src="assets/re3-nemesis.jpg" alt="Resident Evil 3 (2020): Nemesis atraviesa una pared frente a Jill. © Capcom. Uso educativo." style="width:100%; height:150px; object-fit:cover; object-position:center 30%; border-radius:8px; display:block;"><div class="imgcaption"><i>Resident Evil 3</i> (2020): Nemesis entra rompiendo una pared. © Capcom.</div></figure>
       </div>
       <div>
         <p style="font-size:16px; line-height:1.5; margin:0 0 10px;">Un enemigo que <b>sigue al jugador por todo el mapa</b>. No es rápido ni inteligente: lo agobiante es que <b>no para</b>. Sus reglas son pocas:</p>
@@ -1007,7 +1018,7 @@ objetivo = pacman.position + pacman.direccion * <span class="n">4</span>
     <div class="slide-eyebrow">Nivel 3 · Dos cerebros</div>
     <h2 class="slide-title">Alien: Isolation (2014): uno sabe, el otro busca</h2>
     <div class="columns" style="grid-template-columns:0.8fr 1.2fr; align-items:center;">
-      <div class="ph" style="height:250px;">🖼️ IMAGEN PENDIENTE<br>Alien: Isolation: el alien recorriendo un pasillo, o la protagonista escondida en un armario</div>
+      <figure style="margin:0;"><img src="assets/alien-isolation.jpg" alt="Alien: Isolation (2014): el alien en un pasillo de la estación, con el detector de movimiento en primer plano. © Creative Assembly / SEGA. Uso educativo." style="width:100%; border-radius:8px; display:block;"><div class="imgcaption"><i>Alien: Isolation</i> (2014): el alien en el pasillo y el detector de movimiento. © Creative Assembly / SEGA.</div></figure>
       <div>
         <div class="card" style="padding:10px 12px 6px;">
           <svg viewBox="0 0 560 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="El director sabe dónde está el jugador y le da pistas al alien; el alien busca con vista y oído" style="width:100%;height:auto;display:block;">
@@ -1131,7 +1142,7 @@ objetivo = pacman.position + pacman.direccion * <span class="n">4</span>
         <h3>📝 Para traer</h3>
         <ul>
           <li>El proyecto de la Clase 5+ (o el TP3) con el élite funcionando</li>
-          <li>El diagrama de Boo, en papel o foto</li>
+          <li>El diagrama del ejercicio, en papel o foto</li>
           <li>Opcional: abrir el proyecto de demos (<code>v2/semana-04/proyecto-clase</code>) y probarlas</li>
           <li>Pensar: ¿cómo se “anula” en la clase hija una función de la madre?</li>
         </ul>

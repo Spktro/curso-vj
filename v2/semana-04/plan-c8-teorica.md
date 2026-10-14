@@ -139,6 +139,13 @@ Se suman a `v2/capturas-pendientes.md`:
 3. Alien: Isolation: el alien recorriendo un pasillo, o la jugadora escondida en un armario.
 4. Left 4 Dead: una horda llegando.
 
+## Cambios posteriores (14/10)
+
+- **Boo deja de ser el ejercicio** y pasa a ser el cuarto caso de análisis del bloque 4 (después de Hollow Knight, antes de "¿Qué tienen en común?", que suma su fila). Motivo: quien no jugó a Mario no lo conoce.
+- **Ejercicio nuevo, genérico, en papel, 15 minutos** (unos 5 para elegir el caso y 10 para desarrollarlo): elegir un caso de un juego o de la vida real, identificar los estados, identificar qué los hace transicionar, dibujar el diagrama y marcar cada flecha (distancia, evento, tiempo). Va después de "¿Qué tienen en común?".
+- El bloque 4 pasa de 20 a unos 30 minutos: la clase queda en unas 2 h 20 con recreo. Si hace falta recortar, el bloque 5 se puede acortar en vivo.
+- Título del perseguidor: "el Tyrant (Mr. X) y Nemesis". Imágenes de Mr. X, Nemesis y Alien: Isolation colocadas.
+
 ## Decisiones tomadas
 
 - Las demos se muestran, no se programan. El código del jefe se escribe en el C8+.
