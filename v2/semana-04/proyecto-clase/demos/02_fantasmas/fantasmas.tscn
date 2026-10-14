@@ -1,0 +1,26 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://demos/02_fantasmas/fantasma.gd" id="1"]
+[ext_resource type="PackedScene" path="res://comun/jugador.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://comun/cartel.tscn" id="3"]
+
+[node name="Fantasmas" type="Node2D"]
+
+[node name="Jugador" parent="." instance=ExtResource("2")]
+position = Vector2(640, 420)
+
+[node name="Blinky" type="Node2D" parent="."]
+position = Vector2(120, 160)
+script = ExtResource("1")
+color = Color(1, 0.23, 0.23, 1)
+casillas_adelante = 0
+
+[node name="Pinky" type="Node2D" parent="."]
+position = Vector2(1160, 160)
+script = ExtResource("1")
+color = Color(1, 0.61, 0.9, 1)
+casillas_adelante = 4
+
+[node name="Cartel" parent="." instance=ExtResource("3")]
+titulo = "02 · Pac-Man: Blinky (rojo) va al jugador · Pinky (rosa) apunta 4 casillas adelante"
+ayuda = "WASD: mover · Probar: caminar en línea recta y ver cómo Pinky se adelanta"

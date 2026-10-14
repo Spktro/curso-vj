@@ -1,0 +1,27 @@
+; Proyecto de demos de la Clase 8 · Enemigos con cerebro
+; Se abre con Godot 4.3 o posterior.
+
+config_version=5
+
+[application]
+
+config/name="Enemigos con cerebro - demos"
+run/main_scene="res://menu.tscn"
+config/features=PackedStringArray("4.3")
+config/icon="res://icon.svg"
+
+[autoload]
+
+Atajos="*res://comun/atajos.gd"
+
+[display]
+
+window/size/viewport_width=1280
+window/size/viewport_height=720
+window/stretch/mode="canvas_items"
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+environment/defaults/default_clear_color=Color(0.106, 0.133, 0.188, 1)
