@@ -83,8 +83,8 @@
     <div class="recorrido">
       <div class="card"><div class="num">BLOQUE 1</div><h3>Qué es la IA de un juego</h3><p>Reglas simples que <b>parecen</b> inteligencia. Pac-Man y Space Invaders.</p><div class="min">≈ 15 min</div></div>
       <div class="card"><div class="num">BLOQUE 2</div><h3>Máquina de estados, sin juegos</h3><p>Un semáforo con botones. La máquina como <b>clase</b>. Mario chico, grande y fuego.</p><div class="min">≈ 25 min</div></div>
-      <div class="card"><div class="num">BLOQUE 3</div><h3>Del semáforo al enemigo</h3><p>Cómo ve, el spaghetti de <code>if</code>, la máquina del jefe y la histéresis.</p><div class="min">≈ 25 min</div></div>
-      <div class="card"><div class="num">BLOQUE 4</div><h3>Máquinas en juegos conocidos</h3><p>Pac-Man, Metal Gear, Hollow Knight y Boo. Ejercicio: encontrar una máquina.</p><div class="min">≈ 30 min</div></div>
+      <div class="card"><div class="num">BLOQUE 3</div><h3>Del semáforo al enemigo</h3><p>Cómo ve, el spaghetti de <code>if</code>, la idea aplicada al jefe y la histéresis.</p><div class="min">≈ 25 min</div></div>
+      <div class="card"><div class="num">BLOQUE 4</div><h3>Máquinas en juegos conocidos</h3><p>Pac-Man, Metal Gear, Hollow Knight y Boo. Ejercicio: encontrar una máquina. Y la del jefe, en código.</p><div class="min">≈ 30 min</div></div>
       <div class="card"><div class="num">BLOQUE 5</div><h3>La IA no siempre es un enemigo</h3><p>El grupo, el perseguidor, los dos cerebros y el director.</p><div class="min">≈ 25 min</div></div>
     </div>
     <div class="callout" style="margin-top:16px;">▶ Las etiquetas <span class="godot" style="margin-left:0;">Godot · demo NN</span> indican que esa idea se muestra funcionando en el proyecto <code>proyecto-clase</code>. Las demos se <b>miran</b>: el jefe se programa en la Clase 8+.</div>
@@ -564,118 +564,6 @@ objetivo = pacman.position + pacman.direccion * <span class="n">4</span>
     <div class="callout" style="margin-top:16px;">La diferencia: el semáforo <b>espera</b> a que lo llamen. El jefe se pregunta <b>en cada frame</b> “¿cambio?”, mirando la distancia al jugador.</div>
   </section>
 
-  <section class="slide" data-chapter="Máquina de estados" data-topic="El diagrama del slime">
-    <div class="slide-eyebrow">Primero se dibuja, después se programa</div>
-    <h2 class="slide-title">La máquina de estados del jefe</h2>
-    <svg viewBox="0 0 1100 440" width="100%" height="360" style="display:block; margin:0 auto;" aria-label="Diagrama de estados del jefe: acechar, perseguir, atacar y golpeado (on hit)">
-      <defs>
-        <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"/></marker>
-        <marker id="ahr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--red)"/></marker>
-      </defs>
-      <!-- inicio -->
-      <circle cx="170" cy="28" r="7" fill="var(--accent)"/>
-      <line x1="170" y1="36" x2="170" y2="104" stroke="var(--accent)" stroke-width="2.5" marker-end="url(#ah)"/>
-      <text x="186" y="66" font-size="13" fill="var(--muted)">arranca acá</text>
-      <!-- estados -->
-      <rect x="60" y="110" width="220" height="80" rx="40" fill="var(--panel)" stroke="var(--accent)" stroke-width="3"/>
-      <text x="170" y="158" text-anchor="middle" font-size="22" font-weight="800" fill="var(--text)">ACECHAR</text>
-      <rect x="440" y="110" width="220" height="80" rx="40" fill="var(--panel)" stroke="var(--accent)" stroke-width="3"/>
-      <text x="550" y="158" text-anchor="middle" font-size="22" font-weight="800" fill="var(--text)">PERSEGUIR</text>
-      <rect x="820" y="110" width="220" height="80" rx="40" fill="var(--panel)" stroke="var(--accent)" stroke-width="3"/>
-      <text x="930" y="158" text-anchor="middle" font-size="22" font-weight="800" fill="var(--text)">ATACAR</text>
-      <!-- transiciones por distancia -->
-      <line x1="284" y1="135" x2="434" y2="135" stroke="var(--accent)" stroke-width="2.5" marker-end="url(#ah)"/>
-      <text x="359" y="121" text-anchor="middle" font-size="13" fill="var(--muted)">jugador a menos de 250 px</text>
-      <line x1="436" y1="168" x2="286" y2="168" stroke="var(--accent)" stroke-width="2.5" marker-end="url(#ah)"/>
-      <text x="359" y="194" text-anchor="middle" font-size="13" fill="var(--muted)">lo perdió: más de 350 px</text>
-      <line x1="664" y1="135" x2="814" y2="135" stroke="var(--accent)" stroke-width="2.5" marker-end="url(#ah)"/>
-      <text x="739" y="121" text-anchor="middle" font-size="13" fill="var(--muted)">a menos de 40 px</text>
-      <line x1="816" y1="168" x2="666" y2="168" stroke="var(--accent)" stroke-width="2.5" marker-end="url(#ah)"/>
-      <text x="739" y="194" text-anchor="middle" font-size="13" fill="var(--muted)">se alejó: más de 60 px</text>
-      <!-- GOLPEADO (on hit) -->
-      <rect x="440" y="300" width="220" height="80" rx="40" fill="var(--panel)" stroke="var(--red)" stroke-width="3"/>
-      <text x="550" y="348" text-anchor="middle" font-size="22" font-weight="800" fill="var(--red)">GOLPEADO</text>
-      <text x="550" y="404" text-anchor="middle" font-size="13" fill="var(--muted)">on hit: empujón (knockback) + 0.5 s congelado</text>
-      <line x1="230" y1="192" x2="444" y2="318" stroke="var(--red)" stroke-width="2.5" stroke-dasharray="7 5" marker-end="url(#ahr)"/>
-      <text x="296" y="282" text-anchor="middle" font-size="13" fill="var(--red)">le pega una bala</text>
-      <line x1="515" y1="192" x2="515" y2="296" stroke="var(--red)" stroke-width="2.5" stroke-dasharray="7 5" marker-end="url(#ahr)"/>
-      <text x="503" y="250" text-anchor="end" font-size="13" fill="var(--red)">le pega una bala</text>
-      <line x1="870" y1="192" x2="656" y2="318" stroke="var(--red)" stroke-width="2.5" stroke-dasharray="7 5" marker-end="url(#ahr)"/>
-      <text x="804" y="282" text-anchor="middle" font-size="13" fill="var(--red)">le pega una bala</text>
-      <line x1="585" y1="296" x2="585" y2="194" stroke="var(--accent)" stroke-width="2.5" marker-end="url(#ah)"/>
-      <text x="597" y="250" font-size="13" fill="var(--muted)">pasan 0.5 s</text>
-      <!-- nota -->
-      <text x="550" y="432" text-anchor="middle" font-size="14" fill="var(--muted)">Violeta: por distancia o por tiempo · Rojas punteadas: por evento (salen de recibir_dano) · solo UN estado activo a la vez</text>
-    </svg>
-    <div class="callout" style="margin-top:8px;">💡 <b>Se dibuja antes de programar.</b> Si no se puede dibujar, no se puede programar. Y si está dibujado, el código sale casi solo.</div>
-  </section>
-
-  <section class="slide" data-chapter="Máquina de estados" data-topic="enum y match">
-    <div class="slide-eyebrow">Dos herramientas, ya vistas en el semáforo</div>
-    <h2 class="slide-title"><code>enum</code> para nombrar, <code>match</code> para elegir</h2>
-    <div class="columns">
-      <div class="code-wrap">
-        <pre class="code" style="font-size:12.5px;"><span class="c"># enum: una lista de nombres. Cada uno</span>
-<span class="c"># es un número por dentro, pero en el</span>
-<span class="c"># código se usa el nombre. Cero confusión.</span>
-<span class="k">enum</span> <span class="t">Estado</span> { ACECHAR, PERSEGUIR, ATACAR, GOLPEADO }
-
-<span class="k">var</span> estado = <span class="t">Estado</span>.ACECHAR</pre>
-      </div>
-      <div class="code-wrap">
-        <pre class="code" style="font-size:12.5px;"><span class="c"># match: un if/elif especializado para</span>
-<span class="c"># comparar UNA variable contra varios</span>
-<span class="c"># valores. Más limpio que elif, elif…</span>
-<span class="k">match</span> estado:
-	<span class="t">Estado</span>.ACECHAR:
-		acechar(delta)
-	<span class="t">Estado</span>.PERSEGUIR:
-		perseguir(delta)
-	<span class="t">Estado</span>.ATACAR:
-		atacar()
-	<span class="t">Estado</span>.GOLPEADO:
-		golpeado()</pre>
-      </div>
-    </div>
-    <div class="callout" style="margin-top:16px;">Podrían escribirlo con <code>if estado == Estado.ACECHAR: … elif …</code> y funcionaría igual. <code>match</code> es lo mismo, pero <b>se lee como el diagrama</b>.</div>
-  </section>
-
-  <section class="slide" data-chapter="Máquina de estados" data-topic="El _process completo">
-    <div class="slide-eyebrow">El corazón <span class="godot">Godot · demo 07</span></div>
-    <h2 class="slide-title">El <code>_process</code>: hacer + decidir</h2>
-    <div class="columns" style="grid-template-columns:1.15fr 0.85fr;">
-      <div class="code-wrap">
-        <pre class="code" style="font-size:12px;"><span class="k">func</span> <span class="t">_process</span>(delta):
-	<span class="k">var</span> d = distancia_al_jugador()
-	<span class="k">match</span> estado:
-		<span class="t">Estado</span>.ACECHAR:
-			acechar(delta)                  <span class="c"># hacer</span>
-			<span class="k">if</span> d < <span class="n">250</span>: estado = <span class="t">Estado</span>.PERSEGUIR   <span class="c"># decidir</span>
-		<span class="t">Estado</span>.PERSEGUIR:
-			perseguir(delta)
-			<span class="k">if</span> d < <span class="n">40</span>:    estado = <span class="t">Estado</span>.ATACAR
-			<span class="k">elif</span> d > <span class="n">350</span>: estado = <span class="t">Estado</span>.ACECHAR
-		<span class="t">Estado</span>.ATACAR:
-			atacar()
-			<span class="k">if</span> d > <span class="n">60</span>:  estado = <span class="t">Estado</span>.PERSEGUIR
-		<span class="t">Estado</span>.GOLPEADO:
-			golpeado()                      <span class="c"># on hit: quieto y rojo</span>
-			<span class="k">if</span> $TimerGolpe.is_stopped(): estado = <span class="t">Estado</span>.PERSEGUIR</pre>
-      </div>
-      <div style="align-self:center;">
-        <div class="card">
-          <h3>El patrón, siempre igual</h3>
-          <p>En cada estado, dos cosas y en este orden:</p>
-          <ol style="margin:8px 0 0; padding-left:20px; font-size:15px; line-height:1.5;">
-            <li><b>Hacer</b> lo que corresponde al estado</li>
-            <li><b>Decidir</b> si cambio de estado</li>
-          </ol>
-          <p class="small-note" style="margin-top:10px;">Comparado con el diagrama: <b>cada <code>if</code> es una flecha</b>. Falta una sola: la de <b>entrada</b> a <code>GOLPEADO</code>, que no depende de la distancia y vive en <code>recibir_dano()</code>. Se escribe en vivo en la Clase 8+.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <section class="slide" data-chapter="Máquina de estados" data-topic="Histéresis">
     <div class="slide-eyebrow">Un detalle que importa <span class="godot">Godot · demo 08</span></div>
     <h2 class="slide-title">¿Por qué 40 para entrar a ATACAR y 60 para salir?</h2>
@@ -880,6 +768,118 @@ objetivo = pacman.position + pacman.direccion * <span class="n">4</span>
             <li>¿Hay algún evento que en algún estado no haga nada?</li>
             <li>¿Alguna flecha necesita histéresis?</li>
           </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Máquina de estados" data-topic="El diagrama del slime">
+    <div class="slide-eyebrow">Primero se dibuja, después se programa</div>
+    <h2 class="slide-title">La máquina de estados del jefe</h2>
+    <svg viewBox="0 0 1100 440" width="100%" height="360" style="display:block; margin:0 auto;" aria-label="Diagrama de estados del jefe: acechar, perseguir, atacar y golpeado (on hit)">
+      <defs>
+        <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"/></marker>
+        <marker id="ahr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--red)"/></marker>
+      </defs>
+      <!-- inicio -->
+      <circle cx="170" cy="28" r="7" fill="var(--accent)"/>
+      <line x1="170" y1="36" x2="170" y2="104" stroke="var(--accent)" stroke-width="2.5" marker-end="url(#ah)"/>
+      <text x="186" y="66" font-size="13" fill="var(--muted)">arranca acá</text>
+      <!-- estados -->
+      <rect x="60" y="110" width="220" height="80" rx="40" fill="var(--panel)" stroke="var(--accent)" stroke-width="3"/>
+      <text x="170" y="158" text-anchor="middle" font-size="22" font-weight="800" fill="var(--text)">ACECHAR</text>
+      <rect x="440" y="110" width="220" height="80" rx="40" fill="var(--panel)" stroke="var(--accent)" stroke-width="3"/>
+      <text x="550" y="158" text-anchor="middle" font-size="22" font-weight="800" fill="var(--text)">PERSEGUIR</text>
+      <rect x="820" y="110" width="220" height="80" rx="40" fill="var(--panel)" stroke="var(--accent)" stroke-width="3"/>
+      <text x="930" y="158" text-anchor="middle" font-size="22" font-weight="800" fill="var(--text)">ATACAR</text>
+      <!-- transiciones por distancia -->
+      <line x1="284" y1="135" x2="434" y2="135" stroke="var(--accent)" stroke-width="2.5" marker-end="url(#ah)"/>
+      <text x="359" y="121" text-anchor="middle" font-size="13" fill="var(--muted)">jugador a menos de 250 px</text>
+      <line x1="436" y1="168" x2="286" y2="168" stroke="var(--accent)" stroke-width="2.5" marker-end="url(#ah)"/>
+      <text x="359" y="194" text-anchor="middle" font-size="13" fill="var(--muted)">lo perdió: más de 350 px</text>
+      <line x1="664" y1="135" x2="814" y2="135" stroke="var(--accent)" stroke-width="2.5" marker-end="url(#ah)"/>
+      <text x="739" y="121" text-anchor="middle" font-size="13" fill="var(--muted)">a menos de 40 px</text>
+      <line x1="816" y1="168" x2="666" y2="168" stroke="var(--accent)" stroke-width="2.5" marker-end="url(#ah)"/>
+      <text x="739" y="194" text-anchor="middle" font-size="13" fill="var(--muted)">se alejó: más de 60 px</text>
+      <!-- GOLPEADO (on hit) -->
+      <rect x="440" y="300" width="220" height="80" rx="40" fill="var(--panel)" stroke="var(--red)" stroke-width="3"/>
+      <text x="550" y="348" text-anchor="middle" font-size="22" font-weight="800" fill="var(--red)">GOLPEADO</text>
+      <text x="550" y="404" text-anchor="middle" font-size="13" fill="var(--muted)">on hit: empujón (knockback) + 0.5 s congelado</text>
+      <line x1="230" y1="192" x2="444" y2="318" stroke="var(--red)" stroke-width="2.5" stroke-dasharray="7 5" marker-end="url(#ahr)"/>
+      <text x="296" y="282" text-anchor="middle" font-size="13" fill="var(--red)">le pega una bala</text>
+      <line x1="515" y1="192" x2="515" y2="296" stroke="var(--red)" stroke-width="2.5" stroke-dasharray="7 5" marker-end="url(#ahr)"/>
+      <text x="503" y="250" text-anchor="end" font-size="13" fill="var(--red)">le pega una bala</text>
+      <line x1="870" y1="192" x2="656" y2="318" stroke="var(--red)" stroke-width="2.5" stroke-dasharray="7 5" marker-end="url(#ahr)"/>
+      <text x="804" y="282" text-anchor="middle" font-size="13" fill="var(--red)">le pega una bala</text>
+      <line x1="585" y1="296" x2="585" y2="194" stroke="var(--accent)" stroke-width="2.5" marker-end="url(#ah)"/>
+      <text x="597" y="250" font-size="13" fill="var(--muted)">pasan 0.5 s</text>
+      <!-- nota -->
+      <text x="550" y="432" text-anchor="middle" font-size="14" fill="var(--muted)">Violeta: por distancia o por tiempo · Rojas punteadas: por evento (salen de recibir_dano) · solo UN estado activo a la vez</text>
+    </svg>
+    <div class="callout" style="margin-top:8px;">💡 <b>Se dibuja antes de programar.</b> Si no se puede dibujar, no se puede programar. Y si está dibujado, el código sale casi solo.</div>
+  </section>
+
+  <section class="slide" data-chapter="Máquina de estados" data-topic="enum y match">
+    <div class="slide-eyebrow">Dos herramientas, ya vistas en el semáforo</div>
+    <h2 class="slide-title"><code>enum</code> para nombrar, <code>match</code> para elegir</h2>
+    <div class="columns">
+      <div class="code-wrap">
+        <pre class="code" style="font-size:12.5px;"><span class="c"># enum: una lista de nombres. Cada uno</span>
+<span class="c"># es un número por dentro, pero en el</span>
+<span class="c"># código se usa el nombre. Cero confusión.</span>
+<span class="k">enum</span> <span class="t">Estado</span> { ACECHAR, PERSEGUIR, ATACAR, GOLPEADO }
+
+<span class="k">var</span> estado = <span class="t">Estado</span>.ACECHAR</pre>
+      </div>
+      <div class="code-wrap">
+        <pre class="code" style="font-size:12.5px;"><span class="c"># match: un if/elif especializado para</span>
+<span class="c"># comparar UNA variable contra varios</span>
+<span class="c"># valores. Más limpio que elif, elif…</span>
+<span class="k">match</span> estado:
+	<span class="t">Estado</span>.ACECHAR:
+		acechar(delta)
+	<span class="t">Estado</span>.PERSEGUIR:
+		perseguir(delta)
+	<span class="t">Estado</span>.ATACAR:
+		atacar()
+	<span class="t">Estado</span>.GOLPEADO:
+		golpeado()</pre>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:16px;">Podrían escribirlo con <code>if estado == Estado.ACECHAR: … elif …</code> y funcionaría igual. <code>match</code> es lo mismo, pero <b>se lee como el diagrama</b>.</div>
+  </section>
+
+  <section class="slide" data-chapter="Máquina de estados" data-topic="El _process completo">
+    <div class="slide-eyebrow">El corazón <span class="godot">Godot · demo 07</span></div>
+    <h2 class="slide-title">El <code>_process</code>: hacer + decidir</h2>
+    <div class="columns" style="grid-template-columns:1.15fr 0.85fr;">
+      <div class="code-wrap">
+        <pre class="code" style="font-size:12px;"><span class="k">func</span> <span class="t">_process</span>(delta):
+	<span class="k">var</span> d = distancia_al_jugador()
+	<span class="k">match</span> estado:
+		<span class="t">Estado</span>.ACECHAR:
+			acechar(delta)                  <span class="c"># hacer</span>
+			<span class="k">if</span> d < <span class="n">250</span>: estado = <span class="t">Estado</span>.PERSEGUIR   <span class="c"># decidir</span>
+		<span class="t">Estado</span>.PERSEGUIR:
+			perseguir(delta)
+			<span class="k">if</span> d < <span class="n">40</span>:    estado = <span class="t">Estado</span>.ATACAR
+			<span class="k">elif</span> d > <span class="n">350</span>: estado = <span class="t">Estado</span>.ACECHAR
+		<span class="t">Estado</span>.ATACAR:
+			atacar()
+			<span class="k">if</span> d > <span class="n">60</span>:  estado = <span class="t">Estado</span>.PERSEGUIR
+		<span class="t">Estado</span>.GOLPEADO:
+			golpeado()                      <span class="c"># on hit: quieto y rojo</span>
+			<span class="k">if</span> $TimerGolpe.is_stopped(): estado = <span class="t">Estado</span>.PERSEGUIR</pre>
+      </div>
+      <div style="align-self:center;">
+        <div class="card">
+          <h3>El patrón, siempre igual</h3>
+          <p>En cada estado, dos cosas y en este orden:</p>
+          <ol style="margin:8px 0 0; padding-left:20px; font-size:15px; line-height:1.5;">
+            <li><b>Hacer</b> lo que corresponde al estado</li>
+            <li><b>Decidir</b> si cambio de estado</li>
+          </ol>
+          <p class="small-note" style="margin-top:10px;">Comparado con el diagrama: <b>cada <code>if</code> es una flecha</b>. Falta una sola: la de <b>entrada</b> a <code>GOLPEADO</code>, que no depende de la distancia y vive en <code>recibir_dano()</code>. Se escribe en vivo en la Clase 8+.</p>
         </div>
       </div>
     </div>
