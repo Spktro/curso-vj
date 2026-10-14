@@ -676,44 +676,6 @@ objetivo = pacman.position + pacman.direccion * <span class="n">4</span>
     </div>
   </section>
 
-  <section class="slide" data-chapter="IA" data-topic="IA famosa: Doom">
-    <div class="slide-eyebrow">🎮 La flecha que llega de afuera</div>
-    <h2 class="slide-title">Doom (1993): un <code>if</code> y los monstruos se pelean</h2>
-    <div class="columns" style="grid-template-columns:0.95fr 1.05fr; align-items:center;">
-      <div class="card" style="padding:12px;">
-        <svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Doom: el monstruo A le tira una bola de fuego al jugador, le pega al monstruo B, y B ataca a A" style="width:100%;height:auto;max-height:330px;display:block;">
-  <defs><marker id="dm-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker></defs>
-  <rect width="400" height="260" rx="12" fill="#1b2230"/>
-  <!-- jugador -->
-  <circle cx="60" cy="205" r="11" fill="#5ac8ff"/><rect x="52" y="216" width="16" height="18" rx="3" fill="#5ac8ff"/>
-  <text x="60" y="250" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#5ac8ff">jugador</text>
-  <!-- A dispara hacia el jugador -->
-  <line x1="300" y1="82" x2="196" y2="143" stroke="#ff8a3b" stroke-width="2" stroke-dasharray="6 4"/>
-  <line x1="196" y1="143" x2="88" y2="196" stroke="#ff8a3b" stroke-width="1.5" stroke-dasharray="2 6" opacity="0.5"/>
-  <circle cx="196" cy="143" r="9" fill="#ff8a3b"/><circle cx="196" cy="143" r="4" fill="#ffe13a"/>
-  <text x="60" y="64" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#ff8a3b">1 · A le tira una bola de fuego…</text>
-  <rect x="286" y="50" width="28" height="26" rx="6" fill="#b45309"/><rect x="291" y="57" width="6" height="6" fill="#fff"/><rect x="303" y="57" width="6" height="6" fill="#fff"/><rect x="293" y="59" width="3" height="3" fill="#1b2230"/><rect x="305" y="59" width="3" height="3" fill="#1b2230"/><path d="M292,68 l4,4 l4,-4 l4,4 l4,-4" stroke="#fff" stroke-width="2" fill="none"/><text x="300" y="92" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#e5e7eb">monstruo A</text>
-  <rect x="166" y="138" width="28" height="26" rx="6" fill="#7c3aed"/><rect x="171" y="145" width="6" height="6" fill="#fff"/><rect x="183" y="145" width="6" height="6" fill="#fff"/><rect x="173" y="147" width="3" height="3" fill="#1b2230"/><rect x="185" y="147" width="3" height="3" fill="#1b2230"/><path d="M172,156 l4,4 l4,-4 l4,4 l4,-4" stroke="#fff" stroke-width="2" fill="none"/><text x="180" y="180" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#e5e7eb">monstruo B</text>
-  <text x="112" y="150" text-anchor="end" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#ffe13a">2 · …y le pega a B</text>
-  <!-- B contraataca a A -->
-  <path d="M200,132 C240,120 260,100 284,84" stroke="#dc2626" stroke-width="2.5" fill="none" marker-end="url(#dm-ah)"/>
-  <text x="330" y="132" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" font-weight="700" fill="#dc2626">3 · B ahora ataca a A</text>
-  <text x="200" y="235" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#9aa5b8">se olvidan del jugador y se pelean entre ellos: “infighting”</text>
-</svg>
-        <div class="imgcaption">Ilustración propia. El <i>infighting</i>: una regla, un comportamiento que nadie programó.</div>
-      </div>
-      <div>
-        <p style="font-size:16px; line-height:1.5; margin:0 0 12px;">Regla: cuando un monstruo <b>recibe daño</b>, pasa a atacar <b>a quien lo golpeó</b>. Si a un monstruo se le escapa una bola de fuego y le pega a otro, el otro <b>se da vuelta y lo ataca</b>. Los jugadores lo usan como táctica: ponerse en el medio y dejar que se maten entre ellos.</p>
-        <div class="code-wrap"><pre class="code" style="font-size:12px;"><span class="c"># Cuando un monstruo recibe daño, apunta a quien lo golpeó</span>
-<span class="k">func</span> <span class="t">recibir_dano</span>(cantidad, atacante):
-	vida -= cantidad
-	<span class="k">if</span> atacante != jugador:
-		objetivo = atacante        <span class="c"># ¡se pelean entre ellos!</span></pre></div>
-        <p class="small-note" style="margin-top:10px;">Es la flecha que faltaba en el <code>_process</code>: el jefe entra a <b>GOLPEADO</b> desde <code>recibir_dano()</code>, cuando le pega una bala. No depende de la distancia: <b>llega de afuera</b>.</p>
-      </div>
-    </div>
-  </section>
-
   <section class="slide" data-chapter="Máquina de estados" data-topic="Histéresis">
     <div class="slide-eyebrow">Un detalle que importa <span class="godot">Godot · demo 08</span></div>
     <h2 class="slide-title">¿Por qué 40 para entrar a ATACAR y 60 para salir?</h2>
