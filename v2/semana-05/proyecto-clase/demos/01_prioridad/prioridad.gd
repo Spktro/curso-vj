@@ -6,6 +6,9 @@ func _ready():
 	$Caballero/AnimatedSprite2D.animation_finished.connect(_on_animacion_terminada)
 
 func _process(delta):
+	if $Caballero.muerto:
+		$Cartel.mostrar("Muerto: no se mueve ni recibe golpes. R para revivir.")
+		return
 	var orden = "if golpeado → elif se mueve → else (correcto)"
 	if not $Caballero.orden_correcto:
 		orden = "if se mueve → elif golpeado → else (el golpe se pierde)"

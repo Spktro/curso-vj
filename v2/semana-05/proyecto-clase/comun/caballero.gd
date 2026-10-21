@@ -70,12 +70,16 @@ func _on_timer_golpe_timeout():
 	golpeado = false
 
 func morir():
+	if muerto:
+		return   # ya está muerto: no vuelve a caer desde el principio
 	muerto = true
 	$AnimationPlayer.stop()
 	$AnimatedSprite2D.modulate = Color.WHITE
 	$AnimatedSprite2D.play("morir")   # no tiene loop: al terminar emite animation_finished
 
 func revivir():
+	if not muerto:
+		return
 	modulate.a = 1.0
 	muerto = false
 	golpeado = false
