@@ -1,0 +1,21 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://demos/01_prioridad/prioridad.gd" id="1"]
+[ext_resource type="PackedScene" path="res://comun/cartel.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://comun/caballero.tscn" id="3"]
+[ext_resource type="Script" path="res://comun/piso.gd" id="4"]
+
+[node name="Demo" type="Node2D"]
+script = ExtResource("1")
+
+[node name="Piso" type="Node2D" parent="."]
+z_index = -1
+script = ExtResource("4")
+
+[node name="Caballero" parent="." instance=ExtResource("3")]
+position = Vector2(640, 400)
+scale = Vector2(2, 2)
+
+[node name="Cartel" parent="." instance=ExtResource("2")]
+titulo = "01 · AnimatedSprite2D: el orden de los if es la prioridad"
+ayuda = "WASD: mover · G: recibir un golpe · O: invertir el orden de los if · M: morir · R: revivir"

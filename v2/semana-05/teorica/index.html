@@ -29,6 +29,23 @@
   .fx button:hover { border-color: var(--accent); }
   /* Tabla de la planilla de feedback */
   .tbl td.vacio { color: var(--muted); font-style: italic; }
+  /* Etiqueta: esa idea se muestra en el proyecto de demos */
+  .godot { display: inline-block; margin-left: 10px; padding: 2px 10px; border-radius: 999px; background: var(--accent); color: #fff; font-size: 11.5px; font-weight: 700; letter-spacing: .04em; vertical-align: middle; }
+  /* Juegos con imagen (y GIF, si está en assets/) */
+  .juegos .card { padding: 0 0 12px; overflow: hidden; }
+  .juegos .card h3, .juegos .card p { padding: 0 14px; }
+  .juego-img { position: relative; height: 165px; margin-bottom: 10px; background: #111; }
+  .juego-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .juego-img button { position: absolute; right: 8px; bottom: 8px; font: inherit; font-size: 12.5px; font-weight: 700; padding: 4px 10px; border-radius: 8px; border: none; background: rgba(0,0,0,.72); color: #fff; cursor: pointer; display: none; }
+  .juego-img.con-gif button { display: block; }
+  /* Videos recomendados */
+  .video { position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); background: #000; }
+  .video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  /* Niveles de la demo 11 */
+  .niveles { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-top: 10px; }
+  .niveles div { font-size: 12.5px; line-height: 1.3; padding: 6px 8px; border-radius: 8px; background: var(--panel-2); border: 1px solid var(--border); }
+  .niveles div b { display: block; font-size: 13.5px; }
+  .niveles div.sobra { border-color: var(--red); }
 </style>
 </head>
 <body>
@@ -43,6 +60,7 @@
         <h1 class="title">El juego se siente <span class="accent">vivo</span></h1>
         <p class="subtitle">Animación, <code>AnimationPlayer</code>, <code>Tween</code>, sonido y <b>game feel</b>: la capa que no cambia las reglas, pero cambia todo lo que se siente al jugar.</p>
         <p class="small-note">“Las reglas del survivors ya están. Falta que cada bala, cada golpe y cada slime que cae <b>se note</b>.”</p>
+        <p class="small-note" style="margin-top:14px;">Las etiquetas <span class="godot" style="margin-left:0;">Godot · demo NN</span> indican que esa idea se muestra funcionando en el proyecto <code>semana-05/proyecto-clase</code>. Las demos se <b>miran</b>: el código se escribe en el TP.</p>
       </div>
       <div class="title-photo" style="border:none; box-shadow:none; background:transparent;">
         <img src="assets/godot-logo.png" alt="Godot Engine" style="max-height:420px; width:auto; margin:0 auto; display:block;" />
@@ -50,22 +68,9 @@
     </div>
   </section>
 
-  <section class="slide" data-chapter="Inicio" data-topic="Objetivos">
-    <div class="slide-eyebrow">Objetivos</div>
-    <h2 class="slide-title">Al finalizar la clase…</h2>
-    <ul class="bullets">
-      <li>Explicar qué es el <b>game feel</b> y por qué cada acción necesita una <b>respuesta</b> que se vea y se oiga</li>
-      <li>Elegir entre <code>AnimatedSprite2D</code>, <code>AnimationPlayer</code> y <code>Tween</code> según lo que haya que animar</li>
-      <li>Agregar <b>música y efectos</b> con <code>AudioStreamPlayer</code>, y evitar el sonido que se corta</li>
-      <li>Reconocer los efectos clásicos: <b>flash</b>, <b>screenshake</b>, <b>hit stop</b>, <b>partículas</b></li>
-      <li>Diseñar la <b>planilla de feedback</b> del survivors antes de programarla</li>
-    </ul>
-    <div class="callout" style="margin-top:18px;">Puente con la semana 4: el jefe ya se pone <b>rojo</b> y <b>retrocede</b> al recibir una bala. Eso ya era game feel, sin nombrarlo.</div>
-  </section>
-
   <!-- ============ HOOK ============ -->
   <section class="slide" data-chapter="Hook" data-topic="Mismo juego, dos sensaciones">
-    <div class="slide-eyebrow">Arranque</div>
+    <div class="slide-eyebrow">Arranque <span class="godot">Godot · demo 11</span></div>
     <h2 class="slide-title">Misma bala, mismo slime, dos sensaciones</h2>
     <div class="fx">
       <div>
@@ -79,7 +84,7 @@
         <div style="text-align:center;"><button data-fx="B">▶ Disparar (con sonido)</button></div>
       </div>
     </div>
-    <div class="callout" style="margin-top:16px;">🎮 El código de la mecánica es idéntico: <code>recibir_dano()</code> y <code>morir()</code>. La diferencia es el <b>juice</b>: la respuesta sensorial que confirma que la acción <b>pasó</b>.</div>
+    <div class="callout" style="margin-top:16px;">🎮 El código de la mecánica es idéntico: <code>recibir_dano()</code> y <code>morir()</code>. La diferencia es el <b>juice</b>: la respuesta sensorial que confirma que la acción <b>pasó</b>. En Godot, la demo 11 muestra el survivors en el nivel <b>0</b> y en el <b>7</b>.</div>
   </section>
 
   <!-- ============ GAME FEEL ============ -->
@@ -112,18 +117,35 @@
   <section class="slide" data-chapter="Game feel" data-topic="En juegos reales">
     <div class="slide-eyebrow">🎮 En juegos reales</div>
     <h2 class="slide-title">Cuatro juegos que enseñan game feel</h2>
-    <div class="columns" style="grid-template-columns:repeat(4,1fr); gap:14px;">
-      <div class="card"><h3>🏔️ Celeste</h3><p style="font-size:14.5px;">Cada salto y cada <i>dash</i> tiene animación, partículas, sonido y un pequeño temblor. El estándar del género.</p></div>
-      <div class="card"><h3>🔫 Nuclear Throne</h3><p style="font-size:14.5px;">Vlambeer y el <b>screenshake</b>: la pantalla golpea con cada disparo. Las armas se sienten pesadas.</p></div>
-      <div class="card"><h3>🧛 Vampire Survivors</h3><p style="font-size:14.5px;">Cientos de enemigos, y cada uno <b>parpadea</b> al recibir daño. Las gemas suenan al juntarlas. Pura respuesta.</p></div>
-      <div class="card"><h3>🐞 Hollow Knight</h3><p style="font-size:14.5px;">Al pegar o recibir un golpe, el juego se <b>congela</b> unas centésimas (<i>hit stop</i>). El golpe pesa.</p></div>
+    <div class="columns juegos" style="grid-template-columns:repeat(4,1fr); gap:14px;">
+      <div class="card"><div class="juego-img"><img src="assets/juego-celeste.png" data-gif="assets/juego-celeste.gif" alt="Celeste: Madeline en pleno dash entre plataformas nevadas. © Maddy Makes Games. Uso educativo."><button>▶ GIF</button></div><h3>🏔️ Celeste</h3><p style="font-size:14px;">Cada salto y cada <i>dash</i> tiene animación, partículas, sonido y un pequeño temblor. El estándar del género.</p></div>
+      <div class="card"><div class="juego-img"><img src="assets/juego-nuclear-throne.png" data-gif="assets/juego-nuclear-throne.gif" alt="Nuclear Throne: disparos y enemigos en el desierto. © Vlambeer. Uso educativo."><button>▶ GIF</button></div><h3>🔫 Nuclear Throne</h3><p style="font-size:14px;">Vlambeer y el <b>screenshake</b>: la pantalla golpea con cada disparo. Las armas se sienten pesadas.</p></div>
+      <div class="card"><div class="juego-img"><img src="assets/juego-vampire-survivors.webp" data-gif="assets/juego-vampire-survivors.gif" alt="Vampire Survivors: cientos de enemigos, rayos y números de daño. © poncle. Uso educativo."><button>▶ GIF</button></div><h3>🧛 Vampire Survivors</h3><p style="font-size:14px;">Cientos de enemigos, y cada uno <b>parpadea</b> al recibir daño. Las gemas suenan al juntarlas. Pura respuesta.</p></div>
+      <div class="card"><div class="juego-img"><img src="assets/juego-hollow-knight.png" data-gif="assets/juego-hollow-knight.gif" alt="Hollow Knight: el caballero golpea y el impacto estalla en luz. © Team Cherry. Uso educativo." style="object-position:center 60%;"><button>▶ GIF</button></div><h3>🐞 Hollow Knight</h3><p style="font-size:14px;">Al pegar o recibir un golpe, el juego se <b>congela</b> unas centésimas (<i>hit stop</i>). El golpe pesa.</p></div>
     </div>
-    <div class="callout" style="margin-top:16px;">📺 Dos charlas clásicas, cortas y con ejemplos en vivo: <b>“Juice it or lose it”</b> (Jonasson y Purho, 2012) y <b>“The art of screenshake”</b> (Jan Willem Nijman, 2013). Están en YouTube.</div>
+    <p class="small-note" style="margin-top:10px; text-align:center;">Capturas: © Maddy Makes Games, Vlambeer, poncle y Team Cherry. Uso educativo.</p>
+  </section>
+
+  <section class="slide" data-chapter="Game feel" data-topic="Videografía recomendada">
+    <div class="slide-eyebrow">📺 Videografía recomendada · para ver en casa (en inglés, con subtítulos automáticos)</div>
+    <h2 class="slide-title">Dos charlas clásicas, cortas y con ejemplos en vivo</h2>
+    <div class="columns">
+      <div>
+        <div class="video"><iframe src="https://www.youtube-nocookie.com/embed/Fy0aCDmgnxg" title="Juice it or lose it" loading="lazy" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe></div>
+        <h3 style="margin:12px 0 4px;">“Juice it or lose it”</h3>
+        <p style="font-size:14.5px; margin:0;">Martin Jonasson y Petri Purho, 2012 · unos 15 min. Un <i>Breakout</i> aburrido que, efecto por efecto, se vuelve una fiesta. Lo mismo que la demo 11.</p>
+      </div>
+      <div>
+        <div class="video"><iframe src="https://www.youtube-nocookie.com/embed/AJdEqssNZ-U" title="The art of screenshake" loading="lazy" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe></div>
+        <h3 style="margin:12px 0 4px;">“The art of screenshake”</h3>
+        <p style="font-size:14.5px; margin:0;">Jan Willem Nijman (Vlambeer), 2013 · unos 30 min. Un shooter plano que gana peso con más de 30 trucos chicos: temblor, retroceso, pausa, casquillos.</p>
+      </div>
+    </div>
   </section>
 
   <!-- ============ ANIMACIÓN ============ -->
   <section class="slide" data-chapter="Animación" data-topic="AnimatedSprite2D">
-    <div class="slide-eyebrow">Animación · lo que ya se usa</div>
+    <div class="slide-eyebrow">Animación · lo que ya se usa <span class="godot">Godot · demo 01</span></div>
     <h2 class="slide-title"><code>AnimatedSprite2D</code>: la animación <b>por frames</b></h2>
     <div class="columns" style="grid-template-columns:0.95fr 1.05fr;">
       <div>
@@ -145,12 +167,13 @@
 <span class="k">else</span>:
 	$AnimatedSprite2D.play(<span class="s">"idle"</span>)</pre>
         <div class="callout" style="margin-top:10px; font-size:15px;">Llamar a <code>play()</code> en cada frame con la misma animación <b>no la reinicia</b>: Godot sigue desde donde estaba. Por eso este patrón funciona.</div>
+        <p class="small-note" style="margin-top:8px;">Demo 01: caminando, <b>G</b> muestra el golpe. Con <b>O</b> se invierte el orden de los <code>if</code> y el golpe ya no se ve.</p>
       </div>
     </div>
   </section>
 
   <section class="slide" data-chapter="Animación" data-topic="AnimationPlayer">
-    <div class="slide-eyebrow">Animación · más poderoso</div>
+    <div class="slide-eyebrow">Animación · más poderoso <span class="godot">Godot · demo 02</span></div>
     <h2 class="slide-title"><code>AnimationPlayer</code>: animar <b>cualquier propiedad</b></h2>
     <div class="columns">
       <div>
@@ -169,7 +192,7 @@
   </section>
 
   <section class="slide" data-chapter="Animación" data-topic="El parpadeo de daño">
-    <div class="slide-eyebrow">AnimationPlayer · paso a paso</div>
+    <div class="slide-eyebrow">AnimationPlayer · paso a paso <span class="godot">Godot · demo 02</span></div>
     <h2 class="slide-title">El parpadeo de daño del caballero</h2>
     <div class="columns" style="grid-template-columns:1.1fr 0.9fr;">
       <div>
@@ -193,13 +216,13 @@
           </div>
           <p class="small-note" style="margin-top:10px;">Terminar en <b>blanco</b> es obligatorio: la animación deja la propiedad con el valor del <b>último</b> keyframe.</p>
         </div>
-        <div class="callout" style="margin-top:12px; font-size:15px;">Se anima el <code>modulate</code> del <b>sprite</b>, no del <code>Jugador</code>: así no pisa otros colores que el código le ponga al nodo raíz.</div>
+        <div class="callout" style="margin-top:12px; font-size:15px;">▶ <b>Demo 02:</b> <b>G</b> recibe un golpe y se ve el cabezal recorriendo esta misma línea de tiempo. <b>B</b> usa una versión <b>sin</b> el keyframe de 0.4 s: el caballero queda rojo.</div>
       </div>
     </div>
   </section>
 
   <section class="slide" data-chapter="Animación" data-topic="Tween">
-    <div class="slide-eyebrow">Animación · desde el código</div>
+    <div class="slide-eyebrow">Animación · desde el código <span class="godot">Godot · demo 03</span></div>
     <h2 class="slide-title"><code>Tween</code>: una animación que se escribe en una línea</h2>
     <div class="columns" style="grid-template-columns:1.1fr 0.9fr;">
       <div>
@@ -213,6 +236,7 @@ tween.tween_property($AnimatedSprite2D, <span class="s">"modulate"</span>, <span
 t.tween_property(<span class="k">self</span>, <span class="s">"scale"</span>, <span class="t">Vector2</span>(<span class="n">1.5</span>, <span class="n">1.5</span>), <span class="n">0.1</span>)
 t.tween_property(<span class="k">self</span>, <span class="s">"modulate:a"</span>, <span class="n">0.0</span>, <span class="n">0.15</span>)
 t.tween_callback(queue_free)</pre>
+        <div class="callout" style="margin-top:10px; font-size:14.5px;">▶ <b>Demo 03:</b> cinco slimes, cinco <code>Tween</code>: <b>flash</b>, <b>pop</b>, <b>salto</b>, <b>aplastar</b> y <b>girar</b>. Con <b>T</b> cambia la curva (<code>set_trans</code>): <code>TRANS_BACK</code> o <code>TRANS_ELASTIC</code> se sienten vivos; <code>TRANS_LINEAR</code>, mecánico.</div>
       </div>
       <div>
         <div class="card">
@@ -262,7 +286,7 @@ t.tween_callback(queue_free)</pre>
   </section>
 
   <section class="slide" data-chapter="Audio" data-topic="Reproducir y variar">
-    <div class="slide-eyebrow">Audio</div>
+    <div class="slide-eyebrow">Audio <span class="godot">Godot · demo 04</span></div>
     <h2 class="slide-title">Reproducir un efecto, y que no canse</h2>
     <div class="columns" style="grid-template-columns:1.05fr 0.95fr;">
       <div>
@@ -288,7 +312,7 @@ t.tween_callback(queue_free)</pre>
   </section>
 
   <section class="slide" data-chapter="Audio" data-topic="El sonido que se corta">
-    <div class="slide-eyebrow">Audio · la trampa clásica</div>
+    <div class="slide-eyebrow">Audio · la trampa clásica <span class="godot">Godot · demo 05</span></div>
     <h2 class="slide-title">El slime muere… y se lleva su sonido</h2>
     <div class="columns">
       <div class="card" style="border-top:3px solid var(--red);">
@@ -300,23 +324,55 @@ t.tween_callback(queue_free)</pre>
         <p class="small-note" style="margin-top:8px;">Un nodo de audio es un <b>hijo</b>: si se borra el padre, se borra él, en el mismo frame en que empezó a sonar.</p>
       </div>
       <div class="card" style="border-top:3px solid var(--green);">
-        <h3 style="color:var(--green);">✅ Que suene alguien que sigue vivo</h3>
-        <pre class="code" style="font-size:12.5px; margin:6px 0 0;"><span class="c"># enemigo.gd</span>
-<span class="k">func</span> <span class="t">morir</span>():
-	jugador.sumar_kill()
-	queue_free()
-
-<span class="c"># jugador.gd: el sonido vive acá</span>
-<span class="k">func</span> <span class="t">sumar_kill</span>():
-	...
-	$SfxKill.play()</pre>
+        <h3 style="color:var(--green);">✅ Esperar a que termine de sonar</h3>
+        <pre class="code" style="font-size:12.3px; margin:6px 0 0;"><span class="k">func</span> <span class="t">morir</span>():
+	$SfxMuerte.play()
+	hide()                         <span class="c"># ya no se ve…</span>
+	set_deferred(<span class="s">"monitorable"</span>, <span class="k">false</span>) <span class="c"># …ni choca…</span>
+	remove_from_group(<span class="s">"enemigo"</span>)   <span class="c"># …ni es blanco</span>
+	<span class="k">await</span> $SfxMuerte.finished      <span class="c"># la señal: "terminé"</span>
+	queue_free()                   <span class="c"># recién ahora</span></pre>
+        <p class="small-note" style="margin-top:8px;">El slime “muere” para el jugador al instante, pero el nodo vive 0.16 s más: lo que dura el <i>plop</i>.</p>
       </div>
     </div>
-    <div class="callout" style="margin-top:14px;">La misma idea sirve para las <b>partículas</b>: si se borra el slime, se borran con él. Por eso los efectos que tienen que <b>sobrevivir</b> al objeto se ponen en otro lado (el jugador, la arena, o una escena propia que se instancia).</div>
+    <div class="callout" style="margin-top:14px;">Otra salida, la del TP: que el sonido lo toque <b>alguien que sigue vivo</b> (el jugador, en <code>sumar_kill()</code>). La demo 05 compara las tres formas. Y lo mismo pasa con las <b>partículas</b>: si son hijas del slime, se borran con él.</div>
+  </section>
+
+  <section class="slide" data-chapter="Audio" data-topic="Encadenar con señales">
+    <div class="slide-eyebrow">Desencadenantes <span class="godot">Godot · demo 06</span></div>
+    <h2 class="slide-title">Cuando termina una cosa, empieza la otra</h2>
+    <div class="columns" style="grid-template-columns:0.95fr 1.05fr;">
+      <div>
+        <p style="font-size:15px; margin:0 0 8px;">Casi todo lo que dura un tiempo <b>avisa con una señal</b> cuando termina. Esa señal es el <b>desencadenante</b> del paso siguiente.</p>
+        <table class="tbl" style="font-size:13.5px;">
+          <thead><tr><th>Quién</th><th>Avisa “terminé” con</th></tr></thead>
+          <tbody>
+            <tr><td><code>AnimatedSprite2D</code></td><td><code>animation_finished</code> (sin loop)</td></tr>
+            <tr><td><code>AnimationPlayer</code></td><td><code>animation_finished</code></td></tr>
+            <tr><td><code>AudioStreamPlayer</code></td><td><code>finished</code></td></tr>
+            <tr><td><code>Tween</code></td><td><code>finished</code> o <code>tween_callback()</code></td></tr>
+            <tr><td><code>CPUParticles2D</code></td><td><code>finished</code> (one shot)</td></tr>
+            <tr><td><code>Timer</code></td><td><code>timeout</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <pre class="code" style="font-size:12.2px;"><span class="c"># jugador.gd: la muerte, paso a paso</span>
+<span class="k">func</span> <span class="t">morir</span>():
+	$AnimatedSprite2D.play(<span class="s">"morir"</span>)
+	<span class="k">await</span> $AnimatedSprite2D.animation_finished
+	$SfxGameOver.play()
+	<span class="k">await</span> $SfxGameOver.finished
+	$CartelGameOver.show()
+	<span class="k">await</span> get_tree().create_timer(<span class="n">1.5</span>).timeout
+	get_tree().change_scene_to_file(<span class="s">"res://game_over.tscn"</span>)</pre>
+        <div class="callout" style="margin-top:10px; font-size:14.5px;"><code>await</code> pausa <b>solo esta función</b> hasta que llega la señal; el resto del juego sigue. Sin esperar, las cuatro cosas pasan en el <b>mismo frame</b> y se pisan: en la demo 06, la tecla <b>X</b> lo muestra.</div>
+      </div>
+    </div>
   </section>
 
   <section class="slide" data-chapter="Audio" data-topic="Buses">
-    <div class="slide-eyebrow">Audio Bus Layout</div>
+    <div class="slide-eyebrow">Audio Bus Layout <span class="godot">Godot · demo 07</span></div>
     <h2 class="slide-title">Buses: música y efectos por separado</h2>
     <div class="columns">
       <div>
@@ -339,7 +395,7 @@ t.tween_callback(queue_free)</pre>
 
   <!-- ============ EFECTOS ============ -->
   <section class="slide" data-chapter="Efectos" data-topic="Screenshake">
-    <div class="slide-eyebrow">Efectos · 1</div>
+    <div class="slide-eyebrow">Efectos · 1 <span class="godot">Godot · demo 08</span></div>
     <h2 class="slide-title">Screenshake: la cámara tiembla</h2>
     <div class="columns" style="grid-template-columns:1.1fr 0.9fr;">
       <div>
@@ -363,7 +419,7 @@ t.tween_callback(queue_free)</pre>
   </section>
 
   <section class="slide" data-chapter="Efectos" data-topic="Hit stop">
-    <div class="slide-eyebrow">Efectos · 2</div>
+    <div class="slide-eyebrow">Efectos · 2 <span class="godot">Godot · demo 09</span></div>
     <h2 class="slide-title">Hit stop: congelar el tiempo un instante</h2>
     <div class="columns" style="grid-template-columns:1.1fr 0.9fr;">
       <div>
@@ -388,39 +444,88 @@ t.tween_callback(queue_free)</pre>
   </section>
 
   <section class="slide" data-chapter="Efectos" data-topic="Partículas">
-    <div class="slide-eyebrow">Efectos · 3</div>
-    <h2 class="slide-title">Partículas: una explosión de puntitos</h2>
-    <div class="columns">
+    <div class="slide-eyebrow">Efectos · 3 <span class="godot">Godot · demo 10</span></div>
+    <h2 class="slide-title">Partículas: crearlas desde el código</h2>
+    <div class="columns" style="grid-template-columns:1.05fr 0.95fr;">
       <div>
-        <p class="subtitle" style="font-size:17px;"><code>CPUParticles2D</code> dispara muchas copias de un puntito (o de una textura) con velocidad, dirección y vida propias.</p>
-        <table class="tbl" style="font-size:14px;">
+        <pre class="code" style="font-size:12.2px;"><span class="c"># enemigo.gd: una ráfaga donde murió el slime</span>
+<span class="k">func</span> <span class="t">explotar</span>():
+	<span class="k">var</span> p = <span class="t">CPUParticles2D</span>.new()     <span class="c"># 1 · crear el nodo</span>
+	p.one_shot = <span class="k">true</span>                <span class="c"># 2 · configurarlo</span>
+	p.amount = <span class="n">12</span>
+	p.lifetime = <span class="n">0.4</span>
+	p.explosiveness = <span class="n">1.0</span>
+	p.spread = <span class="n">180</span>
+	p.gravity = <span class="t">Vector2</span>.ZERO
+	p.initial_velocity_min = <span class="n">80</span>
+	p.initial_velocity_max = <span class="n">140</span>
+	p.scale_amount_min = <span class="n">4</span>
+	p.color = <span class="t">Color</span>(<span class="s">"a3e635"</span>)
+	p.position = position             <span class="c"># 3 · ubicarlo</span>
+	p.finished.connect(p.queue_free)  <span class="c"># 4 · que se borre solo</span>
+	get_parent().add_child(p)         <span class="c"># 5 · a la ARENA, no al slime</span>
+	p.emitting = <span class="k">true</span>                <span class="c"># 6 · ¡fuego!</span></pre>
+      </div>
+      <div>
+        <p style="font-size:15px; margin:0 0 8px;"><code>CPUParticles2D</code> dispara muchas copias de un puntito con velocidad, dirección y vida propias. Es un nodo más: se crea con <code>new()</code>, igual que cualquier otro.</p>
+        <table class="tbl" style="font-size:13.5px;">
           <tbody>
-            <tr><td><b>One Shot</b> ✓ · <b>Emitting</b> ✓</td><td>una sola ráfaga, apenas aparece</td></tr>
-            <tr><td><b>Amount</b> 12 · <b>Lifetime</b> 0.4</td><td>cuántas y cuánto duran</td></tr>
-            <tr><td><b>Explosiveness</b> 1</td><td>todas a la vez, no de a una</td></tr>
-            <tr><td><b>Spread</b> 180 · <b>Gravity</b> 0, 0</td><td>para todos lados; sin caer (vista de arriba)</td></tr>
-            <tr><td><b>Initial Velocity</b> 80–140</td><td>qué tan lejos salen</td></tr>
+            <tr><td><code>one_shot</code> · <code>explosiveness</code> 1</td><td>una sola ráfaga, todas a la vez</td></tr>
+            <tr><td><code>amount</code> · <code>lifetime</code></td><td>cuántas y cuánto duran</td></tr>
+            <tr><td><code>spread</code> 180 · <code>gravity</code> 0</td><td>para todos lados, sin caer</td></tr>
+            <tr><td><code>initial_velocity</code></td><td>qué tan lejos salen</td></tr>
+            <tr><td><code>scale_amount</code> · <code>color</code></td><td>tamaño y color de cada puntito</td></tr>
           </tbody>
         </table>
+        <div class="callout" style="margin-top:10px; font-size:14.5px;">En <code>morir()</code>: <code>explotar()</code> y después <code>queue_free()</code>. Como la ráfaga es hija de la <b>arena</b>, sobrevive al slime.</div>
       </div>
-      <div style="align-self:center;">
-        <div class="card">
-          <h3>💥 Una escena <code>explosion.tscn</code></h3>
-          <p style="font-size:15px;">Para que sobreviva al slime, la explosión es <b>su propia escena</b>: el slime la instancia en su posición antes de borrarse, igual que el jugador instancia balas. Se borra sola con su señal <code>finished</code>.</p>
-          <pre class="code" style="font-size:12px; margin:8px 0 0;"><span class="k">func</span> <span class="t">_ready</span>():
-	finished.connect(queue_free)</pre>
-        </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Efectos" data-topic="Partículas en una escena">
+    <div class="slide-eyebrow">Efectos · 3 · otra forma <span class="godot">Godot · demo 10</span></div>
+    <h2 class="slide-title">Partículas: armarlas en el editor, como una bala</h2>
+    <div class="columns">
+      <div>
+        <ol class="steps" style="font-size:15px;">
+          <li>Escena nueva con raíz <code>CPUParticles2D</code> → guardarla como <code>explosion.tscn</code></li>
+          <li>En el Inspector, los mismos valores de la diapo anterior: se ven <b>en vivo</b> al tildar <b>Emitting</b></li>
+          <li>Un script de dos líneas, para que se borre sola</li>
+          <li>El slime la instancia en <code>morir()</code>, igual que el jugador instancia balas</li>
+        </ol>
+        <pre class="code" style="font-size:12.2px; margin-top:8px;"><span class="c"># explosion.gd</span>
+<span class="k">func</span> <span class="t">_ready</span>():
+	finished.connect(queue_free)
+	emitting = <span class="k">true</span></pre>
+      </div>
+      <div>
+        <pre class="code" style="font-size:12.2px;"><span class="c"># enemigo.gd</span>
+<span class="k">var</span> escena_explosion = preload(<span class="s">"res://explosion.tscn"</span>)
+
+<span class="k">func</span> <span class="t">morir</span>():
+	<span class="k">var</span> e = escena_explosion.instantiate()
+	e.position = position
+	get_parent().add_child(e)
+	queue_free()</pre>
+        <table class="tbl" style="font-size:13.5px; margin-top:10px;">
+          <thead><tr><th>Demo 10</th><th>Qué se ve</th></tr></thead>
+          <tbody>
+            <tr><td><b>1</b> · desde código</td><td>la ráfaga de <code>explotar()</code></td></tr>
+            <tr><td><b>2</b> · escena</td><td>la misma ráfaga, armada en el editor</td></tr>
+            <tr><td><b>3</b> · hija del slime</td><td><b>nada</b>: se borra con él</td></tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </section>
 
   <section class="slide" data-chapter="Efectos" data-topic="Cuánto es demasiado">
-    <div class="slide-eyebrow">Diseño</div>
+    <div class="slide-eyebrow">Diseño <span class="godot">Godot · demo 11</span></div>
     <h2 class="slide-title">Cuánto <i>juice</i> es demasiado</h2>
     <div class="columns">
       <div class="card" style="border-top:3px solid var(--red);">
         <h3 style="color:var(--red);">Señales de exceso</h3>
-        <ul style="font-size:15px;">
+        <ul style="font-size:14.5px;">
           <li>No se distingue qué pasó: todo tiembla, todo brilla</li>
           <li>Los efectos <b>tapan</b> a los enemigos o las balas</li>
           <li>El sonido más repetido es el más fuerte</li>
@@ -429,7 +534,7 @@ t.tween_callback(queue_free)</pre>
       </div>
       <div class="card" style="border-top:3px solid var(--green);">
         <h3 style="color:var(--green);">Criterios</h3>
-        <ul style="font-size:15px;">
+        <ul style="font-size:14.5px;">
           <li><b>Jerarquía:</b> cuanto más importante el evento, más grande la respuesta</li>
           <li><b>Frecuencia:</b> lo que pasa seguido, respuesta chica</li>
           <li><b>Claridad:</b> el efecto nunca tapa la información</li>
@@ -437,7 +542,19 @@ t.tween_callback(queue_free)</pre>
         </ul>
       </div>
     </div>
-    <div class="callout" style="margin-top:16px;">🧪 La prueba final no es leer el código: es <b>jugar</b> cinco minutos con el sonido prendido y preguntarse qué sobra y qué falta.</div>
+    <div class="niveles">
+      <div><b>0</b>nada: correcto, pero mudo</div>
+      <div><b>1</b>caminar y correr</div>
+      <div><b>2</b>disparo bajito, tono al azar</div>
+      <div><b>3</b>flash del slime</div>
+      <div><b>4</b>pop y “plop” al morir</div>
+      <div><b>5</b>partículas al morir</div>
+      <div><b>6</b>golpe al caballero: parpadeo, sonido, temblor</div>
+      <div><b>7</b>música</div>
+      <div class="sobra"><b>8 · sobra</b>temblor en cada disparo, hit stop en cada slime</div>
+      <div class="sobra"><b>9 · sobra</b>partículas gigantes, pantalla blanca, disparo fuerte</div>
+    </div>
+    <p class="small-note" style="margin-top:8px; text-align:center;">Demo 11: el survivors con la mecánica fija; las teclas <b>0 a 9</b> suman una respuesta por nivel. La prueba final no es leer el código: es <b>jugar</b> cinco minutos con el sonido prendido.</p>
   </section>
 
   <!-- ============ CIERRE ============ -->
@@ -487,8 +604,9 @@ t.tween_callback(queue_free)</pre>
         <tr><td><b><code>AnimatedSprite2D</code></b></td><td>Cambiar el dibujo; <code>if/elif</code> en orden de prioridad</td></tr>
         <tr><td><b><code>AnimationPlayer</code></b></td><td>Secuencias fijas de propiedades, armadas con keyframes en el editor</td></tr>
         <tr><td><b><code>Tween</code></b></td><td>Cambios cortos desde el código: flash, pop, temblor</td></tr>
-        <tr><td><b><code>AudioStreamPlayer</code></b></td><td>Música y efectos; variar <code>pitch_scale</code>; que suene quien sigue vivo</td></tr>
-        <tr><td><b>Screenshake · hit stop · partículas</b></td><td>Exagerar lo importante, nunca todo</td></tr>
+        <tr><td><b><code>AudioStreamPlayer</code></b></td><td>Música y efectos; variar <code>pitch_scale</code>; esperar <code>finished</code> o que suene quien sigue vivo</td></tr>
+        <tr><td><b>Señales que avisan “terminé”</b></td><td>Encadenar pasos con <code>await</code>: animación → sonido → cartel → cambio de escena</td></tr>
+        <tr><td><b>Screenshake · hit stop · partículas</b></td><td>Exagerar lo importante, nunca todo; las partículas, hijas de la arena</td></tr>
       </tbody>
     </table>
   </section>
@@ -515,7 +633,7 @@ t.tween_callback(queue_free)</pre>
         </ul>
       </div>
     </div>
-    <p class="small-note" style="margin-top:24px; text-align:center;">Capturas del editor: documentación oficial de Godot — CC BY 4.0. · Logo de Godot © Godot Foundation — CC BY 4.0.</p>
+    <p class="small-note" style="margin-top:24px; text-align:center;">Capturas del editor: documentación oficial de Godot — CC BY 4.0. · Logo de Godot © Godot Foundation — CC BY 4.0. · Capturas de juegos: © de sus autores, uso educativo. · Demos: sprites de Brackeys (ver <code>LICENSE-brackeys.txt</code>).</p>
   </section>
 
 </div>
@@ -565,6 +683,21 @@ t.tween_callback(queue_free)</pre>
       });
     });
   })();
+
+  /* Juegos: si el GIF existe en assets/, aparece el botón para reproducirlo y pausarlo.
+     Mientras no esté, queda la imagen fija y no se ve ningún botón. */
+  document.querySelectorAll('.juego-img').forEach(function (caja) {
+    var img = caja.querySelector('img'), btn = caja.querySelector('button');
+    var fija = img.getAttribute('src'), gif = img.getAttribute('data-gif'), andando = false;
+    var prueba = new Image();
+    prueba.onload = function () { caja.classList.add('con-gif'); };
+    prueba.src = gif;
+    btn.addEventListener('click', function () {
+      andando = !andando;
+      img.src = andando ? gif : fija;
+      btn.textContent = andando ? '⏸ Pausar' : '▶ GIF';
+    });
+  });
 </script>
 </body>
 </html>

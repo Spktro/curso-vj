@@ -1,0 +1,83 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://comun/caballero.gd" id="1"]
+[ext_resource type="SpriteFrames" path="res://comun/caballero_frames.tres" id="2"]
+[ext_resource type="AudioStream" path="res://assets/disparo.wav" id="3"]
+[ext_resource type="AudioStream" path="res://assets/golpe.wav" id="4"]
+[ext_resource type="AudioStream" path="res://assets/plop.wav" id="5"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_1"]
+radius = 9.0
+
+[sub_resource type="Animation" id="Animation_golpe"]
+resource_name = "golpe"
+length = 0.4
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatedSprite2D:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 1,
+"values": [Color(1, 1, 1, 1), Color(1, 0.3, 0.3, 1), Color(1, 1, 1, 1), Color(1, 0.3, 0.3, 1), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_sin_final"]
+resource_name = "golpe_sin_final"
+length = 0.4
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatedSprite2D:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [Color(1, 1, 1, 1), Color(1, 0.3, 0.3, 1), Color(1, 1, 1, 1), Color(1, 0.3, 0.3, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_1"]
+_data = {
+&"golpe": SubResource("Animation_golpe"),
+&"golpe_sin_final": SubResource("Animation_sin_final")
+}
+
+[node name="Caballero" type="CharacterBody2D"]
+script = ExtResource("1")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+scale = Vector2(2, 2)
+sprite_frames = ExtResource("2")
+animation = &"idle"
+autoplay = "idle"
+offset = Vector2(0, -6)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_1")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_1")
+}
+
+[node name="TimerGolpe" type="Timer" parent="."]
+wait_time = 0.4
+one_shot = true
+
+[node name="SfxDisparo" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3")
+volume_db = -10.0
+bus = &"Efectos"
+
+[node name="SfxGolpe" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4")
+bus = &"Efectos"
+
+[node name="SfxKill" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5")
+bus = &"Efectos"

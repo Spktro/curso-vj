@@ -1,0 +1,32 @@
+; Proyecto de demos de la Clase 7 · El juego se siente vivo
+; Se abre con Godot 4.3 o posterior.
+
+config_version=5
+
+[application]
+
+config/name="El juego se siente vivo - demos"
+run/main_scene="res://menu.tscn"
+config/features=PackedStringArray("4.3")
+config/icon="res://icon.svg"
+
+[audio]
+
+buses/default_bus_layout="res://default_bus_layout.tres"
+
+[autoload]
+
+Atajos="*res://comun/atajos.gd"
+
+[display]
+
+window/size/viewport_width=1280
+window/size/viewport_height=720
+window/stretch/mode="canvas_items"
+
+[rendering]
+
+textures/canvas_textures/default_texture_filter=0
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+environment/defaults/default_clear_color=Color(0.106, 0.133, 0.188, 1)
