@@ -14,7 +14,7 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 
 [application]
 
-config/name="El juego se siente vivo - demos"
+config/name="Look and feel - demos"
 run/main_scene="res://menu.tscn"
 config/features=PackedStringArray("4.6")
 config/icon="res://icon.svg"

@@ -1,4 +1,4 @@
-# Demos de la Clase 7 · El juego se siente vivo
+# Demos de la Clase 7 · Look and feel
 
 Proyecto Godot (4.3 o posterior) para **mostrar en vivo** durante la teórica de la semana 5. No es para que el grupo lo programe: el sonido, el HUD y el game feel del survivors se hacen en el TP5.
 

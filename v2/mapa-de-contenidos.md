@@ -20,7 +20,7 @@ Leyenda de la columna "Origen": ✅ **reusar** tal cual · 🔧 **reforzar** con
 | 04 | Cuerpos, colisiones y señales | Tres cuerpos físicos y regla práctica · `CharacterBody2D` + `move_and_slide()` · `_process` vs `_physics_process` · `CollisionShape2D` · señales (flujo, conectar desde editor y por código) · `Area2D` · grupos · escena Jugador + Moneda |
 | 05 | Muchos de uno | POO: los 4 pilares · scripts como clases · tipado estático · instanciar (`preload` vs `load`) · spawner con timer manual y nodo `Timer` · acceder a instancias |
 | 06 | La cara del juego | Jerarquía de UI · `CanvasLayer` · nodos `Control` · HUD e info dinámica · `@onready` · `ProgressBar` · botones y señales · cambio de escenas · menú + HUD |
-| 07 | El juego se siente vivo | `AnimatedSprite2D` y animar por código · `AnimationPlayer` · game feel · nodos de audio y buses · cámara con smoothing · squash & stretch · partículas · capas de pulido |
+| 07 | Look and feel | `AnimatedSprite2D` y animar por código · `AnimationPlayer` · game feel · nodos de audio y buses · cámara con smoothing · squash & stretch · partículas · capas de pulido |
 | 08 | Enemigos con cerebro | Qué es la IA de un juego · 4 ejemplos famosos (Pac-Man, Space Invaders, Commandos, Doom) · comportamientos básicos · detección · spaghetti de `if` · máquina de estados, `enum` + `match`, hacer + decidir · agregar un estado (GOLPEADO) · FSM en juegos reales |
 
 Contenido que **estuvo** en la v1 y se sacó del deck 08 (recuperable de git, commit `00dd0a5~1`): estructura de proyecto, exportar a Windows en 4 pasos, testing antes de entregar, cómo presentar tu juego.
