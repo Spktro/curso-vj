@@ -15,4 +15,4 @@ script = ExtResource("4")
 
 [node name="Cartel" parent="." instance=ExtResource("2")]
 titulo = "03 · Tween: una animación que se escribe en el código"
-ayuda = "Espacio: los cinco a la vez · 1 a 5: uno solo · T: cambiar la curva (transición) · R: reponer"
+ayuda = "1 a 5: un efecto, en su slime · Espacio: los cinco a la vez · C: largar la carrera de curvas · R: reponer"
