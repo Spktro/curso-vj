@@ -392,13 +392,13 @@ t.tween_callback(queue_free)</pre>
       <pre class="code" style="font-size:12.4px;"><span class="k">func</span> <span class="t">explotar</span>():
 	<span class="k">var</span> p = <span class="t">CPUParticles2D</span>.new()
 	p.one_shot = <span class="k">true</span>
-	p.amount = <span class="n">12</span>
-	p.lifetime = <span class="n">0.4</span>
+	p.amount = <span class="n">24</span>
+	p.lifetime = <span class="n">0.8</span>
 	p.explosiveness = <span class="n">1.0</span>
 	p.spread = <span class="n">180</span>
 	p.gravity = <span class="t">Vector2</span>.ZERO
-	p.initial_velocity_min = <span class="n">80</span>
-	p.initial_velocity_max = <span class="n">140</span>
+	p.initial_velocity_min = <span class="n">160</span>
+	p.initial_velocity_max = <span class="n">260</span>
 	p.position = position
 	p.finished.connect(p.queue_free)
 	get_parent().add_child(p)

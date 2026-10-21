@@ -20,6 +20,7 @@ func reponer():
 		s.modo = i + 1
 		s.demo = self
 		s.persigue = false
+		s.choca = false
 		s.position = Vector2(240 + i * 400, 300)
 		s.scale = Vector2(2, 2)
 		add_child(s)

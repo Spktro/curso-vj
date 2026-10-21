@@ -6,6 +6,7 @@ var velocidad = 60
 var vida = 1
 var dano = 10
 var persigue = true
+var choca = true    # en false, tocar al caballero no le hace nada (demos donde el slime es de muestra)
 
 func _ready():
 	add_to_group("enemigo")
@@ -36,6 +37,6 @@ func morir():
 	queue_free()
 
 func _on_body_entered(body):
-	if body.is_in_group("jugador"):
+	if choca and body.is_in_group("jugador"):
 		body.recibir_dano(dano)
 		queue_free()

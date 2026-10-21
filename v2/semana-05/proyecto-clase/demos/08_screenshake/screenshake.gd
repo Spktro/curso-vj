@@ -10,6 +10,7 @@ func _ready():
 	for i in 8:
 		var s = escena_slime.instantiate()
 		s.persigue = false
+		s.choca = false
 		s.position = Vector2(180 + i * 130, 200 + (i % 2) * 340)
 		add_child(s)
 

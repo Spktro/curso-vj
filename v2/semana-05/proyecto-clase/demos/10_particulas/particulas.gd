@@ -21,7 +21,10 @@ func reponer():
 	add_child(slime)
 
 func _process(delta):
-	$Cartel.mostrar(nombres[modo])
+	var lenta = ""
+	if Engine.time_scale < 1:
+		lenta = "   ·   CÁMARA LENTA (L para volver)"
+	$Cartel.mostrar(nombres[modo] + lenta)
 
 func _unhandled_input(event):
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
@@ -33,6 +36,11 @@ func _unhandled_input(event):
 		matar_slime()
 	elif k >= KEY_1 and k <= KEY_3:
 		modo = k - KEY_0
+	elif k == KEY_L:
+		if Engine.time_scale < 1:
+			Engine.time_scale = 1.0
+		else:
+			Engine.time_scale = 0.25
 
 func matar_slime():
 	if modo == 1:
@@ -46,23 +54,32 @@ func matar_slime():
 		slime.add_child(e)   # hija del slime…
 	slime.queue_free()       # …y acá se borra con él
 	slime = null
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(1.2).timeout
 	reponer()
 
 func explotar(posicion):
 	var p = CPUParticles2D.new()
 	p.one_shot = true
-	p.amount = 12
-	p.lifetime = 0.4
+	p.amount = 24
+	p.lifetime = 0.8
 	p.explosiveness = 1.0           # todas a la vez
 	p.spread = 180                  # para todos lados
 	p.gravity = Vector2.ZERO        # vista de arriba: no caen
-	p.initial_velocity_min = 80
-	p.initial_velocity_max = 140
-	p.scale_amount_min = 4
-	p.scale_amount_max = 6
-	p.color = Color("a3e635")
+	p.initial_velocity_min = 160
+	p.initial_velocity_max = 260
+	p.scale_amount_min = 8
+	p.scale_amount_max = 12
+	p.damping_min = 120             # frenan al final
+	p.damping_max = 120
+	var fundido = Gradient.new()    # y se desvanecen
+	fundido.set_color(0, Color.WHITE)
+	fundido.set_color(1, Color(1, 1, 1, 0))
+	p.color_ramp = fundido
+	p.color = Color("d9ff73")
 	p.position = posicion
 	p.finished.connect(p.queue_free)   # se borra sola al terminar
 	add_child(p)
 	p.emitting = true
+
+func _exit_tree():
+	Engine.time_scale = 1.0

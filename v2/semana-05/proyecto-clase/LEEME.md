@@ -21,7 +21,7 @@ Proyecto Godot (4.3 o posterior) para **mostrar en vivo** durante la teórica de
 | **07 · Buses** | Buses | Espacio, ↑ ↓, ← →, M | Bajar la música sin tocar los disparos. Los buses están en `default_bus_layout.tres` (panel **Audio**). |
 | **08 · Screenshake** | Screenshake | Espacio, 1, 2, 3 | 3, 6 y 15 px. El cartel de arriba no tiembla: está en un `CanvasLayer`, como el HUD. |
 | **09 · Hit stop** | Hit stop | Espacio, H, 1, 2, 3 | Con 0.06 s se siente un impacto; con 0.25 s, un tirón (parece que el juego se trabó). H: comparar con y sin. |
-| **10 · Partículas** | Partículas (las dos) | Espacio, 1, 2, 3, clic | 1: el `CPUParticles2D` se crea en el código (`explotar()`). 2: se instancia `explosion.tscn`. 3: las partículas son hijas del slime y **no se ven**: se borran con él. |
+| **10 · Partículas** | Partículas (las dos) | Espacio, 1, 2, 3, L, clic | 1: el `CPUParticles2D` se crea en el código (`explotar()`). 2: se instancia `explosion.tscn`. 3: las partículas son hijas del slime y **no se ven**: se borran con él. **L**: cámara lenta, para mirar la ráfaga. |
 | **11 · Cuánto juice** | Arranque y Cuánto juice es demasiado | WASD, 0 a 9, ← → | El survivors con la mecánica fija. **0**: nada. Del **1 al 7** se suma una respuesta por nivel (lista a la derecha). **8 y 9**: el exceso. Sirve también para abrir la clase: 0 y después 7. |
 
 ## Estructura

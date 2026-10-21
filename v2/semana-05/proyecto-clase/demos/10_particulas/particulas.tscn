@@ -15,4 +15,4 @@ script = ExtResource("4")
 
 [node name="Cartel" parent="." instance=ExtResource("2")]
 titulo = "10 · Partículas: una explosión de puntitos"
-ayuda = "Espacio: matar al slime · 1: creadas desde código · 2: escena explosion.tscn · 3: hijas del slime (error) · clic: explosión en el mouse"
+ayuda = "Espacio: matar al slime · 1: desde código · 2: escena explosion.tscn · 3: hijas del slime (error) · L: cámara lenta · clic: explosión"

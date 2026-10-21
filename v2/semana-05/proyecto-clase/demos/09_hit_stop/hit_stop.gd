@@ -13,6 +13,7 @@ func _ready():
 	for i in 5:
 		var s = escena_slime.instantiate()
 		s.persigue = false
+		s.choca = false
 		s.position = Vector2(560 + i * 140, 200 + i * 90)
 		s.scale = Vector2(1.5, 1.5)
 		add_child(s)
