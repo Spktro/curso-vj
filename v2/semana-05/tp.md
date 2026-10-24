@@ -1,7 +1,7 @@
 # Trabajo Práctico 5 — Terminar el juego
 
 > **Diplomatura de Videojuegos · Semana 5** (clases 7 y 6)
-> Objetivo: convertir el survivors del TP4 en un **juego terminado**: arranca en un **menú**, el HUD muestra la **vida, el tiempo y los slimes**, al perder aparece una pantalla de **Game Over** con el resultado y el récord, y cada acción **se ve y se oye**. Después se **exporta** a un `.exe` y se le suma **el aporte propio**: una idea personal que se muestra en la semana 6.
+> Objetivo: convertir el survivors del TP4 en un **juego terminado**: arranca en un **menú**, el HUD muestra la **vida, el tiempo y los slimes**, al perder aparece una pantalla de **Game Over** con el resultado y el récord, y cada acción **se ve y se oye**. El mundo se agranda: la **cámara sigue al caballero** sobre un **piso que no se termina**. Después se **exporta** a un `.exe` y se le suma **el aporte propio**: una idea personal que se muestra en la semana 6.
 
 ---
 
@@ -12,10 +12,11 @@
 - Un **menú de inicio** y una pantalla de **Game Over** con el resultado, el récord y “Reintentar”.
 - **Música y efectos de sonido**: disparo, golpe, slime que cae, game over.
 - **Game feel**: los enemigos destellan al recibir una bala y hacen *pop* al morir; el caballero parpadea y la pantalla tiembla cuando lo golpean.
+- **Un mundo más grande**: la cámara sigue al caballero, el piso es infinito y los slimes nacen justo fuera de lo que muestra la cámara.
 - El juego **exportado**: un `.exe` que corre en una computadora sin Godot.
 - **El aporte propio**: una cosa que no estaba en ningún TP, contada en un `aporte.md`.
 
-> 💡 **Tiempo estimado:** 2 a 3 horas en total. Las partes 1 a 5 son lo de las clases (unos 90 min); la 6 es exportar (15 min); la 7 es el aporte propio, y lleva el tiempo que cada uno decida. **Escribir el código a mano**, y leer el “por qué” de cada bloque.
+> 💡 **Tiempo estimado:** 2 a 3 horas en total. Las partes 1 a 5 son lo de las clases (unos 90 min); la 6 agranda el mundo (20 min); la 7 es exportar (15 min); la 8 es el aporte propio, y lleva el tiempo que cada uno decida. **Escribir el código a mano**, y leer el “por qué” de cada bloque.
 
 > 🔗 **Viene de:** la Clase 7 (animación, `AnimationPlayer`, `Tween`, sonido, game feel, la planilla de feedback), la Clase 6 (HUD, menú, Autoload, Game Over, escritos en vivo) y los TP3 y TP4.
 
@@ -27,7 +28,7 @@ Este TP continúa el **`tp4`**. Copiar la carpeta del proyecto y renombrarla **`
 
 Confirmar que el **punto de control 5 del TP4** sigue andando: los slimes persiguen al caballero, las balas salen solas, y cada 8 enemigos aparece el jefe con su etiqueta de estado y sus colores.
 
-> 🧠 **Qué cambia y qué no.** El spawner, las balas y la máquina de estados del jefe **no se tocan**. Se modifican `jugador.gd` (el HUD, el sonido, el game feel) y `enemigo.gd` (el destello y el *pop*). Todo lo demás son **escenas y scripts nuevos**.
+> 🧠 **Qué cambia y qué no.** Las balas y la máquina de estados del jefe **no se tocan**. Se modifican `jugador.gd` (el HUD, el sonido, el game feel, la cámara), `enemigo.gd` (el destello y el *pop*) y, en la Parte 6, **una sola función** de `spawner.gd`. Todo lo demás son **escenas y scripts nuevos**.
 
 ---
 
@@ -41,12 +42,14 @@ menu.tscn          Menu (Control)                           menu.gd
   └── Botonera (VBoxContainer): Titulo, BtnJugar, BtnSalir
 
 arena.tscn         Arena (Node2D)                           arena.gd      ← NUEVO script
+  ├── Fondo (Parallax2D)                                    ← NUEVO: piso infinito
+  │   └── Piso (Sprite2D)
   ├── Jugador                                               jugador.gd
   │   ├── AnimatedSprite2D, CollisionShape2D, TimerDisparo
   │   ├── SfxDisparo, SfxGolpe, SfxKill (AudioStreamPlayer) ← NUEVOS
-  │   └── AnimationPlayer                                   ← NUEVO: parpadeo
-  ├── Spawner, Enemigos, Balas                              (sin cambios)
-  ├── Camara (Camera2D)                                     ← NUEVO: para temblar
+  │   ├── AnimationPlayer                                   ← NUEVO: parpadeo
+  │   └── Camara (Camera2D)                                 ← NUEVO: tiembla y sigue al caballero
+  ├── Spawner, Enemigos, Balas                              spawner.gd: cambia una función
   ├── Musica (AudioStreamPlayer)                            ← NUEVO
   └── HUD (CanvasLayer)                                     hud.gd        ← NUEVO script
       ├── BarraVida, LabelKills
@@ -67,8 +70,9 @@ partida.gd         Autoload "Partida": kills, tiempo, mejor_tiempo
 | 3 | Game Over | Resultado y récord al perder |
 | 4 | Sonido | Música y efectos |
 | 5 | Game feel | Destello, *pop*, parpadeo, temblor |
-| 6 | Exportar | Un `.exe` que anda sin Godot |
-| 7 | Aporte propio | Algo personal, para mostrar |
+| 6 | Cámara, piso infinito y spawner | El caballero camina sin límites y el mundo lo sigue |
+| 7 | Exportar | Un `.exe` que anda sin Godot |
+| 8 | Aporte propio | Algo personal, para mostrar |
 
 ---
 
@@ -473,7 +477,7 @@ func morir():
 
 ### 5.4 · La pantalla tiembla
 
-8. En `arena.tscn`, hijo de **`Arena`** → **`Camera2D`** → renombrarlo **`Camara`**. **Position** = `0, 0`. **Anchor Mode** = **Fixed Top Left**. Ahora la cámara muestra exactamente lo mismo que antes: solo está para poder moverla.
+8. En `arena.tscn`, hijo de **`Arena`** → **`Camera2D`** → renombrarlo **`Camara`**. **Position** = `0, 0`. **Anchor Mode** = **Fixed Top Left**. Ahora la cámara muestra exactamente lo mismo que antes: solo está para poder moverla. (En la Parte 6 se la lleva adentro del `Jugador` para que lo siga; por ahora, fija.)
 9. En **`jugador.gd`**, una función nueva, y su llamada en `recibir_dano()`:
 
 ```gdscript
@@ -511,11 +515,102 @@ func sacudir_camara():
 
 ---
 
-## 📦 Parte 6 — Exportar: el juego fuera de Godot
+## 🎥 Parte 6 — Un mundo más grande: la cámara sigue al caballero
+
+> **Concepto:** hasta acá el mundo era la ventana: el caballero tenía un `clamp` para no salirse y los slimes nacían en los bordes de la pantalla. Con la **`Camara` adentro del `Jugador`**, lo que se ve es **lo que rodea al caballero**, y la arena pasa a ser tan grande como se quiera. Hacen falta tres cosas: que la cámara lo siga, que haya piso en todos lados, y que los slimes sigan naciendo **justo fuera de lo que se ve**.
+
+### 6.1 · La cámara sigue al jugador
+
+1. En `arena.tscn`, **arrastrar `Camara`** (la de la Parte 5) adentro de **`Jugador`**, para que quede como hija suya, al lado del `AnimationPlayer`.
+2. Con `Camara` seleccionada, en el Inspector: **Anchor Mode** = **Drag Center** (vuelve al valor de fábrica), **Position** = `0, 0`, y **Position Smoothing → Enabled** ✔, **Speed** = `5`.
+3. En **`jugador.gd`**, dos cambios:
+   - **Borrar** las tres líneas del `clamp` al final de `_physics_process()` (las que empiezan con `var limites = get_viewport_rect().size`).
+   - En `sacudir_camara()`, la cámara ahora es hija del jugador:
+
+```gdscript
+func sacudir_camara():
+	var camara = $Camara                  # antes: get_node("../Camara")
+	# ... el resto, igual
+```
+
+4. **F6** con `arena.tscn` abierta. Caminar para cualquier lado: el caballero queda en el centro y **el mundo se mueve**. El HUD sigue clavado en su esquina. Alrededor se ve el gris de Godot: todavía no hay piso. El temblor de la Parte 5 sigue andando igual.
+
+> 🧠 **Una cámara hija va a donde va el padre.** Igual que el `AnimatedSprite2D` o los `Sfx`: el `Jugador` se mueve y arrastra todo lo que cuelga de él. No hace falta ni una línea de código para que lo siga. **Anchor Mode = Drag Center** pone el centro de la pantalla en la posición de la cámara (o sea, en el caballero); en la Parte 5 estaba en *Fixed Top Left* justamente para que **no** moviera nada.
+
+> 🧠 **`Position Smoothing`** hace que la cámara **llegue** a donde está el caballero en vez de ir pegada: con `Speed` 5 tarda una fracción de segundo. Se siente más suave, y cuando el jefe lo empuja no da un latigazo. El `offset` del temblor se suma aparte: las dos cosas conviven.
+
+> 🧠 **¿Y el `clamp`?** Limitaba al caballero a la ventana porque la ventana era el mundo. Ahora el mundo es infinito: ya no hay borde al que llegar.
+
+### 6.2 · Un piso que no se termina
+
+> **Concepto:** en un juego visto desde arriba, el “fondo” es el piso. Un **`Parallax2D`** con una textura que se repite da un piso **infinito** con un solo nodo y cero código: cuando la cámara avanza el tamaño de la imagen, el nodo la **vuelve a poner adelante** sin que se note. Es lo que hace *Vampire Survivors*.
+
+5. Copiar [`piso.png`](assets/piso.png) (pasto en *pixel art*, 1536×1024, hecho para repetirse sin costuras) a la carpeta del proyecto, junto a los demás sprites. Así se ve un pedazo:
+
+   ![Vista previa del piso](assets/preview-piso.png)
+
+6. En `arena.tscn`, hijo de **`Arena`** → **`Parallax2D`** → renombrarlo **`Fondo`**. **Arrastrarlo hasta arriba de todo** en el árbol, por encima de `Jugador`: en 2D, lo que está más arriba se dibuja **primero**, o sea, debajo.
+7. Hijo de `Fondo` → **`Sprite2D`** → renombrarlo **`Piso`**. **Texture** = `piso.png` (arrastrarlo desde el FileSystem). En **Offset → Centered**, **destildar**: la imagen tiene que empezar en `(0, 0)` y extenderse hacia abajo y a la derecha.
+8. Seleccionar **`Fondo`** → sección **Repeat** → **Repeat Size** = `1536` × `1024` (el tamaño exacto de la imagen).
+9. **F6**. Caminar todo lo que se quiera: **el pasto no se acaba nunca**.
+
+> 🧠 **Cómo funciona `repeat_size`.** El `Parallax2D` dibuja la textura y **copias** corridas exactamente `repeat_size` píxeles. Cuando la cámara avanzó esa distancia, el nodo **vuelve la textura al principio** en el mismo frame: como la copia es idéntica, el ojo no lo ve. Por eso la imagen tiene que ser (a) **más grande que la ventana** y (b) **continua**: el borde derecho encaja con el izquierdo y el de abajo con el de arriba. Para dibujar un piso propio, cuidar esas dos cosas.
+
+> 🧠 **¿Y el “parallax”?** El nodo se llama así porque sirve para que un fondo se mueva **más lento** que el mundo (**Scroll Scale** menor que 1) y parezca lejano, como las montañas de un plataformero. En un juego visto desde arriba el piso está **a la misma altura** que el caballero, así que se deja en `1, 1`: se mueve igual que todo lo demás. Solo se usa el “infinito”.
+
+### 6.3 · Los slimes nacen donde mira la cámara
+
+> **Concepto:** `posicion_en_el_borde()` del spawner usa `get_viewport_rect()`: los bordes **de la ventana**, de `0, 0` al tamaño de la pantalla. Eso valía mientras la ventana y el mundo eran lo mismo. Ahora, si el caballero camina 2000 px a la derecha, los slimes seguirían naciendo alrededor del punto de partida, lejos de todo. **Hay que preguntarle a la cámara qué está mostrando.**
+
+10. En **`spawner.gd`**, reemplazar `posicion_en_el_borde()`:
+
+```gdscript
+func posicion_en_el_borde():
+	var camara = get_viewport().get_camera_2d()          # NUEVO: la cámara activa
+	var centro = camara.get_screen_center_position()     # NUEVO: el centro de lo que se ve
+	var mitad = get_viewport_rect().size / 2             # NUEVO: media pantalla
+	var lado = randi_range(0, 3)        # 0 arriba · 1 abajo · 2 izquierda · 3 derecha
+	if lado == 0:
+		return centro + Vector2(randf_range(-mitad.x, mitad.x), -mitad.y - 40)
+	if lado == 1:
+		return centro + Vector2(randf_range(-mitad.x, mitad.x), mitad.y + 40)
+	if lado == 2:
+		return centro + Vector2(-mitad.x - 40, randf_range(-mitad.y, mitad.y))
+	return centro + Vector2(mitad.x + 40, randf_range(-mitad.y, mitad.y))
+```
+
+11. **F6**. Caminar lejos del punto de partida, en cualquier dirección: los slimes siguen entrando por los cuatro costados, siempre desde **afuera** de la pantalla.
+
+> 🧠 **La misma función, con otro origen.** Antes el rectángulo iba de `0, 0` al tamaño de la ventana. Ahora va desde el **centro de lo que muestra la cámara** hasta media pantalla para cada lado, y los 40 px de margen siguen dejando al slime justo afuera. `get_screen_center_position()` devuelve ese centro **real**, el que está dibujado: con el *smoothing*, la cámara va un poco atrás del caballero, y si se usara la posición del jugador los slimes podrían nacer a la vista por un costado.
+
+> 🧠 **¿Por qué no mirar al jugador directo?** Se podría, pero el spawner no tiene por qué saber quién lleva la cámara. Hoy la lleva el caballero; mañana puede ser un vehículo, o una cámara que recorre sola un nivel. Pedirle al viewport **la cámara activa** funciona en todos los casos.
+
+✅ **Punto de control 6:** el caballero camina en cualquier dirección sin tope, el mundo se mueve y el HUD queda fijo; nunca se ve el borde del piso ni el gris de fondo; los slimes y el jefe siguen apareciendo de a uno, siempre desde afuera de la pantalla, aunque se haya ido lejos del punto de partida. Al recibir un golpe, la pantalla sigue temblando.
+
+🛟 **Errores comunes con la cámara y el piso**
+
+<details>
+<summary>Ver soluciones</summary>
+
+- **La cámara no sigue al caballero:** `Camara` tiene que ser **hija de `Jugador`**, no de `Arena`. Arrastrarla en el árbol.
+- **El caballero quedó en una esquina, no en el centro:** el **Anchor Mode** sigue en *Fixed Top Left*. Pasarlo a **Drag Center**.
+- **El caballero sigue sin poder salirse de un rectángulo:** quedaron las líneas del `clamp`. Borrar las tres.
+- **`Node not found: "../Camara"`:** `sacudir_camara()` todavía busca la cámara en la arena. Cambiar a `$Camara`.
+- **No aparece `Parallax2D` en la lista de nodos:** Godot **4.2 o anterior** (`Parallax2D` existe desde 4.3). Lo mismo se hace con los nodos viejos: hijo de `Arena` → **`ParallaxBackground`** → hijo **`ParallaxLayer`** → hijo `Sprite2D` con la textura (Centered destildado). En el `ParallaxLayer`, **Motion → Mirroring** = `1536` × `1024`.
+- **Se ve una franja gris al caminar:** *Centered* quedó tildado en el `Sprite2D`, o *Repeat Size* no es exactamente `1536 × 1024`.
+- **El piso tapa al caballero:** `Fondo` tiene que ser el **primer** hijo de `Arena`. Arrastrarlo arriba de `Jugador`.
+- **El pasto se ve borroso:** falta **Default Texture Filter = Nearest** (Project Settings → Rendering → Textures; se hizo en el TP3).
+- **Los slimes nacen a la vista:** el `40` es poco si la ventana cambió de tamaño o la cámara tiene zoom. Subirlo a `80`.
+- **`Nonexistent function 'get_screen_center_position' in base 'Nil'`:** no hay cámara activa: `Camara` no está en la escena, o tiene **Enabled** destildado.
+</details>
+
+---
+
+## 📦 Parte 7 — Exportar: el juego fuera de Godot
 
 > **Concepto:** hasta ahora el juego solo existe dentro del editor. **Exportar** es empaquetarlo en un `.exe` que cualquiera puede abrir. Godot necesita unas **plantillas** (los ejecutables base de cada plataforma) que se bajan una sola vez.
 
-### 6.1 · Antes de exportar
+### 7.1 · Antes de exportar
 
 - **Main Scene** = `menu.tscn` (Parte 2).
 - **Project → Project Settings → Application → Config → Name** = el nombre del juego.
@@ -524,7 +619,7 @@ func sacudir_camara():
 
 > ⚠️ Si en algún script se escribió una ruta como `C:\Users\...` en vez de `res://`, funciona en la computadora propia y **se rompe en cualquier otra**. Es el error número uno al exportar.
 
-### 6.2 · Exportar a Windows en 4 pasos
+### 7.2 · Exportar a Windows en 4 pasos
 
 1. **Editor → Manage Export Templates → Download and Install**. Una sola vez; pesan bastante. Esperar a que diga que están instaladas.
 
@@ -541,7 +636,7 @@ func sacudir_camara():
 
 5. **Probarlo de verdad:** cerrar Godot, abrir `mi_juego.exe` desde la carpeta y jugar una partida entera: menú, arena, Game Over, Reintentar. Si es posible, pasárselo a alguien que no tenga Godot.
 
-✅ **Punto de control 6:** el `.exe` corre en una computadora **sin Godot**, arranca en el menú, se escucha, y se juega igual que en el editor.
+✅ **Punto de control 7:** el `.exe` corre en una computadora **sin Godot**, arranca en el menú, se escucha, y se juega igual que en el editor.
 
 🛟 **Errores comunes al exportar**
 
@@ -556,7 +651,7 @@ func sacudir_camara():
 
 ---
 
-## 🧩 Parte 7 — Aporte propio: algo que no estaba en ningún TP
+## 🧩 Parte 8 — Aporte propio: algo que no estaba en ningún TP
 
 > **Concepto:** el juego ya está terminado. Ahora se le **agrega una cosa propia**. No importa cuál: importa elegirla, hacerla andar y poder explicar cómo se hizo. Es lo que se va a **mostrar en la semana 6**.
 
@@ -603,7 +698,7 @@ Guardarlo en la raíz del proyecto, al lado de `project.godot`. Plantilla:
 
 > 🎤 **Para la semana 6:** cada uno muestra su juego **exportado** durante unos minutos: una partida corta, y después **el aporte propio** en acción, contando cómo se hizo. `aporte.md` sirve de guía.
 
-✅ **Punto de control 7 (final):** el aporte propio se nota jugando, el resto del juego sigue funcionando igual, y `aporte.md` lo explica. Juego terminado. 🎉
+✅ **Punto de control 8 (final):** el aporte propio se nota jugando, el resto del juego sigue funcionando igual, y `aporte.md` lo explica. Juego terminado. 🎉
 
 ---
 
@@ -626,6 +721,7 @@ Entregar **dos cosas**:
 - [ ] Hay **música en loop** y efectos de disparo, golpe, kill y game over; el disparo es el más bajito.
 - [ ] Los enemigos **destellan** al recibir una bala y hacen **pop** al morir (en `enemigo.gd`, heredado por el jefe).
 - [ ] El caballero **parpadea** (`AnimationPlayer`) y la pantalla **tiembla** al recibir daño; el HUD no tiembla.
+- [ ] La **cámara** es hija del jugador y lo sigue; el **piso** no se termina; los slimes nacen **fuera de lo que muestra la cámara**, en cualquier punto del mundo.
 - [ ] El `.exe` exportado corre **sin Godot**.
 - [ ] **El aporte propio** se nota jugando y está explicado en `aporte.md`.
 
@@ -633,7 +729,7 @@ Entregar **dos cosas**:
 
 ## 📄 Código completo de referencia
 
-Como referencia, por si algún paso no quedó claro. **`spawner.gd`, `bala.gd` y `slime_elite.gd` quedan igual que en el TP4.**
+Como referencia, por si algún paso no quedó claro. **`bala.gd` y `slime_elite.gd` quedan igual que en el TP4.**
 
 <details>
 <summary><code>partida.gd</code>, <code>arena.gd</code> y <code>hud.gd</code></summary>
@@ -710,10 +806,6 @@ func _physics_process(delta):
 	else:
 		$AnimatedSprite2D.play("idle")
 
-	var limites = get_viewport_rect().size
-	position.x = clamp(position.x, 0, limites.x)
-	position.y = clamp(position.y, 0, limites.y)
-
 func recibir_dano(cantidad):
 	vida -= cantidad
 	hud.actualizar_vida(vida)
@@ -728,7 +820,7 @@ func sumar_kill():
 	$SfxKill.play()
 
 func sacudir_camara():
-	var camara = get_node("../Camara")
+	var camara = $Camara
 	var tween = create_tween()
 	for i in 5:
 		var salto = Vector2(randf_range(-6, 6), randf_range(-6, 6))
@@ -813,6 +905,44 @@ func _on_body_entered(body):
 </details>
 
 <details>
+<summary><code>spawner.gd</code> completo</summary>
+
+```gdscript
+extends Node2D
+
+var escena_slime = preload("res://slime.tscn")
+var escena_elite = preload("res://slime_elite.tscn")
+var contador = 0
+
+func _ready():
+	$Timer.timeout.connect(spawnear)
+
+func spawnear():
+	contador += 1
+	var slime
+	if contador % 8 == 0:
+		slime = escena_elite.instantiate()
+	else:
+		slime = escena_slime.instantiate()
+	slime.position = posicion_en_el_borde()
+	get_node("../Enemigos").add_child(slime)
+
+func posicion_en_el_borde():
+	var camara = get_viewport().get_camera_2d()
+	var centro = camara.get_screen_center_position()
+	var mitad = get_viewport_rect().size / 2
+	var lado = randi_range(0, 3)        # 0 arriba · 1 abajo · 2 izquierda · 3 derecha
+	if lado == 0:
+		return centro + Vector2(randf_range(-mitad.x, mitad.x), -mitad.y - 40)
+	if lado == 1:
+		return centro + Vector2(randf_range(-mitad.x, mitad.x), mitad.y + 40)
+	if lado == 2:
+		return centro + Vector2(-mitad.x - 40, randf_range(-mitad.y, mitad.y))
+	return centro + Vector2(mitad.x + 40, randf_range(-mitad.y, mitad.y))
+```
+</details>
+
+<details>
 <summary><code>menu.gd</code> y <code>game_over.gd</code></summary>
 
 ```gdscript
@@ -865,8 +995,9 @@ func _on_menu():
 - **Hit stop cuando cae el jefe.** En `morir()` de `slime_elite.gd`: `Engine.time_scale = 0.05`, `await get_tree().create_timer(0.08, true, false, true).timeout` y `Engine.time_scale = 1.0`, antes del `super()`. Solo para el jefe: con cada slime, el juego viviría congelado.
 - **Partículas al morir.** Una escena `explosion.tscn` con un `CPUParticles2D` (**One Shot** ✔, **Emitting** ✔, **Explosiveness** `1`, **Spread** `180`, **Gravity** `0, 0`, **Initial Velocity** `80`–`140`) y un script con `finished.connect(queue_free)`. El slime la instancia en su posición, en `Balas` o en la arena, antes del *pop*.
 - **Volumen de la música.** Panel **Audio** (abajo): agregar los buses `Musica` y `Efectos` y asignar cada `AudioStreamPlayer` al suyo. En el menú, un `HSlider` de 0 a 1 que haga `AudioServer.set_bus_volume_db(AudioServer.get_bus_index("Musica"), linear_to_db(value))`.
-- **Cámara que sigue y piso infinito.** Llevar la `Camara` adentro del `Jugador` (con **Anchor Mode** en *Drag Center* y la ruta de `sacudir_camara()` cambiada a `$Camara`), y sacar el `clamp`. Hay que cambiar también de dónde salen los slimes. La guía completa, con otros nombres de escena, está en las partes 1 y 2 del [TP8 de la versión anterior](../../trabajos-practicos/trabajo-practico-8.md).
-- **Ranking con nombres.** Un `LineEdit` en el menú para el nombre, y un top 5 guardado en `user://ranking.json`. Está paso a paso en las partes 4 a 6 del mismo [TP8 anterior](../../trabajos-practicos/trabajo-practico-8.md).
+- **Ver más mundo.** En la `Camara`, **Zoom** = `0.8, 0.8`: entra más arena en pantalla y todo se ve más chico. Para que los slimes sigan naciendo afuera, en `posicion_en_el_borde()` la media pantalla pasa a ser `get_viewport_rect().size / 2 / camara.zoom`.
+- **Ahora sí, parallax.** Otro `Parallax2D` en la arena, debajo de `Fondo` en el árbol, con una imagen de nubes semitransparentes de 1536×1024 y **Scroll Scale** = `1.3, 1.3`. Al moverse **más rápido** que el piso, se leen como “están más arriba que el caballero”.
+- **Ranking con nombres.** Un `LineEdit` en el menú para el nombre, y un top 5 guardado en `user://ranking.json`. Está paso a paso en las partes 4 a 6 del [TP8 de la versión anterior](../../trabajos-practicos/trabajo-practico-8.md).
 
 ---
 
@@ -878,6 +1009,8 @@ func _on_menu():
 - Sonido: **[Audio streams](https://docs.godotengine.org/es/4.x/tutorials/audio/audio_streams.html)** y **[Audio buses](https://docs.godotengine.org/es/4.x/tutorials/audio/audio_buses.html)**
 - `AnimationPlayer`: **[Introduction to the animation features](https://docs.godotengine.org/es/4.x/tutorials/animation/introduction.html)**
 - `Tween`: **[referencia de Tween](https://docs.godotengine.org/es/4.x/classes/class_tween.html)**
+- Cámara: **[2D movement overview](https://docs.godotengine.org/es/4.x/tutorials/2d/2d_movement.html)** y **[referencia de Camera2D](https://docs.godotengine.org/es/4.x/classes/class_camera2d.html)**
+- Piso infinito: **[referencia de Parallax2D](https://docs.godotengine.org/es/4.x/classes/class_parallax2d.html)**
 - Exportar: **[Exporting projects](https://docs.godotengine.org/es/4.x/tutorials/export/exporting_projects.html)**
 
-> Sonidos: síntesis propia para la diplomatura (`v2/herramientas/generar-sonidos.py`), uso libre. Sprites de **Brackeys**, licencia **CC0**, heredados del TP3 (ver [`assets/LICENSE-brackeys.txt`](assets/LICENSE-brackeys.txt)). Capturas del editor: documentación oficial de **Godot Engine**, CC BY 4.0.
+> Sonidos: síntesis propia para la diplomatura (`v2/herramientas/generar-sonidos.py`), uso libre. `piso.png`: elaboración propia para la diplomatura, CC0. Sprites de **Brackeys**, licencia **CC0**, heredados del TP3 (ver [`assets/LICENSE-brackeys.txt`](assets/LICENSE-brackeys.txt)). Capturas del editor: documentación oficial de **Godot Engine**, CC BY 4.0.

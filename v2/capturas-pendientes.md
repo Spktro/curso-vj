@@ -42,10 +42,10 @@ Imágenes del material que hoy son **genéricas** (de la documentación de Godot
 
 | Pri. | Línea | Hoy muestra | Captura que hace falta | Nombre sugerido |
 | :-: | :-: | :--- | :--- | :--- |
-| 🔴 | 119 | Pestaña Globals con otro autoload | **Globals → Autoload** con `Partida` → `res://partida.gd` | `tp5-autoload-partida.png` |
-| 🔴 | 462 | Panel de animación genérico | Animación `golpe` del caballero: pista **Modulate** con keys en 0 / 0.1 / … / 0.4 | `tp5-animacion-golpe.png` |
-| 🟡 | 213 | Menú de anclas (docs) | Sirve igual; opcional con el `Fondo` seleccionado | — |
-| 🟡 | 531, 535 | Export templates / Add… (locales) | Sirven igual | — |
+| 🔴 | 123 | Pestaña Globals con otro autoload | **Globals → Autoload** con `Partida` → `res://partida.gd` | `tp5-autoload-partida.png` |
+| 🔴 | 466 | Panel de animación genérico | Animación `golpe` del caballero: pista **Modulate** con keys en 0 / 0.1 / … / 0.4 | `tp5-animacion-golpe.png` |
+| 🟡 | 217 | Menú de anclas (docs) | Sirve igual; opcional con el `Fondo` seleccionado | — |
+| 🟡 | 626, 630 | Export templates / Add… (locales) | Sirven igual | — |
 
 ## Decks
 
