@@ -36,7 +36,6 @@ Reglas de trabajo:
 | 3 | ✅ C5 (POO pura) | ✅ C5+ (la horda en vivo) | ✅ TP3 (base del survivors) |
 | 4 | ✅ C8 (IA y máquinas de estado) | ✅ C8+ (el jefe en vivo) | ✅ TP4 (el jefe piensa) |
 | 5 | ✅ C7 (look and feel) | ✅ C6 (UI en vivo) | ✅ TP5 (terminá tu juego) |
-| 6 | — | ✅ C9 (guardar la partida) | ✅ TP6 (récord, ranking, checkpoint) |
-| Cierre | Presentación de los TPs | — | — |
+| 6 | — | ✅ C9 (guardar la partida) | Presentación de los TPs (jueves) |
 
 Imágenes pendientes: C4 diapo 6 (Angry Birds, pájaro impactando la estructura) y C5 diapo 7 (captura de un survivors con mucha acción).

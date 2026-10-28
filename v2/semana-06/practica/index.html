@@ -438,7 +438,7 @@ archivo.store_string(<span class="s">"Hola"</span>)
   </section>
 
   <section class="slide" data-chapter="Checkpoint" data-topic="Desafío: la estatua">
-    <div class="slide-eyebrow">Desafío · el TP de mañana</div>
+    <div class="slide-eyebrow">Desafío · opcional</div>
     <h2 class="slide-title">Una estatua que guarda la partida</h2>
     <div class="columns" style="grid-template-columns:1.05fr 0.95fr;">
       <ol class="steps" style="font-size:15.5px;">
@@ -455,6 +455,38 @@ archivo.store_string(<span class="s">"Hola"</span>)
         </div>
       </div>
     </div>
+  </section>
+
+  <section class="slide" data-chapter="Checkpoint" data-topic="Pistas del desafío">
+    <div class="slide-eyebrow">Desafío · pistas</div>
+    <h2 class="slide-title">Guardar en la estatua, aplicar en la arena</h2>
+    <div class="columns">
+      <pre class="code" style="margin:0; font-size:12.8px;"><span class="c"># partida.gd</span>
+<span class="k">const</span> RUTA_CHECKPOINT = <span class="s">"user://checkpoint.json"</span>
+<span class="k">var</span> checkpoint = <span class="k">null</span>
+
+<span class="k">func</span> <span class="t">guardar_checkpoint</span>(jugador):
+	<span class="k">var</span> datos = {
+		<span class="s">"vida"</span>: jugador.vida,
+		<span class="s">"x"</span>: jugador.position.x,
+		<span class="s">"y"</span>: jugador.position.y,
+		<span class="s">"tiempo"</span>: tiempo,
+		<span class="s">"kills"</span>: kills
+	}
+	<span class="c"># … y lo demás, como en guardar()</span></pre>
+      <pre class="code" style="margin:0; font-size:12.8px;"><span class="c"># arena.gd: corre después que sus hijos</span>
+<span class="k">func</span> <span class="t">_ready</span>():
+	<span class="k">if</span> Partida.checkpoint != <span class="k">null</span>:
+		<span class="k">var</span> datos = Partida.checkpoint
+		$Jugador.vida = int(datos[<span class="s">"vida"</span>])
+		$Jugador.position = Vector2(datos[<span class="s">"x"</span>], datos[<span class="s">"y"</span>])
+		$HUD.actualizar_vida($Jugador.vida)
+		Partida.checkpoint = <span class="k">null</span></pre>
+    </div>
+    <ul class="bullets" style="margin-top:18px; font-size:17px;">
+      <li><b>Continuar</b> lee el archivo, lo deja en <code>Partida.checkpoint</code> y recién ahí cambia a la arena.</li>
+      <li>Para borrarlo: <code>DirAccess.remove_absolute(Partida.RUTA_CHECKPOINT)</code>.</li>
+    </ul>
   </section>
 
   <section class="slide" data-chapter="Checkpoint" data-topic="JSON o binario">
@@ -478,7 +510,7 @@ archivo.store_var({<span class="s">"vida"</span>: <span class="n">65</span>, <sp
         </tbody>
       </table>
     </div>
-    <p class="small-note" style="margin-top:18px;">Para aprender y para encontrar errores, JSON. El binario queda como extra del TP.</p>
+    <p class="small-note" style="margin-top:18px;">Para aprender y para encontrar errores, JSON. El binario, para quien quiera probarlo.</p>
   </section>
 
   <!-- ============ CIERRE ============ -->
@@ -498,16 +530,17 @@ archivo.store_var({<span class="s">"vida"</span>: <span class="n">65</span>, <sp
     </table>
   </section>
 
-  <section class="slide title-slide" data-chapter="Cierre" data-topic="TP y recursos">
+  <section class="slide title-slide" data-chapter="Cierre" data-topic="Para seguir">
     <div class="slide-eyebrow">Para seguir</div>
-    <h2 class="slide-title">TP 6: guardar la partida</h2>
+    <h2 class="slide-title">Lo de hoy, sobre el juego propio</h2>
     <div class="columns">
       <div class="card">
-        <h3>Sobre el TP5</h3>
+        <h3>Sobre el TP5 (opcional)</h3>
         <ul>
           <li>El récord en <code>user://guardado.json</code></li>
           <li>El ranking con nombre, en el mismo archivo</li>
           <li><b>Desafío:</b> la estatua y el botón Continuar</li>
+          <li>Próxima clase: <b>presentación de los juegos</b></li>
         </ul>
       </div>
       <div class="card">

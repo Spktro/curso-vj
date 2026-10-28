@@ -866,7 +866,7 @@ func _on_menu():
 - **Partículas al morir.** Una escena `explosion.tscn` con un `CPUParticles2D` (**One Shot** ✔, **Emitting** ✔, **Explosiveness** `1`, **Spread** `180`, **Gravity** `0, 0`, **Initial Velocity** `80`–`140`) y un script con `finished.connect(queue_free)`. El slime la instancia en su posición, en `Balas` o en la arena, antes del *pop*.
 - **Volumen de la música.** Panel **Audio** (abajo): agregar los buses `Musica` y `Efectos` y asignar cada `AudioStreamPlayer` al suyo. En el menú, un `HSlider` de 0 a 1 que haga `AudioServer.set_bus_volume_db(AudioServer.get_bus_index("Musica"), linear_to_db(value))`.
 - **Cámara que sigue y piso infinito.** Llevar la `Camara` adentro del `Jugador` (con **Anchor Mode** en *Drag Center* y la ruta de `sacudir_camara()` cambiada a `$Camara`), y sacar el `clamp`. Hay que cambiar también de dónde salen los slimes. La guía completa, con otros nombres de escena, está en las partes 1 y 2 del [TP8 de la versión anterior](../../trabajos-practicos/trabajo-practico-8.md).
-- **Ranking con nombres.** Un `LineEdit` en el menú para el nombre, y un top 5 guardado en un archivo. Es el [TP6](../semana-06/tp.md), de la semana que viene.
+- **Ranking con nombres.** Un `LineEdit` en el menú para el nombre, y un top 5 guardado en un archivo. Se ve en vivo en la [Clase 9](../semana-06/practica/index.html).
 
 ---
 
