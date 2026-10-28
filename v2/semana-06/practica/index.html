@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Diplomatura de Videojuegos · Semana 6 · Clase 9 — Guardar la partida</title>
+<link rel="stylesheet" href="deck.css" />
+<style>
+  /* Diapos "en vivo": código a la izquierda, pasos + punto de control a la derecha */
+  .live { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 22px; align-items: start; }
+  .live pre.code { margin: 0; }
+  .vivo { display: inline-block; background: #dc2626; color: #fff; font-size: 11px; font-weight: 800; letter-spacing: 0.12em; padding: 3px 9px; border-radius: 999px; margin-left: 10px; vertical-align: middle; }
+  ol.steps.compact li { padding: 6px 0 6px 38px; font-size: 15px; line-height: 1.4; }
+  ol.steps.compact li::before { width: 26px; height: 26px; font-size: 12px; top: 6px; }
+  .consola { background: #1e222a; color: #d6deeb; font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 13.5px; line-height: 1.5; padding: 10px 14px; border-radius: 10px; margin: 10px 0 0; white-space: pre; }
+  .consola .lbl { display: block; color: #7f8aa3; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 4px; font-family: inherit; }
+  .proba { margin-top: 10px; font-size: 14.5px; line-height: 1.45; padding: 10px 14px; }
+  .proba b { color: var(--accent); }
+  .nuevo { background: rgba(124, 58, 237, 0.16); border-radius: 3px; }
+  /* Memoria → disco → memoria */
+  .flujo { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 12px; align-items: center; }
+  .flujo .arrow { font-size: 15px; color: var(--accent); font-weight: 800; text-align: center; line-height: 1.3; }
+  .flujo .arrow span { display: block; font-size: 28px; }
+  .flujo .card { text-align: center; padding: 18px; }
+  .flujo .card p { margin: 4px 0 0; font-size: 15px; }
+  /* JSON anotado */
+  .json-anot { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 22px; align-items: start; }
+  .leyenda { display: flex; flex-direction: column; gap: 9px; }
+  .leyenda div { display: grid; grid-template-columns: 92px 1fr; gap: 10px; align-items: center; font-size: 15.5px; }
+  .leyenda code { text-align: center; font-size: 15px; padding: 4px 6px; border-radius: 6px; background: var(--panel-2); color: var(--accent-2); }
+  /* Huecos de imagen y juegos de a uno */
+  .ph { display: flex; align-items: center; justify-content: center; text-align: center; border: 2px dashed var(--border); border-radius: 10px; background: var(--panel-2); color: var(--muted); font-size: 13.5px; line-height: 1.5; padding: 12px; }
+  .juegos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .juegos .card { padding: 14px 16px; }
+  .juegos .ph { height: 140px; margin-bottom: 10px; font-size: 12.5px; }
+  .juegos h3 { font-size: 17px; margin-bottom: 4px; }
+  .juegos p { margin: 0; font-size: 14.5px; line-height: 1.4; }
+  .paso { opacity: 0; transform: translateY(14px); transition: opacity .35s ease, transform .35s ease; }
+  .paso.visible { opacity: 1; transform: none; }
+  @media print { .paso { opacity: 1; transform: none; } }
+  .si { color: #16a34a; font-weight: 800; }
+  .no { color: #dc2626; font-weight: 800; }
+  .duda { color: #d97706; font-weight: 800; }
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck" data-click-nav="off" data-brand="Diplomatura de Videojuegos · Semana 6 · Clase 9" data-home="../../index.html">
+
+  <!-- ============ INICIO ============ -->
+  <section class="slide title-slide active" data-chapter="Inicio" data-topic="Portada">
+    <div class="title-grid">
+      <div>
+        <div class="slide-eyebrow">Semana 6 · Clase 9 · Teórico-práctica</div>
+        <h1 class="title">Guardar la <span class="accent">partida</span></h1>
+        <p class="subtitle">Archivos, rutas y JSON, escritos en vivo sobre el survivors: un récord que no se borra, un ranking con nombres y un checkpoint.</p>
+      </div>
+      <div class="title-photo" style="border:none; box-shadow:none; background:transparent;">
+        <img src="assets/godot-logo.png" alt="Godot Engine" style="max-height:420px; width:auto; margin:0 auto; display:block;" />
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Inicio" data-topic="Cómo va a ser hoy">
+    <div class="slide-eyebrow">Antes de empezar</div>
+    <h2 class="slide-title">La clase de hoy</h2>
+    <div class="columns">
+      <div class="card">
+        <h3>Cuatro bloques</h3>
+        <ol class="steps compact" style="margin-top:8px;">
+          <li><b>Archivos y rutas:</b> <code>res://</code>, <code>user://</code> y <code>FileAccess</code></li>
+          <li><b>JSON:</b> cómo se escribe la información</li>
+          <li><b>En vivo:</b> el récord y el ranking, guardados</li>
+          <li><b>Checkpoint:</b> qué se guarda y qué no (desafío)</li>
+        </ol>
+      </div>
+      <div class="card">
+        <h3>Sobre el proyecto de la Clase 6</h3>
+        <ul>
+          <li>Ya tiene menú, HUD, Game Over y el Autoload <code>Partida</code>.</li>
+          <li>Hoy se modifican <code>partida.gd</code>, <code>menu.gd</code> y <code>game_over.gd</code>.</li>
+          <li>El código se escribe, no se pega.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Inicio" data-topic="Memoria y disco">
+    <div class="slide-eyebrow">El problema</div>
+    <h2 class="slide-title">Al cerrar el juego, el récord vuelve a 0</h2>
+    <div class="flujo" style="margin-top:10px;">
+      <div class="card"><h3>Memoria</h3><p><code>Partida.mejor_tiempo</code></p><p class="small-note" style="margin:6px 0 0;">Rápida. Se borra al cerrar.</p></div>
+      <div class="arrow"><span>→</span><code>guardar()</code></div>
+      <div class="card" style="border-color:var(--accent);"><h3>Disco</h3><p><code>guardado.json</code></p><p class="small-note" style="margin:6px 0 0;">Un archivo. Queda.</p></div>
+      <div class="arrow"><span>→</span><code>cargar()</code></div>
+      <div class="card"><h3>Memoria</h3><p>al abrir el juego</p><p class="small-note" style="margin:6px 0 0;">Las variables, como estaban.</p></div>
+    </div>
+    <ul class="bullets" style="margin-top:28px; font-size:19px;">
+      <li><b>Guardar:</b> pasar variables a un archivo.</li>
+      <li><b>Cargar:</b> leer el archivo y volver a llenar las variables.</li>
+    </ul>
+  </section>
+
+  <!-- ============ BLOQUE 1: ARCHIVOS Y RUTAS ============ -->
+  <section class="slide" data-chapter="Archivos y rutas" data-topic="Qué es un archivo">
+    <div class="slide-eyebrow">Bloque 1 · archivos</div>
+    <h2 class="slide-title">Archivos de texto y archivos binarios</h2>
+    <div class="columns">
+      <div class="card">
+        <h3>Texto</h3>
+        <p>Se abren con el Bloc de notas y se leen.</p>
+        <p><code>.txt</code> <code>.json</code> <code>.gd</code> <code>.tscn</code></p>
+      </div>
+      <div class="card">
+        <h3>Binario</h3>
+        <p>Bytes para la máquina: en el Bloc de notas se ven símbolos raros.</p>
+        <p><code>.png</code> <code>.wav</code> <code>.exe</code> <code>.pck</code></p>
+      </div>
+    </div>
+    <p class="small-note" style="margin-top:18px;">Los <code>.gd</code> y <code>.tscn</code> del proyecto ya son archivos de texto: abrir un <code>.tscn</code> con el Bloc de notas muestra el árbol de nodos.</p>
+  </section>
+
+  <section class="slide" data-chapter="Archivos y rutas" data-topic="res:// y user://">
+    <div class="slide-eyebrow">Bloque 1 · rutas</div>
+    <h2 class="slide-title"><code>res://</code> y <code>user://</code></h2>
+    <table class="tbl" style="font-size:16px;">
+      <thead><tr><th style="width:20%"></th><th><code>res://</code></th><th><code>user://</code></th></tr></thead>
+      <tbody>
+        <tr><td><b>Qué es</b></td><td>La carpeta del proyecto</td><td>Una carpeta del jugador, en su computadora</td></tr>
+        <tr><td><b>Qué hay</b></td><td>Escenas, scripts, sprites, sonidos</td><td>Guardados, ranking, opciones</td></tr>
+        <tr><td><b>En el juego exportado</b></td><td><span class="no">Solo lectura</span>: queda dentro del <code>.pck</code></td><td><span class="si">Lectura y escritura</span></td></tr>
+      </tbody>
+    </table>
+    <ul class="bullets" style="margin-top:22px; font-size:19px;">
+      <li>Todo lo que el juego escribe va a <code>user://</code>.</li>
+      <li>Guardar en <code>res://</code> funciona en el editor y falla en el <code>.exe</code>.</li>
+    </ul>
+  </section>
+
+  <section class="slide" data-chapter="Archivos y rutas" data-topic="Dónde queda user://">
+    <div class="slide-eyebrow">Bloque 1 · rutas</div>
+    <h2 class="slide-title">Dónde queda <code>user://</code></h2>
+    <div class="columns" style="grid-template-columns:1.1fr 0.9fr;">
+      <div>
+        <div class="card">
+          <h3>En Windows</h3>
+          <pre class="code" style="margin:6px 0 0; font-size:13.5px;">C:\Users\<span class="n">usuario</span>\AppData\Roaming\
+   Godot\app_userdata\<span class="n">nombre-del-proyecto</span>\</pre>
+        </div>
+        <div class="card" style="margin-top:14px;">
+          <h3>Desde el editor</h3>
+          <p><b>Project → Open User Data Folder</b> abre esa carpeta.</p>
+        </div>
+      </div>
+      <div class="ph" style="height:300px;">IMAGEN PENDIENTE<br>Captura del menú Project del editor<br>con «Open User Data Folder» resaltado</div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Archivos y rutas" data-topic="FileAccess">
+    <div class="slide-eyebrow">Bloque 1 · FileAccess</div>
+    <h2 class="slide-title"><code>FileAccess</code>: escribir y leer</h2>
+    <div class="columns" style="grid-template-columns:1.1fr 0.9fr;">
+      <pre class="code" style="margin:0; font-size:14px;"><span class="c"># escribir (si el archivo existe, lo pisa)</span>
+<span class="k">var</span> archivo = FileAccess.open(<span class="s">"user://prueba.txt"</span>, FileAccess.WRITE)
+archivo.store_string(<span class="s">"Hola"</span>)
+
+<span class="c"># leer</span>
+<span class="k">if</span> FileAccess.file_exists(<span class="s">"user://prueba.txt"</span>):
+	<span class="k">var</span> texto = FileAccess.get_file_as_string(<span class="s">"user://prueba.txt"</span>)
+	print(texto)</pre>
+      <table class="tbl" style="font-size:14.5px;">
+        <tbody>
+          <tr><td><code>open(ruta, WRITE)</code></td><td>Crea el archivo, o lo vacía</td></tr>
+          <tr><td><code>store_string()</code></td><td>Escribe texto</td></tr>
+          <tr><td><code>file_exists()</code></td><td>¿Ya hay archivo?</td></tr>
+          <tr><td><code>get_file_as_string()</code></td><td>Lee todo el texto</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="small-note" style="margin-top:16px;">El archivo se cierra solo cuando la variable <code>archivo</code> deja de existir, al terminar la función.</p>
+  </section>
+
+  <!-- ============ BLOQUE 2: JSON ============ -->
+  <section class="slide" data-chapter="JSON" data-topic="Qué es JSON">
+    <div class="slide-eyebrow">Bloque 2 · JSON</div>
+    <h2 class="slide-title">Qué es un archivo JSON</h2>
+    <div class="json-anot">
+      <pre class="code" style="margin:0; font-size:16px; line-height:1.5;">{
+	<span class="s">"nombre"</span>: <span class="s">"Caballero"</span>,
+	<span class="s">"vida"</span>: <span class="n">100</span>,
+	<span class="s">"vivo"</span>: <span class="k">true</span>,
+	<span class="s">"posicion"</span>: { <span class="s">"x"</span>: <span class="n">320</span>, <span class="s">"y"</span>: <span class="n">180</span> },
+	<span class="s">"armas"</span>: [<span class="s">"espada"</span>, <span class="s">"arco"</span>]
+}</pre>
+      <div class="leyenda">
+        <div><code>{ }</code><span>Objeto: pares <b>clave: valor</b>, separados por coma</span></div>
+        <div><code>"vida"</code><span>La clave, siempre texto entre comillas</span></div>
+        <div><code>100</code><span>Número</span></div>
+        <div><code>"…"</code><span>Texto</span></div>
+        <div><code>true</code><span><code>true</code> / <code>false</code></span></div>
+        <div><code>[ ]</code><span>Lista, en orden</span></div>
+      </div>
+    </div>
+    <p class="small-note" style="margin-top:18px;">Se puede anidar: un objeto adentro de otro (<code>posicion</code>), una lista de objetos, etc.</p>
+  </section>
+
+  <section class="slide" data-chapter="JSON" data-topic="JSON y GDScript">
+    <div class="slide-eyebrow">Bloque 2 · JSON</div>
+    <h2 class="slide-title">JSON y GDScript se escriben casi igual</h2>
+    <table class="tbl" style="font-size:15.5px;">
+      <thead><tr><th>JSON</th><th>GDScript</th><th>Se lee con</th></tr></thead>
+      <tbody>
+        <tr><td>Objeto <code>{ }</code></td><td><code>Dictionary</code></td><td><code>datos["vida"]</code></td></tr>
+        <tr><td>Lista <code>[ ]</code></td><td><code>Array</code></td><td><code>datos["armas"][0]</code></td></tr>
+      </tbody>
+    </table>
+    <pre class="code" style="margin-top:16px; font-size:14.5px;"><span class="k">var</span> datos = {<span class="s">"vida"</span>: <span class="n">100</span>, <span class="s">"armas"</span>: [<span class="s">"espada"</span>, <span class="s">"arco"</span>]}
+
+<span class="k">var</span> texto = JSON.stringify(datos)       <span class="c"># Dictionary → texto JSON (para guardar)</span>
+<span class="k">var</span> otra_vez = JSON.parse_string(texto) <span class="c"># texto JSON → Dictionary (al cargar)</span></pre>
+  </section>
+
+  <section class="slide" data-chapter="JSON" data-topic="Ejercicio: un ranking en JSON">
+    <div class="slide-eyebrow">Ejercicio · 5 minutos, en papel</div>
+    <h2 class="slide-title">Un ranking en JSON</h2>
+    <div class="columns">
+      <div class="card">
+        <h3>Escribir en JSON</h3>
+        <p>Un ranking con tres jugadores. De cada uno: <b>nombre</b>, <b>tiempo</b> en segundos y <b>slimes</b> eliminados.</p>
+        <p class="small-note">¿Objeto o lista? ¿Qué va afuera y qué va adentro?</p>
+      </div>
+      <pre class="code paso" style="margin:0; font-size:14.5px;">[
+	{ <span class="s">"nombre"</span>: <span class="s">"Ana"</span>,  <span class="s">"tiempo"</span>: <span class="n">80</span>, <span class="s">"kills"</span>: <span class="n">31</span> },
+	{ <span class="s">"nombre"</span>: <span class="s">"Beto"</span>, <span class="s">"tiempo"</span>: <span class="n">52</span>, <span class="s">"kills"</span>: <span class="n">20</span> },
+	{ <span class="s">"nombre"</span>: <span class="s">"Caro"</span>, <span class="s">"tiempo"</span>: <span class="n">37</span>, <span class="s">"kills"</span>: <span class="n">12</span> }
+]
+<span class="c">// una lista (importa el orden)</span>
+<span class="c">// de objetos (cada jugador)</span></pre>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="JSON" data-topic="Lo que JSON no sabe">
+    <div class="slide-eyebrow">Bloque 2 · las trampas</div>
+    <h2 class="slide-title">Lo que JSON no sabe guardar</h2>
+    <table class="tbl" style="font-size:15.5px;">
+      <thead><tr><th style="width:34%">Problema</th><th>Qué pasa</th><th style="width:34%">Solución</th></tr></thead>
+      <tbody>
+        <tr><td><code>Vector2</code>, <code>Color</code>, nodos</td><td>JSON no los conoce</td><td>Guardar los números: <code>"x"</code> y <code>"y"</code></td></tr>
+        <tr><td>Los enteros</td><td>Se guarda <code>37</code> y vuelve <code>37.0</code></td><td><code>int(datos["kills"])</code> al cargar</td></tr>
+        <tr><td>Una clave que no está</td><td>Error, si el archivo es de una versión vieja</td><td><code>datos.get("ranking", [])</code></td></tr>
+        <tr><td>Archivo roto o editado mal</td><td><code>parse_string()</code> devuelve <code>null</code></td><td>Comprobar <code>if datos == null</code></td></tr>
+      </tbody>
+    </table>
+    <p class="small-note" style="margin-top:16px;">Al escribir, Godot ordena las claves alfabéticamente. No cambia nada: se leen por nombre.</p>
+  </section>
+
+  <!-- ============ BLOQUE 3: EN VIVO ============ -->
+  <section class="slide" data-chapter="En vivo" data-topic="En vivo: el récord">
+    <div class="slide-eyebrow">Bloque 3 <span class="vivo">● EN VIVO</span></div>
+    <h2 class="slide-title">Un récord que no se borra</h2>
+    <div class="live" style="grid-template-columns:1.12fr 0.88fr;">
+      <div class="code-wrap">
+        <pre class="code" style="font-size:12.2px; line-height:1.38;"><span class="c"># partida.gd (Autoload)</span>
+<span class="nuevo"><span class="k">const</span> RUTA = <span class="s">"user://guardado.json"</span></span>
+
+<span class="c"># kills, tiempo, mejor_tiempo y reiniciar(), como estaban</span>
+
+<span class="nuevo"><span class="k">func</span> <span class="t">_ready</span>():
+	cargar()
+
+<span class="k">func</span> <span class="t">guardar</span>():
+	<span class="k">var</span> datos = {<span class="s">"mejor_tiempo"</span>: mejor_tiempo}
+	<span class="k">var</span> archivo = FileAccess.open(RUTA, FileAccess.WRITE)
+	archivo.store_string(JSON.stringify(datos, <span class="s">"\t"</span>))
+
+<span class="k">func</span> <span class="t">cargar</span>():
+	<span class="k">if</span> <span class="k">not</span> FileAccess.file_exists(RUTA):
+		<span class="k">return</span>
+	<span class="k">var</span> texto = FileAccess.get_file_as_string(RUTA)
+	<span class="k">var</span> datos = JSON.parse_string(texto)
+	<span class="k">if</span> datos == <span class="k">null</span>:
+		print(<span class="s">"No se pudo leer "</span>, RUTA)
+		<span class="k">return</span>
+	mejor_tiempo = datos.get(<span class="s">"mejor_tiempo"</span>, <span class="n">0.0</span>)</span>
+
+<span class="c"># game_over.gd, dentro del if del récord</span>
+		Partida.mejor_tiempo = Partida.tiempo
+		<span class="nuevo">Partida.guardar()</span></pre>
+      </div>
+      <div>
+        <ol class="steps compact">
+          <li><code>guardar()</code> y <code>cargar()</code> en <code>partida.gd</code></li>
+          <li>Llamar a <code>guardar()</code> cuando hay récord nuevo</li>
+          <li>F5, hacer un récord, cerrar el juego</li>
+          <li><b>Project → Open User Data Folder</b></li>
+        </ol>
+        <div class="consola"><span class="lbl">✅ Punto de control · guardado.json</span>{
+	"mejor_tiempo": 37.8166
+}</div>
+        <div class="callout proba"><b>Probar:</b> cambiar el número a mano en el Bloc de notas y abrir el juego. Después, borrarle una llave y ver la consola.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="En vivo" data-topic="En vivo: el ranking">
+    <div class="slide-eyebrow">Bloque 3 <span class="vivo">● EN VIVO</span></div>
+    <h2 class="slide-title">Un top 5 en el mismo archivo</h2>
+    <div class="live" style="grid-template-columns:1.12fr 0.88fr;">
+      <div class="code-wrap">
+        <pre class="code" style="font-size:12.2px; line-height:1.38;"><span class="c"># partida.gd</span>
+<span class="nuevo"><span class="k">var</span> nombre = <span class="s">"Anónimo"</span>
+<span class="k">var</span> ranking = []</span>
+
+<span class="k">func</span> <span class="t">guardar</span>():
+	<span class="k">var</span> datos = {
+		<span class="s">"mejor_tiempo"</span>: mejor_tiempo,
+		<span class="nuevo"><span class="s">"ranking"</span>: ranking</span>
+	}
+	<span class="c"># … igual que antes</span>
+
+<span class="c"># al final de cargar():</span>
+	<span class="nuevo">ranking = datos.get(<span class="s">"ranking"</span>, [])</span>
+
+<span class="nuevo"><span class="k">func</span> <span class="t">agregar_al_ranking</span>():
+	ranking.append({<span class="s">"nombre"</span>: nombre, <span class="s">"tiempo"</span>: int(tiempo), <span class="s">"kills"</span>: kills})
+	ranking.sort_custom(mas_tiempo)
+	ranking = ranking.slice(<span class="n">0</span>, <span class="n">5</span>)
+
+<span class="k">func</span> <span class="t">mas_tiempo</span>(a, b):
+	<span class="k">return</span> a[<span class="s">"tiempo"</span>] > b[<span class="s">"tiempo"</span>]</span></pre>
+      </div>
+      <div>
+        <table class="tbl" style="font-size:14px;">
+          <tbody>
+            <tr><td><code>append()</code></td><td>Suma la partida al final</td></tr>
+            <tr><td><code>sort_custom(f)</code></td><td>Ordena con una función que dice si <code>a</code> va antes que <code>b</code></td></tr>
+            <tr><td><code>slice(0, 5)</code></td><td>Se queda con los cinco primeros</td></tr>
+            <tr><td><code>.get(clave, [])</code></td><td>El archivo del bloque anterior no tiene <code>"ranking"</code></td></tr>
+          </tbody>
+        </table>
+        <div class="callout proba"><b>Probar:</b> <code>a["tiempo"] &lt; b["tiempo"]</code>. ¿Qué ranking queda?</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="En vivo" data-topic="En vivo: nombre y top 5">
+    <div class="slide-eyebrow">Bloque 3 <span class="vivo">● EN VIVO</span></div>
+    <h2 class="slide-title">El nombre en el menú, el top 5 en el Game Over</h2>
+    <div class="live" style="grid-template-columns:1.12fr 0.88fr;">
+      <div class="code-wrap">
+        <pre class="code" style="font-size:12.2px; line-height:1.38;"><span class="c"># menu.gd, en _on_jugar(), antes de cambiar de escena</span>
+	<span class="nuevo"><span class="k">if</span> $Botonera/CampoNombre.text != <span class="s">""</span>:
+		Partida.nombre = $Botonera/CampoNombre.text</span>
+
+<span class="c"># game_over.gd, en _ready(), después del récord</span>
+	<span class="nuevo">Partida.agregar_al_ranking()
+	Partida.guardar()
+	mostrar_ranking()</span>
+
+<span class="nuevo"><span class="k">func</span> <span class="t">mostrar_ranking</span>():
+	<span class="k">var</span> texto = <span class="s">"TOP 5\n"</span>
+	<span class="k">for</span> i <span class="k">in</span> Partida.ranking.size():
+		<span class="k">var</span> fila = Partida.ranking[i]
+		texto += str(i + <span class="n">1</span>) + <span class="s">". "</span> + fila[<span class="s">"nombre"</span>]
+		texto += <span class="s">" · "</span> + str(int(fila[<span class="s">"tiempo"</span>])) + <span class="s">" s\n"</span>
+	$Botonera/LabelRanking.text = texto</span></pre>
+      </div>
+      <div>
+        <ol class="steps compact">
+          <li>En el menú, un <code>LineEdit</code> <b>CampoNombre</b> arriba de Jugar (<b>Placeholder Text</b>: <code>Nombre</code>)</li>
+          <li>En el Game Over, un <code>Label</code> <b>LabelRanking</b> debajo del récord</li>
+          <li>El <code>Partida.guardar()</code> del bloque anterior sale del <code>if</code>: ahora se guarda siempre</li>
+          <li>F5: tres partidas con nombres distintos</li>
+        </ol>
+        <div class="consola"><span class="lbl">✅ Punto de control · en pantalla</span>TOP 5
+1. Beto · 52 s
+2. Ana · 37 s
+3. Caro · 12 s</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="En vivo" data-topic="Línea por línea">
+    <div class="slide-eyebrow">Bloque 3 · línea por línea</div>
+    <h2 class="slide-title">Qué hace cada pieza nueva</h2>
+    <table class="tbl" style="font-size:14.5px;">
+      <thead><tr><th style="width:42%">Línea</th><th>Qué hace</th></tr></thead>
+      <tbody>
+        <tr><td><code>const RUTA = "user://guardado.json"</code></td><td>La ruta en un solo lugar: si cambia, se cambia una vez.</td></tr>
+        <tr><td><code>cargar()</code> en <code>_ready()</code> de <code>Partida</code></td><td>El Autoload arranca antes que cualquier escena: el menú ya tiene los datos.</td></tr>
+        <tr><td><code>JSON.stringify(datos, "\t")</code></td><td>El diccionario como texto. El <code>"\t"</code> lo escribe con sangría, una clave por línea.</td></tr>
+        <tr><td><code>JSON.parse_string(texto)</code></td><td>El texto como diccionario otra vez, o <code>null</code> si está roto.</td></tr>
+        <tr><td><code>datos.get("ranking", [])</code></td><td>El valor de la clave, o el segundo si no está.</td></tr>
+        <tr><td><code>str(int(fila["tiempo"]))</code></td><td>Del JSON vuelve <code>37.0</code>: <code>int()</code> le saca el <code>.0</code>.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============ BLOQUE 4: CHECKPOINT ============ -->
+  <section class="slide" data-chapter="Checkpoint" data-topic="Cómo guardan otros juegos">
+    <div class="slide-eyebrow">Bloque 4 · en juegos reales</div>
+    <h2 class="slide-title">Dónde y cuándo se guarda</h2>
+    <div class="juegos">
+      <div class="card paso"><div class="ph">IMAGEN PENDIENTE<br>Hollow Knight: el caballero sentado en un banco</div><h3>Hollow Knight</h3><p>El banco guarda y cura. Al morir, se vuelve ahí.</p></div>
+      <div class="card paso"><div class="ph">IMAGEN PENDIENTE<br>Dark Souls: una hoguera encendida</div><h3>Dark Souls</h3><p>La hoguera guarda… y revive a todos los enemigos.</p></div>
+      <div class="card paso"><div class="ph">IMAGEN PENDIENTE<br>Resident Evil: la máquina de escribir</div><h3>Resident Evil</h3><p>Cada guardado gasta una cinta de tinta.</p></div>
+      <div class="card paso"><div class="ph">IMAGEN PENDIENTE<br>Celeste: Madeline entrando a una pantalla nueva</div><h3>Celeste</h3><p>Cada pantalla es un checkpoint. Sin botón.</p></div>
+    </div>
+    <p class="small-note" style="margin-top:16px;">Dónde se guarda y cuánto cuesta es una decisión de <b>diseño</b>: cambia la tensión del juego.</p>
+  </section>
+
+  <section class="slide" data-chapter="Checkpoint" data-topic="Qué se guarda">
+    <div class="slide-eyebrow">Bloque 4 · el diseño</div>
+    <h2 class="slide-title">Un checkpoint es una foto del momento</h2>
+    <div class="columns" style="grid-template-columns:1fr 0.9fr;">
+      <table class="tbl" style="font-size:15px;">
+        <thead><tr><th>En el survivors</th><th>¿Se guarda?</th></tr></thead>
+        <tbody>
+          <tr><td>Vida y posición del caballero</td><td><span class="si">Sí</span></td></tr>
+          <tr><td>Tiempo y slimes eliminados</td><td><span class="si">Sí</span></td></tr>
+          <tr><td>Cuántos faltan para el jefe</td><td><span class="duda">A decidir</span></td></tr>
+          <tr><td>Los slimes en pantalla</td><td><span class="no">No</span>: vuelven a aparecer</td></tr>
+          <tr><td>Las balas</td><td><span class="no">No</span></td></tr>
+        </tbody>
+      </table>
+      <div>
+        <pre class="code" style="margin:0; font-size:14.5px;"><span class="c">// user://checkpoint.json</span>
+{
+	<span class="s">"kills"</span>: <span class="n">22</span>,
+	<span class="s">"tiempo"</span>: <span class="n">61.3</span>,
+	<span class="s">"vida"</span>: <span class="n">65</span>,
+	<span class="s">"x"</span>: <span class="n">320.5</span>,
+	<span class="s">"y"</span>: <span class="n">180.0</span>
+}</pre>
+        <p class="small-note">Se guarda lo mínimo para <b>volver a armar</b> la partida, no todo lo que hay.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Checkpoint" data-topic="Desafío: la estatua">
+    <div class="slide-eyebrow">Desafío · el TP de mañana</div>
+    <h2 class="slide-title">Una estatua que guarda la partida</h2>
+    <div class="columns" style="grid-template-columns:1.05fr 0.95fr;">
+      <ol class="steps" style="font-size:15.5px;">
+        <li><code>estatua.tscn</code>: un <code>Area2D</code> con un cartel <b>E: guardar</b> que aparece si el caballero está cerca</li>
+        <li>Con <b>E</b>: <code>Partida.guardar_checkpoint(jugador)</code> escribe <code>checkpoint.json</code></li>
+        <li>En el menú, <b>Continuar</b> solo si <code>FileAccess.file_exists()</code></li>
+        <li>Continuar lee el archivo y la arena lo aplica en su <code>_ready()</code></li>
+      </ol>
+      <div>
+        <div class="callout"><b>Pista:</b> el <code>_ready()</code> de la <code>Arena</code> corre <b>después</b> del de sus hijos. Ahí el HUD ya existe y el caballero ya puso su vida en 100.</div>
+        <div class="card" style="margin-top:14px;">
+          <h3>Para decidir</h3>
+          <p style="font-size:15px; margin:0;">Al morir, ¿se borra el checkpoint (otra vez de cero) o se vuelve a la estatua?</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-chapter="Checkpoint" data-topic="JSON o binario">
+    <div class="slide-eyebrow">Para saber más</div>
+    <h2 class="slide-title">La otra forma: binario</h2>
+    <div class="columns">
+      <pre class="code" style="margin:0; font-size:13.5px;"><span class="c"># guardar</span>
+<span class="k">var</span> archivo = FileAccess.open(<span class="s">"user://checkpoint.dat"</span>, FileAccess.WRITE)
+archivo.store_var({<span class="s">"vida"</span>: <span class="n">65</span>, <span class="s">"posicion"</span>: position})
+
+<span class="c"># cargar</span>
+<span class="k">var</span> leer = FileAccess.open(<span class="s">"user://checkpoint.dat"</span>, FileAccess.READ)
+<span class="k">var</span> datos = leer.get_var()</pre>
+      <table class="tbl" style="font-size:14.5px;">
+        <thead><tr><th></th><th>JSON</th><th>Binario</th></tr></thead>
+        <tbody>
+          <tr><td>Se lee a simple vista</td><td class="si">Sí</td><td class="no">No</td></tr>
+          <tr><td><code>Vector2</code>, enteros</td><td>Hay que convertir</td><td>Vuelven igual</td></tr>
+          <tr><td>Tamaño</td><td>Más grande</td><td>Más chico</td></tr>
+          <tr><td>Editarlo a mano</td><td>Fácil (también para hacer trampa)</td><td>Difícil</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="small-note" style="margin-top:18px;">Para aprender y para encontrar errores, JSON. El binario queda como extra del TP.</p>
+  </section>
+
+  <!-- ============ CIERRE ============ -->
+  <section class="slide" data-chapter="Cierre" data-topic="Cuando no anda">
+    <div class="slide-eyebrow">Antes de levantar la mano</div>
+    <h2 class="slide-title">Cuando “no anda”</h2>
+    <table class="tbl" style="font-size:14.5px;">
+      <thead><tr><th>Síntoma</th><th>Casi siempre es…</th></tr></thead>
+      <tbody>
+        <tr><td>No aparece ningún archivo</td><td>No se llama a <code>guardar()</code>, o se busca en otra carpeta: usar <b>Open User Data Folder</b>.</td></tr>
+        <tr><td>Se guarda, pero al abrir el juego vuelve a 0</td><td>Falta <code>cargar()</code> en el <code>_ready()</code> de <code>Partida</code>.</td></tr>
+        <tr><td><code>Invalid access to key 'ranking'</code></td><td>El archivo es viejo: usar <code>datos.get("ranking", [])</code>.</td></tr>
+        <tr><td><code>Parse JSON failed</code></td><td>El archivo se editó a mano y le falta una coma o una llave.</td></tr>
+        <tr><td>El ranking muestra <code>37.0 s</code></td><td>Falta <code>int()</code> al mostrarlo.</td></tr>
+        <tr><td>Anda en Godot y no en el <code>.exe</code></td><td>Se guarda en <code>res://</code>: tiene que ser <code>user://</code>.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="slide title-slide" data-chapter="Cierre" data-topic="TP y recursos">
+    <div class="slide-eyebrow">Para seguir</div>
+    <h2 class="slide-title">TP 6: guardar la partida</h2>
+    <div class="columns">
+      <div class="card">
+        <h3>Sobre el TP5</h3>
+        <ul>
+          <li>El récord en <code>user://guardado.json</code></li>
+          <li>El ranking con nombre, en el mismo archivo</li>
+          <li><b>Desafío:</b> la estatua y el botón Continuar</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Recursos</h3>
+        <ul>
+          <li>Docs: <i>File paths in Godot projects</i></li>
+          <li>Docs: <i>FileAccess</i> y <i>JSON</i> (referencia de clases)</li>
+          <li>Docs: <i>Saving games</i> (guarda escenas enteras: para más adelante)</li>
+        </ul>
+      </div>
+    </div>
+    <p class="small-note" style="margin-top:24px; text-align:center;">Logo de Godot © Godot Foundation — CC BY 4.0.</p>
+  </section>
+
+</div>
+
+<script src="deck.js"></script>
+<script>
+  /* Pasos: en la diapo activa, → / Espacio / clic muestran el siguiente .paso y ← oculta el último.
+     Recién cuando están todos visibles, → pasa a la diapo siguiente. */
+  (function () {
+    function activa() { return document.querySelector("section.slide.active"); }
+    function avanzar() {
+      var s = activa(), p = s && s.querySelector(".paso:not(.visible)");
+      if (p) { p.classList.add("visible"); return true; }
+      return false;
+    }
+    function retroceder() {
+      var s = activa(), v = s ? s.querySelectorAll(".paso.visible") : [];
+      if (v.length) { v[v.length - 1].classList.remove("visible"); return true; }
+      return false;
+    }
+    window.addEventListener("keydown", function (e) {
+      var adelante = e.key === "ArrowRight" || e.key === "PageDown" || e.key === " ";
+      var atras = e.key === "ArrowLeft" || e.key === "PageUp";
+      if ((adelante && avanzar()) || (atras && retroceder())) { e.preventDefault(); e.stopImmediatePropagation(); }
+    }, true);
+    document.addEventListener("click", function (e) {
+      if (e.target.closest("button, a, iframe")) return;
+      var s = e.target.closest("section.slide");
+      if (s && s.classList.contains("active")) avanzar();
+    });
+  })();
+</script>
+</body>
+</html>
